@@ -109,8 +109,6 @@ And you can select station category 'Rock' by entering '14'"""
   tb.display()
   sleep 20
 
-main()
-
 try: main()
 except ValueError:
   echo ""
