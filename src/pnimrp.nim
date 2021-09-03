@@ -7,39 +7,47 @@ import illwill
 proc exitProc() {.noconv.} =
   illwillDeinit()
   showCursor()
+  #eraseScreen()
+  #setCursorPos(0,0)
+  echo "when I die, just keep playing the records"
+  quit(0)
 
 illwillInit(fullscreen=true)
 setControlCHook(exitProc)
 hideCursor()
 var tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+proc rect() =
+  tb.setForegroundColor(fgBlack, true)
+  tb.drawRect 0, 0, 60, 25
+  tb.drawHorizLine(15, 40, 2, doubleStyle=true)
+
+rect()
 
 proc main() =
   include base
-  clear()
-  echo """
----Poor Man's Radio Player in Nim-lang---
-
-Station Categories:
-1 181FM
-2 Blues
-3 Bollywood
-4 Classical
-5 Country
-6 Electronic
-7 Hits
-8 Jazz
-9 Medley
-A Metal
-B News & Views
-C Oldies
-D Reggae
-E Rock
-F SomaFM
-G Urban
-N Notes
-Q Quit PMRP"""
+  mnuSy 1,"ye","----------Poor Man's Radio Player in Nim-lang------------"
+  mnuSy 4,"","Station Categories:"
+  mnuSy 5,"","1 181FM"
+  mnuSy 6,"","2 Blues"
+  mnuSy 7,"","3 Bollywood"
+  mnuSy 8,"","4 Classical"
+  mnuSy 9,"","5 Country"
+  mnuSy 10,"","6 Electronic"
+  mnuSy 11,"","7 Hits"
+  mnuSy 12,"","8 Jazz"
+  mnuSy 13,"","9 Medley"
+  mnuSy 14,"","A Metal"
+  mnuSy 15,"","B News & Views"
+  mnuSy 16,"","C Oldies"
+  mnuSy 17,"","D Reggae"
+  mnuSy 18,"","E Rock"
+  mnuSy 19,"","F SomaFM"
+  mnuSy 20,"","G Urban"
+  mnuSy 21,"","N Notes"
+  mnuSy 22,"","Q Quit PMRP"
+  tb.display()
   while true:
-    sleep 160
+    sleep 200
     case getKey():
       of Key.None: discard
       of Key.One:
@@ -91,10 +99,11 @@ Q Quit PMRP"""
         include urban/urban
         urban()]#
       of Key.N:
-        back(21)
-        echo "* ffplay & play cant be exited by using q"
+        back(33)
+        rect()
+        mnuSy 5,"non"," ffplay ,play cant be exited by using q"
         e()
-      of Key.Escape, Key.Q: exitEcho();exitProc()
+      of Key.Escape, Key.Q: exitProc()
       #[else:
         back(19)
         stdout.write """INVALID CHOICE
@@ -120,4 +129,5 @@ except IndexDefect:
   discard readLine(stdin)
   main()
 except IOError: echo "some files are missing or something sus happened"
-except: echo "something sus happened"
+except IllwillError : discard
+#except: echo "something sus happened"
