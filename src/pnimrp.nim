@@ -1,7 +1,7 @@
 from osproc import startProcess,waitForExit,poUsePath,poParentStreams
 from os import findExe,dirExists,fileExists,sleep
 from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
-from strutils import split,endsWith,parseUInt,repeat
+from strutils import split,endsWith,parseUInt,repeat,splitLines
 import illwill
 
 proc exitProc() {.noconv.} =
@@ -16,6 +16,7 @@ illwillInit(fullscreen=true)
 setControlCHook(exitProc)
 hideCursor()
 var tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+
 proc rect() =
   tb.setForegroundColor(fgBlack, true)
   tb.drawRect 0, 0, 60, 25
@@ -25,26 +26,26 @@ rect()
 
 proc main() =
   include base
-  mnuSy 1,"ye","----------Poor Man's Radio Player in Nim-lang------------"
-  mnuSy 4,"","Station Categories:"
-  mnuSy 5,"","1 181FM"
-  mnuSy 6,"","2 Blues"
-  mnuSy 7,"","3 Bollywood"
-  mnuSy 8,"","4 Classical"
-  mnuSy 9,"","5 Country"
-  mnuSy 10,"","6 Electronic"
-  mnuSy 11,"","7 Hits"
-  mnuSy 12,"","8 Jazz"
-  mnuSy 13,"","9 Medley"
-  mnuSy 14,"","A Metal"
-  mnuSy 15,"","B News & Views"
-  mnuSy 16,"","C Oldies"
-  mnuSy 17,"","D Reggae"
-  mnuSy 18,"","E Rock"
-  mnuSy 19,"","F SomaFM"
-  mnuSy 20,"","G Urban"
-  mnuSy 21,"","N Notes"
-  mnuSy 22,"","Q Quit PMRP"
+  mnuSy 1,fgYellow,"----------Poor Man's Radio Player in Nim-lang------------"  
+  mnuSyIter(4,fgBlue,"""Station Categories:
+1 181FM
+2 Blues
+3 Bollywood
+4 Classical
+5 Country
+6 Electronic
+7 Hits
+8 Jazz
+9 Medley
+A Metal
+B News & Views
+C Oldies
+D Reggae
+E Rock
+F SomaFM
+G Urban
+N Notes
+Q Quit PMRP""")
   tb.display()
   while true:
     sleep 200
@@ -101,7 +102,7 @@ proc main() =
       of Key.N:
         back(33)
         rect()
-        mnuSy 5,"non"," ffplay ,play cant be exited by using q"
+        mnuSy 5,fgRed," ffplay ,play cant be exited by using q"
         e()
       of Key.Escape, Key.Q: exitProc()
       #[else:
