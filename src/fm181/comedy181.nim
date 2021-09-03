@@ -14,8 +14,7 @@ proc comedy181() =
   proc r() =
     while true:
       sleep 160
-      var key = getKey()
-      case key:
+      case getKey():
         of Key.None: discard
         of Key.One:
           call(sub,sect,f[0],f[3])

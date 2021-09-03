@@ -40,8 +40,7 @@ N Notes
 Q Quit PMRP"""
   while true:
     sleep 160
-    var key = getKey()
-    case key:
+    case getKey():
       of Key.None: discard
       of Key.One:
         include fm181/fm181
