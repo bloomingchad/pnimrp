@@ -56,12 +56,15 @@ proc menuIter(sect:string,endn:uint32,arr:seq[string]) =
 
 proc e() = wait() ; main()
 
-proc mnuSy(y:int,colour:string,txt:string) =
-  if colour == "non": tb.write 2,y,fgNone,txt
-  if colour == "ye": tb.write 2,y,fgYellow,txt
-  if colour == "bla": tb.write 2,y,fgBlack,txt
-  if colour == "blu": tb.write 2,y,fgBlue,txt
-  if colour == "": tb.write 2,y,fgBlue,txt
-  #if colour == "": tb.write 2,y,fgYellow,txt
-  #if colour == "y": tb.write 2,y,fgYellow,txt
-  #if colour == "y": tb.write 2,y,fgYellow,txt
+proc mnuSy(y:int,colour:ForegroundColor,txt:string) =
+  tb.write 2,y,colour,txt
+
+proc mnuSyIter(y:int,colour:ForegroundColor,txt:string) =
+  var i,j:int
+  j = 0
+  var res = txt.splitLines()
+  i = y
+  for f in 0..res.high:
+    tb.write 2,i,colour,res[j]
+    inc i
+    inc j
