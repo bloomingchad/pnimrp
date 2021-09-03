@@ -13,7 +13,7 @@ proc clear() =
 
 proc wait() = discard getKey() #readLine(stdin)
 
-proc exitEcho() = echo "When I die, just keep playing the records"
+proc exitEcho() = echo "when I die, just keep playing the records"
 
 if dirExists("pnimrp.d") and fileExists("pnimrp.d/pnimrp.cfg"): discard
   #var cfg = readFile("pnimrp.d/pnimrp.cfg").split('\n')
@@ -39,7 +39,7 @@ proc call(mainname,subname,statname,link:string):void =
   elif PLAYER == findExe("ffplay"): discard waitForExit(startProcess(PLAYER, args=["-nodisp",link],options={poUsePath,poParentStreams}))
   elif PLAYER.endsWith("play"): discard waitForExit(startProcess(PLAYER, args=["-t","mp3",link],options={poUsePath,poParentStreams}))
 
-proc menu(sect:string,endn:uint32,arr:seq[string]) =
+proc menuIter(sect:string,endn:uint32,arr:seq[string]) =
   var a,b:uint8
   a = 1
   b = 0
@@ -55,3 +55,13 @@ proc menu(sect:string,endn:uint32,arr:seq[string]) =
   stdout.write "> "
 
 proc e() = wait() ; main()
+
+proc mnuSy(y:int,colour:string,txt:string) =
+  if colour == "non": tb.write 2,y,fgNone,txt
+  if colour == "ye": tb.write 2,y,fgYellow,txt
+  if colour == "bla": tb.write 2,y,fgBlack,txt
+  if colour == "blu": tb.write 2,y,fgBlue,txt
+  if colour == "": tb.write 2,y,fgBlue,txt
+  #if colour == "": tb.write 2,y,fgYellow,txt
+  #if colour == "y": tb.write 2,y,fgYellow,txt
+  #if colour == "y": tb.write 2,y,fgYellow,txt
