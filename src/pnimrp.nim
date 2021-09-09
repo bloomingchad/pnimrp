@@ -1,15 +1,14 @@
 from osproc import startProcess,waitForExit,poUsePath,poParentStreams
 from os import findExe,dirExists,fileExists,sleep
 from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
-from strutils import split,endsWith,parseUInt,repeat,splitLines
+from strutils import endsWith,parseUInt,repeat,splitLines
+from strformat import fmt
 import illwill
 
 proc exitProc() {.noconv.} =
   illwillDeinit()
-  showCursor()
-  #eraseScreen()
-  #setCursorPos(0,0)
   echo "when I die, just keep playing the records"
+  showCursor()
   quit(0)
 
 illwillInit(fullscreen=true)
@@ -20,14 +19,14 @@ var tb = newTerminalBuffer(terminalWidth(), terminalHeight())
 proc rect() =
   tb.setForegroundColor(fgBlack, true)
   tb.drawRect 0, 0, 60, 25
-  tb.drawHorizLine(15, 40, 2, doubleStyle=true)
-
+  tb.drawHorizLine 15, 40, 2 ,doubleStyle=true
 rect()
 
 proc main() =
   include base
+  mnuCls()
   mnuSy 1,fgYellow,"----------Poor Man's Radio Player in Nim-lang------------"  
-  mnuSyIter(4,fgBlue,"""Station Categories:
+  mnuSyIter 4,fgBlue,"""Station Categories:
 1 181FM
 2 Blues
 3 Bollywood
@@ -45,8 +44,8 @@ E Rock
 F SomaFM
 G Urban
 N Notes
-Q Quit PMRP""")
-  tb.display()
+Q Quit PMRP"""
+  #tb.display()
   while true:
     sleep 200
     case getKey():
@@ -100,21 +99,19 @@ Q Quit PMRP""")
         include urban/urban
         urban()]#
       of Key.N:
-        back(33)
-        rect()
+        mnuCls()
         mnuSy 5,fgRed," ffplay ,play cant be exited by using q"
-        e()
       of Key.Escape, Key.Q: exitProc()
-      #[else:
-        back(19)
-        stdout.write """INVALID CHOICE
-
+      else:
+        mnuCls()
+        mnuSyIter 5,fgGreen,"""INVALID CHOICE
 select a category by entering the relevant number
-Ex: enter '2' to select station category 'Blues'
-To select station category 'News & Views' enter '11'
-And you can select station category 'Rock' by entering '14'"""
-        e() ]#
-      else: sleep(50) ; discard
+Ex: enter 2 to select station category Blues
+To select station category News & Views enter 11
+And you can select station category Rock by entering 14"""
+        sleep 2000
+        mnuCls()
+        main()
   tb.display()
   sleep 20
 

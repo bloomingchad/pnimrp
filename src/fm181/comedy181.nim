@@ -1,16 +1,16 @@
 proc comedy181() =
   var sect:string = "Comedy"
-  var f = readFile("pnimrp.d/181FM/comedy181.csv").split('\n')
+  var f = readFile("pnimrp.d/181FM/comedy181.csv").splitLines()
   proc s() =
-    back(17)
-    echo "PNimRP -> ",sect
-    echo ""
-    echo "Stations Playing ",sect," Music:"
-    echo "1 ", f[0]
-    echo "2 ", f[1]
-    echo "3 ", f[2]
-    echo "R Return"
-    echo "Q Quit"
+    mnuCls()
+    mnuSy 1,fgYellow,fmt"PNimRP -> {sub} -> {sect}"
+    mnuSyIter 4,fgBlue,fmt"""{sect} Station Playing Music:
+1 {f[0]}
+2 {f[1]}
+3 {f[2]}
+R Return
+Q Exit"""
+    tb.display()
   proc r() =
     while true:
       sleep 160

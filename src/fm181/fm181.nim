@@ -1,10 +1,8 @@
 proc fm181() =
   var sub:string = "181FM"
-  clear()
-  echo """
-PNimRP -> 181FM
-
-181FM Station Playing Music:
+  mnuCls()
+  mnuSy 1,fgYellow,fmt"PNimRP -> {sub}"
+  mnuSyIter 4,fgBlue,fmt"""{sub} Station Playing Music:
 1 80s
 2 90s
 3 Comedy
@@ -18,6 +16,7 @@ A Techno
 B Urban
 Q Quit
 R Return"""
+  tb.display()
   while true:
     sleep 160
     var key = getKey()
