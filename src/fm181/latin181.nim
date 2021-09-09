@@ -1,6 +1,6 @@
 proc latin181() =
   var sect:string = "Latin"
-  var f = readFile("pnimrp.d/181FM/latin181.csv").split('\n')
+  var f = readFile("pnimrp.d/181FM/latin181.csv").splitLines()
   proc s() =
     back(17)
     echo "PNimRP -> ",sect
