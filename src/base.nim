@@ -18,49 +18,49 @@ proc exitEcho() = echo "when I die, just keep playing the records"
 if dirExists("pnimrp.d") and fileExists("pnimrp.d/pnimrp.cfg"): discard
 else: echo "Data directory and Config file doesnt exist" ; exitProc() ; quit(1)
 
-proc mnuSy(y:int,colour:ForegroundColor,txt:string) =
-  tb.write 2,y,colour,txt
+proc mnuSy(x:int,y:int,colour:ForegroundColor,txt:string) =
+  tb.write x,y,colour,txt
   tb.display()
 
-proc mnuSyIter(y:int,colour:ForegroundColor,txt:string) =
+proc mnuSyIter(x:int,y:int,colour:ForegroundColor,txt:string) =
   var i,j:int
   j = 0
   var res = txt.splitLines()
   i = y
   for f in 0..res.high:
-    tb.write 2,i,colour,res[j]
+    tb.write x,i,colour,res[j]
     inc i
     inc j
   tb.display()
 
 proc mnuCls() =
-  tb.write 2,1," ".repeat(57)
+  tb.write 2,1," ".repeat(width - 4 )
   var i:uint8 = 4
   for f in 1..20:
-    tb.write 2,i," ".repeat(50)
+    tb.write 2,i," ".repeat(width - 4)
     inc i
   tb.display()
 
 proc Cls(x:int) =
-  tb.write 2,x," ".repeat(15)
+  tb.write 2,x," ".repeat(width - 4 )
   tb.display()
 
 proc inv() =
-  mnuSy 16,fgRed,"INVALID CHOICE"
+  mnuSy 2,23,fgRed,"INVALID CHOICE"
   sleep 750
-  Cls(16)
+  Cls(23)
 
 var PLAYER:string
 if findExe("mpv").endsWith("mpv") or findExe("mpv").endsWith("mpv.exe"): PLAYER = findExe("mpv")
 elif findExe("ffplay").endsWith("ffplay"):PLAYER = findExe("ffplay")
 elif findExe("play").endsWith("sox"): PLAYER = "play"
-else: echo "PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ; quit(1)
+else: illwillDeinit();showCursor(); echo "error: PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ; quit(1)
 
 proc call(mainname,subname,statname,link:string):void =
   mnuCls()
   echo "PNimRP -> ",mainname," -> ",subname," -> ",statname
   echo ""
-  if PLAYER == findExe("mpv"): discard waitForExit(startProcess(PLAYER, args=["--no-video",link],options={poUsePath,poParentStreams}))
+  if PLAYER == findExe("mpv"): discard waitForExit(startProcess(PLAYER, args=["--no-video",link],options={#[poUsePath,poParentStreams]#}))
   elif PLAYER == findExe("ffplay"): discard waitForExit(startProcess(PLAYER, args=["-nodisp",link],options={poUsePath,poParentStreams}))
   elif PLAYER.endsWith("play"): discard waitForExit(startProcess(PLAYER, args=["-t","mp3",link],options={poUsePath,poParentStreams}))
 
