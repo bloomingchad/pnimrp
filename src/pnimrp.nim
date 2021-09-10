@@ -1,4 +1,4 @@
-from osproc import startProcess,waitForExit,poUsePath,poParentStreams
+from osproc import startProcess,waitForExit,poUsePath,poParentStreams,execCmd
 from os import findExe,dirExists,fileExists,sleep
 from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
 from strutils import endsWith,parseUInt,repeat,splitLines
@@ -11,23 +11,26 @@ proc exitProc() {.noconv.} =
   showCursor()
   quit(0)
 
+var width = terminalWidth()
+var height = terminalHeight()
+
 illwillInit(fullscreen=true)
 setControlCHook(exitProc)
 hideCursor()
-var tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+var tb = newTerminalBuffer(width, height)
 
 proc rect() =
   tb.setForegroundColor(fgBlack, true)
-  tb.drawRect 0, 0, 60, 25
-  tb.drawHorizLine 15, 40, 2 ,doubleStyle=true
-rect()
+  tb.drawRect 0, 0, width - 1 , height - 1
+  tb.drawHorizLine 2, (width/3).Natural , 2 ,doubleStyle=true
 
 proc main() =
   include base
   mnuCls()
-  mnuSy 1,fgYellow,"----------Poor Man's Radio Player in Nim-lang------------"  
-  mnuSyIter 4,fgBlue,"""Station Categories:
-1 181FM
+  rect()
+  mnuSy 2,1,fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((width/8).int)}"""
+  mnuSyIter 2,4,fgGreen,"Station Categories:"
+  mnuSyIter 6,5,fgBlue,"""1 181FM
 2 Blues
 3 Bollywood
 4 Classical
@@ -45,7 +48,6 @@ F SomaFM
 G Urban
 N Notes
 Q Quit PMRP"""
-  #tb.display()
   while true:
     sleep 200
     case getKey():
@@ -99,17 +101,19 @@ Q Quit PMRP"""
         include urban/urban
         urban()]#
       of Key.N:
-        mnuCls()
-        mnuSy 5,fgRed," ffplay ,play cant be exited by using q"
+        include notes
+        notes()
       of Key.Escape, Key.Q: exitProc()
       else:
         mnuCls()
-        mnuSyIter 5,fgGreen,"""INVALID CHOICE
-select a category by entering the relevant number
+        Cls(2)
+        mnuSy 2,3,fgRed,"INVALID CHOICE"
+        mnuSyIter 6,5,fgGreen,"""select a category by entering the relevant number
 Ex: enter 2 to select station category Blues
 To select station category News & Views enter 11
 And you can select station category Rock by entering 14"""
-        sleep 2000
+        sleep 6000
+        Cls(3)
         mnuCls()
         main()
   tb.display()
@@ -126,6 +130,6 @@ except IndexDefect:
   echo "enter a value"
   discard readLine(stdin)
   main()
-except IOError: echo "some files are missing or something sus happened"
-except IllwillError : discard
+#except IOError: echo "some files are missing or something sus happened"
+#except IllwillError : discard
 #except: echo "something sus happened"

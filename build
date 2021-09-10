@@ -1,1 +1,1 @@
-nim c --opt:size --cc:tcc --hints:off  $@ -o:pnimrp src/pnimrp.nim
+nim c --warnings:off --cc:tcc --hints:off $@ -o:pnimrp src/pnimrp.nim

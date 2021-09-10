@@ -1,8 +1,9 @@
 proc fm181() =
   var sub:string = "181FM"
   mnuCls()
-  mnuSy 1,fgYellow,fmt"PNimRP -> {sub}"
-  mnuSyIter 4,fgBlue,fmt"""{sub} Station Playing Music:
+  rect()
+  mnuSy 2,1,fgYellow,fmt"PNimRP -> {sub}"
+  mnuSyIter 6,4,fgBlue,fmt"""{sub} Station Playing Music:
 1 80s
 2 90s
 3 Comedy

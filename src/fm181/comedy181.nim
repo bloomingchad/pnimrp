@@ -3,9 +3,9 @@ proc comedy181() =
   var f = readFile("pnimrp.d/181FM/comedy181.csv").splitLines()
   proc s() =
     mnuCls()
-    mnuSy 1,fgYellow,fmt"PNimRP -> {sub} -> {sect}"
-    mnuSyIter 4,fgBlue,fmt"""{sect} Station Playing Music:
-1 {f[0]}
+    mnuSy 2,1,fgYellow,fmt"PNimRP -> {sub} -> {sect}"
+    mnuSyIter 2,4,fgGreen,fmt"{sect} Station Playing Music:"
+    mnuSyIter 6,5,fgBlue,fmt"""1 {f[0]}
 2 {f[1]}
 3 {f[2]}
 R Return
