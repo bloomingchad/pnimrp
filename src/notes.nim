@@ -10,15 +10,13 @@ under certain conditions. press `t` for details"""
     case getKey():
       of Key.None: discard
       of Key.T:
-        when defined windows: discard execCmd("notepad.exe TERMS") ; exitProc()
+        when defined windows: exec "notepad.exe",["COPYING"],0 ; exitProc()
         when defined posix:
           mnuSyIter 6,13,fgRed,"type :q and enter to exit"
           mnuSy 6,16,fgBlue,"Please wait..."
           sleep 3000
-          discard execCmd "vi TERMS"
+          exec "vi",["TERMS"],0
           exitProc()
-      of Key.R:
-        mnuCls()
-        main()
+      of Key.R: mnuCls() ; main()
       of Key.Q: exitProc()
       else: inv()
