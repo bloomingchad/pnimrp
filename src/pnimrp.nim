@@ -1,15 +1,17 @@
-from osproc import startProcess,waitForExit,poUsePath,poParentStreams,execCmd
+from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspend,resume,execCmd
 from os import findExe,dirExists,fileExists,sleep
 from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
-from strutils import endsWith,parseUInt,repeat,splitLines
+from strutils import endsWith,repeat,splitLines
 from strformat import fmt
 import illwill
 
 proc exitProc() {.noconv.} =
   illwillDeinit()
-  echo "when I die, just keep playing the records"
   showCursor()
-  quit(0)
+
+proc exit(x:string,y:int) =
+  echo x
+  quit y
 
 var width = terminalWidth()
 var height = terminalHeight()
@@ -103,7 +105,7 @@ Q Quit PMRP"""
       of Key.N:
         include notes
         notes()
-      of Key.Escape, Key.Q: exitProc()
+      of Key.Escape, Key.Q: exitProc();exit "",0
       else:
         mnuCls()
         Cls(2)
@@ -121,14 +123,12 @@ And you can select station category Rock by entering 14"""
 
 try: main()
 except ValueError:
-  echo ""
-  echo "enter value correctly"
-  discard readLine(stdin)
+  sleep 5000
   main()
 except IndexDefect:
   echo ""
   echo "enter a value"
-  discard readLine(stdin)
+  sleep 5000
   main()
 #except IOError: echo "some files are missing or something sus happened"
 #except IllwillError : discard
