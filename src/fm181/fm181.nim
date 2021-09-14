@@ -1,9 +1,9 @@
 proc fm181() =
   var sub:string = "181FM"
-  mnuCls()
-  rect()
-  mnuSy 2,1,fgYellow,fmt"PNimRP -> {sub}"
-  mnuSyIter 6,4,fgBlue,fmt"""{sub} Station Playing Music:
+  mnuCls 0
+  mnuSy 2,1,fgYellow,fmt"PNimRP > {sub}"
+  mnuSyIter 2,4,fgGreen,fmt"{sub} Station Playing Music:"
+  mnuSyIter 6,5,fgBlue,fmt"""
 1 80s
 2 90s
 3 Comedy
@@ -17,9 +17,8 @@ A Techno
 B Urban
 Q Quit
 R Return"""
-  tb.display()
   while true:
-    sleep 160
+    sleep 50
     var key = getKey()
     case key:
       of Key.None: discard  #[
@@ -57,9 +56,9 @@ R Return"""
         include urban181
         urban181()
       of Key.R: main()
-      of Key.Escape , Key.Q: exitEcho() ;exitProc()
+      of Key.Escape , Key.Q: exitProc();exitEcho()
       else:
         inv()
         fm181()
   tb.display()
-  sleep(20)
+  sleep 20

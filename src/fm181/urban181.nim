@@ -1,6 +1,6 @@
 proc urban181() =
   var sect:string = "Urban"
-  var f = readFile("pnimrp.d/181FM/urban181.csv").splitLines()
+  var f = parse "181FM/urban181.csv"
   proc s() =
     back(17)
     echo "PNimRP -> ",sect,"\n"
