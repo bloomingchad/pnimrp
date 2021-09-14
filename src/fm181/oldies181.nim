@@ -1,7 +1,7 @@
 proc oldies181() =
   var sect:string = "Oldies"
   clear()
-  var f = readFile("pnimrp.d/181FM/oldies181.csv").splitLines()
+  var f = parse "181FM/oldies181.csv"
   echo "PNimRP -> ",sect,"\n"
   echo "Stations Playing ",sect," Music:"
   echo "1 ", f[0]

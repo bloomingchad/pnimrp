@@ -3,8 +3,9 @@ proc back(x:uint32):void =
     cursorUp()
     eraseLine()
 
-proc read():char = return readLine(stdin)[0]
+proc read():char = stdin.readLine[0]
 
+proc parse(x:string):seq[string] = readFile(fmt"pnimrp.d/{x}").splitLines()
 proc clear() =
   when defined(windows): eraseScreen()
   else:
@@ -13,7 +14,26 @@ proc clear() =
 
 proc wait() = sleep 3000
 
-proc exitEcho() = echo "when I die, just keep playing the records" ; quit(0)
+proc exitEcho() =
+  echo ""
+  echo "when I die, just keep playing the records"
+  quit 0
+
+proc exitProc() {.noconv.} =
+  illwillDeinit()
+  showCursor()
+
+var width = terminalWidth()
+var height = terminalHeight()
+
+illwillInit(fullscreen=true)
+setControlCHook exitProc
+hideCursor()
+var tb = newTerminalBuffer(width,height)
+
+proc exec(x:string,args:openArray[string],stream:uint8) =
+  if stream == 1: discard waitForExit(startProcess(x,args=args,options={poUsePath,poParentStreams}))
+  if stream == 0: discard waitForExit(startProcess(x,args=args,options={poUsePath}))
 
 proc checkFileIter(x:seq[string]):bool =
   var i:uint8 = 0
@@ -25,11 +45,21 @@ proc checkFileIter(x:seq[string]):bool =
 var amog = @["pnimrp","181FM/comedy181","181FM/easy181","181FM/latin181","181FM/oldies181","181FM/rock181","181FM/country181",
 "181FM/eight181","181FM/nine181","181FM/pop181","181FM/urban181"]
 
-if not ( dirExists("pnimrp.d") and checkFileIter amog ): exitProc() ; exit "Data directory and Config file doesnt exist",1
+if not ( dirExists("pnimrp.d") and checkFileIter amog ): exitProc(); echo "data and config files dont exist" ; quit 1
 
 proc mnuSy(x:int,y:int,colour:ForegroundColor,txt:string) =
   tb.write x,y,colour,txt
   tb.display()
+
+when defined linux:
+  if findExe("nircmd.exe").contains "nircmd":
+    mnuSy 2, 6 , fgRed, """"nircmd was not found in your windows system
+and needed for volume control etc...
+Downloading it...."""
+    sleep 3000
+    var sus = newHttpClient()
+    sus.downloadFile "https://www.nirsoft.net/utils/nircmd.zip","nircmd.zip"
+    exec "7z.exe" ,["e","nircmd.zip"],0
 
 proc mnuSyIter(x:int,y:int,colour:ForegroundColor,txt:string) =
   var i,j:int
@@ -42,8 +72,8 @@ proc mnuSyIter(x:int,y:int,colour:ForegroundColor,txt:string) =
     inc j
   tb.display()
 
-proc mnuCls() =
-  tb.write 2,1," ".repeat(width - 4)
+proc mnuCls(x:int) =
+  if x == 0: tb.write 2,1," ".repeat(width - 4)
   var i:uint8 = 4
   for f in 1..20:
     tb.write 2,i," ".repeat(width - 4)
@@ -59,63 +89,75 @@ proc inv() =
   sleep 750
   Cls(23)
 
-proc exec(x:string,args:openArray[string],stream:uint8) =
-  if stream == 1: discard waitForExit(startProcess(x,args=args,options={poUsePath,poParentStreams}))
-  if stream == 0: discard waitForExit(startProcess(x,args=args,options={poUsePath}))
+var PLAYER:string
+if findExe("mpav").contains "mpv": PLAYER = absolutePath(findExe "mpv")
+elif findExe("ffpqlay").contains "ffplay": PLAYER = absolutePath(findExe "ffplay")
+elif findExe("play",followSymlinks = false).contains "play": PLAYER = absolutePath(findExe("play",followSymlinks = false))
+else: illwillDeinit();showCursor(); echo "error: PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ; quit 1
 
-proc execPolled(x:string,args:openArray[string]) =
+proc execPolled(x:string,args:openArray[string]):bool =
+  if args[1] == "" or args[1].contains(" "): inv() ; return true
   var app = startProcess(x,args=args,options={poUsePath})
-  var volume:int8 = 30
+  mnuSy 6,10,fgGreen,"Playing.."
+  #var volume:int8 = 30
   proc s() =
     while true:
       sleep 3000
       case getKey():
         of Key.None: discard
         of Key.Slash:
-          when defined linux: discard execCmd "amixer --quiet set PCM 5%+"#exec "amixer",["--quiet","set","PCM","5%+"],0
-          when defined freebsd:
-            exec "mixer",["vol",fmt"{volume}"],0
-            volume += 5
-          when defined windows: exec ".\nircmd.exe",["changesysvolume","2000"],0
-          when defined macos: mnuSy 2,15,"isnt supported in macos as it needs sudo powers and is malicious for the convinience"
+          when defined linux:
+            exec "amixer",["--quiet","set","PCM","7%+"],0
+            mnuSy 6,13,fgRed,"Volume+"
+            sleep 2000
+            Cls 13
+          when defined freebsd: exec "mixer",["vol",fmt"{volume}"],0
+          when defined windows: exec ".\nircmd.exe",["changesysvolume","5000"],0
+          when defined macos:
+            mnuSy 2,15,"isnt supported in macos as it needs sudo powers and is malicious for the convinience"
+            sleep 5000
+            Cls 15
           when defined haiku: exec "setvolume",[audio],0
+
         of Key.Asterisk:
-          when defined linux: exec "",["",""],0
-          when defined windows: exec "",["",""],0
-          when defined freebsd: exec "",["",""],0
-          when defined haiku: exec "",["",""],0
+          when defined linux:
+            exec "amixer",["--quiet","set","PCM","7%-"],0
+            mnuSy 6,13,fgRed,"Volume-"
+            sleep 2000
+            Cls 13
+          when defined freebsd: exec "mixer",["vol",fmt"{volume}"],0
+          when defined windows: exec ".\nircmd.exe",["changesysvolume","-5000"],0
+          when defined macos:
+            mnuSy 2,15,"isnt supported in macos as it needs sudo powers and is malicious for the convinience"
+            sleep 5000
+            Cls 15
+          when defined haiku: exec "setvolume",[audio],0
         of Key.P:
-          suspend(app)
+          mnuSy 6,10,fgGreen,"Paused.."
+          suspend app
           while true:
             sleep 300
             case getKey():
               of Key.None: discard
               of Key.P:
-                resume(app)
+                resume app
+                mnuSy 6,10,fgGreen,"Playing.."
                 sleep 1000
                 s()
-              of Key.Q:
-                kill(app) ; break
+              of Key.R: kill app; break
+              of Key.Q: kill app; exitProc(); exitEcho()
               else: inv()
-        of Key.Escape ,Key.Q: kill(app) ; break
+        of Key.M: discard
+        of Key.Q: kill app; exitProc(); exitEcho()
+        of Key.Escape,Key.R: kill app; break
         else: inv()
-      #echo volume
   s()
-  
-
-
-var PLAYER:string
-if findExe("mpv").endsWith("mpv") or findExe("mpv").endsWith("mpv.exe"): PLAYER = findExe("mpv")
-elif findExe("ffplay").endsWith("ffplay"):PLAYER = findExe("ffplay")
-elif findExe("play").endsWith("sox"): PLAYER = "play"
-else: illwillDeinit();showCursor(); exit "error: PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ,1
 
 proc call(main,sub,stat,link:string) =
-  mnuCls()
-  #echo "PNimRP -> ",main," -> ",sub," -> ",stat ; echo ""
-  if PLAYER == findExe("mpv"): execPolled(PLAYER,["--no-video",link])
-  elif PLAYER == findExe("ffplay"): execPolled(PLAYER,["-nodisp",link])
-  elif PLAYER.endsWith("play"): execPolled(PLAYER,["-t","mp3",link])
+  mnuCls 1
+  if PLAYER == absolutePath(findExe "mpv"): discard execPolled(PLAYER,["--no-video",link])
+  elif PLAYER == absolutePath(findExe "ffplay"): discard execPolled(PLAYER,["-nodisp",link])
+  elif PLAYER == absolutePath(findExe("play",followSymlinks = false)): discard execPolled(PLAYER,["-t","mp3",link,"upsample"])
 
 proc menuIter(sect:string,endn:uint32,arr:seq[string]) =
   var a,b:uint8
@@ -130,3 +172,8 @@ proc menuIter(sect:string,endn:uint32,arr:seq[string]) =
   echo "R Return"
   echo "Q Quit"
   stdout.write "> "
+
+proc rect() =
+  tb.setForegroundColor fgBlack, true
+  tb.drawRect 0, 0, width - 1 , height - 1
+  tb.drawHorizLine 2, (width/3).Natural , 2 ,doubleStyle=true
