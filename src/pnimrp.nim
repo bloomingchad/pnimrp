@@ -4,17 +4,17 @@ from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
 from strutils import contains,repeat,splitLines
 from strformat import fmt
 import illwill
-when defined linux: from httpclient import downloadFile,newHttpClient
+#when defined windows: from httpclient import downloadFile,newHttpClient
 
 include base
 
 rect()
 
 proc main() =
- mnuCls 0
- mnuSy 2,1,fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((width/8).int)}"""
- mnuSyIter 2,4,fgGreen,"Station Categories:"
- mnuSyIter 6,5,fgBlue,fmt"""1 181FM
+ clsIter 0
+ say 2,1,fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((width/8).int)}"""
+ sayIter 2,4,fgGreen,"Station Categories:"
+ sayIter 6,5,fgBlue,fmt"""1 181FM
 2 Blues
 3 Bollywood
 4 Classical
@@ -90,16 +90,16 @@ Q Quit PMRP
     notes()
    of Key.Escape, Key.Q: exitProc();exitEcho()
    else:
-    mnuCls 0
-    Cls 2
-    mnuSy 2,3,fgRed,"INVALID CHOICE"
-    mnuSyIter 6,5,fgGreen,"""select a category by entering the relevant number
+    clsIter 0
+    cls 2
+    say 2,3,fgRed,"INVALID CHOICE"
+    sayIter 6,5,fgGreen,"""select a category by entering the relevant number
 Ex: enter 2 to select station category Blues
 To select station category News & Views enter 11
 And you can select station category Rock by entering 14"""
     sleep 4000
-    Cls 3
-    mnuCls 0
+    cls 3
+    clsIter 0
     main()
   sleep 20
 
