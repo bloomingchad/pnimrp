@@ -2,10 +2,10 @@ proc country181() =
  var sect:string = "Country"
  var f = parse "181FM/country181.csv"
  proc s() =
-  mnuCls 0
-  mnuSy 2,1,fgYellow,fmt"PNimRP > {sub} > {sect}"
-  mnuSyIter 2,4,fgGreen,fmt"{sect} Station Playing Music:"
-  mnuSyIter 6,5,fgBlue,fmt"""1 {f[0]}
+  clsIter 0
+  say 2,1,fgYellow,fmt"PNimRP > {sub} > {sect}"
+  say 2,4,fgGreen,fmt"{sect} Station Playing Music:"
+  sayIter 6,5,fgBlue,fmt"""1 {f[0]}
 2 {f[1]}
 3 {f[2]}
 4 {f[3]}

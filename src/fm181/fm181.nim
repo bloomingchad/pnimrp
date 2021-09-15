@@ -1,9 +1,9 @@
 proc fm181() =
   var sub:string = "181FM"
-  mnuCls 0
-  mnuSy 2,1,fgYellow,fmt"PNimRP > {sub}"
-  mnuSyIter 2,4,fgGreen,fmt"{sub} Station Playing Music:"
-  mnuSyIter 6,5,fgBlue,fmt"""
+  clsIter 0
+  say 2,1,fgYellow,fmt"PNimRP > {sub}"
+  say 2,4,fgGreen,fmt"{sub} Station Playing Music:"
+  sayIter 6,5,fgBlue,fmt"""
 1 80s
 2 90s
 3 Comedy
@@ -60,5 +60,4 @@ R Return"""
       else:
         inv()
         fm181()
-  tb.display()
   sleep 20

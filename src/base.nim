@@ -47,21 +47,18 @@ var amog = @["pnimrp","181FM/comedy181","181FM/easy181","181FM/latin181","181FM/
 
 if not ( dirExists("pnimrp.d") and checkFileIter amog ): exitProc(); echo "data and config files dont exist" ; quit 1
 
-proc mnuSy(x:int,y:int,colour:ForegroundColor,txt:string) =
+proc say(x:int,y:int,colour:ForegroundColor,txt:string) =
   tb.write x,y,colour,txt
   tb.display()
 
-when defined linux:
+#[when defined windows:
   if findExe("nircmd.exe").contains "nircmd":
-    mnuSy 2, 6 , fgRed, """"nircmd was not found in your windows system
-and needed for volume control etc...
-Downloading it...."""
-    sleep 3000
-    var sus = newHttpClient()
-    sus.downloadFile "https://www.nirsoft.net/utils/nircmd.zip","nircmd.zip"
-    exec "7z.exe" ,["e","nircmd.zip"],0
+    mnuSy 2, 6 , fgRed,"nircmd was not found in your windows system"
+    sleep 1000
+    downloadFile "https://www.nirsoft.net/utils/nircmd.zip","nircmd.zip"
+    exec "7z.exe" ,["e","nircmd.zip"],0 ]#
 
-proc mnuSyIter(x:int,y:int,colour:ForegroundColor,txt:string) =
+proc sayIter(x:int,y:int,colour:ForegroundColor,txt:string) =
   var i,j:int
   j = 0
   var res = txt.splitLines()
@@ -72,7 +69,7 @@ proc mnuSyIter(x:int,y:int,colour:ForegroundColor,txt:string) =
     inc j
   tb.display()
 
-proc mnuCls(x:int) =
+proc clsIter(x:int) =
   if x == 0: tb.write 2,1," ".repeat(width - 4)
   var i:uint8 = 4
   for f in 1..20:
@@ -80,14 +77,14 @@ proc mnuCls(x:int) =
     inc i
   tb.display()
 
-proc Cls(x:int) =
+proc cls(x:int) =
   tb.write 2,x," ".repeat(width - 4)
   tb.display()
 
 proc inv() =
-  mnuSy 2,23,fgRed,"INVALID CHOICE"
+  say 2,23,fgRed,"INVALID CHOICE"
   sleep 750
-  Cls(23)
+  cls 23
 
 var PLAYER:string
 if findExe("mpav").contains "mpv": PLAYER = absolutePath(findExe "mpv")
@@ -98,42 +95,41 @@ else: illwillDeinit();showCursor(); echo "error: PNimRP requires ffplay, mpv or 
 proc execPolled(x:string,args:openArray[string]):bool =
   if args[1] == "" or args[1].contains(" "): inv() ; return true
   var app = startProcess(x,args=args,options={poUsePath})
-  mnuSy 6,10,fgGreen,"Playing.."
+  say 6,10,fgGreen,"Playing.."
   #var volume:int8 = 30
-  proc s() =
-    while true:
+  while true:
       sleep 3000
       case getKey():
         of Key.None: discard
         of Key.Slash:
           when defined linux:
             exec "amixer",["--quiet","set","PCM","7%+"],0
-            mnuSy 6,13,fgRed,"Volume+"
+            say 6,13,fgRed,"Volume+"
             sleep 2000
-            Cls 13
+            cls 13
           when defined freebsd: exec "mixer",["vol",fmt"{volume}"],0
           when defined windows: exec ".\nircmd.exe",["changesysvolume","5000"],0
           when defined macos:
-            mnuSy 2,15,"isnt supported in macos as it needs sudo powers and is malicious for the convinience"
+            say 2,15,"isnt supported in macos as it needs sudo powers and is malicious for the convinience"
             sleep 5000
-            Cls 15
+            cls 15
           when defined haiku: exec "setvolume",[audio],0
 
         of Key.Asterisk:
           when defined linux:
             exec "amixer",["--quiet","set","PCM","7%-"],0
-            mnuSy 6,13,fgRed,"Volume-"
+            say 6,13,fgRed,"Volume-"
             sleep 2000
-            Cls 13
+            cls 13
           when defined freebsd: exec "mixer",["vol",fmt"{volume}"],0
           when defined windows: exec ".\nircmd.exe",["changesysvolume","-5000"],0
           when defined macos:
-            mnuSy 2,15,"isnt supported in macos as it needs sudo powers and is malicious for the convinience"
+            say 2,15,"isnt supported in macos as it needs sudo powers and is malicious for the convinience"
             sleep 5000
-            Cls 15
+            cls 15
           when defined haiku: exec "setvolume",[audio],0
         of Key.P:
-          mnuSy 6,10,fgGreen,"Paused.."
+          say 6,10,fgGreen,"Paused.."
           suspend app
           while true:
             sleep 300
@@ -141,9 +137,8 @@ proc execPolled(x:string,args:openArray[string]):bool =
               of Key.None: discard
               of Key.P:
                 resume app
-                mnuSy 6,10,fgGreen,"Playing.."
+                say 6,10,fgGreen,"Playing.."
                 sleep 1000
-                s()
               of Key.R: kill app; break
               of Key.Q: kill app; exitProc(); exitEcho()
               else: inv()
@@ -151,10 +146,14 @@ proc execPolled(x:string,args:openArray[string]):bool =
         of Key.Q: kill app; exitProc(); exitEcho()
         of Key.Escape,Key.R: kill app; break
         else: inv()
-  s()
 
-proc call(main,sub,stat,link:string) =
-  mnuCls 1
+proc call(sub,sect,stat,link:string) =
+ if link == "" or link.contains " ":
+  say 2,23,fgRed,"link dont exist or is invalid"
+  sleep 750
+ else:
+  say 2,1,fgYellow,fmt"PNimRP > {sub} > {sect} > {stat}"
+  clsIter 1
   if PLAYER == absolutePath(findExe "mpv"): discard execPolled(PLAYER,["--no-video",link])
   elif PLAYER == absolutePath(findExe "ffplay"): discard execPolled(PLAYER,["-nodisp",link])
   elif PLAYER == absolutePath(findExe("play",followSymlinks = false)): discard execPolled(PLAYER,["-t","mp3",link,"upsample"])
