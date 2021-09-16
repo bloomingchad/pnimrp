@@ -1,5 +1,5 @@
 proc country181() =
- var sect:string = "Country"
+ const sect  = "Country"
  var f = parse "181FM/country181.csv"
  proc s() =
   clsIter 0
