@@ -4,7 +4,6 @@ from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
 from strutils import contains,repeat,splitLines
 from strformat import fmt
 import illwill
-#when defined windows: from httpclient import downloadFile,newHttpClient
 
 include base
 
@@ -13,7 +12,7 @@ rect()
 proc main() =
  clsIter 0
  say 2,1,fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((width/8).int)}"""
- sayIter 2,4,fgGreen,"Station Categories:"
+ say 2,4,fgGreen,"Station Categories:"
  sayIter 6,5,fgBlue,fmt"""1 181FM
 2 Blues
 3 Bollywood
@@ -31,8 +30,7 @@ E Rock
 F SomaFM
 G Urban
 N Notes
-Q Quit PMRP
-{PLAYER}"""
+Q Quit PMRP"""
  while true:
   sleep 50
   case getKey():

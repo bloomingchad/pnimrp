@@ -1,5 +1,5 @@
 proc fm181() =
-  var sub:string = "181FM"
+  const sub = "181FM"
   clsIter 0
   say 2,1,fgYellow,fmt"PNimRP > {sub}"
   say 2,4,fgGreen,fmt"{sub} Station Playing Music:"
