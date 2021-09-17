@@ -18,8 +18,7 @@ for f in lex.low..lex.high:
   if inSeq[f] == "": echo fmt"info: {file} {f + 1}: line is nil"
   elif inSeq[f].contains "radionomy":
    inSeq[f] = ""
-   #if f
-   #inSeq[(f/2).int] = ""
+   inSeq[ ( inSeq.high / 2 ).int - ( inSeq.high - f ).int ] = ""
    echo fmt"info: {file} {f + 1}: line had radionomy link"
    
   elif inSeq[f].contains " ":
@@ -31,9 +30,12 @@ for f in lex.low..lex.high:
    except: discard
 
   else:
-   inSeq[f] = inSeq[f].strip()
-   removeSuffix(inSeq[f],"\"")
-   inSeq[f].delete(inSeq.low..(inSeq[f].find("=") + 1))
+   if ( inSeq[f].find "=" ) == -1: echo fmt"info: {file} {f + 1}: processed"
+   else:
+    echo fmt"info: {file} {f + 1}: processed"
+    inSeq[f] = inSeq[f].strip()
+    removeSuffix(inSeq[f],"\"")
+    inSeq[f].delete(inSeq.low..(inSeq[f].find("=") + 1))
 
  echo inSeq.join("\n")
  #writeFile(file,inSeq.join("\n"))
