@@ -1,6 +1,6 @@
 #tool to make parsing values from pmrp easier
 
-from strutils import splitLines,removeSuffix,delete,contains,join,strip,find
+from strutils import splitLines,removePrefix,removeSuffix,contains,join,strip,find,delete,replace
 from os import commandLineParams,copyFile
 from strformat import fmt
 
@@ -16,17 +16,20 @@ for f in lex.low..lex.high:
 
  for f in inSeq.low..inSeq.high:
   if inSeq[f] == "": echo fmt"info: {file} {f + 1}: line is nil"
-  elif inSeq[f].contains "radionomy":
+  elif inSeq[f].contains "onomy":
    inSeq[f] = ""
-   inSeq[ ( inSeq.high / 2 ).int - ( inSeq.high - f ).int ] = ""
+   var e = ( inSeq.high / 2 ).int - ( inSeq.high - f ).int 
+   inSeq[e] = ""
    echo fmt"info: {file} {f + 1}: line had radionomy link"
    
   elif inSeq[f].contains " ":
    echo fmt"info: {file} {f + 1}: line had space"
    inSeq[f] = inSeq[f].strip()
    try:
-    removeSuffix(inSeq[f],"\"")
-    inSeq[f].delete(inSeq.low..(inSeq[f].find("=") + 1))
+    if inSeq[f].find("=") == -1: echo fmt"info: {file} {f + 1}: processed"
+    else:
+     removeSuffix(inSeq[f],"\"")
+     inSeq[f].delete(inSeq.low..(inSeq[f].find("=") + 1))
    except: discard
 
   else:
@@ -37,5 +40,5 @@ for f in lex.low..lex.high:
     removeSuffix(inSeq[f],"\"")
     inSeq[f].delete(inSeq.low..(inSeq[f].find("=") + 1))
 
- echo inSeq.join("\n")
- #writeFile(file,inSeq.join("\n"))
+ #echo inSeq.join("\n").strip()
+ writeFile(file,inSeq.join("\n"))
