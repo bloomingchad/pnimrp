@@ -1,19 +1,20 @@
 from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspend,resume
 from os import findExe,dirExists,fileExists,sleep,absolutePath
-from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
+#from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
+import terminal
 from strutils import contains,repeat,splitLines
 from strformat import fmt
-import illwill
 
 include base
 
 rect()
+hideCursor()
 
-proc main() =
- clsIter 0
- say 2,1,fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((width/8).int)}"""
- say 2,4,fgGreen,"Station Categories:"
- sayIter 6,5,fgBlue,fmt"""1 181FM
+while true:
+ clear()
+ say fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((width/8).int)}"""
+ sayPos 4,fgGreen,"Station Categories:"
+ sayIter 5,fgBlue,"""1 181FM
 2 Blues
 3 Bollywood
 4 Classical
@@ -32,81 +33,76 @@ G Urban
 N Notes
 Q Quit PMRP"""
  while true:
-  sleep 50
-  case getKey():
-   of Key.None: discard
-   of Key.One:
+  sleep 90
+  case getch():
+   of '1':
     include fm181/fm181
     fm181()
- #[of Key.Two:
+    break
+ #[of '2':
     include blues/blues
     blues()
-   of  Key.Three:
+    break
+   of  '3':
     include bollywood/bollywoood
     bollywood()
-   of Key.Four:
+    break
+   of '4':
     include classical/classical
     classical()
-   of Key.Five:
+    break
+   of '5':
     include country/country
     country()
-   of Key.Six:
+    break
+   of '6':
     include electronic/electronic
     electronic()
-   of Key.Seven:
+    break
+   of '7':
     include hits/hits
     hits()
-   of Key.Eight:
+    break
+   of '8':
     include jazz/jazz
     jazz()
-   of Key.Nine:
+    break
+   of '9':
     include listener/listener
     listener()
-   of Key.A:
+    break
+   of 'A','a':
     include metal/metal
     metal()
-   of Key.B:
+    break
+   of 'B','b':
     include news/news
     news()
-   of Key.C:
+    break
+   of 'C','c':
     include oldies/oldies
     oldies()
-   of Key.D:
+    break
+   of 'D','d':
     include reggae/reggae
     reggae()
-   of Key.E:
+    break
+   of 'E','e':
     include rock/rock
     rock()
-   of Key.F:
+    break
+   of 'F','f':
     include soma/soma
     soma()
-   of Key.G:
+    break
+   of 'G','g':
     include urban/urban
-    urban()]#
-   of Key.N:
+    urban()
+    break]#
+   of 'N','n':
     include notes
     notes()
-   of Key.Escape, Key.Q: exitProc();exitEcho()
-   else:
-    clsIter 0
-    cls 2
-    say 2,3,fgRed,"INVALID CHOICE"
-    sayIter 6,5,fgGreen,"""select a category by entering the relevant number
-Ex: enter 2 to select station category Blues
-To select station category News & Views enter 11
-And you can select station category Rock by entering 14"""
-    sleep 4000
-    cls 3
-    clsIter 0
-    main()
+    break
+   of 'Q','q': exitEcho()
+   else: inv()
   sleep 20
-
-#try: 
-main()
-#except ValueError:
-# sleep 5000
-# main()
-#except IndexDefect: exitProc();exitEcho()
-#except IOError: echo "some files are missing or something sus happened"
-#except IllwillError : discard
-#except: echo "something sus happened"

@@ -1,10 +1,11 @@
-proc fm181() =
+proc fm181 =
+ while true:
   const sub = "181FM"
-  clsIter 0
-  say 2,1,fgYellow,fmt"PNimRP > {sub}"
-  say 2,4,fgGreen,fmt"{sub} Station Playing Music:"
-  sayIter 6,5,fgBlue,fmt"""
-1 80s
+  clear()
+  var j:bool
+  say fgYellow,fmt"PNimRP > {sub}"
+  sayIter 4,fgGreen,fmt"{sub} Station Playing Music:"
+  sayIter 5,fgBlue,"""1 80s
 2 90s
 3 Comedy
 4 Country
@@ -18,46 +19,54 @@ B Urban
 Q Quit
 R Return"""
   while true:
-    sleep 50
-    var key = getKey()
-    case key:
-      of Key.None: discard  #[
-      of '1':
-        include eight181
-        eight181()
-      of '2':
-        include nine181
-        nine181() ]#
-      of Key.Three:
-        include comedy181
-        comedy181()
-      of Key.Four:
-        include country181
-        country181()
-      of Key.Five:
-        include easy181
-        easy181()
-      of Key.Six:
-        include latin181
-        latin181()
-      of Key.Seven:
-        include oldies181
-        oldies181()
-      of Key.Eight:
-        include pop181
-        pop181()
-      of Key.Nine:
-        include rock181
-        rock181()
-      of Key.A:
-        include techno181
-        techno181()
-      of Key.B:
-        include urban181
-        urban181()
-      of Key.R: main()
-      of Key.Escape , Key.Q: exitProc();exitEcho()
-      else:
-        inv()
-        fm181()
-  sleep 20
+   sleep 50
+   case getch(): #[
+    of '1':
+     include eight181
+     eight181()
+     break
+    of '2':
+     include nine181
+     nine181()
+     break ]#
+    of '3':
+     include comedy181
+     comedy181()
+     break
+    of '4':
+     include country181
+     country181()
+     break
+    of '5':
+     include easy181
+     easy181()
+     break
+    of '6':
+     include latin181
+     latin181()
+     break
+    of '7':
+     include oldies181
+     oldies181()
+     break
+    of '8':
+     include pop181
+     pop181()
+     break
+    of '9':
+     include rock181
+     rock181()
+     break
+    of 'A','a':
+     include techno181
+     techno181()
+     break
+    of 'B','b':
+     include urban181
+     urban181()
+     break
+    of 'R','r': j = true; break
+    of 'Q','q': exitEcho()
+    else: inv()
+   sleep 70
+  if j == true: break
