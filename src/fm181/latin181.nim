@@ -7,7 +7,7 @@ proc latin181* =
  var sect:string = "Latin"
  var f = parse "181FM/latin181.csv"
  while true:
-  var j:bool
+  var j = false
   clear()
   say fgYellow,fmt"PNimRP > {sub} > {sect}"
   setCursorXPos 4

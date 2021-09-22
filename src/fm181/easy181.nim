@@ -7,7 +7,7 @@ proc easy181* =
  const sect = "Easy Listening"
  var f = parse "181FM/easy181.csv"
  while true:
-  var j:bool
+  var j = false
   clear()
   say fgYellow,fmt"PNimRP > {sub} > {sect}"
   sayIter 4,fgGreen,fmt"{sect} Station Playing Music:"
