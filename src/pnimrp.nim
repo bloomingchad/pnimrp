@@ -1,13 +1,10 @@
-from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspend,resume
-from os import findExe,dirExists,fileExists,sleep,absolutePath
-#from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
-import terminal
-from strutils import contains,repeat,splitLines
+#from terminal import getch,hideCursor
+import terminal,os,strutils
 from strformat import fmt
 
-include base
+import base,notes
+import fm181/[fm181]
 
-rect()
 hideCursor()
 
 while true:
@@ -33,76 +30,24 @@ G Urban
 N Notes
 Q Quit PMRP"""
  while true:
-  sleep 90
+  sleep 100
   case getch():
-   of '1':
-    include fm181/fm181
-    fm181()
-    break
- #[of '2':
-    include blues/blues
-    blues()
-    break
-   of  '3':
-    include bollywood/bollywoood
-    bollywood()
-    break
-   of '4':
-    include classical/classical
-    classical()
-    break
-   of '5':
-    include country/country
-    country()
-    break
-   of '6':
-    include electronic/electronic
-    electronic()
-    break
-   of '7':
-    include hits/hits
-    hits()
-    break
-   of '8':
-    include jazz/jazz
-    jazz()
-    break
-   of '9':
-    include listener/listener
-    listener()
-    break
-   of 'A','a':
-    include metal/metal
-    metal()
-    break
-   of 'B','b':
-    include news/news
-    news()
-    break
-   of 'C','c':
-    include oldies/oldies
-    oldies()
-    break
-   of 'D','d':
-    include reggae/reggae
-    reggae()
-    break
-   of 'E','e':
-    include rock/rock
-    rock()
-    break
-   of 'F','f':
-    include soma/soma
-    soma()
-    break
-   of 'G','g':
-    include urban/urban
-    urban()
-    break]#
-   of 'N','n':
-    include notes
-    notes()
-    break
+   of '1': fm181(); break
+   #[of '2': blues(); break
+   of  '3': bollywood(); break
+   of '4': classical(); break
+   of '5': country(); break
+   of '6': electronic(); break
+   of '7': hits(); break
+   of '8': jazz(); break
+   of '9': listener(); break
+   of 'A','a': metal(); break
+   of 'B','b': news(); break
+   of 'C','c': oldies(); break
+   of 'D','d': reggae(); break
+   of 'E','e': rock(); break
+   of 'F','f': soma(); break
+   of 'G','g': urban(); break]#
+   of 'N','n': notes(); break
    of 'Q','q': exitEcho()
    else: inv()
-  sleep 20
