@@ -15,7 +15,7 @@ for f in lex.low..lex.high:
    var inSeq = splitLines readFile file
 
    for f in inSeq.low..inSeq.high:
-    if ( inSeq[f].find "=" ) == -1: echo fmt"info: {file} aldready processed" ; break
+    if ( inSeq[f].find """: """ ) == -1: echo fmt"info: {file} aldready processed" ; break
     elif inSeq[f] == "": echo fmt"info: {file} {f + 1}: line is nil"
     elif inSeq[f].contains "onomy":
      inSeq[f] = ""
