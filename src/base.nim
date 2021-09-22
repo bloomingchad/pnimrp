@@ -14,17 +14,18 @@ proc checkFileIter*(x:seq[string]):bool =
   else: return false
  return true
 
-var PLAYER*:string
+#var PLAYER*:string
 
 proc init* =
+ var PLAYER:string
  var amog = @["pnimrp","181FM/comedy181","181FM/easy181","181FM/latin181",
  "181FM/oldies181","181FM/rock181","181FM/country181","181FM/eight181",
  "181FM/nine181","181FM/pop181","181FM/urban181"]
 
  if not ( dirExists "pnimrp.d" ) and checkFileIter amog: echo "data and config files dont exist" ; quit 1
 
- PLAYER = parse("pnimrp")[0]
-
+proc initPlayer():string =
+ var PLAYER:string = parse("pnimrp.csv")[0]
  if PLAYER == "" or PLAYER.contains " ":
   when defined windows:
    if findExe("mpv").contains "mpv": PLAYER = absolutePath(findExe "mpv")
@@ -36,15 +37,24 @@ proc init* =
    elif findExe("play",followSymlinks = false).contains "play": PLAYER = absolutePath(findExe("play",followSymlinks = false))
    elif findExe("ffplay").contains "ffplay": PLAYER = absolutePath(findExe "ffplay")
    else: showCursor();echo "error: PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ; quit 1
+ "pnimrp.d/pnimrp.csv".writeFile PLAYER
+ return PLAYER
 
 proc clear*() =
  eraseScreen()
  setCursorPos 0,0
 
+proc byteKb(x:int):float32 =
+ return x / 1024
+
 proc exitEcho* =
  showCursor()
  echo ""
  styledEcho fgCyan ,"when I die, just keep playing the records"
+ when not (defined release) or (defined danger):
+  echo fmt"free mem: {byteKb(getFreeMem())} kB"
+  echo fmt"total/max mem: {byteKb(getTotalMem())} kB"
+  echo fmt"occupied mem: {byteKb(getOccupiedMem())} kB"
  quit 0
 
 var width* = terminalWidth()
@@ -125,9 +135,10 @@ proc call*(sub,sect,stat,link:string) =
  else:
   clear()
   say fgYellow,fmt"PNimRP > {sub} > {sect} > {stat}"
-  if PLAYER == absolutePath(findExe "mpv"): discard execPolled(PLAYER,["--no-video",link])
-  elif PLAYER == absolutePath(findExe "ffplay"): discard execPolled(PLAYER,["-nodisp",link])
-  elif PLAYER == absolutePath(findExe("play",followSymlinks = false)): discard execPolled(PLAYER,["-t","mp3",link,"upsample"])
+  var PLAYER = initPlayer()
+  if PLAYER.contains "mpv": discard execPolled(PLAYER,["--no-video",link])
+  elif PLAYER.contains "ffplay": discard execPolled(PLAYER,["-nodisp",link])
+  elif PLAYER.contains "play": discard execPolled(PLAYER,["-t","mp3",link,"upsample"])
 
 #[proc menuIter(sect:string,endn:uint32,arr:seq[string]) =
  var a,b:uint8
