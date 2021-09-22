@@ -1,4 +1,6 @@
-proc notes() =
+import base,terminal,os
+
+proc notes* =
  clear()
  sayIter 5,fgGreen, """PNimRP Copyright (C) 2021 antonl05
 This program comes with ABSOLUTELY NO WARRANTY
@@ -8,7 +10,7 @@ under certain conditions. press `t` for details"""
   sleep 100
   case getch():
    of 'T','t':
-    when defined windows: exec "notepad.exe",["COPYING"],1 ; exitProc();exitEcho()
+    when defined windows: exec "notepad.exe",["COPYING"],1 ; exitEcho()
     when defined posix:
      sayIter 13,fgRed,"type :q and enter to exit"
      sayIter 13,fgBlue,"Please wait..."
