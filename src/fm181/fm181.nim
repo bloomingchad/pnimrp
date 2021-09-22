@@ -8,7 +8,7 @@ proc fm181* =
  while true:
   const sub = "181FM"
   clear()
-  var j:bool
+  var j = false
   say fgYellow,fmt"PNimRP > {sub}"
   sayIter 4,fgGreen,fmt"{sub} Station Playing Music:"
   sayIter 5,fgBlue,"""1 80s

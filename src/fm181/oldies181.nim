@@ -7,7 +7,7 @@ proc oldies181* =
  const sect = "Oldies"
  var f = parse "181FM/oldies181.csv"
  while true:
-  var j:bool
+  var j = false
   clear()
   say fgYellow,fmt"PNimRP > {sub} > {sect}"
   sayPos 4,fgGreen,fmt"{sect} Station Playing Music:"

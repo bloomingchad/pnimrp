@@ -1,11 +1,11 @@
 #from terminal import getch,hideCursor
 import terminal,os,strutils
 from strformat import fmt
-
 import base,notes
-import fm181/[fm181]
+import fm181/fm181
 
 hideCursor()
+init()
 
 while true:
  clear()
