@@ -7,12 +7,8 @@ proc country181* =
  const sect  = "Country"
  var f = parse "181FM/country181.csv"
  while true:
-  var PLAYR = "/bin/mpv"
   var j = false
-  clear()
-  say fgYellow,fmt"PNimRP > {sub} > {sect}"
-  sayIter 4,fgGreen,fmt"{sect} Station Playing Music:"
-  sayIter 5,fgBlue,fmt"""1 {f[0]}
+  drawMenuSect sub,sect,fmt"""1 {f[0]}
 2 {f[1]}
 3 {f[2]}
 4 {f[3]}

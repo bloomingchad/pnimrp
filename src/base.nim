@@ -1,6 +1,5 @@
 from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspend,resume
-from os import findExe,dirExists,fileExists,sleep,absolutePath
-#from terminal import setCursorPos,eraseScreen,eraseLine,cursorUp
+from os import findExe,dirExists,fileExists,sleep,absolutePath,getCurrentDir,removeFile
 import terminal
 from strutils import contains,repeat,splitLines
 from strformat import fmt
@@ -14,10 +13,7 @@ proc checkFileIter*(x:seq[string]):bool =
   else: return false
  return true
 
-#var PLAYER*:string
-
 proc init* =
- var PLAYER:string
  var amog = @["pnimrp","181FM/comedy181","181FM/easy181","181FM/latin181",
  "181FM/oldies181","181FM/rock181","181FM/country181","181FM/eight181",
  "181FM/nine181","181FM/pop181","181FM/urban181"]
@@ -33,19 +29,17 @@ proc initPlayer():string =
    else: showCursor();echo "error: PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ; quit 1
 
   when not defined windows:
-   if findExe("mpv").contains "mpv": PLAYER = absolutePath(findExe "mpv")
-   elif findExe("play",followSymlinks = false).contains "play": PLAYER = absolutePath(findExe("play",followSymlinks = false))
-   elif findExe("ffplay").contains "ffplay": PLAYER = absolutePath(findExe "ffplay")
-   else: showCursor();echo "error: PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ; quit 1
- "pnimrp.d/pnimrp.csv".writeFile PLAYER
- return PLAYER
+   var dir = getCurrentDir()
+   #var PLAYER = 
+   return fmt"{dir}/player"
+ #"pnimrp.d/pnimrp.csv".writeFile PLAYER
+ #return PLAYER
 
 proc clear*() =
  eraseScreen()
  setCursorPos 0,0
 
-proc byteKb(x:int):float32 =
- return x / 1024
+proc byteKb(x:int):float32 = x / 1024
 
 proc exitEcho* =
  showCursor()
@@ -56,8 +50,6 @@ proc exitEcho* =
   echo fmt"total/max mem: {byteKb(getTotalMem())} kB"
   echo fmt"occupied mem: {byteKb(getOccupiedMem())} kB"
  quit 0
-
-var width* = terminalWidth()
 
 proc exec*(x:string,args:openArray[string],strm:uint8) =
  if strm == 1: discard waitForExit(startProcess(x,args=args,options={poUsePath,poParentStreams}))
@@ -82,11 +74,19 @@ proc inv* =
  cursorUp()
  eraseLine()
 
-proc execPolled*(x:string,args:openArray[string]):bool =
- if args[1] == "" or args[1].contains(" "): inv() ; return true
+proc execPolled(q,x:string,args:openArray[string]):bool =
+ when defined windows:
+  if x.contains "play":
+   if args[2] == "" or args[2].contains " ":
+    inv() ; return true
+  else:
+   if args[1] == "" or args[1].contains " ":
+    inv() ; return true
+ else:
+  if args[0] == "" or args[0].contains " ": inv() ; return true
+  var curl = startProcess(q,args=["-s",args[0],"-o","temp"])
  var app = startProcess(x ,args=args)
- setCursorXPos 4
- say fgGreen,"Playing.."
+ sayPos 4,fgGreen,"Playing.."
  while true:
   sleep 50
   case getch():
@@ -115,16 +115,16 @@ proc execPolled*(x:string,args:openArray[string]):bool =
        say fgGreen,"Playing.."
        sleep 400
        break
-      of 'R','r': kill app; discard waitForExit app; break
-      of 'Q','q': kill app; discard waitForExit app; exitEcho()
+      of 'R','r':kill app; discard waitForExit app; kill curl; discard waitForExit curl; removeFile "temp"; break
+      of 'Q','q': kill app; discard waitForExit app; kill curl; discard waitForExit curl; removeFile "temp"; exitEcho()
       else: inv()
-   of 'Q','q':
-    kill app
-    discard waitForExit app
-    exitEcho()
+   of 'Q','q': kill app; discard waitForExit app; kill curl; discard waitForExit curl; removeFile "temp"; exitEcho()
    of 'R','r':
     kill app
-    discard waitForExit app #remove app from tree completely
+    discard waitForExit app
+    kill curl
+    discard waitForExit curl
+    removeFile "temp"
     break
    else: inv()
 
@@ -135,10 +135,27 @@ proc call*(sub,sect,stat,link:string) =
  else:
   clear()
   say fgYellow,fmt"PNimRP > {sub} > {sect} > {stat}"
+  say fgGreen, fmt"{'-'.repeat((terminalWidth()/8).int)}{'>'.repeat(int(terminalWidth()/12))}"
+  var curl = findExe "curl"
   var PLAYER = initPlayer()
-  if PLAYER.contains "mpv": discard execPolled(PLAYER,["--no-video",link])
-  elif PLAYER.contains "ffplay": discard execPolled(PLAYER,["-nodisp",link])
-  elif PLAYER.contains "play": discard execPolled(PLAYER,["-t","mp3",link,"upsample"])
+  when defined windows:
+   if PLAYER.contains "mpv": discard execPolled(curl,PLAYER,["--no-video",link])
+   elif PLAYER.contains "play": discard execPolled(curl,PLAYER,["-t","mp3",link,"upsample"])
+  when not defined windows: discard execPolled(curl,PLAYER,[link])
+
+proc drawMenuSect*(sub,sect,x:string) =
+ clear()
+ say fgYellow,fmt"PNimRP > {sub} > {sect}"
+ say fgGreen, fmt"{'-'.repeat((terminalWidth()/8).int)}{'>'.repeat(int(terminalWidth()/12))}"
+ sayPos 4,fgGreen,fmt"{sect} Station Playing Music:"
+ sayIter 5,fgBlue,x
+
+proc drawMenu*(sub,x:string) =
+ clear()
+ say fgYellow,fmt"PNimRP > {sub}"
+ say fgGreen, fmt"{'-'.repeat((terminalWidth()/8).int)}{'>'.repeat(int(terminalWidth()/12))}"
+ sayPos 4,fgGreen,fmt"{sub} Station Playing Music:"
+ sayIter 5,fgBlue,x
 
 #[proc menuIter(sect:string,endn:uint32,arr:seq[string]) =
  var a,b:uint8
@@ -162,7 +179,6 @@ proc back(x:uint32):void =
 proc read():char = stdin.readLine[0]
 
 proc wait = sleep 3000
-proc rect = discard
 
 when defined windows:
   if findExe("nircmd").contains "nircmd":
@@ -172,13 +188,13 @@ when defined windows:
    exec "7z.exe" ,["e","nircmd.zip"],0
 
 proc clsIter(x:int) =
-  if x == 0: tb.write 2,1," ".repeat(width - 4)
+  if x == 0: tb.write 2,1," ".repeat(terminalWidth() - 4)
   var i:uint8 = 4
   for f in 1..20:
-    tb.write 2,i," ".repeat(width - 4)
+    tb.write 2,i," ".repeat(terminalWidth() - 4)
     inc i
   tb.display()
 
 proc cls(x:int) =
-  tb.write 2,x," ".repeat(width - 4)
+  tb.write 2,x," ".repeat(terminalWidth() - 4)
   tb.display() ]#
