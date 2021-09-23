@@ -4,15 +4,11 @@ from strformat import fmt
 
 proc latin181* =
  const sub = "181FM"
- var sect:string = "Latin"
+ var sect = "Latin"
  var f = parse "181FM/latin181.csv"
  while true:
   var j = false
-  clear()
-  say fgYellow,fmt"PNimRP > {sub} > {sect}"
-  setCursorXPos 4
-  say fgGreen,fmt"{sect} Station Playing Music:"
-  sayIter 5,fgBlue,fmt"""1 {f[0]}
+  drawMenuSect sub,sect,fmt"""1 {f[0]}
 2 {f[1]}
 3 {f[2]}
 R Return

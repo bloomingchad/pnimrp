@@ -8,10 +8,7 @@ proc urban181* =
  var f = parse "181FM/urban181.csv"
  while true:
   var j = false
-  clear()
-  say fgYellow,fmt"PNimRP > {sub} > {sect}"
-  sayPos 4,fgGreen,fmt"{sect} Station Playing Music:"
-  sayIter 5,fgBlue,fmt"""1 {f[0]}
+  drawMenuSect sub,sect,fmt"""1 {f[0]}
 2 {f[1]}
 3 {f[2]}
 4 {f[3]}

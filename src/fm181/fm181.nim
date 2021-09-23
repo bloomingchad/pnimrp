@@ -1,6 +1,5 @@
 from os import sleep
 import terminal,../base
-from strformat import fmt
 import comedy181,country181,easy181,latin181,oldies181,pop181,rock181,techno181,urban181
 #eight181,nine181
 
@@ -9,9 +8,7 @@ proc fm181* =
   const sub = "181FM"
   clear()
   var j = false
-  say fgYellow,fmt"PNimRP > {sub}"
-  sayIter 4,fgGreen,fmt"{sub} Station Playing Music:"
-  sayIter 5,fgBlue,"""1 80s
+  drawMenu sub,"""1 80s
 2 90s
 3 Comedy
 4 Country

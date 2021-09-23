@@ -9,7 +9,7 @@ init()
 
 while true:
  clear()
- say fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((width/8).int)}"""
+ say fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((terminalWidth()/8).int)}"""
  sayPos 4,fgGreen,"Station Categories:"
  sayIter 5,fgBlue,"""1 181FM
 2 Blues
