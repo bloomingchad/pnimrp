@@ -1,9 +1,10 @@
 from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspend,resume
 from os import findExe,dirExists,fileExists,sleep,absolutePath,getCurrentDir,removeFile
-import terminal
+import terminal,json
 from strutils import contains,repeat,splitLines
 
 proc parse*(x:string):seq[string] = splitLines readFile "pnimrp.d/" & x
+proc parseJ*(x:string):JsonNode = parseJson readFile "pnimrp.d/" & x
 
 proc checkFileIter*(x:seq[string]):bool =
  var i:uint8 = 0

@@ -1,3 +1,3 @@
 nim c --verbosity:3 --cc:tcc $@ -o:pnimrp src/pnimrp.nim
-cd src/player
-make
+#cd src/player
+#make
