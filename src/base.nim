@@ -2,14 +2,13 @@ from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspe
 from os import findExe,dirExists,fileExists,sleep,absolutePath,getCurrentDir,removeFile
 import terminal
 from strutils import contains,repeat,splitLines
-from strformat import fmt
 
-proc parse*(x:string):seq[string] = splitLines readFile fmt"pnimrp.d/{x}"
+proc parse*(x:string):seq[string] = splitLines readFile "pnimrp.d/" & x
 
 proc checkFileIter*(x:seq[string]):bool =
  var i:uint8 = 0
  for f in x:
-  if fileExists(fmt"pnimrp.d/{x[i]}.csv"): inc i
+  if fileExists("pnimrp.d/" & x[i] & ".csv"): inc i
   else: return false
  return true
 
@@ -29,9 +28,7 @@ proc initPlayer():string =
    else: showCursor();echo "error: PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ; quit 1
 
   when not defined windows:
-   var dir = getCurrentDir()
-   #var PLAYER = 
-   return fmt"{dir}/player"
+   return getCurrentDir() & "/player"
  #"pnimrp.d/pnimrp.csv".writeFile PLAYER
  #return PLAYER
 
@@ -46,26 +43,38 @@ proc exitEcho* =
  echo ""
  styledEcho fgCyan ,"when I die, just keep playing the records"
  when not (defined release) or (defined danger):
-  echo fmt"free mem: {byteKb(getFreeMem())} kB"
-  echo fmt"total/max mem: {byteKb(getTotalMem())} kB"
-  echo fmt"occupied mem: {byteKb(getOccupiedMem())} kB"
+  stdout.write "free mem: "
+  stdout.write byteKb getFreeMem()
+  echo " kB"
+  stdout.write "total/max mem: "
+  stdout.write  byteKb getTotalMem()
+  echo " kB"
+  stdout.write "occupied mem: "
+  stdout.write byteKb getOccupiedMem()
+  echo " kB"
  quit 0
 
 proc exec*(x:string,args:openArray[string],strm:uint8) =
  if strm == 1: discard waitForExit(startProcess(x,args=args,options={poUsePath,poParentStreams}))
  if strm == 0: discard waitForExit(startProcess(x,args=args,options={poUsePath}))
 
-proc say*(colour:ForegroundColor,txt:string) = styledEcho colour,txt
+proc say*(txt:string) = styledEcho fgYellow,txt
 
-proc sayPos*(x:int,colour:ForegroundColor,a:string) =
+proc sayPos*(x:int,a:string) =
  setCursorXPos x
- styledEcho colour,a
+ styledEcho fgGreen,a
 
-proc sayIter*(shift:int,colour:ForegroundColor,txt:string) =
+proc sayIter*(txt:string) =
  var e = splitLines txt
  for f in e.low..e.high:
-  setCursorXPos shift
-  styledEcho colour, e[f]
+  setCursorXPos 5
+  styledEcho fgBlue, e[f]
+
+proc sayC*(txt:string) =
+ setCursorXPos 5
+ styledEcho fgBlue,txt
+
+proc warn*(txt:string) =  styledEcho fgRed,txt
 
 proc inv* =
  styledEcho fgRed,"INVALID CHOICE"
@@ -86,24 +95,24 @@ proc execPolled(q,x:string,args:openArray[string]):bool =
   if args[0] == "" or args[0].contains " ": inv() ; return true
   var curl = startProcess(q,args=["-s",args[0],"-o","temp"])
  var app = startProcess(x ,args=args)
- sayPos 4,fgGreen,"Playing.."
+ sayPos 4,"Playing.."
  while true:
   sleep 50
   case getch():
    of '/':
     when not defined macos:
      when defined linux: exec "amixer",["--quiet","set","PCM","7%+"],0
-     #when defined freebsd,netbsd,openbsd: exec "mixer",["vol",fmt""],0
+     #when defined freebsd,netbsd,openbsd: exec "mixer",["vol",""],0
      when defined windows: exec "nircmd",["changesysvolume","5000"],0
-     #when defined haiku: exec "setvolume",[fmt""],0
-     say fgRed,"Volume+"
+     #when defined haiku: exec "setvolume",[""],0
+     warn "Volume+"
      sleep 500
     else: discard
 
    of 'P','p':
     cursorUp()
     setCursorXPos 4
-    say fgGreen,"Paused.."
+    warn "Paused.."
     suspend app
     while true:
      sleep 300
@@ -112,7 +121,7 @@ proc execPolled(q,x:string,args:openArray[string]):bool =
        resume app
        cursorUp()
        setCursorXPos 4
-       say fgGreen,"Playing.."
+       warn "Playing.."
        sleep 400
        break
       of 'R','r':kill app; discard waitForExit app; kill curl; discard waitForExit curl; removeFile "temp"; break
@@ -130,12 +139,12 @@ proc execPolled(q,x:string,args:openArray[string]):bool =
 
 proc call*(sub,sect,stat,link:string) =
  if link == "" or link.contains " ":
-  say fgRed,"link dont exist or is invalid"
+  warn "link dont exist or is invalid"
   sleep 750
  else:
   clear()
-  say fgYellow,fmt"PNimRP > {sub} > {sect} > {stat}"
-  say fgGreen, fmt"{'-'.repeat((terminalWidth()/8).int)}{'>'.repeat(int(terminalWidth()/12))}"
+  say "PNimRP > " & sub & " > " & sect & " > " & stat
+  sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat(int(terminalWidth()/12))
   var curl = findExe "curl"
   var PLAYER = initPlayer()
   when defined windows:
@@ -145,17 +154,22 @@ proc call*(sub,sect,stat,link:string) =
 
 proc drawMenuSect*(sub,sect,x:string) =
  clear()
- say fgYellow,fmt"PNimRP > {sub} > {sect}"
- say fgGreen, fmt"{'-'.repeat((terminalWidth()/8).int)}{'>'.repeat(int(terminalWidth()/12))}"
- sayPos 4,fgGreen,fmt"{sect} Station Playing Music:"
- sayIter 5,fgBlue,x
+ say "PNimRP > " & sub & " > " & sect
+ sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat(int(terminalWidth()/12))
+ sayPos 4, sect & " Station Playing Music:"
+ sayIter x
 
 proc drawMenu*(sub,x:string) =
  clear()
- say fgYellow,fmt"PNimRP > {sub}"
- say fgGreen, fmt"{'-'.repeat((terminalWidth()/8).int)}{'>'.repeat(int(terminalWidth()/12))}"
- sayPos 4,fgGreen,fmt"{sub} Station Playing Music:"
- sayIter 5,fgBlue,x
+ say "PNimRP > " & sub
+ sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat(int(terminalWidth()/12))
+ sayPos 4, sub & " Station Playing Music:"
+ sayIter x
+
+proc back*(x:uint32) =
+ for a in 1..x:
+  cursorUp()
+  eraseLine()
 
 #[proc menuIter(sect:string,endn:uint32,arr:seq[string]) =
  var a,b:uint8
@@ -170,11 +184,6 @@ proc drawMenu*(sub,x:string) =
  echo "R Return"
  echo "Q Quit"
  stdout.write "> "
-
-proc back(x:uint32):void =
- for a in 1..x:
-  cursorUp()
-  eraseLine()
 
 proc read():char = stdin.readLine[0]
 
