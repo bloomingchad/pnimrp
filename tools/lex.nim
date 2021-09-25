@@ -1,6 +1,6 @@
 #tool to make parsing values from pmrp easier
 from strutils import splitLines,contains,join,strip,find,replace
-from os import commandLineParams,fileExists
+from os import commandLineParams
 from sequtils import delete
 
 let lex = commandLineParams()
@@ -8,11 +8,11 @@ if lex == @[]: echo "give files" ; quit 1
 
 for f in lex.low..lex.high:
  try:
-  var file = lex[f]
-  if fileExists((file & ".json")): echo "info: ", file, " aldready processed" ; break
-  else:
+   var file = lex[f]
+  #if file.contains "json": echo "info: ", file, " aldready processed" ; break
+  #else:
    var inSeq = splitLines readFile file
-   if inSeq[0].contains "{": discard
+   if inSeq[0].contains "{": break
    else:
     var lo = inSeq.low
     var hi = inSeq.high
@@ -33,13 +33,12 @@ for f in lex.low..lex.high:
       inSeq[f] = strip inSeq[f]
       inseq[f] = "  \"" & inSeq[f]
       inSeq[f] = inSeq[f].replace("=", "\": ")
-      if f == inSeq.high - 1: discard
-      else: inSeq[f] = inSeq[f] & ","
+      #if f == inSeq.high - 1: discard else: 
+      inSeq[f] = inSeq[f] & ","
 
     inSeq = "{" & inSeq
     var e = strip inSeq.join "\x0D\x0A"
-    e.add "\x0D\x0A}"
-    file.add ".json"
-    echo e#file.writeFile e
+    e.add "\x0D\x0A}\x0D\x0A"
+    file.writeFile e
  except IOError,OSError: echo "no such file"
- #except: echo "unexpected error"
+ except: echo "unexpected error"

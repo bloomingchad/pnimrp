@@ -1,24 +1,30 @@
 from os import sleep
 from terminal import getch
-import ../base
+import ../base,json
 
 proc latin181* =
  const sub = "181FM"
  var sect = "Latin"
- var f = parse "181FM/latin181.csv"
+ let node = parseJ "181FM/latin181.json"
+ let Name01 = getStr node{"Name01"}
+ let Name02 = getStr node{"Name02"}
+ let Name03 = getStr node{"Name03"}
+ let link01 = getStr node{"link01"}
+ let link02 = getStr node{"link02"}
+ let link03 = getStr node{"link03"}
  while true:
   var j = false
-  drawMenuSect sub,sect,"1 " & f[0]
-  sayC "2 " & f[1]
-  sayC "3 " & f[2]
+  drawMenuSect sub,sect,"1 " & Name01
+  sayC "2 " & Name02
+  sayC "3 " & Name03
   sayIter """R Return
 Q Exit"""
   while true:
    sleep 70
    case getch():
-    of '1': call sub,sect,f[0],f[3] ; break
-    of '2': call sub,sect,f[1],f[4] ; break
-    of '3': call sub,sect,f[2],f[5] ; break
+    of '1': call sub,sect,Name01,link01 ; break
+    of '2': call sub,sect,Name02,link02 ; break
+    of '3': call sub,sect,Name03,link03 ; break
     of 'R','r': j = true; break
     of 'Q','q': exitEcho()
     else: inv()
