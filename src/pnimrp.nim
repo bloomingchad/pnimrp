@@ -1,7 +1,6 @@
-#from terminal import getch,hideCursor
-import terminal,os,strutils
-from strformat import fmt
-import base,notes
+from os import sleep
+from strutils import repeat
+import base,notes,terminal
 import fm181/fm181
 
 hideCursor()
@@ -9,9 +8,9 @@ init()
 
 while true:
  clear()
- say fgYellow, fmt"""Poor Mans Radio Player in Nim-lang {"-".repeat((terminalWidth()/8).int)}"""
- sayPos 4,fgGreen,"Station Categories:"
- sayIter 5,fgBlue,"""1 181FM
+ say "Poor Mans Radio Player in Nim-lang " & '-'.repeat((terminalWidth()/8).int)
+ sayPos 4,"Station Categories:"
+ sayIter """1 181FM
 2 Blues
 3 Bollywood
 4 Classical

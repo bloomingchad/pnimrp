@@ -1,6 +1,6 @@
 from os import sleep
-import terminal,../base
-from strformat import fmt
+from terminal import getch
+import ../base
 
 proc latin181* =
  const sub = "181FM"
@@ -8,10 +8,10 @@ proc latin181* =
  var f = parse "181FM/latin181.csv"
  while true:
   var j = false
-  drawMenuSect sub,sect,fmt"""1 {f[0]}
-2 {f[1]}
-3 {f[2]}
-R Return
+  drawMenuSect sub,sect,"1 " & f[0]
+  sayC "2 " & f[1]
+  sayC "3 " & f[2]
+  sayIter """R Return
 Q Exit"""
   while true:
    sleep 70
