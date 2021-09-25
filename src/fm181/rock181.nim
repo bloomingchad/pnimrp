@@ -1,6 +1,6 @@
 from os import sleep
-import terminal,../base
-from strformat import fmt
+from terminal import getch
+import ../base
 
 proc rock181* =
  const sub = "181FM"
@@ -8,20 +8,17 @@ proc rock181* =
  var f = parse "181FM/rock181.csv"
  while true:
   var j = false
-  clear()
-  say fgYellow,fmt"PNimRP > {sub} > {sect}"
-  sayPos 4,fgGreen,fmt"{sect} Station Playing Music:"
-  sayIter 5,fgBlue,fmt"""1 {f[0]}
-2 {f[1]}
-3 {f[2]}
-4 {f[3]}
-5 {f[4]}
-6 {f[5]}
-7 {f[6]}
-8 {f[7]}
-9 {f[8]}
-A {f[9]}
-R Return
+  drawMenuSect sub,sect,"1 " & f[0]
+  sayC "2 " & f[1]
+  sayC "3 " & f[2]
+  sayC "4 " & f[3]
+  sayC "5 " & f[4]
+  sayC "6 " & f[5]
+  sayC "7 " & f[6]
+  sayC "8 " & f[7]
+  sayC "9 " & f[8]
+  sayC "A " & f[9]
+  sayC """R Return
 Q Exit"""
   while true:
    sleep 100

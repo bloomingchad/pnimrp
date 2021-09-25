@@ -5,10 +5,9 @@ import comedy181,country181,easy181,latin181,oldies181,pop181,rock181,techno181,
 
 proc fm181* =
  while true:
-  const sub = "181FM"
   clear()
   var j = false
-  drawMenu sub,"""1 80s
+  drawMenu "181FM","""1 80s
 2 90s
 3 Comedy
 4 Country

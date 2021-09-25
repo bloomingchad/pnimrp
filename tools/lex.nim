@@ -1,7 +1,7 @@
 #tool to make parsing values from pmrp easier
-from strutils import splitLines,removeSuffix,contains,join,strip,find,delete
-from os import commandLineParams,copyFile,fileExists
-from strformat import fmt
+from strutils import splitLines,contains,join,strip,find,replace
+from os import commandLineParams,fileExists
+from sequtils import delete
 
 let lex = commandLineParams()
 if lex == @[]: echo "give files" ; quit 1
@@ -9,23 +9,37 @@ if lex == @[]: echo "give files" ; quit 1
 for f in lex.low..lex.high:
  try:
   var file = lex[f]
-  if fileExists fmt"{file}.bkp": echo fmt"info: {file} aldready processed" ; break
+  if fileExists((file & ".json")): echo "info: ", file, " aldready processed" ; break
   else:
-   file.copyFile fmt"{file}.bkp"
    var inSeq = splitLines readFile file
+   if inSeq[0].contains "{": discard
+   else:
+    var lo = inSeq.low
+    var hi = inSeq.high
+    for f in lo..hi:
+     if ( inSeq[f].find "=" ) == -1: echo "info: ", file, " ", f + 1, ": aldready processed or has space"
+     elif inSeq[f] == "":
+      inSeq.delete(f..f)
+      var e = int( inSeq.high / 2 ) - int( inSeq.high - f )
+      inSeq.delete(e..e)
+      lo = inSeq.low
+      hi = inSeq.high
+      echo "info: ", file, " ", f + 1, ": line is nil"
+     elif inSeq[f].contains "onomy":
+      inSeq[f] = ""
+      inSeq[int( inSeq.high / 2 ) - int( inSeq.high - f )] = ""
+      echo "info: ", file, " ", f + 1, ": line had radionomy link"
+     else:
+      inSeq[f] = strip inSeq[f]
+      inseq[f] = "  \"" & inSeq[f]
+      inSeq[f] = inSeq[f].replace("=", "\": ")
+      if f == inSeq.high - 1: discard
+      else: inSeq[f] = inSeq[f] & ","
 
-   for f in inSeq.low..inSeq.high:
-    if ( inSeq[f].find """: """ ) == -1: echo fmt"info: {file} aldready processed" ; break
-    elif inSeq[f] == "": echo fmt"info: {file} {f + 1}: line is nil"
-    elif inSeq[f].contains "onomy":
-     inSeq[f] = ""
-     inSeq[int( inSeq.high / 2 ) - int( inSeq.high - f )] = ""
-     echo fmt"info: {file} {f + 1}: line had radionomy link"
-    else:
-     inSeq[f] = strip inSeq[f]
-     inSeq[f].removeSuffix "\""
-     inSeq[f].delete(inSeq.low..(inSeq[f].find("=") + 1))
-
-   file.writeFile strip inSeq.join "\n"
- except IOError,OSError: echo fmt"no such file"
- except: echo fmt"unexpected error"
+    inSeq = "{" & inSeq
+    var e = strip inSeq.join "\x0D\x0A"
+    e.add "\x0D\x0A}"
+    file.add ".json"
+    echo e#file.writeFile e
+ except IOError,OSError: echo "no such file"
+ #except: echo "unexpected error"
