@@ -1,3 +1,19 @@
-nim c --verbosity:3 --cc:tcc $@ -o:pnimrp src/pnimrp.nim
-#cd src/player
-#make
+nim c -d:release --verbosity:3 --cc:gcc $@ -o:pnimrp \
+  --hint:LineTooLong:off \
+  --hint:XDeclaredButNotUsed:on \
+  --hint:Path:off \
+  --hint:ProcessingStmt:off \
+  --hint:Conf:off \
+  --hint:Link:off \
+  --hint:MsgOrigin:off \
+  src/pnimrp.nim
+
+nim c -d:release --verbosity:3 --cc:gcc $@ -o:player \
+  --hint:LineTooLong:off \
+  --hint:XDeclaredButNotUsed:on \
+  --hint:Path:off \
+  --hint:ProcessingStmt:off \
+  --hint:Conf:off \
+  --hint:Link:off \
+  --hint:MsgOrigin:off \
+  src/player/player.nim
