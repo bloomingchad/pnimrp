@@ -1,5 +1,6 @@
 #client.h nim binding for libmpv
-{.passL: "-lmpv".}
+when defined posix: {.push dynlib: "libmpv.so".}
+when defined windows: {.push dynlib: "mpv-1.dll".}
 
 template MPV_MAKE_VERSION*(major, minor: untyped): untyped = (((major) shl 16) or (minor) or 0'u32)
 
@@ -8,7 +9,7 @@ const MPV_CLIENT_API_VERSION* = MPV_MAKE_VERSION(1, 107)
 #types gofirst
 #mpv_depreciated has been merged without a when block
 type
-  mpv_handle = distinct pointer
+  mpv_handle* = distinct pointer
 
   INNER_C_UNION_client_1* {.bycopy, union.} = object
     string*: cstring
@@ -152,136 +153,138 @@ type
 
 #procs
 proc mpv_get_wakeup_pipe*(ctx: ptr mpv_handle): cint
-    {.header: "<mpv/client.h>", importc: "mpv_get_wakeup_pipe", varargs.}
+    {.importc: "mpv_get_wakeup_pipe".}
 
 proc mpv_client_api_version*(): culong
-    {.header: "<mpv/client.h>", importc: "mpv_client_api_version", varargs.}
+    {.importc: "mpv_client_api_version".}
 
 proc mpv_error_string*(error: cint): cstring
-    {.header: "<mpv/client.h>", importc: "mpv_error_string", varargs.}
+    {.importc: "mpv_error_string".}
 
 proc mpv_free*(data: pointer)
-    {.header: "<mpv/client.h>", importc: "mpv_free", varargs.}
+    {.importc: "mpv_free".}
 
 proc mpv_client_name*(ctx: ptr mpv_handle): cstring
-    {.header: "<mpv/client.h>", importc: "mpv_client_name", varargs.}
+    {.importc: "mpv_client_name".}
 
 proc mpv_create*(): ptr mpv_handle
-    {.header: "<mpv/client.h>", importc: "mpv_create", varargs.}
+    {.importc: "mpv_create".}
 
 proc mpv_initialize*(ctx: ptr mpv_handle): cint
-    {.header: "<mpv/client.h>", importc: "mpv_initialize", varargs.}
+    {.importc: "mpv_initialize".}
 
 proc mpv_destroy*(ctx: ptr mpv_handle)
-    {.header: "<mpv/client.h>", importc: "mpv_destroy", varargs.}
+    {.importc: "mpv_destroy".}
 
 proc mpv_terminate_destroy*(ctx: ptr mpv_handle)
-    {.header: "<mpv/client.h>", importc: "mpv_terminate_destroy", varargs.}
+    {.importc: "mpv_terminate_destroy".}
 
 proc mpv_create_client*(ctx: ptr mpv_handle; name: cstring): ptr mpv_handle
-    {.header: "<mpv/client.h>", importc: "mpv_create_client", varargs.}
+    {.importc: "mpv_create_client".}
 
 proc mpv_create_weak_client*(ctx: ptr mpv_handle; name: cstring): ptr mpv_handle
-    {.header: "<mpv/client.h>", importc: "mpv_create_weak_client", varargs.}
+    {.importc: "mpv_create_weak_client".}
 
 proc mpv_load_config_file*(ctx: ptr mpv_handle; filename: cstring): cint
-    {.header: "<mpv/client.h>", importc: "mpv_load_config_file", varargs.}
+    {.importc: "mpv_load_config_file".}
 
 proc mpv_get_time_us*(ctx: ptr mpv_handle): cint
-    {.header: "<mpv/client.h>", importc: "mpv_get_time_us", varargs.}
+    {.importc: "mpv_get_time_us".}
 
 proc mpv_free_node_contents*(node: ptr mpv_node)
-    {.header: "<mpv/client.h>", importc: "mpv_free_node_contents", varargs.}
+    {.importc: "mpv_free_node_contents".}
 
 proc mpv_set_option*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer): cint
-    {.header: "<mpv/client.h>", importc: "mpv_set_option", varargs.}
+    {.importc: "mpv_set_option".}
 
 proc mpv_set_option_string*(ctx: ptr mpv_handle; name: cstring; data: cstring): cint
-    {.header: "<mpv/client.h>", importc: "mpv_set_option_string", varargs.}
+    {.importc: "mpv_set_option_string".}
 
 proc mpv_command*(ctx: ptr mpv_handle; args: cstringArray): cint
-    {.header: "<mpv/client.h>", importc: "mpv_command", varargs.}
+    {.importc: "mpv_command".}
 
 proc mpv_command_node*(ctx: ptr mpv_handle; args: ptr mpv_node; result: ptr mpv_node): cint
-    {.header: "<mpv/client.h>", importc: "mpv_command_node", varargs.}
+    {.importc: "mpv_command_node".}
 
 proc mpv_command_ret*(ctx: ptr mpv_handle; args: cstringArray; result: ptr mpv_node): cint
-    {.header: "<mpv/client.h>", importc: "mpv_command_ret", varargs.}
+    {.importc: "mpv_command_ret".}
 
 proc mpv_command_string*(ctx: ptr mpv_handle; args: cstring): cint
-   {.header: "<mpv/client.h>", importc: "mpv_command_string", varargs.}
+   {.importc: "mpv_command_string".}
 
 proc mpv_command_async*(ctx: ptr mpv_handle; reply_userdata: cint; args: cstringArray): cint
-   {.header: "<mpv/client.h>", importc: "mpv_command_async", varargs.}
+   {.importc: "mpv_command_async".}
 
 proc mpv_command_node_async*(ctx: ptr mpv_handle; reply_userdata: cint; args: ptr mpv_node): cint
-   {.header: "<mpv/client.h>", importc: "mpv_command_node_async", varargs.}
+   {.importc: "mpv_command_node_async".}
 
 proc mpv_abort_async_command*(ctx: ptr mpv_handle; reply_userdata: cint)
-   {.header: "<mpv/client.h>", importc: "mpv_abort_async_command", varargs.}
+   {.importc: "mpv_abort_async_command".}
 
 proc mpv_set_property*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer): cint 
-   {.header: "<mpv/client.h>", importc: "mpv_set_property", varargs.}
+   {.importc: "mpv_set_property".}
 
 proc mpv_set_property_string*(ctx: ptr mpv_handle; name: cstring; data: cstring): cint 
-   {.header: "<mpv/client.h>", importc: "mpv_set_property_string", varargs.}
+   {.importc: "mpv_set_property_string".}
 
 proc mpv_set_property_async*(ctx: ptr mpv_handle; reply_userdata: cint; name: cstring; format: mpv_format; data: pointer): cint 
-   {.header: "<mpv/client.h>", importc: "mpv_set_property_async", varargs.}
+   {.importc: "mpv_set_property_async".}
 
 proc mpv_get_property*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer): cint 
-   {.header: "<mpv/client.h>", importc: "mpv_get_property", varargs.}
+   {.importc: "mpv_get_property".}
 
 proc mpv_get_property_string*(ctx: ptr mpv_handle; name: cstring): cstring
-   {.header: "<mpv/client.h>", importc: "mpv_get_property_string", varargs.}
+   {.importc: "mpv_get_property_string".}
 
 proc mpv_get_property_osd_string*(ctx: ptr mpv_handle; name: cstring): cstring 
-   {.header: "<mpv/client.h>", importc: "mpv_get_property_osd_string", varargs.}
+   {.importc: "mpv_get_property_osd_string".}
 
 proc mpv_get_property_async*(ctx: ptr mpv_handle; reply_userdata: cint; name: cstring; format: mpv_format): cint
-   {.header: "<mpv/client.h>", importc: "mpv_get_property_async", varargs.}
+   {.importc: "mpv_get_property_async".}
 
 proc mpv_observe_property*(mpv: ptr mpv_handle; reply_userdata: cint; name: cstring; format: mpv_format): cint 
-   {.header: "<mpv/client.h>", importc: "mpv_observe_property", varargs.}
+   {.importc: "mpv_observe_property".}
 
 proc mpv_unobserve_property*(mpv: ptr mpv_handle; registered_reply_userdata: cint): cint 
-   {.header: "<mpv/client.h>", importc: "mpv_unobserve_property", varargs.}
+   {.importc: "mpv_unobserve_property".}
 
 proc mpv_event_name*(event: mpv_event_id): cstring 
-   {.header: "<mpv/client.h>", importc: "mpv_event_name", varargs.}
+   {.importc: "mpv_event_name".}
 
 proc mpv_detach_destroy*(ctx: ptr mpv_handle) 
-   {.header: "<mpv/client.h>", importc: "mpv_detach_destroy", varargs.}
+   {.importc: "mpv_detach_destroy".}
 
 proc mpv_suspend*(ctx: ptr mpv_handle) 
-   {.header: "<mpv/client.h>", importc: "mpv_suspend", varargs.}
+   {.importc: "mpv_suspend".}
 
 proc mpv_resume*(ctx: ptr mpv_handle)
-   {.header: "<mpv/client.h>", importc: "mpv_resume", varargs.}
+   {.importc: "mpv_resume".}
 
 proc mpv_get_sub_api*(ctx: ptr mpv_handle; sub_api: mpv_sub_api): pointer 
-   {.header: "<mpv/client.h>", importc: "mpv_get_sub_api", varargs.}
+   {.importc: "mpv_get_sub_api".}
 
 proc mpv_request_event*(ctx: ptr mpv_handle; event: mpv_event_id; enable: cint): cint
-   {.header: "<mpv/client.h>", importc: "mpv_request_event", varargs.}
+   {.importc: "mpv_request_event".}
 
 proc mpv_request_log_messages*(ctx: ptr mpv_handle; min_level: cstring): cint
-   {.header: "<mpv/client.h>", importc: "mpv_request_log_messages", varargs.}
+   {.importc: "mpv_request_log_messages".}
 
 proc mpv_wait_event*(ctx: ptr mpv_handle; timeout: cdouble): ptr mpv_event 
-   {.header: "<mpv/client.h>", importc: "mpv_wait_event", varargs.}
+   {.importc: "mpv_wait_event".}
 
 proc mpv_wakeup*(ctx: ptr mpv_handle) 
-   {.header: "<mpv/client.h>", importc: "mpv_wakeup", varargs.}
+   {.importc: "mpv_wakeup".}
 
 proc mpv_set_wakeup_callback*(ctx: ptr mpv_handle; cb: proc (d: pointer); d: pointer) 
-   {.header: "<mpv/client.h>", importc: "mpv_set_wakeup_callback", varargs.}
+   {.importc: "mpv_set_wakeup_callback".}
 
 proc mpv_wait_async_requests*(ctx: ptr mpv_handle)
-   {.header: "<mpv/client.h>", importc: "mpv_wait_async_requests", varargs.}
+   {.importc: "mpv_wait_async_requests".}
 
 proc mpv_hook_add*(ctx: ptr mpv_handle; reply_userdata: cint; name: cstring; priority: cint): cint
-   {.header: "<mpv/client.h>", importc: "mpv_hook_add", varargs.}
+   {.importc: "mpv_hook_add".}
 
 proc mpv_hook_continue*(ctx: ptr mpv_handle; id: cint): cint 
-   {.header: "<mpv/client.h>", importc: "mpv_hook_continue", varargs.}
+   {.importc: "mpv_hook_continue".}
+
+{.pop.}

@@ -7,7 +7,6 @@ CFLAGS="-d:release \
 HINTS=" --hint:LineTooLong:off \
   --hint:XDeclaredButNotUsed:on \
   --hint:Path:off \
-  --hint:ProcessingStmt:off \
   --hint:Conf:off \
   --hint:Link:off \
   --hint:MsgOrigin:off"
@@ -22,5 +21,5 @@ nim c --cc:$CC $@ -o:pnimrp \
   $HINTS \
   src/pnimrp.nim
 
-strip pnimrp &
-strip player
+strip player &
+strip pnimrp
