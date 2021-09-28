@@ -20,16 +20,7 @@ proc init* =
 
  if not ( dirExists "pnimrp.d" ) and checkFileIter amog: echo "data and config files dont exist" ; quit 1
 
-proc initPlayer():string =
- var PLAYER:string = parse("pnimrp.csv")[0]
- if PLAYER == "" or PLAYER.contains " ":
-  when defined windows:
-   if findExe("mpv").contains "mpv": PLAYER = absolutePath(findExe "mpv")
-   elif findExe("play",followSymlinks = false).contains "play": PLAYER = absolutePath(findExe("play",followSymlinks = false))
-   else: showCursor();echo "error: PNimRP requires ffplay, mpv or play. Install to enjoy PMRP" ; quit 1
-
-  when not defined windows:
-   return getCurrentDir() & "/player"
+proc initPlayer():string = getCurrentDir() & "/player"
  #"pnimrp.d/pnimrp.csv".writeFile PLAYER
  #return PLAYER
 
@@ -37,21 +28,19 @@ proc clear*() =
  eraseScreen()
  setCursorPos 0,0
 
-proc byteKb(x:int):float32 = x / 1024
-
 proc exitEcho* =
  showCursor()
  echo ""
  styledEcho fgCyan ,"when I die, just keep playing the records"
  when not (defined release) or (defined danger):
   stdout.write "free mem: "
-  stdout.write byteKb getFreeMem()
+  stdout.write getFreeMem() / 1024
   echo " kB"
   stdout.write "total/max mem: "
-  stdout.write  byteKb getTotalMem()
+  stdout.write getTotalMem() / 1024
   echo " kB"
   stdout.write "occupied mem: "
-  stdout.write byteKb getOccupiedMem()
+  stdout.write getOccupiedMem() / 1024
   echo " kB"
  quit 0
 
@@ -85,16 +74,7 @@ proc inv* =
  eraseLine()
 
 proc execPolled(q,x:string,args:openArray[string]):bool =
- when defined windows:
-  if x.contains "play":
-   if args[2] == "" or args[2].contains " ":
-    inv() ; return true
-  else:
-   if args[1] == "" or args[1].contains " ":
-    inv() ; return true
- else:
-  if args[0] == "" or args[0].contains " ": inv() ; return true
-  var curl = startProcess(q,args=["-s",args[0],"-o","temp"])
+ var curl = startProcess(q,args=["-s",args[0],"-o","temp"])
  var app = startProcess(x ,args=args)
  sayPos 4,"Playing.."
  while true:
@@ -103,11 +83,11 @@ proc execPolled(q,x:string,args:openArray[string]):bool =
    of '/':
     when not defined macos:
      when defined linux: exec "amixer",["--quiet","set","PCM","7%+"],0
-     #when defined freebsd,netbsd,openbsd: exec "mixer",["vol",""],0
      when defined windows: exec "nircmd",["changesysvolume","5000"],0
-     #when defined haiku: exec "setvolume",[""],0
      warn "Volume+"
      sleep 500
+     cursorUp()
+     eraseLine()
     else: discard
 
    of 'P','p':
