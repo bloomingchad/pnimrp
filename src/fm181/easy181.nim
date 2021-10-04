@@ -1,6 +1,7 @@
 from os import sleep
 from terminal import getch
 import ../base,json
+from strformat import fmt
 
 proc easy181* =
  const sub = "181FM"
@@ -40,22 +41,22 @@ proc easy181* =
 
  while true:
   var j = false
-  drawMenuSect sub,sect,"1 " & Name01
-  sayC "2 " & Name02
-  sayC "3 " & Name03
-  sayC "4 " & Name04
-  sayC "5 " & Name05
-  sayC "6 " & Name06
-  sayC "7 " & Name07
-  sayC "8 " & Name08
-  sayC "9 " & Name09
-  sayC "A " & Name10
-  sayC "B " & Name11
-  sayC "C " & Name12
-  sayC "D " & Name13
-  sayC "E " & Name14
-  sayC "F " & Name15
-  sayIter """R Return
+  drawMenuSect sub,sect,fmt"""1 {Name01}
+2 {Name02}
+3 {Name03}
+4 {Name04}
+5 {Name05}
+6 {Name06}
+7 {Name07}
+8 {Name08}
+9 {Name09}
+A {Name10}
+B {Name11}
+C {Name12}
+D {Name13}
+E {Name14}
+F {Name15}
+R Return
 Q Exit"""
   while true:
    sleep 100
