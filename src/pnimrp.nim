@@ -1,7 +1,6 @@
 from os import sleep
 from strutils import repeat
-import base,notes,terminal
-import fm181/fm181
+import base/[termbase, initbase], notes, terminal, fm181/fm181
 
 hideCursor()
 init()

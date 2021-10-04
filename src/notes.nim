@@ -1,4 +1,4 @@
-import base
+import base/[termbase, playerbase]
 from os import sleep
 from terminal import getch,terminalWidth,showCursor,hideCursor
 from strutils import repeat
@@ -31,4 +31,4 @@ under certain conditions. press `t` for details"""
     of 'r','R': j = true; break
     of 'Q','q': exitEcho()
     else: inv()
-  if j == true: break
+  if j: break

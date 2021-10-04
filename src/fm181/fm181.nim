@@ -1,5 +1,6 @@
 from os import sleep
-import terminal,../base
+import terminal
+import ../base/termbase
 import comedy181,country181,easy181,latin181,oldies181,pop181,rock181,techno181,urban181
 #eight181,nine181
 

@@ -1,6 +1,6 @@
 from os import sleep
 from terminal import getch
-import ../base,json
+import ../base/[termbase,playerbase,initbase],json
 from strformat import fmt
 
 proc easy181* =
@@ -79,4 +79,4 @@ Q Exit"""
     of 'R','r': j = true; break
     of 'Q','q': exitEcho()
     else: inv()
-  if j == true: break
+  if j: break
