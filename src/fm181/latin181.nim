@@ -1,7 +1,8 @@
 from os import sleep
 from terminal import getch
-import ../base,json
+import ../base/[termbase,playerbase,initbase],json
 from strformat import fmt
+
 
 proc latin181* =
  const sub = "181FM"
@@ -29,4 +30,4 @@ Q Exit"""
     of 'R','r': j = true; break
     of 'Q','q': exitEcho()
     else: inv()
-  if j == true: break
+  if j: break
