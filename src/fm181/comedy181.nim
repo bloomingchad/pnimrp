@@ -1,6 +1,7 @@
 from os import sleep
 from terminal import getch
 import ../base,json
+from strformat import fmt
 
 proc comedy181* =
  const sub = "181FM"
@@ -15,10 +16,10 @@ proc comedy181* =
 
  while true:
   var j = false
-  drawMenuSect sub,sect,"1 " & Name01
-  sayC "2 " & Name02
-  sayC "3 " & Name03
-  sayIter """R Return
+  drawMenuSect sub,sect,fmt"""1 {Name01}
+2 {Name02}
+3 {Name03}
+R Return
 Q Exit"""
   while true:
    sleep 100
