@@ -1,0 +1,12 @@
+{
+  "Name01": "MJoy Radio-Xmas",
+  "Name02": "MJoy Radio-Z",
+  "Name03": "MJoy Urban Space",
+  "Name04": "DFM RTV INT",
+  "Name05": "Ralph Radio",
+  "link01": "http://stream.mjoy.ua:8000/radio-xmas",
+  "link02": "http://stream.mjoy.ua:8000/radio-z-kryjivky",
+  "link03": "http://stream.mjoy.ua:8000/urban-space-radio",
+  "link04": "http://176.9.138.209:8205/dfm_1",
+  "link05": "http://213.177.96.6:9900/ralph128"
+}
