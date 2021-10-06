@@ -19,9 +19,9 @@ for f in lex.low..lex.high:
     for f in lo..hi:
      if ( inSeq[f].find "=" ) == -1: echo "info: ", file, " ", f + 1, ": aldready processed or has space"
      elif inSeq[f] == "":
-      inSeq.delete(f..f)
+      inSeq.delete(f,f)
       var e = int( inSeq.high / 2 ) - int( inSeq.high - f )
-      inSeq.delete(e..e)
+      inSeq.delete(e,e)
       lo = inSeq.low
       hi = inSeq.high
       echo "info: ", file, " ", f + 1, ": line is nil"
