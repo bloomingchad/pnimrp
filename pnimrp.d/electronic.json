@@ -1,0 +1,22 @@
+{
+  "Name01": "Ambient Sleeping Pill",
+  "Name02": "Ibiza Global Radio",
+  "Name03": "Radio Seven",
+  "Name04": "Antenne Bayern Chillout",
+  "Name05": "Frisky",
+  "Name06": "Nirvana Radio",
+  "Name07": "Puls Radio",
+  "Name08": "",
+  "Name09": "",
+  "Name10": "",
+  "link01": "http://50.7.96.138:8235/stream",
+  "link02": "http://37.59.254.25:8024",
+  "link03": "http://188.65.152.205:80",
+  "link04": "http://mp3channels.webradio.antenne.de:80/chillout",
+  "link05": "http://stream.friskyradio.com:8000/frisky_mp3_hi",
+  "link06": "http://91.121.134.15:9106",
+  "link07": "http://212.83.185.51:80",
+  "link08": "",
+  "link09": "",
+  "link10": ""
+}

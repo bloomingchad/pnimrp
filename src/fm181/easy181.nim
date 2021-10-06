@@ -6,7 +6,7 @@ from strformat import fmt
 proc easy181* =
  const sub = "181FM"
  const sect = "Easy Listening"
- let node = parseJ "181FM/easy181.json"
+ let node = parseJ "fm181/easy181.json"
  let Name01 = getStr node{"Name01"}
  let Name02 = getStr node{"Name02"}
  let Name03 = getStr node{"Name03"}
