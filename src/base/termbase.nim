@@ -2,8 +2,11 @@ from strformat import fmt
 import terminal
 from os import sleep
 from strutils import contains,repeat,splitLines
+#from playerbase import call
+#from json import `{}`,getStr
+#from initbase import parseJ
 
-proc clear*() =
+proc clear* =
  eraseScreen()
  setCursorPos 0,0
 
@@ -15,7 +18,7 @@ proc exitEcho* =
   echo fmt"free mem: {getFreeMem() / 1024} kB"
   echo fmt"total/max mem: {getTotalMem() / 1024} kB"
   echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
- quit 0
+ quit QuitSuccess
 
 proc say*(txt:string) = styledEcho fgYellow,txt
 

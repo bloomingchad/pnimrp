@@ -1,13 +1,13 @@
 from os import sleep
 from strutils import repeat
-import base/[termbase, initbase], notes, terminal, fm181/fm181
+import base/[termbase,initbase],notes, terminal, fm181
 
 hideCursor()
 init()
 
 while true:
  clear()
- say "Poor Mans Radio Player in Nim-lang " & '-'.repeat((terminalWidth()/8).int)
+ say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
  sayPos 4,"Station Categories:"
  sayIter """1 181FM
 2 Blues

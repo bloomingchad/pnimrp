@@ -1,7 +1,6 @@
 from os import fileExists,findExe,dirExists
 from strformat import fmt
 from strutils import splitLines
-import json
 
 proc checkFileIter*(x:seq[string]):bool =
  var i:uint8 = 0
@@ -18,4 +17,3 @@ proc init* =
  if findExe("curl") == "": echo "please get curl installed"; quit 1
 
 proc parse*(x:string):seq[string] = splitLines readFile fmt"pnimrp.d/{x}"
-proc parseJ*(x:string):JsonNode = parseJson readFile fmt"pnimrp.d/{x}"
