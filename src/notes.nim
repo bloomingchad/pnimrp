@@ -19,15 +19,19 @@ under certain conditions. press `t` for details"""
    sleep 100
    case getch():
     of 'T','t':
-     when defined windows: exec "notepad.exe",["TERMS"],1 ; exitEcho()
+     when defined windows:
+      exec "notepad.exe",["TERMS"],1
+      break
      when defined posix:
       warn "type :q and enter to exit"
       say "Please wait..."
       sleep 750
       showCursor()
-      exec "vi",["TERMS"],1
+      when not defined android: exec "vi",["TERMS"],1
+      else: exec "editor",["TERMS"],1
       hideCursor()
       break
+     else: showCursor(); echo "please open TERMS file"; quit QuitSuccess
     of 'r','R': j = true; break
     of 'Q','q': exitEcho()
     else: inv()

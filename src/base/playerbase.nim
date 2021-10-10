@@ -1,7 +1,7 @@
 from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspend,resume
 from strutils import contains,repeat,splitLines
 from os import findExe,sleep,getCurrentDir,removeFile
-from termbase import warn,say,sayPos,inv,clear,exitEcho
+from termbase import warn,say,sayPos,inv,clear,exitEcho,drawMenuSect
 from terminal import terminalWidth,setCursorXPos,setCursorPos,getch,cursorUp,eraseLine
 from strformat import fmt
 
