@@ -1,22 +1,8 @@
 {
-  "Name01": "Aardvark Blues FM",
-  "Name02": "Blues Radio",
-  "Name03": "Big Blue Swing",
-  "Name04": "Blues Radio UK",
-  "Name05": "Crossroads Blues Radio",
-  "Name06": "Houston Blues Radio",
-  "Name07": "",
-  "Name08": "",
-  "Name09": "",
-  "Name10": "",
-  "link01": "http://74.208.45.146:8639/stream",
-  "link02": "http://185.33.22.13:8030",
-  "link03": "http://209.236.126.18:8002",
-  "link04": "http://206.217.213.16:8430/",
-  "link05": "http://174.127.114.128:8134/stream",
-  "link06": "http://74.208.170.137:8640/stream",
-  "link07": "",
-  "link08": "",
-  "link09": "",
-  "link10": ""
+  "Name01": "Big Blue Swing",
+  "Name02": "",
+  "Name03": "",
+  "link01": "http://209.236.126.18:8002",
+  "link02": "",
+  "link03": ""
 }

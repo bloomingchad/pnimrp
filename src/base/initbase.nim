@@ -1,6 +1,6 @@
 from os import fileExists,findExe,dirExists
 from strformat import fmt
-from terminal import showCursor
+from terminal import showCursor,hideCursor
 
 proc checkFileIter*(x:seq[string]):bool =
  var i:uint8 = 0
@@ -14,11 +14,10 @@ proc init* =
  "fm181/rock181","fm181/country181","fm181/eight181","fm181/nine181","fm181/pop181","fm181/urban181"]
 
  if not dirExists("pnimrp.d") or not checkFileIter(amog):
-   echo "data and config files dont exist"
-   showCursor()
-   quit QuitFailure
+  echo "data and config files dont exist"
+  quit QuitFailure
 
  if findExe("curl") == "":
   echo "please get curl installed"
-  showCursor()
   quit QuitFailure
+ hideCursor()
