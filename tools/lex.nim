@@ -4,7 +4,7 @@ from os import commandLineParams
 from sequtils import delete
 
 let lex = commandLineParams()
-if lex == @[]: echo "give files" ; quit 1
+if lex == @[]: echo "give files" ; quit QuitFailure
 
 for f in lex.low..lex.high:
  try:
@@ -12,7 +12,7 @@ for f in lex.low..lex.high:
   #if file.contains "json": echo "info: ", file, " aldready processed" ; break
   #else:
    var inSeq = splitLines readFile file
-   if inSeq[0].contains "{": break
+   if inSeq[0].contains "{": echo "info: ",file," processed?"
    else:
     var lo = inSeq.low
     var hi = inSeq.high
