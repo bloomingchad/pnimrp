@@ -34,4 +34,6 @@ proc clsIter(x:int) =
 proc cls(x:int) =
   tb.write 2,x," ".repeat(terminalWidth() - 4)
   tb.display()
+
+proc parse*(x:string):seq[string] = splitLines readFile fmt"pnimrp.d/{x}"
 ]#

@@ -2,9 +2,6 @@ from strformat import fmt
 import terminal
 from os import sleep
 from strutils import contains,repeat,splitLines
-#from playerbase import call
-#from json import `{}`,getStr
-#from initbase import parseJ
 
 proc clear* =
  eraseScreen()
@@ -48,14 +45,14 @@ proc inv* =
 proc drawMenuSect*(sub,sect,x:string) =
  clear()
  say fmt"PNimRP > {sub} > {sect}"
- sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat(int(terminalWidth()/12))
+ sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat int terminalWidth() / 12
  sayPos 4, fmt"{sect} Station Playing Music:"
  sayIter x
 
 proc drawMenu*(sub,x:string) =
  clear()
  say fmt"PNimRP > {sub}"
- sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat(int(terminalWidth()/12))
+ sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat int terminalWidth() / 12
  sayPos 4, fmt"{sub} Station Playing Music:"
  sayIter x
 

@@ -1,19 +1,24 @@
 from os import fileExists,findExe,dirExists
 from strformat import fmt
-from strutils import splitLines
+from terminal import showCursor
 
 proc checkFileIter*(x:seq[string]):bool =
  var i:uint8 = 0
  for f in x:
-  if fileExists(fmt"pnimrp.d/{x[i]}.csv"): inc i
+  if fileExists(fmt"pnimrp.d/{x[i]}.json"): inc i
   else: return false
  return true
 
 proc init* =
- var amog = @["pnimrp","181FM/comedy181","181FM/easy181","181FM/latin181","181FM/oldies181",
- "181FM/rock181","181FM/country181","181FM/eight181","181FM/nine181","181FM/pop181","181FM/urban181"]
+ var amog = @["fm181/comedy181","fm181/easy181","fm181/latin181","fm181/oldies181",
+ "fm181/rock181","fm181/country181","fm181/eight181","fm181/nine181","fm181/pop181","fm181/urban181"]
 
- if not ( dirExists "pnimrp.d" ) and checkFileIter amog: echo "data and config files dont exist" ; quit 1
- if findExe("curl") == "": echo "please get curl installed"; quit 1
+ if not dirExists("pnimrp.d") or not checkFileIter(amog):
+   echo "data and config files dont exist"
+   showCursor()
+   quit QuitFailure
 
-proc parse*(x:string):seq[string] = splitLines readFile fmt"pnimrp.d/{x}"
+ if findExe("curl") == "":
+  echo "please get curl installed"
+  showCursor()
+  quit QuitFailure
