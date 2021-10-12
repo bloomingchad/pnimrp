@@ -5,7 +5,7 @@ from terminal import showCursor,hideCursor
 proc checkFileIter*(x:seq[string]):bool =
  var i:uint8 = 0
  for f in x:
-  if fileExists(fmt"pnimrp.d/{x[i]}.json"): inc i
+  if fileExists fmt"pnimrp.d/{x[i]}.json": inc i
   else: return false
  return true
 
@@ -17,7 +17,4 @@ proc init* =
   echo "data and config files dont exist"
   quit QuitFailure
 
- if findExe("curl") == "":
-  echo "please get curl installed"
-  quit QuitFailure
  hideCursor()

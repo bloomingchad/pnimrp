@@ -2,7 +2,7 @@
 when defined posix: {.push dynlib: "libmpv.so".}
 when defined windows: {.push dynlib: "mpv-1.dll".}
 
-template MPV_MAKE_VERSION*(major, minor: untyped): untyped = (((major) shl 16) or (minor) or 0'u32)
+template MPV_MAKE_VERSION*(major, minor: untyped): untyped = major shl 16 or minor or 0'u32
 
 const MPV_CLIENT_API_VERSION* = MPV_MAKE_VERSION(1, 107)
 
@@ -13,8 +13,7 @@ type
 
   INNER_C_UNION_client_1* {.bycopy, union.} = object
     string*: cstring
-    flag*: cint
-    int64*: cint
+    flag*, int64*: cint
     double*: cdouble
     list*: ptr mpv_node_list
     ba*: ptr mpv_byte_array
@@ -118,14 +117,11 @@ type
     MPV_LOG_LEVEL_TRACE             = 70
 
   mpv_event_log_message* {.bycopy.} = object
-    prefix*: cstring
-    level*: cstring
-    text*: cstring
+    prefix*, level*, text*: cstring
     log_level*: mpv_log_level
 
   mpv_event_end_file* {.bycopy.} = object
-    reason*: cint
-    error*: cint
+    reason*, error*: cint
 
   mpv_event_client_message* {.bycopy.} = object
     num_args*: cint
@@ -140,8 +136,7 @@ type
 
   mpv_event* {.bycopy.} = object
     event_id*: mpv_event_id
-    error*: cint
-    reply_userdata*: cint
+    error*, reply_userdata*: cint
     data*: pointer
 
   mpv_event_script_input_dispatch* {.bycopy.} = object
@@ -170,7 +165,7 @@ proc mpv_client_name*(ctx: ptr mpv_handle): cstring
 proc mpv_create*(): ptr mpv_handle
     {.importc: "mpv_create".}
 
-proc mpv_initialize*(ctx: ptr mpv_handle): cint
+proc mpv_initialize*(ctx: ptr mpv_handle) #: cint
     {.importc: "mpv_initialize".}
 
 proc mpv_destroy*(ctx: ptr mpv_handle)
@@ -194,13 +189,13 @@ proc mpv_get_time_us*(ctx: ptr mpv_handle): cint
 proc mpv_free_node_contents*(node: ptr mpv_node)
     {.importc: "mpv_free_node_contents".}
 
-proc mpv_set_option*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer): cint
+proc mpv_set_option*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer) #: cint
     {.importc: "mpv_set_option".}
 
 proc mpv_set_option_string*(ctx: ptr mpv_handle; name: cstring; data: cstring): cint
     {.importc: "mpv_set_option_string".}
 
-proc mpv_command*(ctx: ptr mpv_handle; args: cstringArray): cint
+proc mpv_command*(ctx: ptr mpv_handle; args: cstringArray) #: cint
     {.importc: "mpv_command".}
 
 proc mpv_command_node*(ctx: ptr mpv_handle; args: ptr mpv_node; result: ptr mpv_node): cint

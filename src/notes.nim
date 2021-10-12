@@ -10,7 +10,7 @@ proc notes* =
   const sub = "Notes"
   clear()
   say fmt"PNimRP > {sub}"
-  sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat(int(terminalWidth()/12))
+  sayPos 0, ('-'.repeat int terminalWidth() / 8) & ('>'.repeat int terminalWidth() / 12)
   sayIter """PNimRP Copyright (C) 2021 antonl05
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
@@ -27,8 +27,8 @@ under certain conditions. press `t` for details"""
       say "Please wait..."
       sleep 750
       showCursor()
-      when not defined android: exec "vi",["TERMS"],1
-      else: exec "editor",["TERMS"],1
+      when not defined android: exec "vi",["TERMS"], stream = true
+      else: exec "editor",["TERMS"], stream = true
       hideCursor()
       break
      else: showCursor(); echo "please open TERMS file"; quit QuitSuccess
