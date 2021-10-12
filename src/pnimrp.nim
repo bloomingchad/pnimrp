@@ -5,6 +5,7 @@ import base/[termbase,initbase,menu], notes, fm181, soma, listener
 
 init()
 
+#1,3,4,5,6,7
 while true:
  clear()
  say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
