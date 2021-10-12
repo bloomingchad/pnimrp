@@ -1,7 +1,7 @@
 from strformat import fmt
 import terminal
 from os import sleep
-from strutils import contains,repeat,splitLines
+from strutils import repeat,splitLines
 
 proc clear* =
  eraseScreen()

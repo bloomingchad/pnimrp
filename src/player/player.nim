@@ -1,15 +1,15 @@
-from os import commandLineParams,sleep
+from os import commandLineParams
 import client
 
-proc main() =
- let parm = commandLineParams()
- let ctx = mpv_create()
- var val: cint = 1
- discard mpv_set_option(ctx, "", MPV_FORMAT_FLAG, addr(val))
- discard mpv_initialize ctx
- let file = allocCStringArray ["loadfile", parm[0]]
- discard mpv_command(ctx, file)
- while true:
-  discard mpv_wait_event(ctx, 1)
+let
+ parm = commandLineParams()
+ ctx = mpv_create()
+ file = allocCStringArray ["loadfile", parm[0]] #couldbe file,link,playlistfile
+var val: cint = 1
 
-main()
+mpv_set_option(ctx, "", MPV_FORMAT_FLAG, addr val)
+mpv_initialize ctx
+mpv_command(ctx, file)
+
+while true:
+ discard mpv_wait_event(ctx, 1000)
