@@ -1,4 +1,5 @@
 #client.h nim binding for libmpv
+from terminal import showCursor
 when defined posix: {.push dynlib: "libmpv.so".}
 when defined windows: {.push dynlib: "mpv-1.dll".}
 
@@ -165,7 +166,7 @@ proc mpv_client_name*(ctx: ptr mpv_handle): cstring
 proc mpv_create*(): ptr mpv_handle
     {.importc: "mpv_create".}
 
-proc mpv_initialize*(ctx: ptr mpv_handle) #: cint
+proc mpv_initialize*(ctx: ptr mpv_handle): cint
     {.importc: "mpv_initialize".}
 
 proc mpv_destroy*(ctx: ptr mpv_handle)
@@ -189,13 +190,13 @@ proc mpv_get_time_us*(ctx: ptr mpv_handle): cint
 proc mpv_free_node_contents*(node: ptr mpv_node)
     {.importc: "mpv_free_node_contents".}
 
-proc mpv_set_option*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer) #: cint
+proc mpv_set_option*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer): cint
     {.importc: "mpv_set_option".}
 
 proc mpv_set_option_string*(ctx: ptr mpv_handle; name: cstring; data: cstring): cint
     {.importc: "mpv_set_option_string".}
 
-proc mpv_command*(ctx: ptr mpv_handle; args: cstringArray) #: cint
+proc mpv_command*(ctx: ptr mpv_handle; args: cstringArray): cint
     {.importc: "mpv_command".}
 
 proc mpv_command_node*(ctx: ptr mpv_handle; args: ptr mpv_node; result: ptr mpv_node): cint
@@ -281,5 +282,11 @@ proc mpv_hook_add*(ctx: ptr mpv_handle; reply_userdata: cint; name: cstring; pri
 
 proc mpv_hook_continue*(ctx: ptr mpv_handle; id: cint): cint 
    {.importc: "mpv_hook_continue".}
+
+proc check_error*(status: cint) {.inline.} =
+ if status < 0:
+  echo "mpv API error: ", mpv_error_string status
+  showCursor()
+  quit QuitFailure
 
 {.pop.}
