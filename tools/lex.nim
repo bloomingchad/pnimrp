@@ -31,6 +31,7 @@ for f in lex.low..lex.high:
       echo "info: ", file, " ", f + 1, ": line had radionomy link"
      else:
       inSeq[f] = strip inSeq[f]
+      if inSeq[f][4] == '0': strutils.delete inSeq[f], 4,4
       inseq[f] = "  \"" & inSeq[f]
       inSeq[f] = inSeq[f].replace("=", "\": ")
       #if f == inSeq.high - 1: discard else: 
