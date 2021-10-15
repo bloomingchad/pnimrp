@@ -23,17 +23,17 @@ Q Quit"""
   while true:
    sleep 100
    case getch():
-    of '1': endMenu5 sub,"80s","fm181/eight181"; break
-    of '2': endMenu5 sub,"90s","fm181/nine181"; break
-    of '3': endMenu3 sub,"Comedy","fm181/comedy181"; break
-    of '4': endMenu10 sub,"Country","fm181/country181"; break
-    of '5': endMenu15 sub,"Easy Listening","fm181/easy181"; break
-    of '6': endMenu3 sub,"Latin","fm181/latin181"; break
-    of '7': endMenu10 sub,"Oldies","fm181/oldies181"; break
-    of '8': endMenu10 sub,"Pop","fm181/pop181"; break
-    of '9': endMenu10 sub,"Rock","fm181/rock181"; break
-    of 'A','a': endMenu10 sub,"Techno","fm181/techno181"; break
-    of 'B','b': endMenu10 sub,"Urban","fm181/urban181"; break
+    of '1': endMenu5 sub,"fm181/eight181","80s"; break
+    of '2': endMenu5 sub,"fm181/nine181","90s"; break
+    of '3': endMenu3 sub,"fm181/comedy181","Comedy"; break
+    of '4': endMenu10 sub,"fm181/country181","Country"; break
+    of '5': endMenu15 sub,"fm181/easy181","Easy Listening"; break
+    of '6': endMenu3 sub,"fm181/latin181","Latin"; break
+    of '7': endMenu10 sub,"fm181/oldies181","Oldies"; break
+    of '8': endMenu10 sub,"fm181/pop181","Pop"; break
+    of '9': endMenu10 sub,"fm181/rock181","Rock"; break
+    of 'A','a': endMenu10 sub,"fm181/techno181","Techno"; break
+    of 'B','b': endMenu10 sub,"fm181/urban181","Urban"; break
     of 'R','r': j = true; break
     of 'Q','q': exitEcho()
     else: inv()
