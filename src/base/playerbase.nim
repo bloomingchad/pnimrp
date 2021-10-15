@@ -69,10 +69,11 @@ proc player(parm:string) =
    else: inv()
   if e: break
 
-proc call*(sub,sect,stat,link:string) =
+proc call*(sub:string; sect = ""; stat,link:string) =
  if link == "" or link.contains " ": warn "link dont exist or is invalid"; sleep 750
  else:
   clear()
-  say fmt"PNimRP > {sub} > {sect} > {stat}"
+  if sect == "": say fmt"PNimRP > {sub} > {stat}"
+  else: say fmt"PNimRP > {sub} > {sect} > {stat}"
   sayPos 0,'-'.repeat(int terminalWidth() / 8) & '>'.repeat int terminalWidth() / 12
   player link
