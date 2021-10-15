@@ -6,18 +6,20 @@ from strformat import fmt
 
 proc parseJ(x:string):JsonNode = parseJson readFile fmt"pnimrp.d/{x}.json"
 
-proc endMenu3*(sub,sect,file:string) =
+proc endMenu3*(sub,file:string; sect = "") =
  let node = parseJ file
- var n,l:seq[string]
+ var n,l:seq[string] = @[]
  for f in 1..3: n.add getStr node{ "Name" & $f }
  for f in 1..3: l.add getStr node{ "link" & $f }
  while true:
   var j = false
-  drawMenu sub,sect,fmt"""1 {n[0]}
+  var o = fmt"""1 {n[0]}
 2 {n[1]}
 3 {n[2]}
 R Return
 Q Exit"""
+  if sect == "": drawMenu sub,o
+  else: drawMenu sub,o,sect
   while true:
    sleep 100
    case getch():
@@ -29,20 +31,22 @@ Q Exit"""
     else: inv()
   if j: break
 
-proc endMenu5*(sub,sect,file:string) =
+proc endMenu5*(sub,file:string; sect = "") =
  let node = parseJ file
- var n,l:seq[string]
+ var n,l:seq[string] = @[]
  for f in 1..5: n.add getStr node{ "Name" & $f }
  for f in 1..5: l.add getStr node{ "link" & $f }
  while true:
   var j = false
-  drawMenu sub,sect,fmt"""1 {n[0]}
+  var o = fmt"""1 {n[0]}
 2 {n[1]}
 3 {n[2]}
 4 {n[3]}
 5 {n[4]}
 R Return
 Q Exit"""
+  if sect == "": drawMenu sub,o
+  else: drawMenu sub,o,sect
   while true:
    sleep 100
    case getch():
@@ -56,14 +60,14 @@ Q Exit"""
     else: inv()
   if j: break
 
-proc endMenu10*(sub,sect,file:string) =
+proc endMenu10*(sub,file:string; sect = "") =
  let node = parseJ file
- var n,l:seq[string]
+ var n,l:seq[string] = @[]
  for f in 1..10: n.add getStr node{ "Name" & $f }
  for f in 1..10: l.add getStr node{ "link" & $f }
  while true:
   var j = false
-  drawMenu sub,sect,fmt"""1 {n[0]}
+  var o = fmt"""1 {n[0]}
 2 {n[1]}
 3 {n[2]}
 4 {n[3]}
@@ -75,6 +79,8 @@ proc endMenu10*(sub,sect,file:string) =
 A {n[9]}
 R Return
 Q Exit"""
+  if sect == "": drawMenu sub,o
+  else: drawMenu sub,o,sect
   while true:
    sleep 100
    case getch():
@@ -93,14 +99,14 @@ Q Exit"""
     else: inv()
   if j: break
 
-proc endMenu15*(sub,sect,file:string) =
+proc endMenu15*(sub,file:string; sect = "") =
  let node = parseJ file
- var n,l:seq[string]
+ var n,l:seq[string] = @[]
  for f in 1..15: n.add getStr node{ "Name" & $f }
  for f in 1..15: l.add getStr node{ "link" & $f }
  while true:
   var j = false
-  drawMenu sub,sect,fmt"""1 {n[0]}
+  var o = fmt"""1 {n[0]}
 2 {n[1]}
 3 {n[2]}
 4 {n[3]}
@@ -117,6 +123,8 @@ E {n[13]}
 F {n[14]}
 R Return
 Q Exit"""
+  if sect == "": drawMenu sub,o
+  else: drawMenu sub,o,sect
   while true:
    sleep 100
    case getch():

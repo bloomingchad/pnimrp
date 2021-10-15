@@ -42,18 +42,20 @@ proc inv* =
  cursorUp()
  eraseLine()
 
-proc drawMenu*(sub,x:string) =
+#[proc drawMenu*(sub,x:string) =
  clear()
  say fmt"PNimRP > {sub}"
  sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat int terminalWidth() / 12
  sayPos 4, fmt"{sub} Station Playing Music:"
  sayIter x
-
-proc drawMenu*(sub,sect,x:string) =
+]#
+proc drawMenu*(sub,x:string; sect = "") =
  clear()
- say fmt"PNimRP > {sub} > {sect}"
+ if sect == "": say fmt"PNimRP > {sub}"
+ else: say fmt"PNimRP > {sub} > {sect}"
  sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat int terminalWidth() / 12
- sayPos 4, fmt"{sect} Station Playing Music:"
+ if sect == "": sayPos 4, fmt"{sub} Station Playing Music:"
+ else: sayPos 4, fmt"{sect} Station Playing Music:"
  sayIter x
 
 proc back*(x:uint32) =

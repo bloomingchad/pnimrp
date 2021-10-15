@@ -3,7 +3,7 @@
 version       = "0.1.0"
 author        = "antonl05"
 description   = "a port of pmrp in nim"
-license       = "MIT"
+license       = "GPL-3.0"
 srcDir        = "src"
 bin           = @["pnimrp"]
 
