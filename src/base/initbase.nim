@@ -3,10 +3,8 @@ from strformat import fmt
 from terminal import showCursor,hideCursor
 
 proc checkFileIter(x:seq[string]):bool =
- var i:uint8 = 0
  for f in x:
-  if fileExists fmt"pnimrp.d/{x[i]}.json": inc i
-  else: return false
+  if not fileExists fmt"pnimrp.d/{f}.json": return false
  return true
 
 proc init* =

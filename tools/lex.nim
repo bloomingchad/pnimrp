@@ -4,7 +4,7 @@ from os import commandLineParams
 from sequtils import delete
 
 let lex = commandLineParams()
-if lex == @[]: echo "give files" ; quit QuitFailure
+if lex == @[]: echo "give files"; quit QuitFailure
 
 for f in lex.low..lex.high:
  try:
@@ -14,32 +14,31 @@ for f in lex.low..lex.high:
    var inSeq = splitLines readFile file
    if inSeq[0].contains "{": echo "info: ",file," processed?"
    else:
-    var lo = inSeq.low
-    var hi = inSeq.high
+    var
+     lo = inSeq.low
+     hi = inSeq.high
+     ind = inSeq[f]
     for f in lo..hi:
-     if ( inSeq[f].find "=" ) == -1: echo "info: ", file, " ", f + 1, ": aldready processed or has space"
-     elif inSeq[f] == "":
+     if ( ind.find "=" ) == -1: echo "info: ", file, " ", f + 1, ": aldready processed or has space"
+     elif ind == "":
       inSeq.delete(f,f)
-      var e = int( inSeq.high / 2 ) - int( inSeq.high - f )
+      var e = int(hi / 2) - int(hi - f)
       inSeq.delete(e,e)
-      lo = inSeq.low
-      hi = inSeq.high
       echo "info: ", file, " ", f + 1, ": line is nil"
-     elif inSeq[f].contains "onomy":
-      inSeq[f] = ""
+     elif ind.contains "onomy":
+      ind = ""
       inSeq[int( inSeq.high / 2 ) - int( inSeq.high - f )] = ""
       echo "info: ", file, " ", f + 1, ": line had radionomy link"
      else:
-      inSeq[f] = strip inSeq[f]
-      if inSeq[f][4] == '0': strutils.delete inSeq[f], 4,4
-      inseq[f] = "  \"" & inSeq[f]
-      inSeq[f] = inSeq[f].replace("=", "\": ")
+      ind = strip ind
+      if ind[4] == '0': strutils.delete ind, 4,4
+      ind = "  \"" & ind
+      ind = ind.replace("=", "\": ")
       #if f == inSeq.high - 1: discard else: 
-      inSeq[f] = inSeq[f] & ","
+      ind = ind & ","
 
     inSeq = "{" & inSeq
     var e = strip inSeq.join "\x0D\x0A"
     e.add "\x0D\x0A}\x0D\x0A"
     file.writeFile e
  except IOError,OSError: echo "no such file"
- except: echo "unexpected error"
