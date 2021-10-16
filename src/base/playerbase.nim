@@ -12,13 +12,7 @@ proc exec*(x:string,args:openArray[string]; stream = false) =
 
 proc exit(ctx:ptr mpv_handle; term = false) =
  if term: mpv_terminate_destroy ctx
- echo ""
- showCursor()
- stdout.styledWriteLine fgCyan ,"when I die, just keep playing the records"
- echo fmt"free mem: {getFreeMem() / 1024} kB"
- echo fmt"total/max mem: {getTotalMem() / 1024} kB"
- echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
- quit QuitSuccess
+ exitEcho()
 
 proc init(parm:string,ctx: ptr mpv_handle) =
  let file = allocCStringArray ["loadfile", parm] #couldbe file,link,playlistfile
@@ -41,8 +35,7 @@ proc player(parm:string) =
   sleep 50
   case getch():
    of 'p','m','P','M':
-    setCursorXPos 4
-    warn "Paused/Muted"
+    warn "Paused/Muted",4
     cursorUp()
     mpv_terminate_destroy ctx
     sleep 50
