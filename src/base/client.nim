@@ -1,291 +1,280 @@
-#client.h nim binding for libmpv
+##[
+this module contains bindings for libmpvs client.h used to play streams.
+the module does not wrap deprecated functions.
+first templates, consts, then types, procedures at last.
+this module renames procedures so to better look with language,
+like seen in SDL2 module.
+Please refer to official documentation available in mpv/client.h for most information
+
+Cites
+- c2nim -> wrapped most of the types
+]##
+
 from terminal import showCursor
+
 when defined posix: {.push dynlib: "libmpv.so".}
 when defined windows: {.push dynlib: "mpv-1.dll".}
 
-template MPV_MAKE_VERSION*(major, minor: untyped): untyped = major shl 16 or minor or 0'u32
+#templates
+template makeVersion*(major, minor: untyped): untyped = major shl 16 or minor or 0'u32
 
-const MPV_CLIENT_API_VERSION* = MPV_MAKE_VERSION(1, 107)
+#consts
+const clientApiVersion* = makeVersion(1, 107)
 
-#types gofirst
-#mpv_depreciated has been merged without a when block
-type
-  mpv_handle* = distinct pointer
+#types
+type #enums
+  error* = enum ##errors codes returned by api functions
+    errGeneric              = -20,
+    errNotImplemented       = -19,
+    errUnsupported          = -18,
+    errUnknownFormat        = -17,
+    errNothingToPlay        = -16,
+    errVOInitFailed         = -15,
+    errAOInitFailed         = -14,
+    errLoadFaile            = -13,
+    errCmd                  = -12,
+    errOnProperty           = -11,
+    errPropertyUnavailable  = -10,
+    errPropertyFormat       = -9,
+    errPropertyNotFound     = -8,
+    errOnOption             = -7,
+    errOptionFormat         = -6,
+    errOptionNotFound       = -5,
+    errInvalidParameter     = -4,
+    errUninitialized        = -3,
+    errNoMem                = -2,
+    errEventQueueFull       = -1,
+    errSuccess              =  0
 
-  INNER_C_UNION_client_1* {.bycopy, union.} = object
-    string*: cstring
-    flag*, int64*: cint
+  format* = enum
+    formatNone       = 0,
+    formatString     = 1,
+    formatOSDString  = 2,
+    formatFlag       = 3,
+    formatInt64      = 4,
+    formatFloat64    = 5,
+    formatNode       = 6,
+    formatNodeArray  = 7,
+    formatNodeMap    = 8,
+    formatByteArray  = 9
+
+  eventID* = enum
+    eventIDNone              = 0,
+    eventIDShutdown          = 1,
+    eventIDLogMessage        = 2,
+    eventIDGetPropertyReply  = 3,
+    eventIDSetPropertyReply  = 4,
+    eventIDCommandReply      = 5,
+    eventIDStartFile         = 6,
+    eventIDEndFile           = 7,
+    eventIDFileLoaded        = 8,
+    eventIDIdle              = 11,
+    eventIDClientMessage     = 16,
+    eventIDVideoReConfig     = 17,
+    eventIDAudioReConfig     = 18,
+    eventIDSeek              = 20,
+    eventIDPlayBackRestart   = 21,
+    eventIDPropertyChange    = 22,
+    eventIDQueueOverFlow     = 24,
+    eventIDHook              = 25
+
+  endFileReason* = enum
+    endFileReasonEOF         = 0,
+    endFileReasonStop        = 2,
+    endFileReasonQuit        = 3,
+    endFileReasonError       = 4,
+    endFileReasonReDirect    = 5
+
+  logLevel* = enum
+    logLevelNone   = 0,  ##no messages
+    logLevelFatal  = 10, ##fatal/abortive erres
+    logLevelError  = 20, ##simple errors
+    logLevelWarn   = 30, ##possible problem warnings
+    logLevelInfo   = 40, ##info
+    logLevelV      = 50, ##noisy info
+    logLevelDebug  = 60, ##more noisy verbose info
+    logLevelTrace  = 70  ##extermely verbose
+
+#Type Objects
+  handle* =  distinct pointer  ##basic type that is essential, used to infer the context
+
+  clientUnionType* {.bycopy, union.} = object
+    str*: cstring
+    flag*, integer*: cint
     double*: cdouble
-    list*: ptr mpv_node_list
-    ba*: ptr mpv_byte_array
+    list*: ptr nodeList
+    ba*: ptr byteArray
 
-  mpv_error* = enum
-    MPV_ERROR_GENERIC               = -20,
-    MPV_ERROR_NOT_IMPLEMENTED       = -19,
-    MPV_ERROR_UNSUPPORTED           = -18,
-    MPV_ERROR_UNKNOWN_FORMAT        = -17,
-    MPV_ERROR_NOTHING_TO_PLAY       = -16,
-    MPV_ERROR_VO_INIT_FAILED        = -15,
-    MPV_ERROR_AO_INIT_FAILED        = -14,
-    MPV_ERROR_LOADING_FAILED        = -13,
-    MPV_ERROR_COMMAND               = -12,
-    MPV_ERROR_PROPERTY_ERROR        = -11,
-    MPV_ERROR_PROPERTY_UNAVAILABLE  = -10,
-    MPV_ERROR_PROPERTY_FORMAT       = -9,
-    MPV_ERROR_PROPERTY_NOT_FOUND    = -8,
-    MPV_ERROR_OPTION_ERROR          = -7,
-    MPV_ERROR_OPTION_FORMAT         = -6,
-    MPV_ERROR_OPTION_NOT_FOUND      = -5,
-    MPV_ERROR_INVALID_PARAMETER     = -4,
-    MPV_ERROR_UNINITIALIZED         = -3,
-    MPV_ERROR_NOMEM                 = -2,
-    MPV_ERROR_EVENT_QUEUE_FULL      = -1,
-    MPV_ERROR_SUCCESS = 0
+  node* {.bycopy.} = object
+    u*: clientUnionType
+    format*: format
 
-  mpv_format* = enum
-    MPV_FORMAT_NONE                 = 0,
-    MPV_FORMAT_STRING               = 1,
-    MPV_FORMAT_OSD_STRING           = 2,
-    MPV_FORMAT_FLAG                 = 3,
-    MPV_FORMAT_INT64                = 4,
-    MPV_FORMAT_DOUBLE               = 5,
-    MPV_FORMAT_NODE                 = 6,
-    MPV_FORMAT_NODE_ARRAY           = 7,
-    MPV_FORMAT_NODE_MAP             = 8,
-    MPV_FORMAT_BYTE_ARRAY           = 9
-
-  mpv_event_id* = enum
-    MPV_EVENT_NONE                  = 0,
-    MPV_EVENT_SHUTDOWN              = 1,
-    MPV_EVENT_LOG_MESSAGE           = 2,
-    MPV_EVENT_GET_PROPERTY_REPLY    = 3,
-    MPV_EVENT_SET_PROPERTY_REPLY    = 4,
-    MPV_EVENT_COMMAND_REPLY         = 5,
-    MPV_EVENT_START_FILE            = 6,
-    MPV_EVENT_END_FILE              = 7,
-    MPV_EVENT_FILE_LOADED           = 8,
-    MPV_EVENT_TRACKS_CHANGED        = 9,
-    MPV_EVENT_TRACK_SWITCHED        = 10,
-    MPV_EVENT_IDLE                  = 11,
-    MPV_EVENT_PAUSE                 = 12,
-    MPV_EVENT_UNPAUSE               = 13,
-    MPV_EVENT_TICK                  = 14,
-    MPV_EVENT_SCRIPT_INPUT_DISPATCH = 15,
-    MPV_EVENT_CLIENT_MESSAGE        = 16,
-    MPV_EVENT_VIDEO_RECONFIG        = 17,
-    MPV_EVENT_AUDIO_RECONFIG        = 18,
-    MPV_EVENT_METADATA_UPDATE       = 19,
-    MPV_EVENT_SEEK                  = 20,
-    MPV_EVENT_PLAYBACK_RESTART      = 21,
-    MPV_EVENT_PROPERTY_CHANGE       = 22,
-    MPV_EVENT_CHAPTER_CHANGE        = 23,
-    MPV_EVENT_QUEUE_OVERFLOW        = 24,
-    MPV_EVENT_HOOK                  = 25
-
-  mpv_end_file_reason* = enum
-    MPV_END_FILE_REASON_EOF         = 0,
-    MPV_END_FILE_REASON_STOP        = 2,
-    MPV_END_FILE_REASON_QUIT        = 3,
-    MPV_END_FILE_REASON_ERROR       = 4,
-    MPV_END_FILE_REASON_REDIRECT    = 5
-
-  mpv_node* {.bycopy.} = object
-    u*: INNER_C_UNION_client_1
-    format*: mpv_format
-
-  mpv_node_list* {.bycopy.} = object
+  nodeList* {.bycopy.} = object
     num*: cint
-    values*: ptr mpv_node
+    values*: ptr node
     keys*: cstringArray
 
-  mpv_byte_array* {.bycopy.} = object
+  byteArray* {.bycopy.} = object
     data*: pointer
     size*: csize_t
 
-  mpv_event_property* {.bycopy.} = object
+  eventProperty* {.bycopy.} = object
     name*: cstring
-    format*: mpv_format
+    format*: format
     data*: pointer
 
-  mpv_log_level* = enum
-    MPV_LOG_LEVEL_NONE              = 0,
-    MPV_LOG_LEVEL_FATAL             = 10,
-    MPV_LOG_LEVEL_ERROR             = 20,
-    MPV_LOG_LEVEL_WARN              = 30,
-    MPV_LOG_LEVEL_INFO              = 40,
-    MPV_LOG_LEVEL_V                 = 50,
-    MPV_LOG_LEVEL_DEBUG             = 60,
-    MPV_LOG_LEVEL_TRACE             = 70
-
-  mpv_event_log_message* {.bycopy.} = object
+  eventLogMessage* {.bycopy.} = object
     prefix*, level*, text*: cstring
-    log_level*: mpv_log_level
+    logLevel*: logLevel
 
-  mpv_event_end_file* {.bycopy.} = object
+  eventEndFile* {.bycopy.} = object
     reason*, error*: cint
 
-  mpv_event_client_message* {.bycopy.} = object
+  eventClientMessage* {.bycopy.} = object
     num_args*: cint
     args*: cstringArray
 
-  mpv_event_hook* {.bycopy.} = object
+  eventHook* {.bycopy.} = object
     name*: cstring
     id*: cint
 
-  mpv_event_command* {.bycopy.} = object
-    result*: mpv_node
+  eventCmd* {.bycopy.} = object
+    result*: node
 
-  mpv_event* {.bycopy.} = object
-    event_id*: mpv_event_id
-    error*, reply_userdata*: cint
+  event* {.bycopy.} = object
+    eventID*: eventID
+    error*, replyUserData*: cint
     data*: pointer
 
-  mpv_event_script_input_dispatch* {.bycopy.} = object
-    arg0*: cint
-    `type`*: cstring
-
-  mpv_sub_api* = enum
-    MPV_SUB_API_OPENGL_CB = 1
-
 #procs
-proc mpv_get_wakeup_pipe*(ctx: ptr mpv_handle): cint
-    {.importc: "mpv_get_wakeup_pipe".}
-
-proc mpv_client_api_version*(): culong
-    {.importc: "mpv_client_api_version".}
-
-proc mpv_error_string*(error: cint): cstring
-    {.importc: "mpv_error_string".}
-
-proc mpv_free*(data: pointer)
-    {.importc: "mpv_free".}
-
-proc mpv_client_name*(ctx: ptr mpv_handle): cstring
-    {.importc: "mpv_client_name".}
-
-proc mpv_create*(): ptr mpv_handle
-    {.importc: "mpv_create".}
-
-proc mpv_initialize*(ctx: ptr mpv_handle): cint
-    {.importc: "mpv_initialize".}
-
-proc mpv_destroy*(ctx: ptr mpv_handle)
-    {.importc: "mpv_destroy".}
-
-proc mpv_terminate_destroy*(ctx: ptr mpv_handle)
-    {.importc: "mpv_terminate_destroy".}
-
-proc mpv_create_client*(ctx: ptr mpv_handle; name: cstring): ptr mpv_handle
-    {.importc: "mpv_create_client".}
-
-proc mpv_create_weak_client*(ctx: ptr mpv_handle; name: cstring): ptr mpv_handle
-    {.importc: "mpv_create_weak_client".}
-
-proc mpv_load_config_file*(ctx: ptr mpv_handle; filename: cstring): cint
-    {.importc: "mpv_load_config_file".}
-
-proc mpv_get_time_us*(ctx: ptr mpv_handle): cint
-    {.importc: "mpv_get_time_us".}
-
-proc mpv_free_node_contents*(node: ptr mpv_node)
-    {.importc: "mpv_free_node_contents".}
-
-proc mpv_set_option*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer): cint
-    {.importc: "mpv_set_option".}
-
-proc mpv_set_option_string*(ctx: ptr mpv_handle; name: cstring; data: cstring): cint
-    {.importc: "mpv_set_option_string".}
-
-proc mpv_command*(ctx: ptr mpv_handle; args: cstringArray): cint
-    {.importc: "mpv_command".}
-
-proc mpv_command_node*(ctx: ptr mpv_handle; args: ptr mpv_node; result: ptr mpv_node): cint
-    {.importc: "mpv_command_node".}
-
-proc mpv_command_ret*(ctx: ptr mpv_handle; args: cstringArray; result: ptr mpv_node): cint
-    {.importc: "mpv_command_ret".}
-
-proc mpv_command_string*(ctx: ptr mpv_handle; args: cstring): cint
-   {.importc: "mpv_command_string".}
-
-proc mpv_command_async*(ctx: ptr mpv_handle; reply_userdata: cint; args: cstringArray): cint
-   {.importc: "mpv_command_async".}
-
-proc mpv_command_node_async*(ctx: ptr mpv_handle; reply_userdata: cint; args: ptr mpv_node): cint
-   {.importc: "mpv_command_node_async".}
-
-proc mpv_abort_async_command*(ctx: ptr mpv_handle; reply_userdata: cint)
+proc abortAsyncCmd*(ctx: ptr handle; replyUserData: cint)
    {.importc: "mpv_abort_async_command".}
 
-proc mpv_set_property*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer): cint 
-   {.importc: "mpv_set_property".}
+proc getClientName*(ctx: ptr handle): cstring
+    {.importc: "mpv_client_name".}
+ ##return the unique client handle name
 
-proc mpv_set_property_string*(ctx: ptr mpv_handle; name: cstring; data: cstring): cint 
-   {.importc: "mpv_set_property_string".}
+proc cmd*(ctx: ptr handle; args: cstringArray): cint
+    {.importc: "mpv_command".}
 
-proc mpv_set_property_async*(ctx: ptr mpv_handle; reply_userdata: cint; name: cstring; format: mpv_format; data: pointer): cint 
-   {.importc: "mpv_set_property_async".}
+proc cmdAsync*(ctx: ptr handle; reply_userdata: cint; args: cstringArray): cint
+   {.importc: "mpv_command_async".}
 
-proc mpv_get_property*(ctx: ptr mpv_handle; name: cstring; format: mpv_format; data: pointer): cint 
-   {.importc: "mpv_get_property".}
+proc cmdNode*(ctx: ptr handle; args, result: ptr node): cint
+    {.importc: "mpv_command_node".}
 
-proc mpv_get_property_string*(ctx: ptr mpv_handle; name: cstring): cstring
-   {.importc: "mpv_get_property_string".}
+proc cmdNodeAsync*(ctx: ptr handle; replyUserData: cint; args: ptr node): cint
+   {.importc: "mpv_command_node_async".}
 
-proc mpv_get_property_osd_string*(ctx: ptr mpv_handle; name: cstring): cstring 
-   {.importc: "mpv_get_property_osd_string".}
+proc cmdRet*(ctx: ptr handle; args: cstringArray; result: ptr node): cint
+    {.importc: "mpv_command_ret".}
 
-proc mpv_get_property_async*(ctx: ptr mpv_handle; reply_userdata: cint; name: cstring; format: mpv_format): cint
-   {.importc: "mpv_get_property_async".}
+proc cmdString*(ctx: ptr handle; args: cstring): cint
+   {.importc: "mpv_command_string".}
 
-proc mpv_observe_property*(mpv: ptr mpv_handle; reply_userdata: cint; name: cstring; format: mpv_format): cint 
-   {.importc: "mpv_observe_property".}
+proc create*: ptr handle
+    {.importc: "mpv_create".}
+ ##create and return a handle used to control the instance
 
-proc mpv_unobserve_property*(mpv: ptr mpv_handle; registered_reply_userdata: cint): cint 
-   {.importc: "mpv_unobserve_property".}
+proc createClient*(ctx: ptr handle; name: cstring): ptr handle
+    {.importc: "mpv_create_client".}
 
-proc mpv_event_name*(event: mpv_event_id): cstring 
+proc createWeakClient*(ctx: ptr handle; name: cstring): ptr handle
+    {.importc: "mpv_create_weak_client".}
+
+proc destroy*(ctx: ptr handle)
+    {.importc: "mpv_destroy".}
+
+proc errorString*(error: cint): cstring
+    {.importc: "mpv_error_string".}
+
+proc eventName*(event: eventID): cstring 
    {.importc: "mpv_event_name".}
 
-proc mpv_detach_destroy*(ctx: ptr mpv_handle) 
-   {.importc: "mpv_detach_destroy".}
+proc free*(data: pointer)
+    {.importc: "mpv_free".}
 
-proc mpv_suspend*(ctx: ptr mpv_handle) 
-   {.importc: "mpv_suspend".}
+proc freeNodeContents*(node: ptr node)
+    {.importc: "mpv_free_node_contents".}
 
-proc mpv_resume*(ctx: ptr mpv_handle)
-   {.importc: "mpv_resume".}
+proc getClientApiVersion*: culong
+ {.importc: "mpv_client_api_version".}
+ ##return api version of libmpv
 
-proc mpv_get_sub_api*(ctx: ptr mpv_handle; sub_api: mpv_sub_api): pointer 
-   {.importc: "mpv_get_sub_api".}
+proc getProperty*(ctx: ptr handle; name: cstring; format: format; data: pointer): cint 
+   {.importc: "mpv_get_property".}
 
-proc mpv_request_event*(ctx: ptr mpv_handle; event: mpv_event_id; enable: cint): cint
-   {.importc: "mpv_request_event".}
+proc getPropertyAsync*(ctx: ptr handle; replyUserData: cint; name: cstring; format: format): cint
+   {.importc: "mpv_get_property_async".}
 
-proc mpv_request_log_messages*(ctx: ptr mpv_handle; min_level: cstring): cint
-   {.importc: "mpv_request_log_messages".}
+proc getPropertyOSDString*(ctx: ptr handle; name: cstring): cstring 
+   {.importc: "mpv_get_property_osd_string".}
 
-proc mpv_wait_event*(ctx: ptr mpv_handle; timeout: cdouble): ptr mpv_event 
-   {.importc: "mpv_wait_event".}
+proc getPropertyString*(ctx: ptr handle; name: cstring): cstring
+   {.importc: "mpv_get_property_string".}
 
-proc mpv_wakeup*(ctx: ptr mpv_handle) 
-   {.importc: "mpv_wakeup".}
+proc getTimeUS*(ctx: ptr handle): cint
+    {.importc: "mpv_get_time_us".}
 
-proc mpv_set_wakeup_callback*(ctx: ptr mpv_handle; cb: proc (d: pointer); d: pointer) 
-   {.importc: "mpv_set_wakeup_callback".}
-
-proc mpv_wait_async_requests*(ctx: ptr mpv_handle)
-   {.importc: "mpv_wait_async_requests".}
-
-proc mpv_hook_add*(ctx: ptr mpv_handle; reply_userdata: cint; name: cstring; priority: cint): cint
+proc hookAdd*(ctx: ptr handle; replyUserData: cint; name: cstring; priority: cint): cint
    {.importc: "mpv_hook_add".}
 
-proc mpv_hook_continue*(ctx: ptr mpv_handle; id: cint): cint 
+proc hookContinue*(ctx: ptr handle; id: cint): cint
    {.importc: "mpv_hook_continue".}
 
-proc check_error*(status: cint) {.inline.} =
+proc initialize*(ctx: ptr handle): cint
+    {.importc: "mpv_initialize".}
+
+proc loadConfigFile*(ctx: ptr handle; filename: cstring): cint
+    {.importc: "mpv_load_config_file".}
+
+proc observeProperty*(mpv: ptr handle; replyUserData: cint; name: cstring; format: format): cint 
+   {.importc: "mpv_observe_property".}
+
+proc requestEvent*(ctx: ptr handle; event: eventID; enable: cint): cint
+   {.importc: "mpv_request_event".}
+
+proc requestLogMsgs*(ctx: ptr handle; min_level: cstring): cint
+   {.importc: "mpv_request_log_messages".}
+
+proc setOption*(ctx: ptr handle; name: cstring; format: format; data: pointer): cint
+    {.importc: "mpv_set_option".}
+
+proc setOptionString*(ctx: ptr handle; name: cstring; data: cstring): cint
+    {.importc: "mpv_set_option_string".}
+
+proc setProperty*(ctx: ptr handle; name: cstring; format: format; data: pointer): cint 
+   {.importc: "mpv_set_property".}
+
+proc setPropertyAsync*(ctx: ptr handle; replyUserData: cint; name: cstring; format: format; data: pointer): cint 
+   {.importc: "mpv_set_property_async".}
+
+proc setPropertyString*(ctx: ptr handle; name: cstring; data: cstring): cint 
+   {.importc: "mpv_set_property_string".}
+
+proc setWakeupCallback*(ctx: ptr handle; cb: proc (d: pointer); d: pointer) 
+   {.importc: "mpv_set_wakeup_callback".}
+
+proc terminateDestroy*(ctx: ptr handle)
+    {.importc: "mpv_terminate_destroy".}
+
+proc unobserveProperty*(mpv: ptr handle; registeredReplyUserData: cint): cint 
+   {.importc: "mpv_unobserve_property".}
+
+proc waitAsyncRequests*(ctx: ptr handle)
+   {.importc: "mpv_wait_async_requests".}
+
+proc waitEvent*(ctx: ptr handle; timeout: cdouble): ptr event
+   {.importc: "mpv_wait_event".}
+
+proc wakeup*(ctx: ptr handle)
+   {.importc: "mpv_wakeup".}
+
+proc checkError*(status: cint) =
+ ##unofficial: checks the return value of enclosed function,
+ ##and if less than 0 quit with failure exit status
  if status < 0:
-  echo "mpv API error: ", mpv_error_string status
+  echo "mpv API error: ", errorString status
   showCursor()
   quit QuitFailure
 

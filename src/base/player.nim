@@ -1,7 +1,7 @@
 from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspend,resume
 from strutils import contains,repeat
 from os import findExe,sleep,getCurrentDir
-from termbase import warn,say,sayPos,inv,clear,exitEcho
+from term import warn,say,sayPos,inv,clear,exitEcho
 from terminal import terminalWidth,setCursorXPos,getch,cursorUp,eraseLine,showCursor,styledWriteLine,fgCyan
 from strformat import fmt
 import client
@@ -10,40 +10,40 @@ proc exec*(x:string,args:openArray[string]; stream = false) =
  if stream: discard waitForExit startProcess(x,args=args,options={poUsePath,poParentStreams})
  else: discard waitForExit startProcess(x,args=args,options={poUsePath})
 
-proc exit(ctx:ptr mpv_handle; term = false) =
- if term: mpv_terminate_destroy ctx
+proc exit(ctx:ptr handle; term = false) =
+ if term: terminateDestroy ctx
  exitEcho()
 
-proc init(parm:string,ctx: ptr mpv_handle) =
+proc init(parm:string,ctx: ptr handle) =
  let file = allocCStringArray ["loadfile", parm] #couldbe file,link,playlistfile
  var val: cint = 1
- check_error ctx.mpv_set_option("osc", MPV_FORMAT_FLAG, addr val)
- check_error mpv_initialize ctx
- check_error ctx.mpv_command file
+ checkError ctx.setOption("osc", formatFlag, addr val)
+ checkError initialize ctx
+ checkError ctx.cmd file
 
-proc player(parm:string) =
- let ctx = mpv_create()
+proc player*(parm:string) =
+ let ctx = create()
  init parm, ctx
  var j = true
  var e = false
- var event = ctx.mpv_wait_event 1000
+ var event = ctx.waitEvent 1000
  while true:
   if j: sayPos 4, "Playing"; cursorUp(); j = false
-  event = ctx.mpv_wait_event 1000
-  if cast[mpv_event_id](event) == MPV_EVENT_SHUTDOWN: break
-  if cast[mpv_event_id](event) == MPV_EVENT_IDLE: break
+  event = ctx.waitEvent 1000
+  if cast[eventID](event) == eventIDShutdown: break
+  if cast[eventID](event) == eventIDIdle: break
   sleep 50
   case getch():
    of 'p','m','P','M':
     warn "Paused/Muted",4
     cursorUp()
-    mpv_terminate_destroy ctx
+    terminateDestroy ctx
     sleep 50
     while true:
      case getch():
       of 'p','m','P','M':
        eraseLine()
-       let ctx = mpv_create()
+       let ctx = create()
        init parm, ctx
        j = true
        break
@@ -57,7 +57,7 @@ proc player(parm:string) =
     sleep 500
     cursorUp()
     eraseLine()
-   of 'r','R': mpv_terminate_destroy ctx; break
+   of 'r','R': terminateDestroy ctx; break
    of 'q','Q': exit ctx, term = true
    else: inv()
   if e: break

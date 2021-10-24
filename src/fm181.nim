@@ -1,6 +1,6 @@
 from os import sleep
 import terminal
-import base/[termbase,menu]
+import base/[term,menu]
 
 proc fm181* =
  const sub = "181FM"
