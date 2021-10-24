@@ -1,4 +1,4 @@
-import playerbase,termbase
+import player,term
 from terminal import getch
 from json import getStr, `{}`,JsonNode,parseJson
 from os import sleep

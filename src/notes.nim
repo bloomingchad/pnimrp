@@ -1,4 +1,4 @@
-import base/[termbase, playerbase]
+import base/[term, player]
 from os import sleep
 from terminal import getch,terminalWidth,showCursor,hideCursor
 from strutils import repeat

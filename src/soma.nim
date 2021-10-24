@@ -1,6 +1,6 @@
 from os import sleep
 from terminal import getch
-import base/[termbase,menu]
+import base/[term,menu]
 
 proc soma* =
  const sub = "SomaFM"
