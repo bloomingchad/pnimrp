@@ -1,7 +1,7 @@
 from os import sleep
 from strutils import repeat
 from terminal import getch,terminalWidth
-import base/[termbase,initbase,menu], notes, fm181, soma, listener
+import base/[term,init,menu], notes, fm181, soma, listener
 
 init()
 
