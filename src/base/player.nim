@@ -32,13 +32,12 @@ proc player*(parm:string) =
   event = ctx.waitEvent 1000
   if cast[eventID](event) == eventIDShutdown: break
   if cast[eventID](event) == eventIDIdle: break
-  sleep 50
   case getch():
    of 'p','m','P','M':
     warn "Paused/Muted",4
     cursorUp()
     terminateDestroy ctx
-    sleep 50
+    sleep 500
     while true:
      case getch():
       of 'p','m','P','M':
