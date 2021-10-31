@@ -40,11 +40,11 @@ type #enums
     errOnOption             = -7,
     errOptionFormat         = -6,
     errOptionNotFound       = -5,
-    errInvalidParameter     = -4,
-    errUninitialized        = -3,
-    errNoMem                = -2,
+    errInvalidParameter     = -4, ##error when parameter is invalid or unsupported
+    errUninitialized        = -3, ##set an option that doesnt exist
+    errNoMem                = -2, ##memory allocation failed
     errEventQueueFull       = -1,
-    errSuccess              =  0
+    errSuccess              =  0   ##no error, >= 0 means success
 
   format* = enum
     formatNone       = 0,
@@ -79,11 +79,11 @@ type #enums
     eventIDHook              = 25
 
   endFileReason* = enum
-    endFileReasonEOF         = 0,
-    endFileReasonStop        = 2,
-    endFileReasonQuit        = 3,
-    endFileReasonError       = 4,
-    endFileReasonReDirect    = 5
+    endFileReasonEOF         = 0, ##reaching end of file. network issues, corrupted packets?
+    endFileReasonStop        = 2, ##external action (controls?)
+    endFileReasonQuit        = 3, ##quitted
+    endFileReasonError       = 4, ##some error made it stop.
+    endFileReasonReDirect    = 5  ##playlist endofFile redirect mechanism
 
   logLevel* = enum
     logLevelNone   = 0,  ##no messages

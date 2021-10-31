@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "git-dev"
 author        = "antonl05"
 description   = "a port of pmrp in nim"
 license       = "GPL-3.0-or-later"

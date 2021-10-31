@@ -1,4 +1,3 @@
-from os import sleep
 import terminal
 import base/[term,menu]
 
@@ -21,7 +20,6 @@ B Urban
 R Return
 Q Quit"""
   while true:
-   sleep 100
    case getch():
     of '1': endMenu5 sub,"fm181/eight181","80s"; break
     of '2': endMenu5 sub,"fm181/nine181","90s"; break

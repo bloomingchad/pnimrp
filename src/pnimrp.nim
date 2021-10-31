@@ -1,4 +1,3 @@
-from os import sleep
 from strutils import repeat
 from terminal import getch,terminalWidth
 import base/[term,init,menu], notes, fm181, soma, listener
@@ -28,7 +27,6 @@ G Urban
 N Notes
 Q Quit PMRP"""
  while true:
-  sleep 100
   case getch():
    of '1': fm181(); break
    of '2': endMenu3 "Blues","blues"; break

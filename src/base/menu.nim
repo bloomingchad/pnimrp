@@ -1,7 +1,6 @@
 import player,term
 from terminal import getch
 from json import getStr, `{}`,JsonNode,parseJson
-from os import sleep
 from strformat import fmt
 
 proc parseJ(x:string):JsonNode = parseJson readFile fmt"pnimrp.d/{x}.json"
@@ -9,8 +8,8 @@ proc parseJ(x:string):JsonNode = parseJson readFile fmt"pnimrp.d/{x}.json"
 proc endMenu3*(sub,file:string; sect = "") =
  let node = parseJ file
  var n,l:seq[string] = @[]
- for f in 1..3: n.add getStr node{ "Name" & $f }
- for f in 1..3: l.add getStr node{ "link" & $f }
+ for f in '1'..'3': n.add getStr node{ "Name" & f }
+ for f in '1'..'3': l.add getStr node{ "link" & f }
  while true:
   var j = false
   var o = fmt"""1 {n[0]}
@@ -18,10 +17,8 @@ proc endMenu3*(sub,file:string; sect = "") =
 3 {n[2]}
 R Return
 Q Exit"""
-  if sect == "": drawMenu sub,o
-  else: drawMenu sub,o,sect
+  drawMenu sub,o,sect
   while true:
-   sleep 100
    case getch():
     of '1': call sub,sect,n[0],l[0]; break
     of '2': call sub,sect,n[1],l[1]; break
@@ -34,8 +31,8 @@ Q Exit"""
 proc endMenu5*(sub,file:string; sect = "") =
  let node = parseJ file
  var n,l:seq[string] = @[]
- for f in 1..5: n.add getStr node{ "Name" & $f }
- for f in 1..5: l.add getStr node{ "link" & $f }
+ for f in '1'..'5': n.add getStr node{ "Name" & f }
+ for f in '1'..'5': l.add getStr node{ "link" & f }
  while true:
   var j = false
   var o = fmt"""1 {n[0]}
@@ -45,10 +42,8 @@ proc endMenu5*(sub,file:string; sect = "") =
 5 {n[4]}
 R Return
 Q Exit"""
-  if sect == "": drawMenu sub,o
-  else: drawMenu sub,o,sect
+  drawMenu sub,o,sect
   while true:
-   sleep 100
    case getch():
     of '1': call sub,sect,n[0],l[0]; break
     of '2': call sub,sect,n[1],l[1]; break
@@ -79,10 +74,8 @@ proc endMenu10*(sub,file:string; sect = "") =
 A {n[9]}
 R Return
 Q Exit"""
-  if sect == "": drawMenu sub,o
-  else: drawMenu sub,o,sect
+  drawMenu sub,o,sect
   while true:
-   sleep 100
    case getch():
     of '1': call sub,sect,n[0],l[0]; break
     of '2': call sub,sect,n[1],l[1]; break
@@ -123,10 +116,8 @@ E {n[13]}
 F {n[14]}
 R Return
 Q Exit"""
-  if sect == "": drawMenu sub,o
-  else: drawMenu sub,o,sect
+  drawMenu sub,o,sect
   while true:
-   sleep 100
    case getch():
     of '1': call sub,sect,n[0],l[0]; break
     of '2': call sub,sect,n[1],l[1]; break
