@@ -8,7 +8,7 @@ while true:
  clear()
  say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
  sayPos 4,"Station Categories:"
- sayIter """1 181FM
+ sayIter """1 FM181
 2 Blues
 3 Bollywood
 4 Classical

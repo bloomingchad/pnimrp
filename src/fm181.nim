@@ -2,7 +2,7 @@ import terminal
 import base/[term,menu]
 
 proc fm181* =
- const sub = "181FM"
+ const sub = "FM181"
  while true:
   clear()
   var j = false

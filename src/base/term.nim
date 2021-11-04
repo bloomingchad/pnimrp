@@ -18,30 +18,27 @@ proc exitEcho* =
 
 proc say*(txt:string) = styledEcho fgYellow,txt
 
-proc sayPos*(x:int,a:string) =
+proc sayPos*(x:int,a:string; echo = true) =
  setCursorXPos x
- styledEcho fgGreen,a
+ if echo: styledEcho fgGreen,a
+ else: stdout.styledWrite fgGreen,a
 
 proc sayIter*(txt:string) =
- var e = splitLines txt
- for f in e:
+ for f in splitLines txt:
   setCursorXPos 5
   styledEcho fgBlue, f
 
-proc sayC*(txt:string) =
- setCursorXPos 5
- styledEcho fgBlue,txt
-
 proc warn*(txt:string; x = -1) =
- if not x == -1: setCursorXPos x
+ if not(x == -1): setCursorXPos x
  styledEcho fgRed,txt
+ sleep 500
 
 proc inv* =
- warn "INVALID CHOICE"
- sleep 350
- eraseLine()
+ cursorDown()
+ warn "INVALID CHOICE", 4
  cursorUp()
  eraseLine()
+ cursorUp()
 
 proc drawMenu*(sub,x:string; sect = "") =
  clear()
@@ -51,8 +48,3 @@ proc drawMenu*(sub,x:string; sect = "") =
  if sect == "": sayPos 4, fmt"{sub} Station Playing Music:"
  else: sayPos 4, fmt"{sect} Station Playing Music:"
  sayIter x
-
-proc back*(x:uint32) =
- for a in 1..x:
-  cursorUp()
-  eraseLine()
