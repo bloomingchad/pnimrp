@@ -36,4 +36,14 @@ proc cls(x:int) =
   tb.display()
 
 proc parse*(x:string):seq[string] = splitLines readFile fmt"pnimrp.d/{x}"
+
+proc sayC*(txt:string) =
+ setCursorXPos 5
+ styledEcho fgBlue,txt
+
+proc back*(x:uint32) =
+ for a in 1..x:
+  cursorUp()
+  eraseLine()
+
 ]#

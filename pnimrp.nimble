@@ -2,7 +2,7 @@
 
 version       = "git-dev"
 author        = "antonl05"
-description   = "a port of pmrp in nim"
+description   = "a Terminal based audio player in nim"
 license       = "GPL-3.0-or-later"
 srcDir        = "src"
 bin           = @["pnimrp"]

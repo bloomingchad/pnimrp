@@ -3,7 +3,7 @@ from terminal import getch
 from json import getStr, `{}`,JsonNode,parseJson
 from strformat import fmt
 
-proc parseJ(x:string):JsonNode = parseJson readFile fmt"pnimrp.d/{x}.json"
+proc parseJ(x:string):JsonNode = parseJson readFile fmt"assets/{x}.json"
 
 proc endMenu3*(sub,file:string; sect = "") =
  let node = parseJ file

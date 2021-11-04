@@ -1,5 +1,4 @@
 import base/[term, player]
-from os import sleep
 from terminal import getch,terminalWidth,showCursor,hideCursor
 from strutils import repeat
 from strformat import fmt
@@ -18,20 +17,18 @@ under certain conditions. press `t` for details"""
   while true:
    case getch():
     of 'T','t':
-     when defined windows: exec "notepad.exe",["TERMS"], stream = true; break
+     when defined windows: exec "notepad.exe",["LICENSE"], stream = true; break
      when defined posix:
       when defined android:
        showCursor()
-       exec "editor",["TERMS"], stream = true
+       exec "editor",["LICENSE"], stream = true
        hideCursor()
        break
       else:
        warn "type esc, :q and enter to exit"
-       say "Please wait..."
-       sleep 750
        showCursor()
-       exec "vi",["TERMS"], stream = true
-     else: showCursor(); echo "please open TERMS file"; quit QuitSuccess
+       exec "vi",["LICENSE"], stream = true
+     else: showCursor(); echo "please open LICENSE file"; quit QuitSuccess
     of 'r','R': j = true; break
     of 'Q','q': exitEcho()
     else: inv()
