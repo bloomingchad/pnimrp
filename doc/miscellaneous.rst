@@ -1,15 +1,16 @@
 ============
 Miscellanous
 ============
+.. default-role:: code
+.. include:: rstcommon.rst
+.. contents::
 
 Introduction
 ------------
-
 This document contains some miscellanous stuff like history, changes, thoughts...
 
 Thoughts and History
 --------------------
-
 This project was conceived by a overnight thought about rewriting pmrp,
 (parent project) by hand to another langauge, for knowing shell better and
 knowing the target language better, which at that time was C.
