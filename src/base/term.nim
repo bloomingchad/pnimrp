@@ -31,7 +31,9 @@ proc sayIter*(txt:string) =
 proc warn*(txt:string; x = -1) =
  if not(x == -1): setCursorXPos x
  styledEcho fgRed,txt
- sleep 500
+ #if echo == false: stdout.styledWrite fgRed,txt
+ #default Args dosent seem to be working?
+ sleep 750
 
 proc inv* =
  cursorDown()

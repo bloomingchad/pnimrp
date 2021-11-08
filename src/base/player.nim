@@ -1,7 +1,7 @@
 from osproc import startProcess,waitForExit,poUsePath,poParentStreams,kill,suspend,resume
 from strutils import contains,repeat
 from term import warn,say,sayPos,inv,clear,exitEcho
-from terminal import terminalWidth,setCursorXPos,getch,cursorUp,eraseLine,showCursor,styledWriteLine,fgCyan
+from terminal import terminalWidth,setCursorXPos,getch,cursorUp,cursorDown,eraseLine,showCursor,styledWriteLine,fgCyan
 from strformat import fmt
 import client
 
@@ -36,6 +36,7 @@ proc call*(sub:string; sect = ""; stat,link:string) =
    event = ctx.waitEvent 1000
   while true:
    if j: sayPos 4, "Playing"; cursorUp(); j = false
+   #remove cursorUp
    event = ctx.waitEvent 1000
    if cast[eventID](event) == eventIDShutdown: break
    if cast[eventID](event) == eventIDIdle: break
@@ -58,9 +59,11 @@ proc call*(sub:string; sect = ""; stat,link:string) =
     of '/':
      when defined linux: exec "amixer",["--quiet","set","PCM","7%+"]
      #when defined windows: exec "nircmd",["changesysvolume","5000"]
-     warn "Volume+"
+     cursorDown()
+     warn "Volume+", 4
      cursorUp()
      eraseLine()
+     cursorUp()
     of 'r','R': terminateDestroy ctx; break
     of 'q','Q': exit ctx, term = true
     else: inv()

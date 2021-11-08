@@ -1,6 +1,7 @@
 ======================
 User Manual for PNimRP
 ======================
+.. include:: rstcommon.rst
 
 Table Of Contents
 -----------------
@@ -10,7 +11,6 @@ Table Of Contents
 
 Supported Platforms
 -------------------
-
 Ceiling of supportiveness boils down to the usage of audio api used
 to play streams,and not because of the application code, thus can be
 extended in the future
@@ -27,5 +27,6 @@ for it (as in tty).
 
 Controls
 --------
-
-General Controls extend
+General Controls are using given numbers or characters to select the menu.
+where R would return and q would quit out of the application.
+and when stream is being played, use p to pause/mute or play.

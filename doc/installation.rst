@@ -1,15 +1,16 @@
 ===================
 Installation Manual
 ===================
+.. include:: rstcommon.rst
 
 Difficulty:
  - TODO
 
 Table of Contents
--------------------
+-----------------
   * Dependencies
   * Compliling The Project
-  * Using PreComplied Packages
+  * Using Pre-Complied Packages
 
 Dependencies
 ------------
@@ -21,53 +22,45 @@ any version which is not too old is supported, the stable or developement
 version of api dont matter.
 
 In some POSIX OSes (ArchLinux,BSDs..), the package manager does not provide
-the library intact.while its only available through installing mpv itself!
+the library intact but only available as through installing mpv itself!
 
-For Linux users, per distrobutions:
+For Linux users, as distrobutions:
+ Debian,Ubuntu-based::
+   sudo apt install libmpv-dev
 
-Debian,Ubuntu-based:
- ```
-  sudo apt install libmpv-dev
- ```
+ ArchLinux-based::
+   sudo pacman -S mpv
 
-ArchLinux-based:
- ```
-  sudo pacman -S mpv
- ```
+ Gentoo-based::
+   sudo emerge
 
-Gentoo-based:
- ```
- ```
+ Fedora-based::
+   sudo dnf install mpv
 
-RHEL, Fedora-based:
- ```
- ```
+ OpenSUSE-based::
+   sudo zypper install mpv
 
-OpenSUSE-based:
- ```
- ```
-
-SlackWare-based:
- ```
- ```
+ SlackWare(current)-based (slackel)::
+   wget http://www.slackel.gr/repo/x86_64/current/slackel/extra/mpv-0.32.0-x86_64-3dj.txz
+   sudo upgradepkg --install-new mpv-0.32.0-x86_64-3dj.txz
 
 For Windows Users, mpv-1.dll is required for usage:
- - visit https://sourceforge.net/projects/mpv-player-windows/files/libmpv/
- - download the relevant archive for the given architecture.
- - unpack and place the dll where the executable (pnimrp.exe) is at.
+  - visit https://sourceforge.net/projects/mpv-player-windows/files/libmpv/
+  - download the relevant archive for the given architecture.
+  - unpack and place the dll where the executable (pnimrp.exe) is at.
 
 For BSD Users,
- FreeBSD-based:
-  ```
-   sudo pkg install mpv
-  ```
- OpenBSD,NetBSD-based:
-  ```
-  ```
+  FreeBSD-based::
+    sudo pkg install mpv
 
-For OpenSolaris/Illuminos-based:
- ```
- ```
+  OpenBSD-based::
+    sudo pkg_add mpv
+
+  NetBSD-based::
+    pkgin install mpv
+
+ For OpenSolaris/Illuminos-based::
+   sudo pkg install mpv
 
 For Information about supported platforms read user.rst
 
@@ -76,19 +69,27 @@ Compiling The Project
 Compilation is as simple as running this command at root project folder,
 and is the same regardless the platform.
 
-Using Nimble Package Manager:
- ```
+Using Nimble Package Manager::
   nimble build
- ```
-Using Compiler Directly:
- ```
+
+Using Compiler Directly::
   nim c -d:release -o:pnimrp src/pnimrp
- ```
-or using the shell script provided for POSIX Users:
- ```
-  ./releaseBuild.sh
- ```
+
+Note:
+ * project does not compile under JS backend
 
 Using PreComplied Packages
 --------------------------
-* Packages need to be made available yet!
+Note:
+ * Packages are not available yet!
+ * Windows installer script is not available yet!
+
+The Package is an tar.xz archive, consisting of:
+ - assets/ (application assets)
+ - doc/ (documentaton)
+ - readme.rst (Introduction ReadME)
+ - pnimrp (app)
+ - lib/ (libraries used)
+ - install (installer nim application)
+ - LICENSE
+ - COPYING
