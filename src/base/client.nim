@@ -36,22 +36,31 @@ type #enums
   error* = enum ##errors codes returned by api procs
     errGeneric              = -20, ##unspecified error
     errNotImplemented       = -19, ##proc called was stub-only
+
     errUnsupported          = -18, ##(was system requirements met?)
     errUnknownFormat        = -17, ##file format could not be determined (was file broken?)
+
     errNothingToPlay        = -16, ##no video/audio to play, (was a stream selected?)
     errVOInitFailed         = -15, ##failed to init video output
+
     errAOInitFailed         = -14, ##failed to init audio output
     errLoadFailed           = -13, ##loading failed (used with eventEndFile.error)
+
     errCmd                  = -12, ##error when running a command with cmd()
     errOnProperty           = -11, ##error when set or get property
+
     errPropertyUnavailable  = -10, ##property exists but is unavailable
     errPropertyFormat       = -9,  ##set or get property using unsupported format
+
     errPropertyNotFound     = -8,  ##said property not found
     errOnOption             = -7,  ##setting option failed (parsing errors?)
+
     errOptionFormat         = -6,  ##set option using unsupported format
     errOptionNotFound       = -5,  ##set option that dosent exist
+
     errInvalidParameter     = -4,  ##error when parameter is invalid or unsupported
     errUninitialized        = -3,  ##api wasnt initialized yet
+
     errNoMem                = -2,  ##memory allocation failed
     errEventQueueFull       = -1,  ##client is choked & cant receive any events.
         ##many unanswered asynchronous requests. (is api frozen?, is it an api bug?) 
@@ -60,70 +69,70 @@ type #enums
   format* = enum ##type for options and properties, can get set properties and options,
   ##support multiple formats
     formatNone       = 0, ##invalid, used for empty values
-    formatString     = 1,
-   ##[ basic type is cstring, returning raw property string, see libmpv/input.rst, nil
-   isnt allowed.
-       not always is the encoding in UTF8, atleast on linux,but are always in windows
-       (see libmpv/Encoding of Filenames)
 
-        readableExample:
-         var result:cstring = nil
-         if ctx.getProperty("property", formatString, addr result) < 0:
-          echo "error"
-         echo result
-         free result
+    formatString     = 1, ##[
+     basic type is cstring, returning raw property string, see libmpv/input.rst, nil
+     isnt allowed. not always is the encoding in UTF8, atleast on linux,but are always
+     in windows (see libmpv/Encoding of Filenames)
 
-        runnableExample:
-         var value: cstring = "new value"
-         #pass addr to var, needed for other types and getProperty()
-         ctx.setProperty("property", formatString, addr value)
-       or use setPropertyString()
+     readableExample:
+      var result:cstring = nil
+      if ctx.getProperty("property", formatString, addr result) < 0:
+       echo "error"
+      echo result
+      free result
+
+     runnableExample:
+      var value: cstring = "new value"
+      #pass addr to var, needed for other types and getProperty()
+      ctx.setProperty("property", formatString, addr value)
+     or use setPropertyString()
    ]##
 
-    formatOSDString  = 2,
-   ##[ basic type is cstring, returns OSD property string (see libmpv/input.rst), mostly
-   its a string, but sometimes is formatted for OSD display, being human-readable and
-   not meant to be parsed. is only valid when doing read access.
+    formatOSDString  = 2, ##[
+     basic type is cstring, returns OSD property string (see libmpv/input.rst), mostly
+     its a string, but sometimes is formatted for OSD display, being human-readable and
+     not meant to be parsed. is only valid when doing read access.
    ]##
 
-    formatFlag       = 3,
-   ##[ basic type is int, allowed values are 0=no and 1=yes
+    formatFlag       = 3, ##[
+     basic type is int, allowed values are 0=no and 1=yes
 
-        readableExample:
-         var result: int #int in C, bool in Nim, needs to be tested and edited!
-         if ctx.getProperty("property", formatFlag, addr result) < 0:
-          echo "error"
-         echo if result: "true" else: "false"
+     readableExample:
+      var result: int #int in C, bool in Nim, needs to be tested and edited!
+      if ctx.getProperty("property", formatFlag, addr result) < 0:
+       echo "error"
+      echo if result: "true" else: "false"
 
-        runnableExample:
-         var flag: cint = 1
-         ctx.setProperty("property", formatFlag, addr flag)
+     runnableExample:
+      var flag: cint = 1
+      ctx.setProperty("property", formatFlag, addr flag)
    ]##
 
     formatInt64      = 4, ##basic type is int64
     formatFloat64    = 5, ##(shouldbe called formatDouble), basic type is flaot64
-    formatNode       = 6,
-   ##[ type is node
-       you should pass a pointer to a stack-allocated node value to api, and then call
-       freeNodeContents(addr node). do not write data, copy it manually if needed to.
-       check node.format member. properties might change their type in future versions
-       of api, or even runtime.
 
-       readableExample:
-        var result:node
-        if ctx.getProperty("property", formatNode, addr result) < 0:
-         echo "error"
-        echo "format=", cast[int](result.format)
-        freeNodeContents(addr result)
+    formatNode       = 6, ##[
+     type is node. you should pass a pointer to a stack-allocated node value to api,
+     and then call freeNodeContents(addr node). do not write data, copy it manually
+     if needed to. check node.format member. properties might change their type in
+     future versions of api, or even runtime.
 
-       you should make a node manually, pass pointer to api. api will never write to your
-       data (can use any allocation mechanism)
+     readableExample:
+      var result:node
+      if ctx.getProperty("property", formatNode, addr result) < 0:
+       echo "error"
+      echo "format=", cast[int](result.format)
+      freeNodeContents(addr result)
 
-       runnableExample:
-        var value: node
-        value.format = formatString
-        value.u.str = "hello"
-        ctx.setProperty("property", formatNone, addr value)
+     you should make a node manually, pass pointer to api. api will never write to your
+     data (can use any allocation mechanism)
+
+     runnableExample:
+      var value: node
+      value.format = formatString
+      value.u.str = "hello"
+      ctx.setProperty("property", formatNone, addr value)
    ]##
 
     formatNodeArray  = 7, ##used with node (not directly!)
@@ -135,50 +144,51 @@ type #enums
     eventIDNone              = 0,  ##nothing happened (when timeouts or sporadic wakeups)
     eventIDShutdown          = 1,  ##when player quits, it tries to disconnect all clients
       ##but most requests to player will fail, so client should quit with destroy()
+
     eventIDLogMessage        = 2,  ##see requestLogMessages()
     eventIDGetPropertyReply  = 3,  ##reply to getPropertyAsync(), (see event, eventProperty)
     eventIDSetPropertyReply  = 4,  ##reply to setPropertyAsync(), eventProperty is not used
     eventIDCommandReply      = 5,  ##reply to commandAsync() or commandNodeAsync()
      ##(see eventID, eventCmd)
-    eventIDStartFile         = 6,  ##notification before playback start of file
-     ##(before loading)
-    eventIDEndFile           = 7,  ##notification after playback ends (after unloading)
-     ##(see eventID)
+
+    eventIDStartFile         = 6,  ##notification before playback start of file (before loading)
+    eventIDEndFile           = 7,  ##notification after playback ends,after unloading, see eventID
     eventIDFileLoaded        = 8,  ##notification when file has been loaded (headers read..)
-    eventIDIdle              = 11,
-   ##[
-      entered idle mode. now, no file is played and playback core waits for commands,
-      (mpv normally quits instead of going idleMode (not when --idle)). if ctx strated
-      using create(), idleMode is not enabled by default
+    eventIDIdle              = 11, ##[
+     entered idle mode. now, no file is played and playback core waits for commands,
+     (mpv normally quits instead of going idleMode (not when --idle)). if ctx strated
+     using create(), idleMode is not enabled by default
    ]##
-    eventIDClientMessage     = 16,
-   ##[
+
+    eventIDClientMessage     = 16, ##[
      triggered by script-message input command, it uses first argument of command as
      clientName (see getclientName()). to dispatch mesage. passes all arguments from
      second arguemnt as strings. (see event, ecentClientMessage)
    ]##
-    eventIDVideoReConfig     = 17,
-   ##[
+
+    eventIDVideoReConfig     = 17, ##[
      happens when video gets changed. resolution, pixel format or video filter changes.
      event is sent after video filters & VO are reconfigured. if using mpv window, app
      should listen this event so to resize window if needed. this can happen sporadically
      and should manually check if video parameters changed
    ]##
+
     eventIDAudioReConfig     = 18, ##similar as eventIDVideoReConfig
     eventIDSeek              = 20, ##happens when a seek was initiated and will resume using
       ##eventIDPlaybackRestart when seek is finished
+
     eventIDPlayBackRestart   = 21,
       ##there was discontinuity like a seek, so playback was reinitialized (happens after
       ##seeking, chapter switches). mainly allows client to detect if seek is finished
-    eventIDPropertyChange    = 22, ##event sent due to observeProperty() (see event,
-    ##eventProperty)
-    eventIDQueueOverFlow     = 24,
-  ##[
-    happens if internal handle ringBuffer OverFlows, then atleast 1 event has to be dropped,
-    this can happen if client doesnt read event queue quickly with waitEvent() or client
-    makes very large number of asynchronous calls at once. every delivery will continue
-    normally once event gets returned, this forces client to empty queue
+
+    eventIDPropertyChange    = 22, ##event sent due to observeProperty().see event,eventProperty
+    eventIDQueueOverFlow     = 24, ##[
+     happens if internal handle ringBuffer OverFlows, then atleast 1 event has to be dropped,
+     this can happen if client doesnt read event queue quickly with waitEvent() or client
+     makes very large number of asynchronous calls at once. every delivery will continue
+     normally once event gets returned, this forces client to empty queue
   ]##
+
     eventIDHook              = 25  ##triggered if hook handler was registered with hookAdd()
     ##and hook is invoked. this must be manually handled and continue hook with
     ##hookContinue() (see event, eventHook)
@@ -413,11 +423,12 @@ proc waitEvent*(ctx: ptr handle; timeout: cdouble): ptr event
  ##
 
 proc wakeup*(ctx: ptr handle)
-   {.importc: "mpv_wakeup".}
- ##interrupt current waitEvent(), this will wakeup thread currently waiting in waitEvent().
- ##waiting thread is woken up. if no thread is waiting, next waitEvent() will return to
- ##avoid lost wakeups. waitEvent() will get a eventNone if woken up due to this call.
- ##but this dummy event might by skipped if there are others queued.
+ {.importc: "mpv_wakeup".} ##[
+  interrupt current waitEvent(), this will wakeup thread currently waiting in waitEvent().
+  waiting thread is woken up. if no thread is waiting, next waitEvent() will return to
+  avoid lost wakeups. waitEvent() will get a eventNone if woken up due to this call.
+  but this dummy event might by skipped if there are others queued.
+ ]##
 
 proc checkError*(status: cint) =
  ##unofficial: checks the return value of enclosed function,
