@@ -177,9 +177,10 @@ type #enums
     eventIDSeek              = 20, ##happens when a seek was initiated and will resume using
       ##eventIDPlaybackRestart when seek is finished
 
-    eventIDPlayBackRestart   = 21,
-      ##there was discontinuity like a seek, so playback was reinitialized (happens after
-      ##seeking, chapter switches). mainly allows client to detect if seek is finished
+    eventIDPlayBackRestart   = 21, ##[
+     there was discontinuity like a seek, so playback was reinitialized (happens after
+     seeking, chapter switches). mainly allows client to detect if seek is finished
+    ]##
 
     eventIDPropertyChange    = 22, ##event sent due to observeProperty().see event,eventProperty
     eventIDQueueOverFlow     = 24, ##[
@@ -189,9 +190,11 @@ type #enums
      normally once event gets returned, this forces client to empty queue
   ]##
 
-    eventIDHook              = 25  ##triggered if hook handler was registered with hookAdd()
-    ##and hook is invoked. this must be manually handled and continue hook with
-    ##hookContinue() (see event, eventHook)
+    eventIDHook              = 25  ##[
+     triggered if hook handler was registered with hookAdd()
+     and hook is invoked. this must be manually handled and continue hook with
+     hookContinue() (see event, eventHook)
+    ]##
 
   endFileReason* = enum ##end file reason enum (since 1.9)
     endFileReasonEOF         = 0, ##reaching end of file. network issues, corrupted packets?
@@ -200,8 +203,10 @@ type #enums
     endFileReasonError       = 4, ##some error made it stop.
     endFileReasonReDirect    = 5  ##playlist endofFile redirect mechanism
 
-  logLevel* = enum ##enum describing log level verbosity (see requestLogMessages())
-   ##lower number = more important message, unused values are for future use
+  logLevel* = enum ##[
+   enum describing log level verbosity (see requestLogMessages())
+   lower number = more important message, unused values are for future use
+  ]##
     logLevelNone   = 0,  ##no messages, never used when receiving messages
     logLevelFatal  = 10, ##fatal/abortive erres
     logLevelError  = 20, ##simple errors
@@ -263,35 +268,44 @@ type #enums
     data*: pointer
 
 #procs
-proc abortAsyncCmd*(ctx: ptr handle; replyUserData: cint)
+using
+ ctx: ptr handle
+ replyUserdata,error: cint
+ argsArr: cstringArray
+ result, node: ptr node
+ argsStr, name: cstring
+ data: pointer
+ format: format
+
+proc abortAsyncCmd*(ctx; replyUserData)
     {.importc: "mpv_abort_async_command".}
  ##
 
-proc getClientName*(ctx: ptr handle): cstring
+proc getClientName*(ctx): cstring
     {.importc: "mpv_client_name".}
  ##return the unique client handle name
 
-proc cmd*(ctx: ptr handle; args: cstringArray): cint
+proc cmd*(ctx; argsArr): cint
     {.importc: "mpv_command".}
  ##
 
-proc cmdAsync*(ctx: ptr handle; reply_userdata: cint; args: cstringArray): cint
+proc cmdAsync*(ctx; replyUserdata; argsArr): cint
    {.importc: "mpv_command_async".}
  ##
 
-proc cmdNode*(ctx: ptr handle; args, result: ptr node): cint
+proc cmdNode*(ctx; argsArr; result): cint
     {.importc: "mpv_command_node".}
  ##
 
-proc cmdNodeAsync*(ctx: ptr handle; replyUserData: cint; args: ptr node): cint
+proc cmdNodeAsync*(ctx; replyUserData; result): cint
    {.importc: "mpv_command_node_async".}
  ##
 
-proc cmdRet*(ctx: ptr handle; args: cstringArray; result: ptr node): cint
+proc cmdRet*(ctx; argsArr; result): cint
     {.importc: "mpv_command_ret".}
  ##
 
-proc cmdString*(ctx: ptr handle; args: cstring): cint
+proc cmdString*(ctx; argsStr): cint
    {.importc: "mpv_command_string".}
  ##
 
@@ -299,19 +313,19 @@ proc create*: ptr handle
     {.importc: "mpv_create".}
  ##create and return a handle used to control the instance
 
-proc createClient*(ctx: ptr handle; name: cstring): ptr handle
+proc createClient*(ctx; name): ptr handle
     {.importc: "mpv_create_client".}
  ##
 
-proc createWeakClient*(ctx: ptr handle; name: cstring): ptr handle
+proc createWeakClient*(ctx; name): ptr handle
     {.importc: "mpv_create_weak_client".}
  ##
 
-proc destroy*(ctx: ptr handle)
+proc destroy*(ctx)
     {.importc: "mpv_destroy".}
  ##
 
-proc errorString*(error: cint): cstring
+proc errorString*(error): cstring
     {.importc: "mpv_error_string".}
  ##
 
@@ -319,11 +333,11 @@ proc eventName*(event: eventID): cstring
    {.importc: "mpv_event_name".}
  ##
 
-proc free*(data: pointer)
+proc free*(data)
     {.importc: "mpv_free".}
  ##
 
-proc freeNodeContents*(node: ptr node)
+proc freeNodeContents*(node)
     {.importc: "mpv_free_node_contents".}
  ##
 
@@ -331,103 +345,100 @@ proc getClientApiVersion*: culong
  {.importc: "mpv_client_api_version".}
  ##return api version of libmpv
 
-proc getProperty*(ctx: ptr handle; name: cstring; format: format; data: pointer): cint 
+proc getProperty*(ctx; name; format; data): cint
    {.importc: "mpv_get_property".}
  ##
 
-proc getPropertyAsync*(ctx: ptr handle; replyUserData: cint; name: cstring;
-  format: format): cint
+proc getPropertyAsync*(ctx; replyUserData; name; format): cint
    {.importc: "mpv_get_property_async".}
  ##
 
-proc getPropertyOSDString*(ctx: ptr handle; name: cstring): cstring 
+proc getPropertyOSDString*(ctx; name): cstring
    {.importc: "mpv_get_property_osd_string".}
  ##
 
-proc getPropertyString*(ctx: ptr handle; name: cstring): cstring
+proc getPropertyString*(ctx; name): cstring
    {.importc: "mpv_get_property_string".}
  ##
 
-proc getTimeUS*(ctx: ptr handle): cint
+proc getTimeUS*(ctx): cint
     {.importc: "mpv_get_time_us".}
  ##
 
-proc hookAdd*(ctx: ptr handle; replyUserData: cint; name: cstring; priority: cint): cint
+proc hookAdd*(ctx; replyUserData; name; priority: cint): cint
    {.importc: "mpv_hook_add".}
  ##
 
-proc hookContinue*(ctx: ptr handle; id: cint): cint
+proc hookContinue*(ctx; id: cint): cint
    {.importc: "mpv_hook_continue".}
  ##
 
-proc initialize*(ctx: ptr handle): cint
+proc initialize*(ctx): cint
     {.importc: "mpv_initialize".}
  ##
 
-proc loadConfigFile*(ctx: ptr handle; filename: cstring): cint
+proc loadConfigFile*(ctx; filename: cstring): cint
     {.importc: "mpv_load_config_file".}
  ##
 
-proc observeProperty*(mpv: ptr handle; replyUserData: cint; name: cstring;
-  format: format): cint
+proc observeProperty*(ctx; replyUserData; name; format): cint
    {.importc: "mpv_observe_property".}
  ##
 
-proc requestEvent*(ctx: ptr handle; event: eventID; enable: cint): cint
+proc requestEvent*(ctx; event: eventID; enable: cint): cint
    {.importc: "mpv_request_event".}
  ##
 
-proc requestLogMsgs*(ctx: ptr handle; min_level: cstring): cint
+proc requestLogMsgs*(ctx; minLevel: cstring): cint
    {.importc: "mpv_request_log_messages".}
  ##
 
-proc setOption*(ctx: ptr handle; name: cstring; format: format; data: pointer): cint
+proc setOption*(ctx; name; format; data): cint
     {.importc: "mpv_set_option".}
  ##
 
-proc setOptionString*(ctx: ptr handle; name: cstring; data: cstring): cint
+proc setOptionString*(ctx; name; data: cstring): cint
     {.importc: "mpv_set_option_string".}
  ##
 
-proc setProperty*(ctx: ptr handle; name: cstring; format: format; data: pointer): cint 
+proc setProperty*(ctx; name; format; data): cint
    {.importc: "mpv_set_property".}
  ##
 
-proc setPropertyAsync*(ctx: ptr handle; replyUserData: cint; name: cstring; format: format;
-     data: pointer): cint
+proc setPropertyAsync*(ctx; replyUserData; name; format; data): cint
    {.importc: "mpv_set_property_async".}
  ##
 
-proc setPropertyString*(ctx: ptr handle; name: cstring; data: cstring): cint 
+proc setPropertyString*(ctx; name; data: cstring): cint
    {.importc: "mpv_set_property_string".}
  ##
 
-proc setWakeupCallback*(ctx: ptr handle; cb: proc (d: pointer); d: pointer) 
+proc setWakeupCallback*(ctx; cb: proc (d: pointer); d: pointer)
    {.importc: "mpv_set_wakeup_callback".}
  ##
 
-proc terminateDestroy*(ctx: ptr handle)
+proc terminateDestroy*(ctx)
     {.importc: "mpv_terminate_destroy".}
  ##
 
-proc unobserveProperty*(mpv: ptr handle; registeredReplyUserData: cint): cint 
+proc unobserveProperty*(ctx; registeredReplyUserData: cint): cint
    {.importc: "mpv_unobserve_property".}
  ##
 
-proc waitAsyncRequests*(ctx: ptr handle)
+proc waitAsyncRequests*(ctx)
    {.importc: "mpv_wait_async_requests".}
  ##
 
-proc waitEvent*(ctx: ptr handle; timeout: cdouble): ptr event
+proc waitEvent*(ctx; timeout: cdouble): ptr event
    {.importc: "mpv_wait_event".}
  ##
 
-proc wakeup*(ctx: ptr handle)
+proc wakeup*(ctx)
  {.importc: "mpv_wakeup".} ##[
   interrupt current waitEvent(), this will wakeup thread currently waiting in waitEvent().
   waiting thread is woken up. if no thread is waiting, next waitEvent() will return to
   avoid lost wakeups. waitEvent() will get a eventNone if woken up due to this call.
-  but this dummy event might by skipped if there are others queued.
+  but this dummy event might by skipped if there are others queued
  ]##
 
 proc checkError*(status: cint) =
