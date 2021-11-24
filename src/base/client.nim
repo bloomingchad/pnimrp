@@ -1,11 +1,11 @@
 ##[
 this module contains bindings for libmpvs client.h used to play streams.
-module does NOT wrap deprecated functions.
-first templates, consts, then types, procedures at last.
-this module renames procedures so to better look with language, like seen in SDL2 module.
+module does NOT wrap deprecated functions. first templates, consts, then
+types, procedures at last. this module renames procedures so to better
+look with language, like seen in SDL2 module.
 
-Please refer to official documentation available in mpv/client.h for most information,
-libmpv shall mean official mpv documentation throught.
+Please refer to official documentation available in mpv/client.h for most
+information, libmpv shall mean official mpv documentation throught.
 
 Cites:
 - c2nim -> wrapped most of the non-enum type objects
@@ -14,6 +14,16 @@ Imports
 -------
 * terminal
   - showCursor
+
+Type Context
+-------
+* ctx: ptr handle
+* replyUserdata,error: cint
+* argsArr: cstringArray
+* result, node: ptr node
+* argsStr, name: cstring
+* data: pointer
+* format: format
 ]##
 
 from terminal import showCursor
@@ -22,10 +32,12 @@ when defined posix: {.push dynlib: "libmpv.so".}
 when defined windows: {.push dynlib: "mpv-1.dll".}
 
 #templates
-template makeVersion*(major, minor: untyped): untyped = major shl 16 or minor or 0'u32 ##[
-  version is incremented on each change, minor = 16 lower bits, major = 16 higher bits.
-  when api becomes incompatable with previous, major is incremented, affecting only C parts
-  and not properties and options (see libmpv/docs/client-api-changes.rst for changelog)
+template makeVersion*(major, minor: untyped): untyped =
+ major shl 16 or minor or 0'u32 ##[
+  version is incremented on each change, minor = 16 lower bits, major = 16
+  higher bits. when api becomes incompatable with previous, major is
+  incremented, affecting only C parts and not properties and options
+  (see libmpv/docs/client-api-changes.rst for changelog)
 ]##
 
 #consts
@@ -38,9 +50,11 @@ type #enums
     errNotImplemented       = -19, ##proc called was stub-only
 
     errUnsupported          = -18, ##(was system requirements met?)
-    errUnknownFormat        = -17, ##file format could not be determined (was file broken?)
+    errUnknownFormat        = -17, ##file format could not be determined
+     ##(was file broken?)
 
-    errNothingToPlay        = -16, ##no video/audio to play, (was a stream selected?)
+    errNothingToPlay        = -16, ##no video/audio to play,
+     ##(was a stream selected?)
     errVOInitFailed         = -15, ##failed to init video output
 
     errAOInitFailed         = -14, ##failed to init audio output
@@ -63,17 +77,18 @@ type #enums
 
     errNoMem                = -2,  ##memory allocation failed
     errEventQueueFull       = -1,  ##client is choked & cant receive any events.
-        ##many unanswered asynchronous requests. (is api frozen?, is it an api bug?) 
+        ##many unanswered asynchronous requests.is api frozen?, is it an api bug? 
     errSuccess              =  0   ##no error occured, '>= 0' means success
 
-  format* = enum ##type for options and properties, can get set properties and options,
-  ##support multiple formats
+  format* = enum ##type for options and properties, can get set properties and
+  ##options, support multiple formats
+
     formatNone       = 0, ##invalid, used for empty values
 
     formatString     = 1, ##[
-     basic type is cstring, returning raw property string, see libmpv/input.rst, nil
-     isnt allowed. not always is the encoding in UTF8, atleast on linux,but are always
-     in windows (see libmpv/Encoding of Filenames)
+     basic type is cstring, returning raw property string, see libmpv/input.rst,
+     nil isnt allowed. not always is the encoding in UTF8, atleast on linux,
+     but are always in windows (see libmpv/Encoding of Filenames)
 
      readableExample:
       var result:cstring = nil
@@ -90,13 +105,15 @@ type #enums
    ]##
 
     formatOSDString  = 2, ##[
-     basic type is cstring, returns OSD property string (see libmpv/input.rst), mostly
-     its a string, but sometimes is formatted for OSD display, being human-readable and
-     not meant to be parsed. is only valid when doing read access.
+     basic type is cstring, returns OSD property string (see libmpv/input.rst),
+     mostly its a string, but sometimes is formatted for OSD display, being
+     human-readable and not meant to be parsed. is only valid when doing read
+     access.
    ]##
 
     formatFlag       = 3, ##[
-     basic type is int, allowed values are 0=no and 1=yes
+     basic type is cint, allowed values are 0=no and 1=yes
+     !!like bool!!
 
      readableExample:
       var result: int #int in C, bool in Nim, needs to be tested and edited!
@@ -110,13 +127,13 @@ type #enums
    ]##
 
     formatInt64      = 4, ##basic type is int64
-    formatFloat64    = 5, ##(shouldbe called formatDouble), basic type is flaot64
+    formatFloat64    = 5, ##(shouldbe called formatDouble), basic type is float64
 
     formatNode       = 6, ##[
-     type is node. you should pass a pointer to a stack-allocated node value to api,
-     and then call freeNodeContents(addr node). do not write data, copy it manually
-     if needed to. check node.format member. properties might change their type in
-     future versions of api, or even runtime.
+     type is node. you should pass a pointer to a stack-allocated node value to
+     api,and then call freeNodeContents(addr node). do not write data, copy
+     it manually if needed to. check node.format member. properties might
+     change their type in future versions of api, or even runtime.
 
      readableExample:
       var result:node
@@ -125,8 +142,8 @@ type #enums
       echo "format=", cast[int](result.format)
       freeNodeContents(addr result)
 
-     you should make a node manually, pass pointer to api. api will never write to your
-     data (can use any allocation mechanism)
+     you should make a node manually, pass pointer to api. api will never
+     write to your data (can use any allocation mechanism)
 
      runnableExample:
       var value: node
@@ -137,68 +154,85 @@ type #enums
 
     formatNodeArray  = 7, ##used with node (not directly!)
     formatNodeMap    = 8, ##see formatNodeArray
-    formatByteArray  = 9  ##raw, untyped byteArray, used with node (used for screenshot-raw)
-    ##command)
+    formatByteArray  = 9  ##raw, untyped byteArray, used with node (used for
+    ##screenshot-raw command)
 
   eventID* = enum ##event type
-    eventIDNone              = 0,  ##nothing happened (when timeouts or sporadic wakeups)
-    eventIDShutdown          = 1,  ##when player quits, it tries to disconnect all clients
-      ##but most requests to player will fail, so client should quit with destroy()
+    eventIDNone              = 0,  ##nothing happened (when timeouts or
+     ##sporadic wakeups)
+    eventIDShutdown          = 1,  ##[ when player quits, it tries to
+     disconnect all clients but most requests to player will fail, so
+     client should quit with destroy()
+    ]##
 
     eventIDLogMessage        = 2,  ##see requestLogMessages()
-    eventIDGetPropertyReply  = 3,  ##reply to getPropertyAsync(), (see event, eventProperty)
-    eventIDSetPropertyReply  = 4,  ##reply to setPropertyAsync(), eventProperty is not used
-    eventIDCommandReply      = 5,  ##reply to commandAsync() or commandNodeAsync()
-     ##(see eventID, eventCmd)
+    eventIDGetPropertyReply  = 3,  ##reply to getPropertyAsync(),
+     ##(see event, eventProperty)
 
-    eventIDStartFile         = 6,  ##notification before playback start of file (before loading)
-    eventIDEndFile           = 7,  ##notification after playback ends,after unloading, see eventID
-    eventIDFileLoaded        = 8,  ##notification when file has been loaded (headers read..)
+    eventIDSetPropertyReply  = 4,  ##reply to setPropertyAsync(),
+     ##eventProperty is not used
+    eventIDCommandReply      = 5,  ##reply to commandAsync() or
+     ##commandNodeAsync() (see eventID, eventCmd)
+
+    eventIDStartFile         = 6,  ##notification before playback start of
+     ##file (before loading)
+    eventIDEndFile           = 7,  ##notification after playback ends,after
+     ##unloading, see eventID
+    eventIDFileLoaded        = 8,  ##notification when file has been
+     ##loaded (headers read..)
     eventIDIdle              = 11, ##[
-     entered idle mode. now, no file is played and playback core waits for commands,
-     (mpv normally quits instead of going idleMode (not when --idle)). if ctx strated
-     using create(), idleMode is not enabled by default
+     entered idle mode. now, no file is played and playback core waits
+     for commands, (mpv normally quits instead of going idleMode
+     (not when --idle)). if ctx strated using create(),
+     idleMode is not enabled by default
    ]##
 
     eventIDClientMessage     = 16, ##[
-     triggered by script-message input command, it uses first argument of command as
-     clientName (see getclientName()). to dispatch mesage. passes all arguments from
-     second arguemnt as strings. (see event, ecentClientMessage)
+     triggered by script-message input command, it uses first argument
+     of command as clientName (see getclientName()). to dispatch mesage.
+     passes all arguments from second arguemnt as strings.
+     (see event, ecentClientMessage)
    ]##
 
     eventIDVideoReConfig     = 17, ##[
-     happens when video gets changed. resolution, pixel format or video filter changes.
-     event is sent after video filters & VO are reconfigured. if using mpv window, app
-     should listen this event so to resize window if needed. this can happen sporadically
-     and should manually check if video parameters changed
+     happens when video gets changed. resolution, pixel format or video
+     filter changes. event is sent after video filters & VO are
+     reconfigured. if using mpv window, app should listen this event
+     so to resize window if needed. this can happen sporadically and
+     should manually check if video parameters changed
    ]##
 
     eventIDAudioReConfig     = 18, ##similar as eventIDVideoReConfig
-    eventIDSeek              = 20, ##happens when a seek was initiated and will resume using
-      ##eventIDPlaybackRestart when seek is finished
+    eventIDSeek              = 20, ##happens when a seek was initiated
+     ##and will resume using eventIDPlaybackRestart when seek is finished
 
     eventIDPlayBackRestart   = 21, ##[
-     there was discontinuity like a seek, so playback was reinitialized (happens after
-     seeking, chapter switches). mainly allows client to detect if seek is finished
+     there was discontinuity like a seek, so playback was reinitialized
+     (happens after seeking, chapter switches). mainly allows client
+     to detect if seek is finished
     ]##
 
-    eventIDPropertyChange    = 22, ##event sent due to observeProperty().see event,eventProperty
+    eventIDPropertyChange    = 22, ##event sent due to observeProperty().m
+     ##see event,eventProperty
     eventIDQueueOverFlow     = 24, ##[
-     happens if internal handle ringBuffer OverFlows, then atleast 1 event has to be dropped,
-     this can happen if client doesnt read event queue quickly with waitEvent() or client
-     makes very large number of asynchronous calls at once. every delivery will continue
+     happens if internal handle ringBuffer OverFlows, then atleast 1
+     event has to be dropped, this can happen if client doesnt read
+     event queue quickly with waitEvent() or client makes very large
+     number of asynchronous calls at once. every delivery will continue
      normally once event gets returned, this forces client to empty queue
   ]##
 
     eventIDHook              = 25  ##[
      triggered if hook handler was registered with hookAdd()
-     and hook is invoked. this must be manually handled and continue hook with
-     hookContinue() (see event, eventHook)
+     and hook is invoked. this must be manually handled and continue
+     hook with hookContinue() (see event, eventHook)
     ]##
 
   endFileReason* = enum ##end file reason enum (since 1.9)
-    endFileReasonEOF         = 0, ##reaching end of file. network issues, corrupted packets?
-    endFileReasonStop        = 2, ##external action (controls?)
+    endFileReasonEOF         = 0, ##reaching end of file. network issues,
+     ##corrupted packets?
+
+    endFileReasonStop        = 2, ##external action (controls?)l
     endFileReasonQuit        = 3, ##quitted
     endFileReasonError       = 4, ##some error made it stop.
     endFileReasonReDirect    = 5  ##playlist endofFile redirect mechanism
@@ -217,7 +251,8 @@ type #enums
     logLevelTrace  = 70  ##extermely verbose
 
 #non-enum type objects
-  handle* = distinct pointer ##(private) basic type, used by api to infer the context
+  handle* = distinct pointer ##(private) basic type, used by api to
+   ##infer the context
 
   clientUnionType* {.bycopy, union.} = object
     str*: cstring
@@ -435,15 +470,17 @@ proc waitEvent*(ctx; timeout: cdouble): ptr event
 
 proc wakeup*(ctx)
  {.importc: "mpv_wakeup".} ##[
-  interrupt current waitEvent(), this will wakeup thread currently waiting in waitEvent().
-  waiting thread is woken up. if no thread is waiting, next waitEvent() will return to
-  avoid lost wakeups. waitEvent() will get a eventNone if woken up due to this call.
-  but this dummy event might by skipped if there are others queued
+  interrupt current waitEvent(), this will wakeup thread currently
+  waiting in waitEvent(). waiting thread is woken up. if no thread is
+  waiting, next waitEvent() will return to avoid lost wakeups. waitEvent()
+  will get a eventNone if woken up due to this call. but this dummy
+  event might by skipped if there are others queued
  ]##
 
-proc checkError*(status: cint) =
- ##unofficial: checks the return value of enclosed function,
- ##quit with failure exit status if less than 0
+proc checkError*(status: cint) = ##[
+  unofficial: checks the return value of input proc,
+  quit with failure exit status if less than 0
+ ]##
  if status < 0:
   echo "mpv API error: ", errorString status
   showCursor()
