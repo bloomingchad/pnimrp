@@ -18,7 +18,7 @@ Imports
 Type Context
 -------
 * ctx: ptr handle
-* replyUserdata,error: cint
+* replyUserData,error: cint
 * argsArr: cstringArray
 * result, node: ptr node
 * argsStr, name: cstring
@@ -305,7 +305,7 @@ type #enums
 #procs
 using
  ctx: ptr handle
- replyUserdata,error: cint
+ replyUserData,error: cint
  argsArr: cstringArray
  result, node: ptr node
  argsStr, name: cstring
@@ -324,7 +324,7 @@ proc cmd*(ctx; argsArr): cint
     {.importc: "mpv_command".}
  ##
 
-proc cmdAsync*(ctx; replyUserdata; argsArr): cint
+proc cmdAsync*(ctx; replyUserData; argsArr): cint
    {.importc: "mpv_command_async".}
  ##
 
@@ -345,7 +345,7 @@ proc cmdString*(ctx; argsStr): cint
  ##
 
 proc create*: ptr handle
-    {.importc: "mpv_create".}
+    {.importc: "mpv_create".} ##line 445
  ##create and return a handle used to control the instance
 
 proc createClient*(ctx; name): ptr handle

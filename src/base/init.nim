@@ -21,6 +21,12 @@ proc init* =
   echo "data or config files dont exist"
   quit QuitFailure
 
+ #disable volControl in koch?
+ when defined linux:
+  if findExe("amixer") == "":
+   echo "alsa mixer utilities not found. please install it for volume control"
+   quit QuitFailure
+
  when defined dragonfly:
   {.error: """PNimRP is not supported under DragonFlyBSD.
   Please see user.rst for more information""".}

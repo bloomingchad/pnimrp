@@ -9,16 +9,19 @@ proc exec*(x:string,args:openArray[string]; stream = false) =
  if stream: discard waitForExit startProcess(x,args=args,options={poUsePath,poParentStreams})
  else: discard waitForExit startProcess(x,args=args,options={poUsePath})
 
-proc exit(ctx:ptr handle; term = false) =
- if term: terminateDestroy ctx
+proc exit(ctx:ptr handle, isPaused: bool ) =
+ if not(isPaused):
+  terminateDestroy ctx
  exitEcho()
+
+template cE(s:cint) = checkError s
 
 proc init(parm:string,ctx: ptr handle) =
  let file = allocCStringArray ["loadfile", parm] #couldbe file,link,playlistfile
  var val: cint = 1
- checkError ctx.setOption("osc", formatFlag, addr val)
- checkError initialize ctx
- checkError ctx.cmd file
+ cE ctx.setOption("osc", formatFlag, addr val)
+ cE initialize ctx
+ cE ctx.cmd file
 
 proc call*(sub:string; sect = ""; stat,link:string) =
  if link == "" or link.contains " ": warn "link dont exist or is invalid"
@@ -31,40 +34,50 @@ proc call*(sub:string; sect = ""; stat,link:string) =
   let ctx = create()
   init link, ctx
   var
-   j = true
-   e = false
+   echoPlay = true
    event = ctx.waitEvent 1000
+   isPaused = false
+
   while true:
-   if j: sayPos 4, "Playing"; cursorUp(); j = false
-   #remove cursorUp
-   event = ctx.waitEvent 1000
+   if echoPlay:
+    sayPos 4, "Playing"
+    cursorUp()
+    echoPlay = false
+
+   #remove cursorUp?
+   if not(isPaused):
+    event = ctx.waitEvent 1000
+
+   #remove casting?
    if cast[eventID](event) == eventIDShutdown: break
    if cast[eventID](event) == eventIDIdle: break
+
    case getch():
     of 'p','m','P','M':
-     warn "Paused/Muted",4
-     cursorUp()
-     terminateDestroy ctx
-     while true:
-      case getch():
-       of 'p','m','P','M':
-        eraseLine()
-        let ctx = create()
-        init link, ctx
-        j = true
-        break
-       of 'r','R': e = true; break
-       of 'q','Q': exit ctx
-       else: inv()
+     if isPaused:
+      eraseLine()
+      let ctx = create()
+      init link, ctx
+      echoPlay = true
+      isPaused = false
+
+     else:
+      warn "Paused/Muted",4
+      cursorUp()
+      terminateDestroy ctx
+      isPaused = true
+
     of '/':
-     when defined linux: exec "amixer",["--quiet","set","PCM","7%+"]
+     when defined linux: exec "amixer",["--quiet","set","PCM","5+"]
      #when defined windows: exec "nircmd",["changesysvolume","5000"]
      cursorDown()
      warn "Volume+", 4
      cursorUp()
      eraseLine()
      cursorUp()
-    of 'r','R': terminateDestroy ctx; break
-    of 'q','Q': exit ctx, term = true
+
+    of 'r','R':
+     if not(isPaused): terminateDestroy ctx
+     break
+    of 'q','Q': exit ctx, isPaused
     else: inv()
-   if e: break
