@@ -9,7 +9,7 @@ proc exec*(x:string,args:openArray[string]; stream = false) =
  if stream: discard waitForExit startProcess(x,args=args,options={poUsePath,poParentStreams})
  else: discard waitForExit startProcess(x,args=args,options={poUsePath})
 
-proc exit(ctx:ptr handle, isPaused: bool ) =
+proc exit(ctx:ptr handle, isPaused: bool) =
  if not(isPaused):
   terminateDestroy ctx
  exitEcho()
@@ -67,11 +67,22 @@ proc call*(sub:string; sect = ""; stat,link:string) =
       terminateDestroy ctx
       isPaused = true
 
-    of '/':
-     when defined linux: exec "amixer",["--quiet","set","PCM","5+"]
-     #when defined windows: exec "nircmd",["changesysvolume","5000"]
+    of '/','+':
+     when defined(linux) and not defined(android):
+      exec "amixer",["--quiet","set","PCM","5+"]
+      #when defined windows: exec "nircmd",["changesysvolume","5000"]
      cursorDown()
      warn "Volume+", 4
+     cursorUp()
+     eraseLine()
+     cursorUp()
+
+    of '*','-':
+     when defined(linux) and not defined(android):
+      exec "amixer",["--quiet","set","PCM","5-"]
+      #when defined windows: exec "nircmd",["changesysvolume","-5000"]
+     cursorDown()
+     warn "Volume-", 4
      cursorUp()
      eraseLine()
      cursorUp()
