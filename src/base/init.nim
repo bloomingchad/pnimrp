@@ -1,6 +1,7 @@
 from os import fileExists,findExe,dirExists
 from strformat import fmt
 from terminal import showCursor,hideCursor
+import term
 
 proc checkFileIter(x:seq[string]):bool =
  for f in x:
@@ -18,18 +19,15 @@ proc init* =
  "soma/soma1","soma/soma2","soma/soma3","urban"]
 
  if not dirExists("assets") or not checkFileIter(amog):
-  echo "data or config files dont exist"
-  quit QuitFailure
+  error "data or config files dont exist"
 
  #disable volControl in koch?
- when defined linux:
+ when defined(linux) and not defined(android):
   if findExe("amixer") == "":
-   echo "alsa mixer utilities not found. please install it for volume control"
-   quit QuitFailure
+   error "alsa mixer utilities not found. please install it for volume control"
 
  when defined dragonfly:
-  {.error: """PNimRP is not supported under DragonFlyBSD.
+  {.error: """PNimRP is not supported under DragonFlyBSD
   Please see user.rst for more information""".}
-  quit QuitFailure
 
  hideCursor()

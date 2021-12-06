@@ -1,5 +1,6 @@
 from strformat import fmt
 import terminal
+import random
 from os import sleep
 from strutils import repeat,splitLines
 
@@ -7,13 +8,33 @@ proc clear* =
  eraseScreen()
  setCursorPos 0,0
 
+proc sayBye(str:string;auth = "Human") =
+ styledEcho fgCyan, str, "..."
+ setCursorXPos 15
+ styledEcho fgGreen, "—", auth
+
 proc exitEcho* =
  showCursor()
  echo ""
- styledEcho fgCyan ,"when I die, just keep playing the records"
- echo fmt"free mem: {getFreeMem() / 1024} kB"
- echo fmt"total/max mem: {getTotalMem() / 1024} kB"
- echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
+ randomize()
+ case rand 1..6:
+  of 1: sayBye "When I Die, Keep Playing The Records"
+  of 2: sayBye "Where words fail, music speaks", "Hans Christian Andersen"
+  of 3: sayBye "Country music is three chords and truth", "Harlan Howard"
+  of 4:
+   sayBye "There are two ways of refuge from misery — music and cats",
+     "Albert Schweitzer"
+
+  of 5: sayBye "Music is a safe kind of high", "Jimi Hendrix"
+  of 6:
+   sayBye "You enjoy music when you're happy, you understand lyrics when you're sad",
+    "Frank Ocean"
+  else: discard
+
+ when defined debug:
+  echo fmt"free mem: {getFreeMem() / 1024} kB"
+  echo fmt"total/max mem: {getTotalMem() / 1024} kB"
+  echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
  quit QuitSuccess
 
 proc say*(txt:string) = styledEcho fgYellow,txt
@@ -41,6 +62,10 @@ proc inv* =
  cursorUp()
  eraseLine()
  cursorUp()
+
+proc error*(str:string) =
+ styledEcho fgRed, "Error: ", str
+ quit QuitFailure
 
 proc drawMenu*(sub,x:string; sect = "") =
  clear()
