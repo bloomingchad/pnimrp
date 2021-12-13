@@ -1,14 +1,16 @@
 ##[
-this module contains bindings for libmpvs client.h used to play streams.
-module does NOT wrap deprecated functions. first templates, consts, then
-types, procedures at last. this module renames procedures so to better
-look with language, like seen in SDL2 module.
+This module binds libmpv's client.h which is used to play streams.
 
-Please refer to official documentation available in mpv/client.h for most
-information, libmpv shall mean official mpv documentation throught.
+.. warning::
+  - module does NOT wrap deprecated functions.
 
-Cites:
-- c2nim -> wrapped most of the non-enum type objects
+.. note::
+  - this module renames procedures to camelCase (eg. sdl2 module)
+  - please refer to official documentation available in mpv/client.h for
+    most information
+  - Cites and Tools Used:
+    - c2nim -> wrapped most of the non-enum type objects
+  - templates > consts > types > procedures
 
 Imports
 -------
@@ -16,20 +18,29 @@ Imports
   - showCursor
 
 Type Context
--------
-* ctx: ptr handle
-* replyUserData,error: cint
-* argsArr: cstringArray
-* result, node: ptr node
-* argsStr, name: cstring
-* data: pointer
-* format: format
+------------
+.. code-block:: nim
+  - ctx: ptr handle
+  - replyUserData,error: cint
+  - argsArr: cstringArray
+  - result, node: ptr node
+  - argsStr, name: cstring
+  - data: pointer
+  - format: format
+
+Terms Used
+----------
+- libmpv > official mpv documentation
+- isStaticConst > it returns static const string
+     (needless of dealloc() & is always valid)
+     !!making static is not implemented yet!!
 ]##
 
 from terminal import showCursor
 
-when defined posix: {.push dynlib: "libmpv.so".}
-when defined windows: {.push dynlib: "mpv-1.dll".}
+{.push dynlib: "(libmpv.so|mpv-1.dll)".}
+#when defined posix: {.push dynlib: "libmpv.so".}
+#when defined windows: {.push dynlib: "mpv-1.dll".}
 
 #templates
 template makeVersion*(major, minor: untyped): untyped =
@@ -318,7 +329,7 @@ proc abortAsyncCmd*(ctx; replyUserData)
 
 proc getClientName*(ctx): cstring
     {.importc: "mpv_client_name".}
- ##return the unique client handle name
+ ##return the unique client handle name. isStaticConst
 
 proc cmd*(ctx; argsArr): cint
     {.importc: "mpv_command".}
@@ -345,8 +356,10 @@ proc cmdString*(ctx; argsStr): cint
  ##
 
 proc create*: ptr handle
-    {.importc: "mpv_create".} ##line 445
- ##create and return a handle used to control the instance
+    {.importc: "mpv_create".} ##[
+  create and return a handle used to control the instance
+ ]##
+
 
 proc createClient*(ctx; name): ptr handle
     {.importc: "mpv_create_client".}
@@ -361,16 +374,20 @@ proc destroy*(ctx)
  ##
 
 proc errorString*(error): cstring
-    {.importc: "mpv_error_string".}
- ##
+    {.importc: "mpv_error_string".} ##[
+  return string describing error, if unknown: returns "unknown string",
+  isStaticConst, (see error: enum)
+ ]##
 
 proc eventName*(event: eventID): cstring 
    {.importc: "mpv_event_name".}
  ##
 
 proc free*(data)
-    {.importc: "mpv_free".}
- ##
+    {.importc: "mpv_free".} ##[
+  general proc to dealloc() returned by api procs. !!explicitly used!!,
+  if called on not mpv's memory: undefined behavoiur happens
+ ]##
 
 proc freeNodeContents*(node)
     {.importc: "mpv_free_node_contents".}

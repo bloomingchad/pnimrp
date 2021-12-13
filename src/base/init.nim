@@ -5,8 +5,9 @@ import term
 
 proc checkFileIter(x:seq[string]):bool =
  for f in x:
-  if not fileExists fmt"assets/{f}.json": return false
- return true
+  if not fileExists fmt"assets/{f}.json":
+   return false
+ true
 
 proc init* =
  #remove checking files?
