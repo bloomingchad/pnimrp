@@ -10,7 +10,8 @@ This module binds libmpv's client.h which is used to play streams.
     most information
   - Cites and Tools Used:
     - c2nim -> wrapped most of the non-enum type objects
-  - templates > consts > types > procedures
+  - order of code:
+    - templates > consts > types > procedures
 
 Imports
 -------
@@ -325,53 +326,45 @@ using
 
 proc abortAsyncCmd*(ctx; replyUserData)
     {.importc: "mpv_abort_async_command".}
- ##
-
-proc getClientName*(ctx): cstring
-    {.importc: "mpv_client_name".}
- ##return the unique client handle name. isStaticConst
 
 proc cmd*(ctx; argsArr): cint
     {.importc: "mpv_command".}
- ##
 
 proc cmdAsync*(ctx; replyUserData; argsArr): cint
    {.importc: "mpv_command_async".}
- ##
 
 proc cmdNode*(ctx; argsArr; result): cint
     {.importc: "mpv_command_node".}
- ##
 
 proc cmdNodeAsync*(ctx; replyUserData; result): cint
    {.importc: "mpv_command_node_async".}
- ##
 
 proc cmdRet*(ctx; argsArr; result): cint
     {.importc: "mpv_command_ret".}
- ##
 
 proc cmdString*(ctx; argsStr): cint
    {.importc: "mpv_command_string".}
- ##
 
 proc create*: ptr handle
     {.importc: "mpv_create".} ##[
   create and return a handle used to control the instance
+  instance is in preinitialized state. and needs more initialisation
+  for use with other procs. (see errUnitialised, libmpv/examples/simple.c)
+  this gives more control over configuration. (see more..)
+  NO concurrent accesses on uninitialised handle.
+  returns nil when out of memory
  ]##
 
 
 proc createClient*(ctx; name): ptr handle
     {.importc: "mpv_create_client".}
- ##
 
 proc createWeakClient*(ctx; name): ptr handle
     {.importc: "mpv_create_weak_client".}
- ##
 
 proc destroy*(ctx)
     {.importc: "mpv_destroy".}
- ##
+  ##finish the handle, ctx will be deallocated.
 
 proc errorString*(error): cstring
     {.importc: "mpv_error_string".} ##[
@@ -381,109 +374,93 @@ proc errorString*(error): cstring
 
 proc eventName*(event: eventID): cstring 
    {.importc: "mpv_event_name".}
- ##
 
 proc free*(data)
     {.importc: "mpv_free".} ##[
   general proc to dealloc() returned by api procs. !!explicitly used!!,
   if called on not mpv's memory: undefined behavoiur happens
+  valid pointer returned or nil
  ]##
 
 proc freeNodeContents*(node)
     {.importc: "mpv_free_node_contents".}
- ##
 
 proc getClientApiVersion*: culong
  {.importc: "mpv_client_api_version".}
  ##return api version of libmpv
 
+proc getClientName*(ctx): cstring
+    {.importc: "mpv_client_name".}
+ ##return the unique client handle name. isStaticConst
+
 proc getProperty*(ctx; name; format; data): cint
    {.importc: "mpv_get_property".}
- ##
 
 proc getPropertyAsync*(ctx; replyUserData; name; format): cint
    {.importc: "mpv_get_property_async".}
- ##
 
 proc getPropertyOSDString*(ctx; name): cstring
    {.importc: "mpv_get_property_osd_string".}
- ##
 
 proc getPropertyString*(ctx; name): cstring
    {.importc: "mpv_get_property_string".}
- ##
 
 proc getTimeUS*(ctx): cint
     {.importc: "mpv_get_time_us".}
- ##
 
 proc hookAdd*(ctx; replyUserData; name; priority: cint): cint
    {.importc: "mpv_hook_add".}
- ##
 
 proc hookContinue*(ctx; id: cint): cint
    {.importc: "mpv_hook_continue".}
- ##
 
 proc initialize*(ctx): cint
-    {.importc: "mpv_initialize".}
- ##
+    {.importc: "mpv_initialize".} ##[
+  initialise a preinit instance. error returned if instance is running,
+  very important proc for usage if used create() to preinit
+ ]##
 
 proc loadConfigFile*(ctx; filename: cstring): cint
     {.importc: "mpv_load_config_file".}
- ##
 
 proc observeProperty*(ctx; replyUserData; name; format): cint
    {.importc: "mpv_observe_property".}
- ##
 
 proc requestEvent*(ctx; event: eventID; enable: cint): cint
    {.importc: "mpv_request_event".}
- ##
 
 proc requestLogMsgs*(ctx; minLevel: cstring): cint
    {.importc: "mpv_request_log_messages".}
- ##
 
 proc setOption*(ctx; name; format; data): cint
     {.importc: "mpv_set_option".}
- ##
 
 proc setOptionString*(ctx; name; data: cstring): cint
     {.importc: "mpv_set_option_string".}
- ##
 
 proc setProperty*(ctx; name; format; data): cint
    {.importc: "mpv_set_property".}
- ##
 
 proc setPropertyAsync*(ctx; replyUserData; name; format; data): cint
    {.importc: "mpv_set_property_async".}
- ##
 
 proc setPropertyString*(ctx; name; data: cstring): cint
    {.importc: "mpv_set_property_string".}
- ##
 
 proc setWakeupCallback*(ctx; cb: proc (d: pointer); d: pointer)
    {.importc: "mpv_set_wakeup_callback".}
- ##
 
 proc terminateDestroy*(ctx)
     {.importc: "mpv_terminate_destroy".}
- ##
 
 proc unobserveProperty*(ctx; registeredReplyUserData: cint): cint
    {.importc: "mpv_unobserve_property".}
- ##
 
 proc waitAsyncRequests*(ctx)
    {.importc: "mpv_wait_async_requests".}
- ##
 
 proc waitEvent*(ctx; timeout: cdouble): ptr event
    {.importc: "mpv_wait_event".}
- ##
 
 proc wakeup*(ctx)
  {.importc: "mpv_wakeup".} ##[
