@@ -1,5 +1,4 @@
-{
-  "Name1": "AI-Radio",
+/*{
   "Name2": "C89.5 FM",
   "Name3": "CHIRP Radio",
   "Name4": "HPR 1",
@@ -14,7 +13,6 @@
   "Name13": "Radio Velvet",
   "Name14": "90.5 WBER",
   "Name15": "WDCB",
-  "link1": "http://ai-radio.org/128.ogg",
   "link2": "http://208.76.152.74:8000",
   "link3": "http://chirpradio.org/stream",
   "link4": "http://50.7.77.179:8024",
@@ -29,4 +27,11 @@
   "link13": "http://212.37.80.142:8814",
   "link14": "http://wber-ice-encoder.monroe.edu:80/wber-high.mp3",
   "link15": "http://wdcb-ice.streamguys.org:80/wdcb128"
+}
+*/
+{
+ "pnimrp": [
+  "AI-Radio",
+  "http://ai-radio.org/128.ogg"
+ ]
 }
