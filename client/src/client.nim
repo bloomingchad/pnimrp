@@ -9,7 +9,7 @@ This module binds libmpv's client.h which is used to play streams.
   - please refer to official documentation available in mpv/client.h for
     most information
   - Cites and Tools Used:
-    - c2nim -> wrapped most of the non-enum type objects
+    - c2nim -> wrapped most of objects
   - order of code:
     - templates > consts > types > procedures
 
@@ -95,9 +95,9 @@ type #enums
   format* = enum ##type for options and properties, can get set properties and
   ##options, support multiple formats
 
-    formatNone       = 0, ##invalid, used for empty values
+    fmtNone       = 0, ##invalid, used for empty values
 
-    formatString     = 1, ##[
+    fmtString     = 1, ##[
      basic type is cstring, returning raw property string, see libmpv/input.rst,
      nil isnt allowed. not always is the encoding in UTF8, atleast on linux,
      but are always in windows (see libmpv/Encoding of Filenames)
@@ -116,14 +116,14 @@ type #enums
      or use setPropertyString()
    ]##
 
-    formatOSDString  = 2, ##[
+    fmtOSDString  = 2, ##[
      basic type is cstring, returns OSD property string (see libmpv/input.rst),
      mostly its a string, but sometimes is formatted for OSD display, being
      human-readable and not meant to be parsed. is only valid when doing read
      access.
    ]##
 
-    formatFlag       = 3, ##[
+    fmtFlag       = 3, ##[
      basic type is cint, allowed values are 0=no and 1=yes
      !!like bool!!
 
@@ -138,10 +138,10 @@ type #enums
       ctx.setProperty("property", formatFlag, addr flag)
    ]##
 
-    formatInt64      = 4, ##basic type is int64
-    formatFloat64    = 5, ##(shouldbe called formatDouble), basic type is float64
+    fmtInt64      = 4, ##basic type is int64
+    fmtFloat64    = 5, ##(shouldbe called formatDouble), basic type is float64
 
-    formatNode       = 6, ##[
+    fmtNode       = 6, ##[
      type is node. you should pass a pointer to a stack-allocated node value to
      api,and then call freeNodeContents(addr node). do not write data, copy
      it manually if needed to. check node.format member. properties might
@@ -164,49 +164,49 @@ type #enums
       ctx.setProperty("property", formatNone, addr value)
    ]##
 
-    formatNodeArray  = 7, ##used with node (not directly!)
-    formatNodeMap    = 8, ##see formatNodeArray
-    formatByteArray  = 9  ##raw, untyped byteArray, used with node (used for
+    fmtNodeArray  = 7, ##used with node (not directly!)
+    fmtNodeMap    = 8, ##see formatNodeArray
+    fmtByteArray  = 9  ##raw, untyped byteArray, used with node (used for
     ##screenshot-raw command)
 
   eventID* = enum ##event type
-    eventIDNone              = 0,  ##nothing happened (when timeouts or
+    IDNone              = 0,  ##nothing happened (when timeouts or
      ##sporadic wakeups)
-    eventIDShutdown          = 1,  ##[ when player quits, it tries to
+    IDShutdown          = 1,  ##[ when player quits, it tries to
      disconnect all clients but most requests to player will fail, so
      client should quit with destroy()
     ]##
 
-    eventIDLogMessage        = 2,  ##see requestLogMessages()
-    eventIDGetPropertyReply  = 3,  ##reply to getPropertyAsync(),
+    IDLogMessage        = 2,  ##see requestLogMessages()
+    IDGetPropertyReply  = 3,  ##reply to getPropertyAsync(),
      ##(see event, eventProperty)
 
-    eventIDSetPropertyReply  = 4,  ##reply to setPropertyAsync(),
+    IDSetPropertyReply  = 4,  ##reply to setPropertyAsync(),
      ##eventProperty is not used
-    eventIDCommandReply      = 5,  ##reply to commandAsync() or
+    IDCommandReply      = 5,  ##reply to commandAsync() or
      ##commandNodeAsync() (see eventID, eventCmd)
 
-    eventIDStartFile         = 6,  ##notification before playback start of
+    IDStartFile         = 6,  ##notification before playback start of
      ##file (before loading)
-    eventIDEndFile           = 7,  ##notification after playback ends,after
+    IDEndFile           = 7,  ##notification after playback ends,after
      ##unloading, see eventID
-    eventIDFileLoaded        = 8,  ##notification when file has been
+    IDFileLoaded        = 8,  ##notification when file has been
      ##loaded (headers read..)
-    eventIDIdle              = 11, ##[
+    IDIdle              = 11, ##[
      entered idle mode. now, no file is played and playback core waits
      for commands, (mpv normally quits instead of going idleMode
      (not when --idle)). if ctx strated using create(),
      idleMode is not enabled by default
    ]##
 
-    eventIDClientMessage     = 16, ##[
+    IDClientMessage     = 16, ##[
      triggered by script-message input command, it uses first argument
      of command as clientName (see getclientName()). to dispatch mesage.
      passes all arguments from second arguemnt as strings.
      (see event, ecentClientMessage)
    ]##
 
-    eventIDVideoReConfig     = 17, ##[
+    IDVideoReConfig     = 17, ##[
      happens when video gets changed. resolution, pixel format or video
      filter changes. event is sent after video filters & VO are
      reconfigured. if using mpv window, app should listen this event
@@ -214,19 +214,19 @@ type #enums
      should manually check if video parameters changed
    ]##
 
-    eventIDAudioReConfig     = 18, ##similar as eventIDVideoReConfig
-    eventIDSeek              = 20, ##happens when a seek was initiated
+    IDAudioReConfig     = 18, ##similar as eventIDVideoReConfig
+    IDSeek              = 20, ##happens when a seek was initiated
      ##and will resume using eventIDPlaybackRestart when seek is finished
 
-    eventIDPlayBackRestart   = 21, ##[
+    IDPlayBackRestart   = 21, ##[
      there was discontinuity like a seek, so playback was reinitialized
      (happens after seeking, chapter switches). mainly allows client
      to detect if seek is finished
     ]##
 
-    eventIDPropertyChange    = 22, ##event sent due to observeProperty().m
+    IDPropertyChange    = 22, ##event sent due to observeProperty().m
      ##see event,eventProperty
-    eventIDQueueOverFlow     = 24, ##[
+    IDQueueOverFlow     = 24, ##[
      happens if internal handle ringBuffer OverFlows, then atleast 1
      event has to be dropped, this can happen if client doesnt read
      event queue quickly with waitEvent() or client makes very large
@@ -234,33 +234,33 @@ type #enums
      normally once event gets returned, this forces client to empty queue
   ]##
 
-    eventIDHook              = 25  ##[
+    IDHook              = 25  ##[
      triggered if hook handler was registered with hookAdd()
      and hook is invoked. this must be manually handled and continue
      hook with hookContinue() (see event, eventHook)
     ]##
 
   endFileReason* = enum ##end file reason enum (since 1.9)
-    endFileReasonEOF         = 0, ##reaching end of file. network issues,
+    efrEOF         = 0, ##reaching end of file. network issues,
      ##corrupted packets?
 
-    endFileReasonStop        = 2, ##external action (controls?)l
-    endFileReasonQuit        = 3, ##quitted
-    endFileReasonError       = 4, ##some error made it stop.
-    endFileReasonReDirect    = 5  ##playlist endofFile redirect mechanism
+    efrStop        = 2, ##external action (controls?)l
+    efrQuit        = 3, ##quitted
+    efrError       = 4, ##some error made it stop.
+    efrReDirect    = 5  ##playlist endofFile redirect mechanism
 
   logLevel* = enum ##[
    enum describing log level verbosity (see requestLogMessages())
    lower number = more important message, unused values are for future use
   ]##
-    logLevelNone   = 0,  ##no messages, never used when receiving messages
-    logLevelFatal  = 10, ##fatal/abortive erres
-    logLevelError  = 20, ##simple errors
-    logLevelWarn   = 30, ##possible problem warnings
-    logLevelInfo   = 40, ##info
-    logLevelV      = 50, ##noisy info
-    logLevelDebug  = 60, ##more noisy verbose info
-    logLevelTrace  = 70  ##extermely verbose
+    llNone   = 0,  ##no messages, never used when receiving messages
+    llFatal  = 10, ##fatal/abortive erres
+    llError  = 20, ##simple errors
+    llWarn   = 30, ##possible problem warnings
+    llInfo   = 40, ##info
+    llV      = 50, ##noisy info
+    llDebug  = 60, ##more noisy verbose info
+    llTrace  = 70  ##extermely verbose
 
 #non-enum type objects
   handle* = distinct pointer ##(private) basic type, used by api to
@@ -322,7 +322,7 @@ using
  result, node: ptr node
  argsStr, name: cstring
  data: pointer
- format: format
+ fmt: format
 
 proc abortAsyncCmd*(ctx; replyUserData)
     {.importc: "mpv_abort_async_command".}
@@ -354,7 +354,6 @@ proc create*: ptr handle
   NO concurrent accesses on uninitialised handle.
   returns nil when out of memory
  ]##
-
 
 proc createClient*(ctx; name): ptr handle
     {.importc: "mpv_create_client".}
@@ -393,10 +392,10 @@ proc getClientName*(ctx): cstring
     {.importc: "mpv_client_name".}
  ##return the unique client handle name. isStaticConst
 
-proc getProperty*(ctx; name; format; data): cint
+proc getProperty*(ctx; name; fmt; data): cint
    {.importc: "mpv_get_property".}
 
-proc getPropertyAsync*(ctx; replyUserData; name; format): cint
+proc getPropertyAsync*(ctx; replyUserData; name; fmt): cint
    {.importc: "mpv_get_property_async".}
 
 proc getPropertyOSDString*(ctx; name): cstring
@@ -423,7 +422,7 @@ proc initialize*(ctx): cint
 proc loadConfigFile*(ctx; filename: cstring): cint
     {.importc: "mpv_load_config_file".}
 
-proc observeProperty*(ctx; replyUserData; name; format): cint
+proc observeProperty*(ctx; replyUserData; name; fmt): cint
    {.importc: "mpv_observe_property".}
 
 proc requestEvent*(ctx; event: eventID; enable: cint): cint
@@ -432,16 +431,16 @@ proc requestEvent*(ctx; event: eventID; enable: cint): cint
 proc requestLogMsgs*(ctx; minLevel: cstring): cint
    {.importc: "mpv_request_log_messages".}
 
-proc setOption*(ctx; name; format; data): cint
+proc setOption*(ctx; name; fmt; data): cint
     {.importc: "mpv_set_option".}
 
 proc setOptionString*(ctx; name; data: cstring): cint
     {.importc: "mpv_set_option_string".}
 
-proc setProperty*(ctx; name; format; data): cint
+proc setProperty*(ctx; name; fmt; data): cint
    {.importc: "mpv_set_property".}
 
-proc setPropertyAsync*(ctx; replyUserData; name; format; data): cint
+proc setPropertyAsync*(ctx; replyUserData; name; fmt; data): cint
    {.importc: "mpv_set_property_async".}
 
 proc setPropertyString*(ctx; name; data: cstring): cint

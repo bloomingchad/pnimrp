@@ -1,8 +1,6 @@
 {
-  "Name1": "Big Blue Swing",
-  "Name2": "",
-  "Name3": "",
-  "link1": "http://209.236.126.18:8002",
-  "link2": "",
-  "link3": ""
+  "pnimrp": [
+     "Big Blue Swing",
+     "http://209.236.126.18:8002"
+   ]
 }
