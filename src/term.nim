@@ -6,8 +6,8 @@ proc clear* =
   setCursorPos 0,0
 
 proc error*(str:string) =
- styledEcho fgRed, "Error: ", str
- quit QuitFailure
+  styledEcho fgRed, "Error: ", str
+  quit QuitFailure
 
 proc sayBye(str: string; auth = "Human"; line = -1) =
   if auth == "":
@@ -19,7 +19,7 @@ proc sayBye(str: string; auth = "Human"; line = -1) =
   setCursorXPos 15
   styledEcho fgGreen, "—", auth
 
-proc parseJ(x:string):JsonNode =
+proc parseJ(x: string): JsonNode =
   parseJson readFile fmt"assets/{x}.json"
 
 proc parseJArray(file: string): seq[string] =
@@ -32,20 +32,7 @@ proc exitEcho* =
   showCursor()
   echo ""
   randomize()
-#[  case rand 1..6:
-    of 1: sayBye "When I Die, Keep Playing The Records"
-    of 2: sayBye "Where words fail, music speaks", "Hans Christian Andersen"
-    of 3: sayBye "Country music is three chords and truth", "Harlan Howard"
-    of 4:
-      sayBye "There are two ways of refuge from misery — music and cats",
-        "Albert Schweitzer"
 
-    of 5: sayBye "Music is a safe kind of high", "Jimi Hendrix"
-    of 6:
-       sayBye "You enjoy music when you're happy, you understand lyrics when you're sad",
-         "Frank Ocean"
-    else: discard
-]#
   var
     seq = parseJArray "qoute"
     #jimiHendrixHarlandHowardBug
@@ -63,7 +50,7 @@ proc exitEcho* =
     echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
   quit()
 
-proc say*(txt:string) =
+proc say*(txt: string) =
   styledEcho fgYellow,txt
 
 proc sayPos*(x:int,a:string; echo = true) =
@@ -116,7 +103,7 @@ proc exit(ctx:ptr handle, isPaused: bool) =
     terminateDestroy ctx
   exitEcho()
 
-template cE(s:cint) = checkError s
+template cE(s: cint) = checkError s
 
 proc init(parm:string,ctx: ptr handle) =
   let file = allocCStringArray ["loadfile", parm] #couldbe file,link,playlistfile

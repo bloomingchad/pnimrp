@@ -1,22 +1,24 @@
 {
-  "Name1": "Absolutely Country Hits Radio",
-  "Name2": "Always Country",
-  "Name3": "Big R Radio - Country Gold",
-  "Name4": "Americana Boogie Radio",
-  "Name5": "Bluegrass Mix",
-  "Name6": "Country Music 24",
-  "Name7": "Country Radio Switzerland",
-  "Name8": "",
-  "Name9": "",
-  "Name10": "",
-  "link1": "http://185.33.22.15:7800",
-  "link2": "http://208.85.240.89:80",
-  "link3": "http://107.155.126.42:8230",
-  "link4": "http://us1.internet-radio.com:8182/live",
-  "link5": "http://192.81.248.194:8072/stream",
-  "link6": "http://countrymusic24.powerstream.de:9000",
-  "link7": "http://212.48.126.146:8000",
-  "link8": "",
-  "link9": "",
-  "link10": ""
+  "pnimrp": [
+    "Absolutely Country Hits Radio",
+    "http://185.33.22.15:7800",
+
+    "Always Country",
+    "http://208.85.240.89:80",
+
+    "Big R Radio - Country Gold",
+    "http://107.155.126.42:8230",
+
+    "Americana Boogie Radio",
+    "http://us1.internet-radio.com:8182/live",
+
+    "Bluegrass Mix",
+    "http://192.81.248.194:8072/stream",
+
+    "Country Music 24",
+    "http://countrymusic24.powerstream.de:9000",
+
+    "Country Radio Switzerland",
+    "http://212.48.126.146:8000"
+   ]
 }

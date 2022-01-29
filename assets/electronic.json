@@ -1,22 +1,24 @@
 {
-  "Name1": "Ambient Sleeping Pill",
-  "Name2": "Ibiza Global Radio",
-  "Name3": "Radio Seven",
-  "Name4": "Antenne Bayern Chillout",
-  "Name5": "Frisky",
-  "Name6": "Nirvana Radio",
-  "Name7": "Puls Radio",
-  "Name8": "",
-  "Name9": "",
-  "Name10": "",
-  "link1": "http://50.7.96.138:8235/stream",
-  "link2": "http://37.59.254.25:8024",
-  "link3": "http://188.65.152.205:80",
-  "link4": "http://mp3channels.webradio.antenne.de:80/chillout",
-  "link5": "http://stream.friskyradio.com:8000/frisky_mp3_hi",
-  "link6": "http://91.121.134.15:9106",
-  "link7": "http://212.83.185.51:80",
-  "link8": "",
-  "link9": "",
-  "link10": ""
+  "pnimrp": [
+    "Ambient Sleeping Pill",
+    "http://50.7.96.138:8235/stream",
+
+    "Ibiza Global Radio",
+    "http://37.59.254.25:8024",
+
+    "Radio Seven",
+    "http://188.65.152.205:80",
+
+    "Antenne Bayern Chillout",
+    "http://mp3channels.webradio.antenne.de:80/chillout",
+
+    "Frisky",
+    "http://stream.friskyradio.com:8000/frisky_mp3_hi",
+
+    "Nirvana Radio",
+    "http://91.121.134.15:9106",
+
+    "Puls Radio",
+    "http://212.83.185.51:80"
+   ]
 }
