@@ -23,7 +23,10 @@ then use a web browser to open htmldocs/file.html
 Cites
 -----
 - pmrp -> https://github.com/hakerdefo/pmrp
-   code was referred and links were used at beginning of the project.
+   code was referenced and links were used.
 
 - libmpv -> https://github.com/mpv-player/mpv
-   api library was used for playback
+   api library was used for playback.
+
+- c2nim -> https://github.com/nim-lang/c2nim
+   helped wrapping objects.
