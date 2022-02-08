@@ -10,23 +10,29 @@ proc error*(str:string) =
   quit QuitFailure
 
 proc sayBye(str: string; auth = "Human"; line = -1) =
-  if auth == "":
-    error "there can no be qoute without man"
-    if not(line == -1):
-      error fmt"@ line: {line} in qoute.json"
+  if str == "":
+    error "no qoute"
 
   styledEcho fgCyan, str, "..."
   setCursorXPos 15
   styledEcho fgGreen, "—", auth
 
+  if auth == "":
+    error "there can no be qoute without man"
+    if line != -1:
+      error fmt"@ line: {line} in qoute.json"
+
 proc parseJ(x: string): JsonNode =
   parseJson readFile fmt"assets/{x}.json"
 
 proc parseJArray(file: string): seq[string] =
-  to(
+  result = to(
     parseJ(file){"pnimrp"},
     seq[string]
   )
+
+  if result.len mod 2 != 0:
+    error "qouteJson.JArrayResult.len not even"
 
 proc exitEcho* =
   showCursor()
@@ -35,13 +41,19 @@ proc exitEcho* =
 
   var
     seq = parseJArray "qoute"
-    #jimiHendrixHarlandHowardBug
-    rand = rand 0 .. int(seq.len / 2)
+    qoutes, authors: seq[string] = @[]
+
+  for i in 0 .. seq.high:
+    case i mod 2:
+      of 0: qoutes.add seq[i]
+      else: authors.add seq[i]
+
+  var rand = rand qoutes.low .. qoutes.high
 
   sayBye(
-    seq[rand],
-    seq[rand + 1],
-    rand + 1
+    qoutes[rand],
+    authors[rand],
+    rand*2
   )
 
   when defined debug:
