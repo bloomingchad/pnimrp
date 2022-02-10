@@ -1,5 +1,3 @@
-import render
-
 {.push dynlib: "(libmpv.so|mpv-1.dll)", importc.}
 
 type
