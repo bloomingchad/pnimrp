@@ -1,6 +1,8 @@
 import osproc, terminal, random, os, strformat, strutils, json
 import ../client/src/client
 
+export terminal.getch
+
 proc clear* =
   eraseScreen()
   setCursorPos 0,0
@@ -23,7 +25,10 @@ proc sayBye(str: string; auth = "Human"; line = -1) =
       error fmt"@ line: {line} in qoute.json"
 
 proc parseJ(x: string): JsonNode =
-  parseJson readFile fmt"assets/{x}.json"
+  try:
+    return parseJson readFile x
+  except IOError:
+    error "base assets dont exist?"
 
 proc parseJArray(file: string): seq[string] =
   result = to(
@@ -32,7 +37,7 @@ proc parseJArray(file: string): seq[string] =
   )
 
   if result.len mod 2 != 0:
-    error "qouteJson.JArrayResult.len not even"
+    error "JArrayResult.len not even"
 
 proc exitEcho* =
   showCursor()
@@ -40,7 +45,7 @@ proc exitEcho* =
   randomize()
 
   var
-    seq = parseJArray "qoute"
+    seq = parseJArray "assets/qoute.json"
     qoutes, authors: seq[string] = @[]
 
   for i in 0 .. seq.high:
@@ -75,6 +80,11 @@ proc sayIter*(txt:string) =
     setCursorXPos 5
     styledEcho fgBlue, f
 
+proc sayIter*(txt: seq[string]) =
+  for f in txt:
+    setCursorXPos 5
+    styledEcho fgBlue, f
+
 proc warn*(txt:string; x = -1) =
   if not(x == -1): setCursorXPos x
   styledEcho fgRed,txt
@@ -89,7 +99,7 @@ proc inv* =
   eraseLine()
   cursorUp()
 
-proc drawMenu*(sub,x:string; sect = "") =
+proc drawMenu*(sub: string ,x:string | seq[string]; sect = "") =
   clear()
   if sect == "":
     say fmt"PNimRP > {sub}"
@@ -208,14 +218,15 @@ proc menu*(sub, file: string; sect = "") =
       of 1: l.add input[f]
       else: discard
 
-  if n.len < 15:
+  #[if n.len < 15:
     for f in 0 .. 15 - n.len:
       n.add ""
       l.add ""
+]#
 
   while true:
     var j = false
-    var o = fmt"""1 {n[0]}
+  #[  var o = fmt"""1 {n[0]}
 2 {n[1]}
 3 {n[2]}
 4 {n[3]}
@@ -231,10 +242,14 @@ D {n[12]}
 E {n[13]}
 F {n[14]}
 R Return
-Q Exit"""
-    drawMenu sub,o,sect
+Q Exit"""]#
+
+    drawMenu sub,n,sect
+    #add conditiinal check for every if len not thereown size
+    #else no use danger use release
     while true:
-      case getch():
+      try:
+       case getch():
         of '1': call sub,sect,n[0],l[0]; break
         of '2': call sub,sect,n[1],l[1]; break
         of '3': call sub,sect,n[2],l[2]; break
@@ -253,4 +268,5 @@ Q Exit"""
         of 'R','r': j = true; break
         of 'Q','q': exitEcho()
         else: inv()
+      except Defect: inv()
     if j: break
