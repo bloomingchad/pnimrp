@@ -1,12 +1,18 @@
 {
-  "Name1": "90's Alternative",
-  "Name2": "90's Country",
-  "Name3": "90's Dance",
-  "Name4": "Lite 90's",
-  "Name5": "Star 90's",
-  "link1": "http://relay.181.fm:8052",
-  "link2": "http://relay.181.fm:8050",
-  "link3": "http://relay.181.fm:8140",
-  "link4": "http://relay.181.fm:8048",
-  "link5": "http://relay.181.fm:8012"
+  "pnimrp": [
+    "90's Alternative",
+    "http://relay.181.fm:8052",
+
+    "90's Country",
+    "http://relay.181.fm:8050",
+
+    "90's Dance",
+    "http://relay.181.fm:8140",
+
+    "Lite 90's",
+    "http://relay.181.fm:8048",
+
+    "Star 90's",
+    "http://relay.181.fm:8012"
+  ]
 }

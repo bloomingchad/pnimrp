@@ -1,8 +1,6 @@
 {
-  "Name1": "Comedy Club",
-  "Name2": "",
-  "Name3": "",
-  "link1": "http://relay.181.fm:8026",
-  "link2": "",
-  "link3": ""
+  "pnimrp": [
+    "Comedy Club",
+    "http://relay.181.fm:8026"
+  ]
 }

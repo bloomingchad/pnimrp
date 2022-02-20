@@ -1,22 +1,27 @@
 {
-  "Name1": "Party 181",
-  "Name2": "Power 181",
-  "Name3": "Smooth AC",
-  "Name4": "The Heart",
-  "Name5": "The Mix",
-  "Name6": "The Office",
-  "Name7": "The Point",
-  "Name8": "UK Top 40",
-  "Name9": "",
-  "Name10": "",
-  "link1": "http://relay.181.fm:8036",
-  "link2": "http://relay.181.fm:8128",
-  "link3": "http://relay.181.fm:8094",
-  "link4": "http://relay.181.fm:8006",
-  "link5": "http://relay.181.fm:8032",
-  "link6": "http://relay.181.fm:8002",
-  "link7": "http://relay.181.fm:8010",
-  "link8": "http://relay.181.fm:8070",
-  "link9": "",
-  "link10": ""
+  "pnimrp": [
+    "Party 181",
+    "http://relay.181.fm:8036",
+  
+    "Power 181",
+    "http://relay.181.fm:8128",
+  
+    "Smooth AC",
+    "http://relay.181.fm:8094",
+  
+    "The Heart",
+    "http://relay.181.fm:8006",
+  
+    "The Mix",
+    "http://relay.181.fm:8032",
+  
+    "The Office",
+    "http://relay.181.fm:8002",
+  
+    "The Point",
+    "http://relay.181.fm:8010",
+  
+    "UK Top 40",
+    "http://relay.181.fm:8070"
+  ]
 }
