@@ -1,22 +1,24 @@
 {
-  "Name1": "Joint Radio",
-  "Name2": "Reggae Rasta & Roots",
-  "Name3": "Feel Jah FM",
-  "Name4": "Fimi Radio",
-  "Name5": "La Grosse Radio Reggae",
-  "Name6": "Reggae Mix",
-  "Name7": "Scratch Radio",
-  "Name8": "",
-  "Name9": "",
-  "Name10": "",
-  "link1": "http://72.9.152.111:9998",
-  "link2": "http://192.152.23.243:8470",
-  "link3": "http://50.7.98.106:8447",
-  "link4": "http://198.178.123.8:8266",
-  "link5": "http://176.31.246.159:8300",
-  "link6": "http://195.154.80.65:8142",
-  "link7": "http://173.192.198.244:8042",
-  "link8": "",
-  "link9": "",
-  "link10": ""
+  "pnimrp": [
+    "Joint Radio",
+    "http://72.9.152.111:9998",
+
+    "Reggae Rasta & Roots",
+    "http://192.152.23.243:8470",
+
+    "Feel Jah FM",
+    "http://50.7.98.106:8447",
+
+    "Fimi Radio",
+    "http://198.178.123.8:8266",
+
+    "La Grosse Radio Reggae",
+    "http://176.31.246.159:8300",
+
+    "Reggae Mix",
+    "http://195.154.80.65:8142",
+
+    "Scratch Radio",
+    "http://173.192.198.244:8042"
+  ]
 }

@@ -1,8 +1,12 @@
 {
-  "Name1": "80's Country",
-  "Name2": "Awesome 80's",
-  "Name3": "Lite 80's",
-  "link1": "http://relay.181.fm:8134",
-  "link2": "http://relay.181.fm:8000",
-  "link3": "http://relay.181.fm:8040"
+  "pnimrp": [
+    "80's Country",
+    "http://relay.181.fm:8134",
+
+    "Awesome 80's",
+    "http://relay.181.fm:8000",
+
+    "Lite 80's",
+    "http://relay.181.fm:8040"
+  ]
 }

@@ -1,32 +1,36 @@
 {
-  "Name1": "Acid Jazz",
-  "Name2": "Bebop",
-  "Name3": "Classical Guitar",
-  "Name4": "Classical Jazz",
-  "Name5": "Classical Music",
-  "Name6": "Fusion Jazz",
-  "Name7": "Sensual World",
-  "Name8": "The Breeze",
-  "Name9": "Trance Jazz",
-  "Name10": "True Blues",
-  "Name11": "Vocal Jazz",
-  "Name12": "",
-  "Name13": "",
-  "Name14": "",
-  "Name15": "",
-  "link1": "http://icyrelay.181.fm/181-acidjazz_128k.mp3",
-  "link2": "http://icyrelay.181.fm/181-bebop_128k.mp3",
-  "link3": "http://icyrelay.181.fm/181-classicalguitar_128k.mp3",
-  "link4": "http://icyrelay.181.fm/181-classicaljazz_128k.mp3",
-  "link5": "http://icyrelay.181.fm/181-classical_128k.mp3",
-  "link6": "http://icyrelay.181.fm/181-fusionjazz_128k.mp3",
-  "link7": "http://icyrelay.181.fm/181-sensual_128k.mp3",
-  "link8": "http://relay.181.fm:8004",
-  "link9": "http://icyrelay.181.fm/181-trancejazz_128k.mp3",
-  "link10": "http://icyrelay.181.fm/181-blues_128k.mp3",
-  "link11": "http://icyrelay.181.fm/181-vocals_128k.mp3",
-  "link12": "",
-  "link13": "",
-  "link14": "",
-  "link15": ""
+  "pnimrp": [
+    "Acid Jazz",
+    "http://icyrelay.181.fm/181-acidjazz_128k.mp3",
+
+    "Bebop",
+    "http://icyrelay.181.fm/181-bebop_128k.mp3",
+
+    "Classical Guitar",
+    "http://icyrelay.181.fm/181-classicalguitar_128k.mp3",
+
+    "Classical Jazz",
+    "http://icyrelay.181.fm/181-classicaljazz_128k.mp3",
+
+    "Classical Music",
+    "http://icyrelay.181.fm/181-classical_128k.mp3",
+
+    "Fusion Jazz",
+    "http://icyrelay.181.fm/181-fusionjazz_128k.mp3",
+
+    "Sensual World",
+    "http://icyrelay.181.fm/181-sensual_128k.mp3",
+
+    "The Breeze",
+    "http://relay.181.fm:8004",
+
+    "Trance Jazz",
+    "http://icyrelay.181.fm/181-trancejazz_128k.mp3",
+
+    "True Blues",
+    "http://icyrelay.181.fm/181-blues_128k.mp3",
+
+    "Vocal Jazz",
+    "http://icyrelay.181.fm/181-vocals_128k.mp3"
+  ]
 }
