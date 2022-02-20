@@ -1,22 +1,27 @@
 {
-  "Name1": "80's Hairband",
-  "Name2": "Chloe",
-  "Name3": "Classic Buzz",
-  "Name4": "Rock 181",
-  "Name5": "Rock 40",
-  "Name6": "The Buzz",
-  "Name7": "The Eagle",
-  "Name8": "The Rock",
-  "Name9": "",
-  "Name10": "",
-  "link1": "http://relay.181.fm:8014",
-  "link2": "http://relay.181.fm:8100",
-  "link3": "http://relay.181.fm:8038",
-  "link4": "http://relay.181.fm:8008",
-  "link5": "http://relay.181.fm:8028",
-  "link6": "http://relay.181.fm:8126",
-  "link7": "http://relay.181.fm:8030",
-  "link8": "http://relay.181.fm:8064",
-  "link9": "",
-  "link10": ""
+  "pnimrp": [
+    "80's Hairband",
+    "http://relay.181.fm:8014",
+
+    "Chloe",
+    "http://relay.181.fm:8100",
+
+    "Classic Buzz",
+    "http://relay.181.fm:8038",
+
+    "Rock 181",
+    "http://relay.181.fm:8008",
+
+    "Rock 40",
+    "http://relay.181.fm:8028",
+
+    "The Buzz",
+    "http://relay.181.fm:8126",
+
+    "The Eagle",
+    "http://relay.181.fm:8030",
+
+    "The Rock",
+    "http://relay.181.fm:8064"
+  ]
 }

@@ -1,37 +1,51 @@
 {
   "pnimrp": [
-    "Name1": "Air Progressive",
-    "Name2": "BBC",
-    "Name3": "CBC",
-    "Name4": "GLT News & Ideas",
-    "Name5": "NPR",
-    "Name6": "Newstalk 106-108",
-    "Name7": "RFI",
-    "Name8": "Sputnik",
-    "Name9": "The Source",
-    "Name10": "WKSU News",
-    "Name11": "detour TALK",
-    "Name12": "Freethought Radio",
-    "Name13": "Infowars",
-    "Name14": "KSFC",
-    "Name15": "Radio Newark",
-    "Name16": "Talk 790",
+    "Air Progressive",
+    "http://airprogressive.org:8000/stream",
 
-    "link1": "http://airprogressive.org:8000/stream",
-    "link2": "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-einws",
-    "link3": "http://3153.live.streamtheworld.com:80/CBC_R1_MCT_L_SC",
-    "link4": "http://wgltradio.ilstu.edu:8000/wgltmain.mp3",
-    "link5": "http://nprdmp-live01-mp3.akacast.akamaistream.net/7/998/364916/v1/npr.akacast.akamaistream.net/nprdmp_live01_mp3",
-    "link6": "http://vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high",
-    "link7": "http://stream.rfi.fr/2588/rfi_en_anglais/rfianglais.mp3",
-    "link8": "http://audio1.video.ria.ru:80/voiceeng",
-    "link9": "http://stream.wmnf.org:8000/wmnf_hd3",
-    "link10": "http://66.225.205.8:8020",
-    "link11": "http://104.250.149.218:7300",
-    "link12": "http://212.48.126.146:9110",
-    "link13": "http://50.7.79.22:80",
-    "link14": "http://173.192.70.138:8710",
-    "link15": "http://98.114.57.7:8000",
-    "link16": "http://208.85.240.2:8310"
+    "BBC",
+    "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-einws",
+
+    "CBC",
+    "http://3153.live.streamtheworld.com:80/CBC_R1_MCT_L_SC",
+
+    "GLT News & Ideas",
+    "http://wgltradio.ilstu.edu:8000/wgltmain.mp3",
+
+    "NPR",
+    "http://nprdmp-live01-mp3.akacast.akamaistream.net/7/998/364916/v1/npr.akacast.akamaistream.net/nprdmp_live01_mp3",
+
+    "Newstalk 106-108",
+    "http://vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high",
+
+    "RFI",
+    "http://stream.rfi.fr/2588/rfi_en_anglais/rfianglais.mp3",
+
+    "Sputnik",
+    "http://audio1.video.ria.ru:80/voiceeng",
+
+    "The Source",
+    "http://stream.wmnf.org:8000/wmnf_hd3",
+
+    "WKSU News",
+    "http://66.225.205.8:8020",
+
+    "detour TALK",
+    "http://104.250.149.218:7300",
+
+    "Freethought Radio",
+    "http://212.48.126.146:9110",
+
+    "Infowars",
+    "http://50.7.79.22:80",
+
+    "KSFC",
+    "http://173.192.70.138:8710",
+
+    "Radio Newark",
+    "http://98.114.57.7:8000",
+
+    "Talk 790",
+    "http://208.85.240.2:8310"
   ]
 }

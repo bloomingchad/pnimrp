@@ -1,12 +1,18 @@
 {
-  "Name1": "Front Porch",
-  "Name2": "Highway 181",
-  "Name3": "Kickin' Country",
-  "Name4": "Real Country",
-  "Name5": "US 181",
-  "link1": "http://relay.181.fm:8016",
-  "link2": "http://relay.181.fm:8018",
-  "link3": "http://relay.181.fm:8130",
-  "link4": "http://relay.181.fm:8034",
-  "link5": "http://relay.181.fm:8056"
+  "pnimrp": [
+    "Front Porch",
+    "http://relay.181.fm:8016",
+
+    "Highway 181",
+    "http://relay.181.fm:8018",
+
+    "Kickin' Country",
+    "http://relay.181.fm:8130",
+
+    "Real Country",
+    "http://relay.181.fm:8034",
+
+    "US 181",
+    "http://relay.181.fm:8056"
+  ]
 }

@@ -1,8 +1,9 @@
 {
-  "Name1": "Reggae Roots",
-  "Name2": "Salsa",
-  "Name3": "",
-  "link1": "http://relay.181.fm:8096",
-  "link2": "http://relay.181.fm:8098",
-  "link3": ""
+  "pnimrp": [
+    "Reggae Roots",
+    "http://relay.181.fm:8096",
+
+    "Salsa",
+    "http://relay.181.fm:8098"
+  ]
 }

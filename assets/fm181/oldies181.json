@@ -1,22 +1,21 @@
 {
-  "Name1": "Beatles",
-  "Name2": "Classic Hits",
-  "Name3": "Good Time Oldies",
-  "Name4": "Mellow Gold",
-  "Name5": "Soul",
-  "Name6": "Super 70s",
-  "Name7": "",
-  "Name8": "",
-  "Name9": "",
-  "Name10": "",
-  "link1": "http://relay.181.fm:8062",
-  "link2": "http://relay.181.fm:8132",
-  "link3": "http://relay.181.fm:8046",
-  "link4": "http://relay.181.fm:8060",
-  "link5": "http://relay.181.fm:8058",
-  "link6": "http://relay.181.fm:8066",
-  "link7": "",
-  "link8": "",
-  "link9": "",
-  "link10": ""
+  "pnimrp": [
+  "Beatles",
+  "http://relay.181.fm:8062",
+
+  "Classic Hits",
+  "http://relay.181.fm:8132",
+
+  "Good Time Oldies",
+  "http://relay.181.fm:8046",
+
+  "Mellow Gold",
+  "http://relay.181.fm:8060",
+
+  "Soul",
+  "http://relay.181.fm:8058",
+
+  "Super 70s",
+  "http://relay.181.fm:8066"
+  ]
 }

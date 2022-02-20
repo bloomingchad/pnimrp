@@ -1,12 +1,18 @@
 {
-  "Name1": "Jammin 181",
-  "Name2": "Old School HipHop",
-  "Name3": "The Beat",
-  "Name4": "The Box",
-  "Name5": "True R&B",
-  "link1": "http://relay.181.fm:8042",
-  "link2": "http://relay.181.fm:8068",
-  "link3": "http://relay.181.fm:8054",
-  "link4": "http://relay.181.fm:8024",
-  "link5": "http://relay.181.fm:8022"
+  "pnimrp": [
+    "Jammin 181",
+    "http://relay.181.fm:8042",
+
+    "Old School HipHop",
+    "http://relay.181.fm:8068",
+
+    "The Beat",
+    "http://relay.181.fm:8054",
+
+    "The Box",
+    "http://relay.181.fm:8024",
+
+    "True R&B",
+    "http://relay.181.fm:8022"
+  ]
 }
