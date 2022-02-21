@@ -1,37 +1,48 @@
-/*{
-  "Name2": "C89.5 FM",
-  "Name3": "CHIRP Radio",
-  "Name4": "HPR 1",
-  "Name5": "HPR 2",
-  "Name6": "HPR 3",
-  "Name7": "KING FM",
-  "Name8": "KPFA",
-  "Name9": "KALX Radio",
-  "Name10": "MPR",
-  "Name11": "NOFM",
-  "Name12": "Radio Paradise",
-  "Name13": "Radio Velvet",
-  "Name14": "90.5 WBER",
-  "Name15": "WDCB",
-  "link2": "http://208.76.152.74:8000",
-  "link3": "http://chirpradio.org/stream",
-  "link4": "http://50.7.77.179:8024",
-  "link5": "http://50.7.77.179:8022",
-  "link6": "http://50.7.70.58:8708",
-  "link7": "http://icy2.abacast.com:80/king-kingmp3-96",
-  "link8": "http://streams1.kpfa.org:8000/kpfa_64",
-  "link9": "http://icecast.media.berkeley.edu:8000/kalx-128.mp3",
-  "link10": "http://current.stream.publicradio.org/kcmp.mp3",
-  "link11": "http://gal.bitsyu.net:8000",
-  "link12": "http://stream-tx4.radioparadise.com:80/mp3-128",
-  "link13": "http://212.37.80.142:8814",
-  "link14": "http://wber-ice-encoder.monroe.edu:80/wber-high.mp3",
-  "link15": "http://wdcb-ice.streamguys.org:80/wdcb128"
-}
-*/
 {
  "pnimrp": [
-  "AI-Radio",
-  "http://ai-radio.org/128.ogg"
+    "AI-Radio",
+    "http://ai-radio.org/128.ogg",
+
+    "C89.5 FM",
+    "http://208.76.152.74:8000",
+
+    "CHIRP Radio",
+    "http://chirpradio.org/stream",
+
+    "HPR 1",
+    "http://50.7.77.179:8024",
+
+    "HPR 2",
+    "http://50.7.77.179:8022",
+
+    "HPR 3",
+    "http://50.7.70.58:8708",
+
+    "KING FM",
+    "http://icy2.abacast.com:80/king-kingmp3-96",
+
+    "KPFA",
+    "http://streams1.kpfa.org:8000/kpfa_64",
+
+    "KALX Radio",
+    "http://icecast.media.berkeley.edu:8000/kalx-128.mp3",
+
+    "MPR",
+    "http://current.stream.publicradio.org/kcmp.mp3",
+
+    "NOFM",
+    "http://gal.bitsyu.net:8000",
+
+    "Radio Paradise",
+    "http://stream-tx4.radioparadise.com:80/mp3-128",
+
+    "Radio Velvet",
+    "http://212.37.80.142:8814",
+
+    "90.5 WBER",
+    "http://wber-ice-encoder.monroe.edu:80/wber-high.mp3",
+
+    "WDCB",
+    "http://wdcb-ice.streamguys.org:80/wdcb128"
  ]
 }

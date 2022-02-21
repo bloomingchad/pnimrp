@@ -7,7 +7,6 @@ Table Of Contents
 -----------------
   * Supported Platforms
   * Controls
-  *
 
 Supported Platforms
 -------------------
