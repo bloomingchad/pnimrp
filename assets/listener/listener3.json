@@ -1,32 +1,48 @@
 {
-  "Name1": "TSF Jazz",
-  "Name2": "KUVO",
-  "Name3": "KUVO HD2",
-  "Name4": "KUVO HD3",
-  "Name5": "ROK Old Time",
-  "Name6": "ROK British Comedy",
-  "Name7": "ROK American Comedy",
-  "Name8": "ROK Crime & Suspense",
-  "Name9": "ROK Science Fiction",
-  "Name10": "MJoy Radio M",
-  "Name11": "MJoy Radio M Live",
-  "Name12": "MJoy Radio great",
-  "Name13": "MJoy Mousse Radio",
-  "Name14": "MJoy Kredens Cafe",
-  "Name15": "MJoy Radio egoisty",
-  "link1": "http://tsfjazz.ice.infomaniak.ch:80/tsfjazz-high",
-  "link2": "http://kuvo-ice.streamguys.org/kuvo-mp3-64",
-  "link3": "http://kuvo-ice.streamguys.org/kuvohd2-mp3-64",
-  "link4": "http://kuvo-ice.streamguys.org/kuvohd3-mp3-64",
-  "link5": "http://s1.viastreaming.net:9180",
-  "link6": "http://s1.viastreaming.net:9155",
-  "link7": "http://s1.viastreaming.net:9160",
-  "link8": "http://s1.viastreaming.net:9165",
-  "link9": "http://s1.viastreaming.net:9185",
-  "link10": "http://stream.mjoy.ua:8000/radio-m",
-  "link11": "http://stream.mjoy.ua:8000/radio-m-live",
-  "link12": "http://stream.mjoy.ua:8000/radio-great",
-  "link13": "http://stream.mjoy.ua:8000/radio-mousse",
-  "link14": "http://stream.mjoy.ua:8000/kredens-cafe-radio_mp3",
-  "link15": "http://stream.mjoy.ua:8000/radio-egoisty"
+  "pnimrp": [
+    "TSF Jazz",
+    "http://tsfjazz.ice.infomaniak.ch:80/tsfjazz-high",
+
+    "KUVO",
+    "http://kuvo-ice.streamguys.org/kuvo-mp3-64",
+
+    "KUVO HD2",
+    "http://kuvo-ice.streamguys.org/kuvohd2-mp3-64",
+
+    "KUVO HD3",
+    "http://kuvo-ice.streamguys.org/kuvohd3-mp3-64",
+
+    "ROK Old Time",
+    "http://s1.viastreaming.net:9180",
+
+    "ROK British Comedy",
+    "http://s1.viastreaming.net:9155",
+
+    "ROK American Comedy",
+    "http://s1.viastreaming.net:9160",
+
+    "ROK Crime & Suspense",
+    "http://s1.viastreaming.net:9165",
+
+    "ROK Science Fiction",
+    "http://s1.viastreaming.net:9185",
+
+    "MJoy Radio M",
+    "http://stream.mjoy.ua:8000/radio-m",
+
+    "MJoy Radio M Live",
+    "http://stream.mjoy.ua:8000/radio-m-live",
+
+    "MJoy Radio great",
+    "http://stream.mjoy.ua:8000/radio-great",
+
+    "MJoy Mousse Radio",
+    "http://stream.mjoy.ua:8000/radio-mousse",
+
+    "MJoy Kredens Cafe",
+    "http://stream.mjoy.ua:8000/kredens-cafe-radio_mp3",
+
+    "MJoy Radio egoisty",
+    "http://stream.mjoy.ua:8000/radio-egoisty"
+  ]
 }

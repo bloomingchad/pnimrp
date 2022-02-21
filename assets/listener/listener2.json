@@ -1,32 +1,48 @@
 {
-  "Name1": "WEVL 89.9",
-  "Name2": "WERU 89.9 FM",
-  "Name3": "WFMU",
-  "Name4": "WNCU",
-  "Name5": "WNRN-FM",
-  "Name6": "WNYC 93.9 FM",
-  "Name7": "WQXR New York",
-  "Name8": "WSGE FM",
-  "Name9": "WWOZ",
-  "Name10": "Xenicus Radio",
-  "Name11": "andHow FM",
-  "Name12": "FIP",
-  "Name13": "PBB",
-  "Name14": "ABN Antioch",
-  "Name15": "TCAN",
-  "link1": "http://peace.str3am.com:6030",
-  "link2": "http://stream.weru.org:80/weru-high.mp3",
-  "link3": "http://stream0.wfmu.org/freeform-128k",
-  "link4": "http://pubint.ic.llnwd.net/stream/pubint_wncu",
-  "link5": "http://broadcast.wnrn.org:8000/wnrn.mp3",
-  "link6": "http://fm939.wnyc.org/wnycfm",
-  "link7": "http://stream.wqxr.org/wqxr",
-  "link8": "http://amber.streamguys.com:4890/live",
-  "link9": "http://50.31.135.43:80/wwoz-hi.mp3",
-  "link10": "http://192.99.35.93:6744/stream",
-  "link11": "http://199.180.75.6:80",
-  "link12": "http://audio.scdn.arkena.com/11016/fip-midfi128.mp3",
-  "link13": "http://pbb.laurentgarnier.com:8000",
-  "link14": "http://lin2.ash.fast-serv.com:9022",
-  "link15": "http://206.190.144.154:8060"
+  "pnimrp": [
+    "WEVL 89.9",
+    "http://peace.str3am.com:6030",
+
+    "WERU 89.9 FM",
+    "http://stream.weru.org:80/weru-high.mp3",
+
+    "WFMU",
+    "http://stream0.wfmu.org/freeform-128k",
+
+    "WNCU",
+    "http://pubint.ic.llnwd.net/stream/pubint_wncu",
+
+    "WNRN-FM",
+    "http://broadcast.wnrn.org:8000/wnrn.mp3",
+
+    "WNYC 93.9 FM",
+    "http://fm939.wnyc.org/wnycfm",
+
+    "WQXR New York",
+    "http://stream.wqxr.org/wqxr",
+
+    "WSGE FM",
+    "http://amber.streamguys.com:4890/live",
+
+    "WWOZ",
+    "http://50.31.135.43:80/wwoz-hi.mp3",
+
+    "Xenicus Radio",
+    "http://192.99.35.93:6744/stream",
+
+    "andHow FM",
+    "http://199.180.75.6:80",
+
+    "FIP",
+    "http://audio.scdn.arkena.com/11016/fip-midfi128.mp3",
+
+    "PBB",
+    "http://pbb.laurentgarnier.com:8000",
+
+    "ABN Antioch",
+    "http://lin2.ash.fast-serv.com:9022",
+
+    "TCAN",
+    "http://206.190.144.154:8060"
+  ]
 }

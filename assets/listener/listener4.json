@@ -1,12 +1,18 @@
 {
-  "Name1": "MJoy Radio-Xmas",
-  "Name2": "MJoy Radio-Z",
-  "Name3": "MJoy Urban Space",
-  "Name4": "DFM RTV INT",
-  "Name5": "Ralph Radio",
-  "link1": "http://stream.mjoy.ua:8000/radio-xmas",
-  "link2": "http://stream.mjoy.ua:8000/radio-z-kryjivky",
-  "link3": "http://stream.mjoy.ua:8000/urban-space-radio",
-  "link4": "http://176.9.138.209:8205/dfm_1",
-  "link5": "http://213.177.96.6:9900/ralph128"
+  "pnimrp": [
+    "MJoy Radio-Xmas",
+    "http://stream.mjoy.ua:8000/radio-xmas",
+
+    "MJoy Radio-Z",
+    "http://stream.mjoy.ua:8000/radio-z-kryjivky",
+
+    "MJoy Urban Space",
+    "http://stream.mjoy.ua:8000/urban-space-radio",
+
+    "DFM RTV INT",
+    "http://176.9.138.209:8205/dfm_1",
+
+    "Ralph Radio",
+    "http://213.177.96.6:9900/ralph128"
+  ]
 }

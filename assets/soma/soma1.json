@@ -1,32 +1,48 @@
 {
-  "Name1": "7 Inch Soul",
-  "Name2": "BAGeL Radio",
-  "Name3": "Beat Blender",
-  "Name4": "Black Rock FM",
-  "Name5": "Boot Liquor",
-  "Name6": "Cliqhop idm",
-  "Name7": "Covers",
-  "Name8": "DEF CON Radio",
-  "Name9": "Deep Space One",
-  "Name10": "Digitalis",
-  "Name11": "Doomed",
-  "Name12": "Drone Zone",
-  "Name13": "Dub Step Beyond",
-  "Name14": "Earwaves",
-  "Name15": "Fluid",
-  "link1": "http://ice.somafm.com/7soul",
-  "link2": "http://ice.somafm.com/bagel",
-  "link3": "http://ice.somafm.com/beatblender",
-  "link4": "http://ice.somafm.com/brfm",
-  "link5": "http://ice.somafm.com/bootliquor",
-  "link6": "http://ice.somafm.com/cliqhop",
-  "link7": "http://ice.somafm.com/covers",
-  "link8": "http://ice.somafm.com/defcon",
-  "link9": "http://ice.somafm.com/deepspaceone",
-  "link10": "http://ice.somafm.com/digitalis",
-  "link11": "http://ice.somafm.com/doomed",
-  "link12": "http://ice.somafm.com/dronezone",
-  "link13": "http://ice.somafm.com/dubstep",
-  "link14": "http://ice.somafm.com/earwaves",
-  "link15": "http://ice.somafm.com/fluid"
+  "pnimrp": [
+    "7 Inch Soul",
+    "http://ice.somafm.com/7soul",
+
+    "BAGeL Radio",
+    "http://ice.somafm.com/bagel",
+
+    "Beat Blender",
+    "http://ice.somafm.com/beatblender",
+
+    "Black Rock FM",
+    "http://ice.somafm.com/brfm",
+
+    "Boot Liquor",
+    "http://ice.somafm.com/bootliquor",
+
+    "Cliqhop idm",
+    "http://ice.somafm.com/cliqhop",
+
+    "Covers",
+    "http://ice.somafm.com/covers",
+
+    "DEF CON Radio",
+    "http://ice.somafm.com/defcon",
+
+    "Deep Space One",
+    "http://ice.somafm.com/deepspaceone",
+
+    "Digitalis",
+    "http://ice.somafm.com/digitalis",
+
+    "Doomed",
+    "http://ice.somafm.com/doomed",
+
+    "Drone Zone",
+    "http://ice.somafm.com/dronezone",
+
+    "Dub Step Beyond",
+    "http://ice.somafm.com/dubstep",
+
+    "Earwaves",
+    "http://ice.somafm.com/earwaves",
+
+    "Fluid",
+    "http://ice.somafm.com/fluid"
+  ]
 }
