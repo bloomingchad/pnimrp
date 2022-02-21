@@ -1,8 +1,6 @@
 {
-  "Name1": "Underground 80s",
-  "Name2": "",
-  "Name3": "",
-  "link1": "http://ice.somafm.com/u80s",
-  "link2": "",
-  "link3": ""
+  "pnimrp": [
+    "Underground 80s",
+    "http://ice.somafm.com/u80s"
+  ]
 }

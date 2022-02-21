@@ -1,32 +1,48 @@
 {
-  "Name1": "Folk Forward",
-  "Name2": "Groove Salad",
-  "Name3": "Illinois Street Lounge",
-  "Name4": "Indie Pop Rocks",
-  "Name5": "Left Coast 70s",
-  "Name6": "Lush",
-  "Name7": "Mission Control",
-  "Name8": "PopTron",
-  "Name9": "SF 10–33",
-  "Name10": "Secret Agent",
-  "Name11": "Sonic Universe",
-  "Name12": "Space Station Soma",
-  "Name13": "Suburbs of Goa",
-  "Name14": "The Trip",
-  "Name15": "ThistleRadio",
-  "link1": "http://ice.somafm.com/folkfwd",
-  "link2": "http://ice.somafm.com/groovesalad",
-  "link3": "http://ice.somafm.com/illstreet",
-  "link4": "http://ice.somafm.com/indiepop",
-  "link5": "http://ice.somafm.com/seventies",
-  "link6": "http://ice.somafm.com/lush",
-  "link7": "http://ice.somafm.com/missioncontrol",
-  "link8": "http://ice.somafm.com/poptron",
-  "link9": "http://ice.somafm.com/sf1033",
-  "link10": "http://ice.somafm.com/secretagent",
-  "link11": "http://ice.somafm.com/sonicuniverse",
-  "link12": "http://ice.somafm.com/spacestation",
-  "link13": "http://ice.somafm.com/suburbsofgoa",
-  "link14": "http://ice.somafm.com/thetrip",
-  "link15": "http://ice.somafm.com/thistle",
+  "pnimrp": [
+    "Folk Forward",
+    "http://ice.somafm.com/folkfwd",
+ 
+    "Groove Salad",
+    "http://ice.somafm.com/groovesalad",
+ 
+    "Illinois Street Lounge",
+    "http://ice.somafm.com/illstreet",
+ 
+    "Indie Pop Rocks",
+    "http://ice.somafm.com/indiepop",
+ 
+    "Left Coast 70s",
+    "http://ice.somafm.com/seventies",
+ 
+    "Lush",
+    "http://ice.somafm.com/lush",
+ 
+    "Mission Control",
+    "http://ice.somafm.com/missioncontrol",
+ 
+    "PopTron",
+    "http://ice.somafm.com/poptron",
+ 
+    "SF 1033",
+    "http://ice.somafm.com/sf1033",
+ 
+    "Secret Agent",
+    "http://ice.somafm.com/secretagent",
+ 
+    "Sonic Universe",
+    "http://ice.somafm.com/sonicuniverse",
+ 
+    "Space Station Soma",
+    "http://ice.somafm.com/spacestation",
+ 
+    "Suburbs of Goa",
+    "http://ice.somafm.com/suburbsofgoa",
+ 
+    "The Trip",
+    "http://ice.somafm.com/thetrip",
+ 
+    "ThistleRadio",
+    "http://ice.somafm.com/thistle"
+  ]
 }
