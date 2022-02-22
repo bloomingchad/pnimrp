@@ -11,7 +11,7 @@ proc error*(str:string) =
   styledEcho fgRed, "Error: ", str
   quit QuitFailure
 
-proc sayBye(str: string; auth = "Human"; line = -1) =
+proc sayBye(str: string, auth = "Human", line = -1) =
   if str == "":
     error "no qoute"
 
@@ -70,7 +70,7 @@ proc exitEcho* =
 proc say*(txt: string) =
   styledEcho fgYellow,txt
 
-proc sayPos*(x:int,a:string; echo = true) =
+proc sayPos*(x:int, a:string; echo = true) =
   setCursorXPos x
   if echo: styledEcho fgGreen,a
   else: stdout.styledWrite fgGreen,a
@@ -81,9 +81,21 @@ proc sayIter*(txt:string) =
     styledEcho fgBlue, f
 
 proc sayIter*(txt: seq[string]) =
+  var chars =
+    @[
+      '1', '2', '3', '4', '5',
+      '6', '7', '8', '9', 'A',
+      'B', 'C', 'D', 'E', 'F',
+      'G', 'H', 'I', 'J', 'K',
+      'L', 'M', 'N', 'O', 'P',
+      'Q', 'R', 'S', 'T', 'U',
+      'V', 'W', 'X', 'Y', 'Z'
+    ]
+  var num = 0
   for f in txt:
     setCursorXPos 5
-    styledEcho fgBlue, f
+    styledEcho fgBlue, $chars[num], " ", f
+    inc num
 
 proc warn*(txt:string; x = -1) =
   if not(x == -1): setCursorXPos x
@@ -99,7 +111,7 @@ proc inv* =
   eraseLine()
   cursorUp()
 
-proc drawMenu*(sub: string ,x:string | seq[string]; sect = "") =
+proc drawMenu*(sub: string ,x:string | seq[string], sect = "") =
   clear()
   if sect == "":
     say fmt"PNimRP > {sub}"
@@ -203,7 +215,7 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
      cursorUp()
 
     of 'r','R':
-     if not(isPaused): terminateDestroy ctx
+     if not isPaused: terminateDestroy ctx
      break
     of 'q','Q': exit ctx, isPaused
     else: inv()
@@ -218,32 +230,8 @@ proc menu*(sub, file: string; sect = "") =
       of 1: l.add input[f]
       else: discard
 
-  #[if n.len < 15:
-    for f in 0 .. 15 - n.len:
-      n.add ""
-      l.add ""
-]#
-
   while true:
     var j = false
-  #[  var o = fmt"""1 {n[0]}
-2 {n[1]}
-3 {n[2]}
-4 {n[3]}
-5 {n[4]}
-6 {n[5]}
-7 {n[6]}
-8 {n[7]}
-9 {n[8]}
-A {n[9]}
-B {n[10]}
-C {n[11]}
-D {n[12]}
-E {n[13]}
-F {n[14]}
-R Return
-Q Exit"""]#
-
     drawMenu sub,n,sect
     #add conditiinal check for every if len not thereown size
     #else no use danger use release
