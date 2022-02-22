@@ -17,14 +17,14 @@ hideCursor()
 var files, names: seq[string]
 
 for file in walkFiles "assets/*":
- files.add file
- var ProcessingFile = file
- ProcessingFile.removePrefix "assets/"
- ProcessingFile[0] = toUpperAscii(ProcessingFile[0])
- ProcessingFile.removeSuffix ".json"
- if not(ProcessingFile == "Qoute") or
-  not(ProcessingFile == "Prot"):
-   names.add ProcessingFile
+  files.add file
+  var procFile = file
+  procFile.removePrefix "assets/"
+  procFile[0] = procFile[0].toUpperAscii
+  procFile.removeSuffix ".json"
+  if procFile != "Qoute":
+    names.add procFile
+
 names.add "Quit"
 
 while true:
@@ -32,7 +32,6 @@ while true:
   say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
   sayPos 4,"Station Categories:"
   sayIter names
-  var j = false
   #add tryblock to catch defect
   while true:
     case getch():
