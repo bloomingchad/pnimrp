@@ -475,8 +475,7 @@ proc checkError*(status: cint) = ##[
   quit with failure exit status if less than 0
  ]##
  if status < 0:
-  echo "mpv API error: ", errorString status
   showCursor()
-  quit QuitFailure
+  raise newException(CatchableError, "mpv API error: " & $errorString status)
 
 {.pop.}
