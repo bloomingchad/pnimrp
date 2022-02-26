@@ -94,7 +94,8 @@ proc sayIter*(txt: seq[string]) =
   var num = 0
   for f in txt:
     setCursorXPos 5
-    styledEcho fgBlue, $chars[num], " ", f
+    if f != "Quit": styledEcho fgBlue, $chars[num], " ", f
+    else: styledEcho fgBlue, "Q Quit"
     inc num
 
 proc warn*(txt:string; x = -1) =
@@ -256,5 +257,5 @@ proc menu*(sub, file: string; sect = "") =
         of 'R','r': j = true; break
         of 'Q','q': exitEcho()
         else: inv()
-      except Defect: inv()
+      except IndexDefect: inv()
     if j: break
