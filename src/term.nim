@@ -1,7 +1,7 @@
-import osproc, terminal, random, os, strformat, strutils, json
-import ../client/src/client
-
-export terminal.getch
+import
+  osproc, terminal, random, os, #times,
+  strformat, strutils, json,
+  ../client/src/client
 
 proc clear* =
   eraseScreen()
@@ -11,7 +11,7 @@ proc error*(str:string) =
   styledEcho fgRed, "Error: ", str
   quit QuitFailure
 
-proc sayBye(str: string, auth = "Human", line = -1) =
+proc sayBye(str, auth: string, line = -1) =
   if str == "":
     error "no qoute"
 
@@ -172,8 +172,12 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
     echoPlay = false
 
    #remove cursorUp?
-   if not(isPaused):
-    event = ctx.waitEvent 1000
+   #add time check playing error link
+   if not isPaused:
+     #var t0 = now().second
+     event = ctx.waitEvent 1000
+     #if now().second - t0 >= 5:
+      # error "timeout of 5s"
 
    #remove casting?
    case cast[eventID](event):
