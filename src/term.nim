@@ -99,7 +99,7 @@ proc sayIter*(txt: seq[string]) =
     inc num
 
 proc warn*(txt:string; x = -1) =
-  if not(x == -1): setCursorXPos x
+  if x != -1: setCursorXPos x
   styledEcho fgRed,txt
   #if echo == false: stdout.styledWrite fgRed,txt
   #default Args dosent seem to be working?
@@ -134,7 +134,7 @@ proc exec*(x:string,args:openArray[string]; stream = false) =
   )
 
 proc exit(ctx:ptr handle, isPaused: bool) =
-  if not(isPaused):
+  if not isPaused:
     terminateDestroy ctx
   exitEcho()
 
@@ -232,7 +232,11 @@ proc menu*(sub, file: string; sect = "") =
   for f in input.low .. input.high:
     case f mod 2:
       of 0: n.add input[f]
-      of 1: l.add input[f]
+      of 1:
+        if input[f].startsWith "http":
+          l.add input[f]
+        else:
+          l.add "http://" & input[f]
       else: discard
 
   while true:
