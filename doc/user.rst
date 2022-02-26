@@ -7,6 +7,8 @@ Table Of Contents
 -----------------
   * Supported Platforms
   * Controls
+  * Links
+  * Qoutes
 
 Supported Platforms
 -------------------
@@ -29,3 +31,18 @@ Controls
 General Controls are using given numbers or characters to select the menu.
 where R would return and q would quit out of the application.
 and when stream is being played, use p to pause/mute or play.
+
+Links
+-----
+Editing Links is just to look at the relevant file in assets directory.
+the files are arranged in an json array and has to be even as it should have
+name and link latter last respectively.
+
+.. note::
+  you have the choice to put http:// or not
+
+Qoutes
+------
+you can edit qoutes in assets/qoute.json.
+- qoute first, author name second
+- array should be even
