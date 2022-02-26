@@ -1,36 +1,36 @@
 {
   "pnimrp": [
     "AH.FM -data",
-    "http://ca.ah.fm/48k",
+    "ca.ah.fm/48k",
 
     "AH.FM -high",
-    "http://ca.ah.fm",
+    "ca.ah.fm",
 
     "Ambient Sleeping Pill",
-    "http://radio.stereoscenic.com/asp-s",
+    "radio.stereoscenic.com/asp-s",
 
     "Ibiza Global Radio",
-    "http://ibizaglobalradio.streaming-pro.com:8024",
+    "ibizaglobalradio.streaming-pro.com:8024",
 
     "Radio Seven",
-    "http://80.86.106.32:8000/radio7.mp3",
+    "80.86.106.32:8000/radio7.mp3",
 
     "Antenne Bayern Chillout",
     "stream.antenne.de/chillout",
 
-    //"Frisky",
-    //"",
+    "Frisky",
+    "stream2.friskyradio.com/frisky_mp3_hi",
 
     "Nirvana Radio",
-    "http://streaming.exclusive.radio/er/nirvana/icecast.audio",
+    "streaming.exclusive.radio/er/nirvana/icecast.audio",
 
     "Puls Radio",
-    "http://icecast.pulsradio.com/pulsHD.mp3",
+    "icecast.pulsradio.com/pulsHD.mp3",
 
     "Puls Radio - Club",
-    "http://icecast.pulsradio.com/mxHD.mp3",
+    "icecast.pulsradio.com/mxHD.mp3",
 
     "Puls Radio - Trance",
-    "http://icecast.pulsradio.com/pulstranceHD.mp3"
+    "icecast.pulsradio.com/pulstranceHD.mp3"
    ]
 }
