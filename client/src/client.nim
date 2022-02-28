@@ -40,8 +40,6 @@ Terms Used
 from terminal import showCursor
 
 {.push dynlib: "(libmpv.so|mpv-1.dll)".}
-#when defined posix: {.push dynlib: "libmpv.so".}
-#when defined windows: {.push dynlib: "mpv-1.dll".}
 
 #templates
 template makeVersion*(major, minor: untyped): untyped =
@@ -327,6 +325,7 @@ using
 proc abortAsyncCmd*(ctx; replyUserData)
     {.importc: "mpv_abort_async_command".}
 
+{.push discardable.}
 proc cmd*(ctx; argsArr): cint
     {.importc: "mpv_command".}
 
@@ -345,6 +344,7 @@ proc cmdRet*(ctx; argsArr; result): cint
 proc cmdString*(ctx; argsStr): cint
    {.importc: "mpv_command_string".}
 
+{.pop.}
 proc create*: ptr handle
     {.importc: "mpv_create".} ##[
   create and return a handle used to control the instance
@@ -419,6 +419,8 @@ proc initialize*(ctx): cint
   very important proc for usage if used create() to preinit
  ]##
 
+{.push discardable.}
+
 proc loadConfigFile*(ctx; filename: cstring): cint
     {.importc: "mpv_load_config_file".}
 
@@ -455,6 +457,7 @@ proc terminateDestroy*(ctx)
 proc unobserveProperty*(ctx; registeredReplyUserData: cint): cint
    {.importc: "mpv_unobserve_property".}
 
+{.pop.}
 proc waitAsyncRequests*(ctx)
    {.importc: "mpv_wait_async_requests".}
 
