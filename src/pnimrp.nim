@@ -26,7 +26,7 @@ for file in walkFiles "assets/*":
   if procFile != "Qoute":
     names.add procFile
 
-names.add "Quit"
+names.add "Notes"
 
 while true:
   clear()
