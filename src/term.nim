@@ -1,7 +1,7 @@
 import
   osproc, terminal, random, os, #times,
   strformat, strutils, json,
-  ../client/src/client
+  ../client/src/client, sequtils
 
 proc clear* =
   eraseScreen()
@@ -23,6 +23,8 @@ proc sayBye(str, auth: string, line = -1) =
     error "there can no be qoute without man"
     if line != -1:
       error fmt"@ line: {line} in qoute.json"
+
+  quit()
 
 proc parseJ(x: string): JsonNode =
   try:
@@ -55,17 +57,17 @@ proc exitEcho* =
 
   var rand = rand qoutes.low .. qoutes.high
 
+  when not defined(release) or
+    not defined(danger):
+      echo fmt"free mem: {getFreeMem() / 1024} kB"
+      echo fmt"total/max mem: {getTotalMem() / 1024} kB"
+      echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
+
   sayBye(
     qoutes[rand],
     authors[rand],
-    rand*2
+    rand * 2
   )
-
-  when defined debug:
-    echo fmt"free mem: {getFreeMem() / 1024} kB"
-    echo fmt"total/max mem: {getTotalMem() / 1024} kB"
-    echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
-  quit()
 
 proc say*(txt: string) =
   styledEcho fgYellow,txt
@@ -94,9 +96,13 @@ proc sayIter*(txt: seq[string]) =
   var num = 0
   for f in txt:
     setCursorXPos 5
-    if f != "Quit": styledEcho fgBlue, $chars[num], " ", f
-    else: styledEcho fgBlue, "Q Quit"
+    if f != "Notes" or f != "Return": styledEcho fgBlue, $chars[num], " ", f
+    else:
+      styledEcho fgBlue, "N Notes"
+      styledEcho fgBlue, "R Return"
     inc num
+  setCursorXPos 5
+  styledEcho fgBlue, "Q Quit"
 
 proc warn*(txt:string; x = -1) =
   if x != -1: setCursorXPos x
@@ -225,6 +231,27 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
     of 'q','Q': exit ctx, isPaused
     else: inv()
 
+proc splitH*(chars: seq[string]): seq[seq[string]] =
+  let h = int(terminalHeight()/2)
+  var
+    num = 0
+    rest = false
+    length = chars.len
+
+  while length >= h:
+    num += 1
+    length -= h
+
+  if length < h:
+    rest = true
+
+  #it will never be > h
+  if rest:
+    return chars.distribute(num+1, spread = true)
+  else:
+    return chars.distribute(num, spread = false)
+
+
 proc menu*(sub, file: string; sect = "") =
   var n, l: seq[string] = @[]
   var input = parseJArray file
@@ -233,7 +260,7 @@ proc menu*(sub, file: string; sect = "") =
     case f mod 2:
       of 0: n.add input[f]
       of 1:
-        if input[f].startsWith "http":
+        if input[f].startsWith "http://":
           l.add input[f]
         else:
           l.add "http://" & input[f]

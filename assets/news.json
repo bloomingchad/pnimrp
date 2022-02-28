@@ -1,10 +1,10 @@
 {
   "pnimrp": [
     "Air Progressive",
-    "http://airprogressive.org:8000/stream",
+    "airprogressive.org:8000/stream",
 
     "BBC",
-    "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-einws",
+    "bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-einws",
 
     "CBC",
     "http://3153.live.streamtheworld.com:80/CBC_R1_MCT_L_SC",

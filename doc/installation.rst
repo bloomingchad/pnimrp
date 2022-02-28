@@ -10,7 +10,6 @@ Table of Contents
 -----------------
   * Dependencies
   * Compliling The Project
-  * Using Pre-Complied Packages
 
 Dependencies
 ------------
@@ -77,19 +76,3 @@ Using Compiler Directly::
 
 Note:
  * project does not compile under JS backend
-
-Using PreComplied Packages
---------------------------
-Note:
- * Packages are not available yet!
- * Windows installer script is not available yet!
-
-The Package is an tar.xz archive, consisting of:
- - assets/ (application assets)
- - doc/ (documentaton)
- - readme.rst (Introduction ReadME)
- - pnimrp (app)
- - lib/ (libraries used)
- - install (installer nim application)
- - LICENSE
- - COPYING
