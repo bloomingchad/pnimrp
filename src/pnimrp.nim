@@ -32,7 +32,7 @@ while true:
   clear()
   say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
   sayPos 4,"Station Categories:"
-  sayIter names
+  sayIter names, ret = false
   try:
     while true:
       case getch():

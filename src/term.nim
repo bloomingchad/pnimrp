@@ -11,6 +11,11 @@ proc error*(str:string) =
   styledEcho fgRed, "Error: ", str
   quit QuitFailure
 
+proc sayBlue*(strList: varargs[string]) =
+  for str in strList:
+    setCursorXPos 5
+    styledEcho fgBlue, str
+
 proc sayBye(str, auth: string, line = -1) =
   if str == "":
     error "no qoute"
@@ -82,27 +87,25 @@ proc sayIter*(txt:string) =
     setCursorXPos 5
     styledEcho fgBlue, f
 
-proc sayIter*(txt: seq[string]) =
-  var chars =
-    @[
-      '1', '2', '3', '4', '5',
-      '6', '7', '8', '9', 'A',
-      'B', 'C', 'D', 'E', 'F',
-      'G', 'H', 'I', 'J', 'K',
-      'L', 'M', 'N', 'O', 'P',
-      'Q', 'R', 'S', 'T', 'U',
-      'V', 'W', 'X', 'Y', 'Z'
-    ]
-  var num = 0
+proc sayIter*(txt: seq[string]; ret = true) =
+  var
+    chars =
+      @[
+        '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', 'A',
+        'B', 'C', 'D', 'E', 'F',
+        'G', 'H', 'I', 'J', 'K',
+        'L', 'M', 'N', 'O', 'P',
+        'Q', 'R', 'S', 'T', 'U',
+        'V', 'W', 'X', 'Y', 'Z'
+      ]
+    num = 0
   for f in txt:
-    setCursorXPos 5
-    if f != "Notes" or f != "Return": styledEcho fgBlue, $chars[num], " ", f
-    else:
-      styledEcho fgBlue, "N Notes"
-      styledEcho fgBlue, "R Return"
+    if f != "Notes": sayBlue fmt"{$chars[num]} {f}"
+    else: sayBlue "N Notes"
     inc num
-  setCursorXPos 5
-  styledEcho fgBlue, "Q Quit"
+  if ret: sayBlue "R Return"
+  sayBlue "Q Quit"
 
 proc warn*(txt:string; x = -1) =
   if x != -1: setCursorXPos x
