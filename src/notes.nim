@@ -25,6 +25,7 @@ under certain conditions. press `t` for details"""
        warn "type esc, :q and enter to exit"
        showCursor()
        exec "vi",["LICENSE"], stream = true
+       hideCursor()
      else:
        showCursor()
        echo "please open LICENSE file"
