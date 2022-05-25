@@ -1,0 +1,9 @@
+{
+	pnimrp: [
+		"freeCodeCamp codeRadio -data",
+		"https://coderadio-relay-ffm.freecodecamp.org/radio/8010/low.mp3",
+
+		"Chill Step",
+		"http://chillstep.info:1984/listen.ogg"
+	]
+}
