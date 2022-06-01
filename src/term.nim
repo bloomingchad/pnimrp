@@ -147,6 +147,41 @@ proc exit(ctx:ptr handle, isPaused: bool) =
     terminateDestroy ctx
   exitEcho()
 
+proc notes* =
+ while true:
+  var j = false
+  const sub = "Notes"
+  clear()
+  say "PNimRP > " & sub
+  sayPos 0, ('-'.repeat int terminalWidth() / 8) & ('>'.repeat int terminalWidth() / 12)
+  sayIter """PNimRP Copyright (C) 2021 antonl05
+This program comes with ABSOLUTELY NO WARRANTY
+This is free software, and you are welcome to redistribute
+under certain conditions. press `t` for details"""
+  while true:
+   case getch():
+    of 'T','t':
+     when defined windows: exec "notepad.exe",["LICENSE"], stream = true; break
+     when defined posix:
+      when defined android:
+       showCursor()
+       exec "editor",["LICENSE"], stream = true
+       hideCursor()
+       break
+      else:
+       warn "type esc, :q and enter to exit"
+       showCursor()
+       exec "vi",["LICENSE"], stream = true
+       hideCursor()
+     else:
+       showCursor()
+       echo "please open LICENSE file"
+       quit()
+    of 'r','R': j = true; break
+    of 'Q','q': exitEcho()
+    else: inv()
+  if j: break
+
 template cE(s: cint) = checkError s
 
 proc init(parm:string,ctx: ptr handle) =
@@ -254,8 +289,7 @@ proc splitH*(chars: seq[string]): seq[seq[string]] =
   else:
     return chars.distribute(num, spread = false)
 
-
-proc menu*(sub, file: string; sect = "") =
+proc initJsonLists(sub, file:string; sect = ""):seq[seq[string]] =
   var n, l: seq[string] = @[]
   var input = parseJArray file
 
@@ -263,11 +297,19 @@ proc menu*(sub, file: string; sect = "") =
     case f mod 2:
       of 0: n.add input[f]
       of 1:
-        if input[f].startsWith "http://":
-          l.add input[f]
+        if input[f].startsWith("http://") or
+          input[f].startsWith "https://":
+            l.add input[f]
         else:
           l.add "http://" & input[f]
       else: discard
+  return @[n,l]
+
+proc menu*(sub, file: string; sect = "";) =
+  let
+    list = initJsonLists(sub, file, sect)
+    n = list[0]
+    l = list[1]
 
   while true:
     var j = false
@@ -276,24 +318,61 @@ proc menu*(sub, file: string; sect = "") =
     #else no use danger use release
     while true:
       try:
-       case getch():
-        of '1': call sub,sect,n[0],l[0]; break
-        of '2': call sub,sect,n[1],l[1]; break
-        of '3': call sub,sect,n[2],l[2]; break
-        of '4': call sub,sect,n[3],l[3]; break
-        of '5': call sub,sect,n[4],l[4]; break
-        of '6': call sub,sect,n[5],l[5]; break
-        of '7': call sub,sect,n[6],l[6]; break
-        of '8': call sub,sect,n[7],l[7]; break
-        of '9': call sub,sect,n[8],l[8]; break
-        of 'A','a': call sub,sect,n[9],l[9]; break
-        of 'B','b': call sub,sect,n[10],n[10]; break
-        of 'C','c': call sub,sect,n[11],n[11]; break
-        of 'D','d': call sub,sect,n[12],n[12]; break
-        of 'E','e': call sub,sect,n[13],n[13]; break
-        of 'F','f': call sub,sect,n[14],n[14]; break
-        of 'R','r': j = true; break
-        of 'Q','q': exitEcho()
-        else: inv()
+        case getch():
+          of '1': call sub,sect,n[0],l[0]; break
+          of '2': call sub,sect,n[1],l[1]; break
+          of '3': call sub,sect,n[2],l[2]; break
+          of '4': call sub,sect,n[3],l[3]; break
+          of '5': call sub,sect,n[4],l[4]; break
+          of '6': call sub,sect,n[5],l[5]; break
+          of '7': call sub,sect,n[6],l[6]; break
+          of '8': call sub,sect,n[7],l[7]; break
+          of '9': call sub,sect,n[8],l[8]; break
+          of 'A','a': call sub,sect,n[9],l[9]; break
+          of 'B','b': call sub,sect,n[10],n[10]; break
+          of 'C','c': call sub,sect,n[11],n[11]; break
+          of 'D','d': call sub,sect,n[12],n[12]; break
+          of 'E','e': call sub,sect,n[13],n[13]; break
+          of 'F','f': call sub,sect,n[14],n[14]; break
+          of 'R','r': j = true; break
+          of 'Q','q': exitEcho()
+          else: inv()
       except IndexDefect: inv()
     if j: break
+
+proc menu*(
+  names, files: seq[string];
+  mainScreen = false;
+ ) =
+  if mainScreen:
+    if not(names is seq[string] and files is seq[string]):
+      error("term.menu sub file not seq")
+
+  while true:
+    clear()
+    say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
+    sayPos 4,"Station Categories:"
+    sayIter names, ret = false
+    try:
+      while true:
+        case getch():
+          of '1': menu names[0], files[0]; break
+          of '2': menu names[1], files[1]; break
+          of '3': menu names[2], files[2]; break
+          of '4': menu names[3], files[3]; break
+          of '5': menu names[4], files[4]; break
+          of '6': menu names[5], files[5]; break
+          of '7': menu names[6], files[6]; break
+          of '8': menu names[7], files[7]; break
+          of '9': menu names[8], files[8]; break
+          of 'A','a': menu names[9], files[9]; break
+          of 'B','b': menu names[10], files[10]; break
+          of 'C','c': menu names[11], files[11]; break
+          of 'D','d': menu names[12], files[12]; break
+          of 'E','e': menu names[13], files[13]; break
+          of 'F','f': menu names[14], files[14]; break
+          of 'N', 'n': notes(); break
+          of 'q', 'Q': exitEcho()
+          else: inv()
+    except IndexDefect:
+      inv()
