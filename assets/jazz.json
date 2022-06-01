@@ -1,21 +1,21 @@
 {
   "pnimrp": [
     "Bay Smooth Jazz Radio",
-    "http://185.33.22.15:9010",
+    "185.33.22.15:9010",
 
     "The Jazz Groove",
-    "http://199.180.72.2:8015",
+    "199.180.72.2:8015",
 
     "Best Smooth Jazz",
-    "http://64.95.243.43:8002",
+    "64.95.243.43:8002",
 
     "Big Blue Swing",
-    "http://www.bigblueswing.com:8002",
+    "www.bigblueswing.com:8002",
 
     "Public Domain Classical Jazz",
-    "http://relay.publicdomainradio.org:80/classical.mp3",
+    "relay.publicdomainradio.org:80/classical.mp3",
 
     "SmoothJazz Global Radio",
-    "https://smoothjazz.cdnstream1.com/2585_128.mp3"
+    "smoothjazz.cdnstream1.com/2585_128.mp3"
    ]
 }

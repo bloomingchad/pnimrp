@@ -1,27 +1,27 @@
 {
   "pnimrp": [
     "Party 181",
-    "http://relay.181.fm:8036",
+    "relay.181.fm:8036",
   
     "Power 181",
-    "http://relay.181.fm:8128",
+    "relay.181.fm:8128",
   
     "Smooth AC",
-    "http://relay.181.fm:8094",
+    "relay.181.fm:8094",
   
     "The Heart",
-    "http://relay.181.fm:8006",
+    "relay.181.fm:8006",
   
     "The Mix",
-    "http://relay.181.fm:8032",
+    "relay.181.fm:8032",
   
     "The Office",
-    "http://relay.181.fm:8002",
+    "relay.181.fm:8002",
   
     "The Point",
-    "http://relay.181.fm:8010",
+    "relay.181.fm:8010",
   
     "UK Top 40",
-    "http://relay.181.fm:8070"
+    "relay.181.fm:8070"
   ]
 }

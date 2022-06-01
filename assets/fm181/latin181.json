@@ -1,9 +1,9 @@
 {
   "pnimrp": [
     "Reggae Roots",
-    "http://relay.181.fm:8096",
+    "relay.181.fm:8096",
 
     "Salsa",
-    "http://relay.181.fm:8098"
+    "relay.181.fm:8098"
   ]
 }
