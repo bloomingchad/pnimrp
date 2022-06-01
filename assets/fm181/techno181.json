@@ -1,21 +1,21 @@
 {
   "pnimrp": [
     "Chilled Out",
-    "http://relay.181.fm:8700",
+    "relay.181.fm:8700",
 
     "Energy 93",
-    "http://relay.181.fm:8044",
+    "relay.181.fm:8044",
 
     "Energy 98",
-    "http://relay.181.fm:8800",
+    "relay.181.fm:8800",
 
     "Studio 181",
-    "http://relay.181.fm:8072",
+    "relay.181.fm:8072",
 
     "Techno Club",
-    "http://icyrelay.181.fm/181-technoclub_128k.mp3",
+    "icyrelay.181.fm/181-technoclub_128k.mp3",
 
     "The Vibe of Vegas",
-    "http://relay.181.fm:8074"
+    "relay.181.fm:8074"
   ]
 }

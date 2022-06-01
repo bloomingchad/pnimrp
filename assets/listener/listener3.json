@@ -1,48 +1,48 @@
 {
   "pnimrp": [
     "TSF Jazz",
-    "http://tsfjazz.ice.infomaniak.ch:80/tsfjazz-high",
+    "tsfjazz.ice.infomaniak.ch:80/tsfjazz-high",
 
     "KUVO",
-    "http://kuvo-ice.streamguys.org/kuvo-mp3-64",
+    "kuvo-ice.streamguys.org/kuvo-mp3-64",
 
     "KUVO HD2",
-    "http://kuvo-ice.streamguys.org/kuvohd2-mp3-64",
+    "kuvo-ice.streamguys.org/kuvohd2-mp3-64",
 
     "KUVO HD3",
-    "http://kuvo-ice.streamguys.org/kuvohd3-mp3-64",
+    "kuvo-ice.streamguys.org/kuvohd3-mp3-64",
 
     "ROK Old Time",
-    "http://s1.viastreaming.net:9180",
+    "s1.viastreaming.net:9180",
 
     "ROK British Comedy",
-    "http://s1.viastreaming.net:9155",
+    "s1.viastreaming.net:9155",
 
     "ROK American Comedy",
-    "http://s1.viastreaming.net:9160",
+    "s1.viastreaming.net:9160",
 
     "ROK Crime & Suspense",
-    "http://s1.viastreaming.net:9165",
+    "s1.viastreaming.net:9165",
 
     "ROK Science Fiction",
-    "http://s1.viastreaming.net:9185",
+    "s1.viastreaming.net:9185",
 
     "MJoy Radio M",
-    "http://stream.mjoy.ua:8000/radio-m",
+    "stream.mjoy.ua:8000/radio-m",
 
     "MJoy Radio M Live",
-    "http://stream.mjoy.ua:8000/radio-m-live",
+    "stream.mjoy.ua:8000/radio-m-live",
 
     "MJoy Radio great",
-    "http://stream.mjoy.ua:8000/radio-great",
+    "stream.mjoy.ua:8000/radio-great",
 
     "MJoy Mousse Radio",
-    "http://stream.mjoy.ua:8000/radio-mousse",
+    "stream.mjoy.ua:8000/radio-mousse",
 
     "MJoy Kredens Cafe",
-    "http://stream.mjoy.ua:8000/kredens-cafe-radio_mp3",
+    "stream.mjoy.ua:8000/kredens-cafe-radio_mp3",
 
     "MJoy Radio egoisty",
-    "http://stream.mjoy.ua:8000/radio-egoisty"
+    "stream.mjoy.ua:8000/radio-egoisty"
   ]
 }
