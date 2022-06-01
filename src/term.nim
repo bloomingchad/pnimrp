@@ -142,7 +142,7 @@ proc exec*(x:string,args:openArray[string]; stream = false) =
       else: {poUsePath}
   )
 
-proc exit(ctx:ptr handle, isPaused: bool) =
+proc exit(ctx:ptr Handle, isPaused: bool) =
   if not isPaused:
     terminateDestroy ctx
   exitEcho()
@@ -184,7 +184,7 @@ under certain conditions. press `t` for details"""
 
 template cE(s: cint) = checkError s
 
-proc init(parm:string,ctx: ptr handle) =
+proc init(parm:string,ctx: ptr Handle) =
   let file = allocCStringArray ["loadfile", parm] #couldbe file,link,playlistfile
   var val: cint = 1
   cE ctx.setOption("osc", fmtFlag, addr val)
@@ -224,7 +224,7 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
       # error "timeout of 5s"
 
    #remove casting?
-   case cast[eventID](event):
+   case cast[EventID](event):
      of IDShutdown, IDIdle: break
      else: discard
 
@@ -329,11 +329,11 @@ proc menu*(sub, file: string; sect = "";) =
           of '8': call sub,sect,n[7],l[7]; break
           of '9': call sub,sect,n[8],l[8]; break
           of 'A','a': call sub,sect,n[9],l[9]; break
-          of 'B','b': call sub,sect,n[10],n[10]; break
-          of 'C','c': call sub,sect,n[11],n[11]; break
-          of 'D','d': call sub,sect,n[12],n[12]; break
-          of 'E','e': call sub,sect,n[13],n[13]; break
-          of 'F','f': call sub,sect,n[14],n[14]; break
+          of 'B','b': call sub,sect,n[10],l[10]; break
+          of 'C','c': call sub,sect,n[11],l[11]; break
+          of 'D','d': call sub,sect,n[12],l[12]; break
+          of 'E','e': call sub,sect,n[13],l[13]; break
+          of 'F','f': call sub,sect,n[14],l[14]; break
           of 'R','r': j = true; break
           of 'Q','q': exitEcho()
           else: inv()
@@ -341,18 +341,20 @@ proc menu*(sub, file: string; sect = "";) =
     if j: break
 
 proc menu*(
-  names, files: seq[string];
+  names, files, dirs: seq[string];
   mainScreen = false;
  ) =
   if mainScreen:
-    if not(names is seq[string] and files is seq[string]):
-      error("term.menu sub file not seq")
+    if not(names is seq[string] and
+      files is seq[string]) and
+        dirs is seq[string]:
+      error("term.menu sub file dirs not seq")
 
   while true:
     clear()
     say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
     sayPos 4,"Station Categories:"
-    sayIter names, ret = false
+    sayIter names&dirs, ret = false
     try:
       while true:
         case getch():

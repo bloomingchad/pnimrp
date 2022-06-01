@@ -1,4 +1,4 @@
-import term, os, terminal, strutils
+import term, os, terminal, strutils, parseutils
 
 if not dirExists "assets":
   error "data or config files dont exist"
@@ -28,8 +28,18 @@ for file in walkFiles "assets/*":
 
 names.add "Notes"
 
+var dirs: seq[string]
+
+for dir in walkDirs "assets/*":
+  var procDir = dir
+  procDir.removePrefix "assets/"
+  procDir.suffix("/")
+  if not(procDir[0].isUpperAscii()):
+    discard parseChar($procDir[0].toUpperAscii(), procDir[0])
+  dirs.add procDir
+
 clear()
 say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
 sayPos 4,"Station Categories:"
 sayIter names, ret = false
-menu(names, files, mainScreen = true)
+menu(names, files, dirs, mainScreen = true)

@@ -21,10 +21,10 @@ Imports
 Type Context
 ------------
 .. code-block:: nim
-  - ctx: ptr handle
+  - ctx: ptr Handle
   - replyUserData,error: cint
   - argsArr: cstringArray
-  - result, node: ptr node
+  - result, Node: ptr Node
   - argsStr, name: cstring
   - data: pointer
   - format: format
@@ -55,7 +55,7 @@ const clientApiVersion* = makeVersion(1, 107)
 
 #types
 type #enums
-  error* = enum ##errors codes returned by api procs
+  Error* = enum ##errors codes returned by api procs
     errGeneric              = -20, ##unspecified error
     errNotImplemented       = -19, ##proc called was stub-only
 
@@ -68,7 +68,7 @@ type #enums
     errVOInitFailed         = -15, ##failed to init video output
 
     errAOInitFailed         = -14, ##failed to init audio output
-    errLoadFailed           = -13, ##loading failed (used with eventEndFile.error)
+    errLoadFailed           = -13, ##loading failed (used with EventEndFile.error)
 
     errCmd                  = -12, ##error when running a command with cmd()
     errOnProperty           = -11, ##error when set or get property
@@ -86,11 +86,11 @@ type #enums
     errUninitialized        = -3,  ##api wasnt initialized yet
 
     errNoMem                = -2,  ##memory allocation failed
-    errEventQueueFull       = -1,  ##client is choked & cant receive any events.
+    errEventQueueFull       = -1,  ##client is choked & cant receive any Events.
         ##many unanswered asynchronous requests.is api frozen?, is it an api bug? 
     errSuccess              =  0   ##no error occured, '>= 0' means success
 
-  format* = enum ##type for options and properties, can get set properties and
+  Format* = enum ##type for options and properties, can get set properties and
   ##options, support multiple formats
 
     fmtNone       = 0, ##invalid, used for empty values
@@ -140,34 +140,34 @@ type #enums
     fmtFloat64    = 5, ##(shouldbe called formatDouble), basic type is float64
 
     fmtNode       = 6, ##[
-     type is node. you should pass a pointer to a stack-allocated node value to
-     api,and then call freeNodeContents(addr node). do not write data, copy
-     it manually if needed to. check node.format member. properties might
+     type is Node. you should pass a pointer to a stack-allocated Node value to
+     api,and then call freeNodeContents(addr Node). do not write data, copy
+     it manually if needed to. check Node.format member. properties might
      change their type in future versions of api, or even runtime.
 
      readableExample:
-      var result:node
+      var result:Node
       if ctx.getProperty("property", formatNode, addr result) < 0:
        echo "error"
       echo "format=", cast[int](result.format)
       freeNodeContents(addr result)
 
-     you should make a node manually, pass pointer to api. api will never
+     you should make a Node manually, pass pointer to api. api will never
      write to your data (can use any allocation mechanism)
 
      runnableExample:
-      var value: node
+      var value: Node
       value.format = formatString
       value.u.str = "hello"
       ctx.setProperty("property", formatNone, addr value)
    ]##
 
-    fmtNodeArray  = 7, ##used with node (not directly!)
+    fmtNodeArray  = 7, ##used with Node (not directly!)
     fmtNodeMap    = 8, ##see formatNodeArray
-    fmtByteArray  = 9  ##raw, untyped byteArray, used with node (used for
+    fmtByteArray  = 9  ##raw, untyped byteArray, used with Node (used for
     ##screenshot-raw command)
 
-  eventID* = enum ##event type
+  EventID* = enum ##Event type
     IDNone              = 0,  ##nothing happened (when timeouts or
      ##sporadic wakeups)
     IDShutdown          = 1,  ##[ when player quits, it tries to
@@ -177,17 +177,17 @@ type #enums
 
     IDLogMessage        = 2,  ##see requestLogMessages()
     IDGetPropertyReply  = 3,  ##reply to getPropertyAsync(),
-     ##(see event, eventProperty)
+     ##(see Event, EventProperty)
 
     IDSetPropertyReply  = 4,  ##reply to setPropertyAsync(),
-     ##eventProperty is not used
+     ##EventProperty is not used
     IDCommandReply      = 5,  ##reply to commandAsync() or
-     ##commandNodeAsync() (see eventID, eventCmd)
+     ##commandNodeAsync() (see EventID, EventCmd)
 
     IDStartFile         = 6,  ##notification before playback start of
      ##file (before loading)
     IDEndFile           = 7,  ##notification after playback ends,after
-     ##unloading, see eventID
+     ##unloading, see EventID
     IDFileLoaded        = 8,  ##notification when file has been
      ##loaded (headers read..)
     IDIdle              = 11, ##[
@@ -201,20 +201,20 @@ type #enums
      triggered by script-message input command, it uses first argument
      of command as clientName (see getclientName()). to dispatch mesage.
      passes all arguments from second arguemnt as strings.
-     (see event, ecentClientMessage)
+     (see Event, ecentClientMessage)
    ]##
 
     IDVideoReConfig     = 17, ##[
      happens when video gets changed. resolution, pixel format or video
-     filter changes. event is sent after video filters & VO are
-     reconfigured. if using mpv window, app should listen this event
+     filter changes. Event is sent after video filters & VO are
+     reconfigured. if using mpv window, app should listen this Event
      so to resize window if needed. this can happen sporadically and
      should manually check if video parameters changed
    ]##
 
-    IDAudioReConfig     = 18, ##similar as eventIDVideoReConfig
+    IDAudioReConfig     = 18, ##similar as EventIDVideoReConfig
     IDSeek              = 20, ##happens when a seek was initiated
-     ##and will resume using eventIDPlaybackRestart when seek is finished
+     ##and will resume using EventIDPlaybackRestart when seek is finished
 
     IDPlayBackRestart   = 21, ##[
      there was discontinuity like a seek, so playback was reinitialized
@@ -222,23 +222,23 @@ type #enums
      to detect if seek is finished
     ]##
 
-    IDPropertyChange    = 22, ##event sent due to observeProperty().m
-     ##see event,eventProperty
+    IDPropertyChange    = 22, ##Event sent due to observeProperty().m
+     ##see Event,EventProperty
     IDQueueOverFlow     = 24, ##[
-     happens if internal handle ringBuffer OverFlows, then atleast 1
-     event has to be dropped, this can happen if client doesnt read
-     event queue quickly with waitEvent() or client makes very large
+     happens if internal Handle ringBuffer OverFlows, then atleast 1
+     Event has to be dropped, this can happen if client doesnt read
+     Event queue quickly with waitEvent() or client makes very large
      number of asynchronous calls at once. every delivery will continue
-     normally once event gets returned, this forces client to empty queue
+     normally once Event gets returned, this forces client to empty queue
   ]##
 
     IDHook              = 25  ##[
-     triggered if hook handler was registered with hookAdd()
-     and hook is invoked. this must be manually handled and continue
-     hook with hookContinue() (see event, eventHook)
+     triggered if hook Handler was registered with hookAdd()
+     and hook is invoked. this must be manually Handled and continue
+     hook with hookContinue() (see Event, EventHook)
     ]##
 
-  endFileReason* = enum ##end file reason enum (since 1.9)
+  EndFileReason* = enum ##end file reason enum (since 1.9)
     efrEOF         = 0, ##reaching end of file. network issues,
      ##corrupted packets?
 
@@ -247,7 +247,7 @@ type #enums
     efrError       = 4, ##some error made it stop.
     efrReDirect    = 5  ##playlist endofFile redirect mechanism
 
-  logLevel* = enum ##[
+  LogLevel* = enum ##[
    enum describing log level verbosity (see requestLogMessages())
    lower number = more important message, unused values are for future use
   ]##
@@ -261,66 +261,66 @@ type #enums
     llTrace  = 70  ##extermely verbose
 
 #non-enum type objects
-  handle* = distinct pointer ##(private) basic type, used by api to
+  Handle* = distinct pointer ##(private) basic type, used by api to
    ##infer the context
 
-  clientUnionType* {.bycopy, union.} = object
+  ClientUnionType* {.bycopy, union.} = object
     str*: cstring
     flag*, int*: cint
     double*: cdouble
-    list*: ptr nodeList
-    ba*: ptr byteArray
+    list*: ptr NodeList
+    ba*: ptr ByteArray
 
-  node* {.bycopy.} = object
-    u*: clientUnionType
-    format*: format
+  Node* {.bycopy.} = object
+    u*: ClientUnionType
+    format*: Format
 
-  nodeList* {.bycopy.} = object
+  NodeList* {.bycopy.} = object
     num*: cint
-    values*: ptr node
+    values*: ptr Node
     keys*: cstringArray
 
-  byteArray* {.bycopy.} = object
+  ByteArray* {.bycopy.} = object
     data*: pointer
     size*: csize_t
 
-  eventProperty* {.bycopy.} = object
+  EventProperty* {.bycopy.} = object
     name*: cstring
-    format*: format
+    format*: Format
     data*: pointer
 
-  eventLogMessage* {.bycopy.} = object
+  EventLogMessage* {.bycopy.} = object
     prefix*, level*, text*: cstring
-    logLevel*: logLevel
+    logLevel*: LogLevel
 
-  eventEndFile* {.bycopy.} = object
+  EventEndFile* {.bycopy.} = object
     reason*, error*: cint
 
-  eventClientMessage* {.bycopy.} = object
+  EventClientMessage* {.bycopy.} = object
     numArgs*: cint
     args*: cstringArray
 
-  eventHook* {.bycopy.} = object
+  EventHook* {.bycopy.} = object
     name*: cstring
     id*: cint
 
-  eventCmd* {.bycopy.} = object
-    result*: node
+  EventCmd* {.bycopy.} = object
+    result*: Node
 
-  event* {.bycopy.} = object
-    eventID*: eventID
+  Event* {.bycopy.} = object
+    eventID*: EventID
     error*, replyUserData*: cint
     data*: pointer
 
 #procs
 using
- ctx: ptr handle
+ ctx: ptr Handle
  replyUserData,error: cint
  argsArr: cstringArray
- result, node: ptr node
+ result, node: ptr Node
  argsStr, name: cstring
  data: pointer
- fmt: format
+ fmt: Format
 
 proc abortAsyncCmd*(ctx; replyUserData)
     {.importc: "mpv_abort_async_command".}
@@ -345,25 +345,25 @@ proc cmdString*(ctx; argsStr): cint
    {.importc: "mpv_command_string".}
 
 {.pop.}
-proc create*: ptr handle
+proc create*: ptr Handle
     {.importc: "mpv_create".} ##[
-  create and return a handle used to control the instance
+  create and return a Handle used to control the instance
   instance is in preinitialized state. and needs more initialisation
   for use with other procs. (see errUnitialised, libmpv/examples/simple.c)
   this gives more control over configuration. (see more..)
-  NO concurrent accesses on uninitialised handle.
+  NO concurrent accesses on uninitialised Handle.
   returns nil when out of memory
  ]##
 
-proc createClient*(ctx; name): ptr handle
+proc createClient*(ctx; name): ptr Handle
     {.importc: "mpv_create_client".}
 
-proc createWeakClient*(ctx; name): ptr handle
+proc createWeakClient*(ctx; name): ptr Handle
     {.importc: "mpv_create_weak_client".}
 
 proc destroy*(ctx)
     {.importc: "mpv_destroy".}
-  ##finish the handle, ctx will be deallocated.
+  ##finish the Handle, ctx will be deallocated.
 
 proc errorString*(error): cstring
     {.importc: "mpv_error_string".} ##[
@@ -371,7 +371,7 @@ proc errorString*(error): cstring
   isStaticConst, (see error: enum)
  ]##
 
-proc eventName*(event: eventID): cstring 
+proc EventName*(Event: EventID): cstring
    {.importc: "mpv_event_name".}
 
 proc free*(data)
@@ -390,7 +390,7 @@ proc getClientApiVersion*: culong
 
 proc getClientName*(ctx): cstring
     {.importc: "mpv_client_name".}
- ##return the unique client handle name. isStaticConst
+ ##return the unique client Handle name. isStaticConst
 
 proc getProperty*(ctx; name; fmt; data): cint
    {.importc: "mpv_get_property".}
@@ -427,7 +427,7 @@ proc loadConfigFile*(ctx; filename: cstring): cint
 proc observeProperty*(ctx; replyUserData; name; fmt): cint
    {.importc: "mpv_observe_property".}
 
-proc requestEvent*(ctx; event: eventID; enable: cint): cint
+proc requestEvent*(ctx; Event: EventID; enable: cint): cint
    {.importc: "mpv_request_event".}
 
 proc requestLogMsgs*(ctx; minLevel: cstring): cint
@@ -461,7 +461,7 @@ proc unobserveProperty*(ctx; registeredReplyUserData: cint): cint
 proc waitAsyncRequests*(ctx)
    {.importc: "mpv_wait_async_requests".}
 
-proc waitEvent*(ctx; timeout: cdouble): ptr event
+proc waitEvent*(ctx; timeout: cdouble): ptr Event
    {.importc: "mpv_wait_event".}
 
 proc wakeup*(ctx)
@@ -469,8 +469,8 @@ proc wakeup*(ctx)
   interrupt current waitEvent(), this will wakeup thread currently
   waiting in waitEvent(). waiting thread is woken up. if no thread is
   waiting, next waitEvent() will return to avoid lost wakeups. waitEvent()
-  will get a eventNone if woken up due to this call. but this dummy
-  event might by skipped if there are others queued
+  will get a EventNone if woken up due to this call. but this dummy
+  Event might by skipped if there are others queued
  ]##
 
 proc checkError*(status: cint) = ##[
