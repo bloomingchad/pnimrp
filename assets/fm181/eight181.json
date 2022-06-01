@@ -1,12 +1,12 @@
 {
   "pnimrp": [
     "80's Country",
-    "http://relay.181.fm:8134",
+    "relay.181.fm:8134",
 
     "Awesome 80's",
-    "http://relay.181.fm:8000",
+    "relay.181.fm:8000",
 
     "Lite 80's",
-    "http://relay.181.fm:8040"
+    "relay.181.fm:8040"
   ]
 }

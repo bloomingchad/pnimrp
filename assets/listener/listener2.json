@@ -1,48 +1,48 @@
 {
   "pnimrp": [
     "WEVL 89.9",
-    "http://peace.str3am.com:6030",
+    "peace.str3am.com:6030",
 
     "WERU 89.9 FM",
-    "http://stream.weru.org:80/weru-high.mp3",
+    "stream.weru.org:80/weru-high.mp3",
 
     "WFMU",
-    "http://stream0.wfmu.org/freeform-128k",
+    "stream0.wfmu.org/freeform-128k",
 
     "WNCU",
-    "http://pubint.ic.llnwd.net/stream/pubint_wncu",
+    "pubint.ic.llnwd.net/stream/pubint_wncu",
 
     "WNRN-FM",
-    "http://broadcast.wnrn.org:8000/wnrn.mp3",
+    "broadcast.wnrn.org:8000/wnrn.mp3",
 
     "WNYC 93.9 FM",
-    "http://fm939.wnyc.org/wnycfm",
+    "fm939.wnyc.org/wnycfm",
 
     "WQXR New York",
-    "http://stream.wqxr.org/wqxr",
+    "stream.wqxr.org/wqxr",
 
     "WSGE FM",
-    "http://amber.streamguys.com:4890/live",
+    "amber.streamguys.com:4890/live",
 
     "WWOZ",
-    "http://50.31.135.43:80/wwoz-hi.mp3",
+    "50.31.135.43:80/wwoz-hi.mp3",
 
     "Xenicus Radio",
-    "http://192.99.35.93:6744/stream",
+    "192.99.35.93:6744/stream",
 
     "andHow FM",
-    "http://199.180.75.6:80",
+    "199.180.75.6:80",
 
     "FIP",
-    "http://audio.scdn.arkena.com/11016/fip-midfi128.mp3",
+    "audio.scdn.arkena.com/11016/fip-midfi128.mp3",
 
     "PBB",
-    "http://pbb.laurentgarnier.com:8000",
+    "pbb.laurentgarnier.com:8000",
 
     "ABN Antioch",
-    "http://lin2.ash.fast-serv.com:9022",
+    "lin2.ash.fast-serv.com:9022",
 
     "TCAN",
-    "http://206.190.144.154:8060"
+    "206.190.144.154:8060"
   ]
 }

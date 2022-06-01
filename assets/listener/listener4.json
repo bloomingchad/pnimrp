@@ -1,18 +1,18 @@
 {
   "pnimrp": [
     "MJoy Radio-Xmas",
-    "http://stream.mjoy.ua:8000/radio-xmas",
+    "stream.mjoy.ua:8000/radio-xmas",
 
     "MJoy Radio-Z",
-    "http://stream.mjoy.ua:8000/radio-z-kryjivky",
+    "stream.mjoy.ua:8000/radio-z-kryjivky",
 
     "MJoy Urban Space",
-    "http://stream.mjoy.ua:8000/urban-space-radio",
+    "stream.mjoy.ua:8000/urban-space-radio",
 
     "DFM RTV INT",
-    "http://176.9.138.209:8205/dfm_1",
+    "176.9.138.209:8205/dfm_1",
 
     "Ralph Radio",
-    "http://213.177.96.6:9900/ralph128"
+    "213.177.96.6:9900/ralph128"
   ]
 }

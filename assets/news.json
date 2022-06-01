@@ -7,45 +7,45 @@
     "bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-einws",
 
     "CBC",
-    "http://3153.live.streamtheworld.com:80/CBC_R1_MCT_L_SC",
+    "3153.live.streamtheworld.com:80/CBC_R1_MCT_L_SC",
 
     "GLT News & Ideas",
-    "http://wgltradio.ilstu.edu:8000/wgltmain.mp3",
+    "wgltradio.ilstu.edu:8000/wgltmain.mp3",
 
     "NPR",
-    "http://nprdmp-live01-mp3.akacast.akamaistream.net/7/998/364916/v1/npr.akacast.akamaistream.net/nprdmp_live01_mp3",
+    "nprdmp-live01-mp3.akacast.akamaistream.net/7/998/364916/v1/npr.akacast.akamaistream.net/nprdmp_live01_mp3",
 
     "Newstalk 106-108",
-    "http://vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high",
+    "vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high",
 
     "RFI",
-    "http://stream.rfi.fr/2588/rfi_en_anglais/rfianglais.mp3",
+    "stream.rfi.fr/2588/rfi_en_anglais/rfianglais.mp3",
 
     "Sputnik",
-    "http://audio1.video.ria.ru:80/voiceeng",
+    "audio1.video.ria.ru:80/voiceeng",
 
     "The Source",
-    "http://stream.wmnf.org:8000/wmnf_hd3",
+    "stream.wmnf.org:8000/wmnf_hd3",
 
     "WKSU News",
-    "http://66.225.205.8:8020",
+    "66.225.205.8:8020",
 
     "detour TALK",
-    "http://104.250.149.218:7300",
+    "104.250.149.218:7300",
 
     "Freethought Radio",
-    "http://212.48.126.146:9110",
+    "212.48.126.146:9110",
 
     "Infowars",
-    "http://50.7.79.22:80",
+    "50.7.79.22:80",
 
     "KSFC",
-    "http://173.192.70.138:8710",
+    "173.192.70.138:8710",
 
     "Radio Newark",
-    "http://98.114.57.7:8000",
+    "98.114.57.7:8000",
 
     "Talk 790",
-    "http://208.85.240.2:8310"
+    "208.85.240.2:8310"
   ]
 }

@@ -1,18 +1,18 @@
 {
   "pnimrp": [
     "Jammin 181",
-    "http://relay.181.fm:8042",
+    "relay.181.fm:8042",
 
     "Old School HipHop",
-    "http://relay.181.fm:8068",
+    "relay.181.fm:8068",
 
     "The Beat",
-    "http://relay.181.fm:8054",
+    "relay.181.fm:8054",
 
     "The Box",
-    "http://relay.181.fm:8024",
+    "relay.181.fm:8024",
 
     "True R&B",
-    "http://relay.181.fm:8022"
+    "relay.181.fm:8022"
   ]
 }

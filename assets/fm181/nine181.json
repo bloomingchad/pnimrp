@@ -1,18 +1,18 @@
 {
   "pnimrp": [
     "90's Alternative",
-    "http://relay.181.fm:8052",
+    "relay.181.fm:8052",
 
     "90's Country",
-    "http://relay.181.fm:8050",
+    "relay.181.fm:8050",
 
     "90's Dance",
-    "http://relay.181.fm:8140",
+    "relay.181.fm:8140",
 
     "Lite 90's",
-    "http://relay.181.fm:8048",
+    "relay.181.fm:8048",
 
     "Star 90's",
-    "http://relay.181.fm:8012"
+    "relay.181.fm:8012"
   ]
 }

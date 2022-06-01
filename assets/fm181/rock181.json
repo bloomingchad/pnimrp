@@ -1,27 +1,27 @@
 {
   "pnimrp": [
     "80's Hairband",
-    "http://relay.181.fm:8014",
+    "relay.181.fm:8014",
 
     "Chloe",
-    "http://relay.181.fm:8100",
+    "relay.181.fm:8100",
 
     "Classic Buzz",
-    "http://relay.181.fm:8038",
+    "relay.181.fm:8038",
 
     "Rock 181",
-    "http://relay.181.fm:8008",
+    "relay.181.fm:8008",
 
     "Rock 40",
-    "http://relay.181.fm:8028",
+    "relay.181.fm:8028",
 
     "The Buzz",
-    "http://relay.181.fm:8126",
+    "relay.181.fm:8126",
 
     "The Eagle",
-    "http://relay.181.fm:8030",
+    "relay.181.fm:8030",
 
     "The Rock",
-    "http://relay.181.fm:8064"
+    "relay.181.fm:8064"
   ]
 }

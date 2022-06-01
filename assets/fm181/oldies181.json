@@ -1,21 +1,21 @@
 {
   "pnimrp": [
   "Beatles",
-  "http://relay.181.fm:8062",
+  "relay.181.fm:8062",
 
   "Classic Hits",
-  "http://relay.181.fm:8132",
+  "relay.181.fm:8132",
 
   "Good Time Oldies",
-  "http://relay.181.fm:8046",
+  "relay.181.fm:8046",
 
   "Mellow Gold",
-  "http://relay.181.fm:8060",
+  "relay.181.fm:8060",
 
   "Soul",
-  "http://relay.181.fm:8058",
+  "relay.181.fm:8058",
 
   "Super 70s",
-  "http://relay.181.fm:8066"
+  "relay.181.fm:8066"
   ]
 }

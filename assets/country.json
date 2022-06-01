@@ -1,24 +1,24 @@
 {
   "pnimrp": [
     "Absolutely Country Hits Radio",
-    "http://185.33.22.15:7800",
+    "185.33.22.15:7800",
 
     "Always Country",
-    "http://208.85.240.89:80",
+    "208.85.240.89:80",
 
     "Big R Radio - Country Gold",
-    "http://107.155.126.42:8230",
+    "107.155.126.42:8230",
 
     "Americana Boogie Radio",
-    "http://us1.internet-radio.com:8182/live",
+    "us1.internet-radio.com:8182/live",
 
     "Bluegrass Mix",
-    "http://192.81.248.194:8072/stream",
+    "192.81.248.194:8072/stream",
 
     "Country Music 24",
-    "http://countrymusic24.powerstream.de:9000",
+    "countrymusic24.powerstream.de:9000",
 
     "Country Radio Switzerland",
-    "http://212.48.126.146:8000"
+    "212.48.126.146:8000"
    ]
 }

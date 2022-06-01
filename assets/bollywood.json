@@ -1,9 +1,9 @@
 {
   "pnimrp": [
     "Bombay Beats India Radio",
-    "http://205.164.62.15:8017",
+    "205.164.62.15:8017",
 
     "Desi Music Mix",
-    "http://desimusicmix.com:8000/HQ"
+    "desimusicmix.com:8000/HQ"
   ]
 }

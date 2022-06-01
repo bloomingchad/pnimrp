@@ -1,27 +1,27 @@
 {
   "pnimrp": [
     "ANTENNE BAYERN Top 40",
-    "http://mp3channels.webradio.antenne.de:80/top-40",
+    "mp3channels.webradio.antenne.de:80/top-40",
 
     "Yes! 91.2",
-    "http://46.4.65.194:8039",
+    "46.4.65.194:8039",
 
     "ChartHits FM",
-    "http://95.141.24.3:80",
+    "95.141.24.3:80",
 
     "Dublins KISS",
-    "http://uk4.internet-radio.com:15476",
+    "uk4.internet-radio.com:15476",
 
     "Hit Station FM",
-    "http://46.163.124.61:8450",
+    "46.163.124.61:8450",
 
     "Megahit Radio",
-    "http://87.118.122.45:30710",
+    "87.118.122.45:30710",
 
     "Raute Music",
-    "http://193.34.51.67:80",
+    "193.34.51.67:80",
 
     "Venus FM",
-    "http://s3.onweb.gr:8808"
+    "s3.onweb.gr:8808"
    ]
 }

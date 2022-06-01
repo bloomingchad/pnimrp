@@ -1,18 +1,18 @@
 {
   "pnimrp": [
     "Front Porch",
-    "http://relay.181.fm:8016",
+    "relay.181.fm:8016",
 
     "Highway 181",
-    "http://relay.181.fm:8018",
+    "relay.181.fm:8018",
 
     "Kickin' Country",
-    "http://relay.181.fm:8130",
+    "relay.181.fm:8130",
 
     "Real Country",
-    "http://relay.181.fm:8034",
+    "relay.181.fm:8034",
 
     "US 181",
-    "http://relay.181.fm:8056"
+    "relay.181.fm:8056"
   ]
 }
