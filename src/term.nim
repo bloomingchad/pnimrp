@@ -1,7 +1,8 @@
 import
-  osproc, terminal, random, os, #times,
+  osproc, terminal, random, os,
   strformat, strutils, json,
-  ../client/src/client, sequtils, parseutils
+  client, sequtils, parseutils,
+  httpclient, times, asyncdispatch
 
 proc clear* =
   eraseScreen()
@@ -29,7 +30,7 @@ proc sayBye(str, auth: string, line = -1) =
     if line != -1:
       error fmt"@ line: {line} in qoute.json"
 
-  quit()
+  quit QuitFailure
 
 proc parseJ(x: string): JsonNode =
   try:
@@ -191,6 +192,41 @@ proc init(parm:string,ctx: ptr Handle) =
   cE initialize ctx
   cE ctx.cmd file
 
+
+#[proc onProgressChanged(total, progress, speed: BiggestInt) {.async.} =
+  let t0 = cpuTime()
+  let t1 = cpuTime() - t0
+  echo t1
+
+proc asyncProc(link: string):Future[string] {.async.} =
+  var client = newAsyncHttpClient()
+  client.onProgressChanged = onProgressChanged
+  return await client.getContent(link & "/status-json.xsl")
+]#
+
+proc getCurrentSong*(linke: string): string =
+  var client = newAsyncHttpClient()
+  var link = linke
+  link.removePrefix("http://")
+  link.delete(find(link, "/") .. link.high)
+  echo link
+  link = "http://" & link
+  #try: #icecast
+  var xsl = waitFor asyncProc link
+  #var xsl = client.getContent(link & "/status-json.xsl")
+  return
+      to(
+        parseJson(
+          xsl
+         ){"icestats"}{"source"}[1]{"yp_currently_playing"},
+        string
+       )
+  #[except HttpRequestError, JsonParsingError: #shoutcast
+   return client.getContent(link & "/currentsong")
+  except:
+   return ""]#
+
+
 proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
  if link == "": return 1
  elif link.contains " ":
@@ -211,6 +247,7 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
 
   while true:
    if echoPlay:
+    sayPos 4, "Now Playing: " & getCurrentSong(link)
     sayPos 4, "Playing"
     cursorUp()
     echoPlay = false
