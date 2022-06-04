@@ -1,7 +1,7 @@
 import
   osproc, terminal, random, os, #times,
   strformat, strutils, json,
-  ../client/src/client, sequtils
+  ../client/src/client, sequtils, parseutils
 
 proc clear* =
   eraseScreen()
@@ -154,7 +154,7 @@ proc notes* =
   clear()
   say "PNimRP > " & sub
   sayPos 0, ('-'.repeat int terminalWidth() / 8) & ('>'.repeat int terminalWidth() / 12)
-  sayIter """PNimRP Copyright (C) 2021 antonl05
+  sayIter """PNimRP Copyright (C) 2021-2022 antonl05
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
 under certain conditions. press `t` for details"""
@@ -305,6 +305,34 @@ proc initJsonLists(sub, file:string; sect = ""):seq[seq[string]] =
       else: discard
   return @[n,l]
 
+proc initIndx*(dir = "assets"): seq[seq[string]] =
+  var files, names, dirs: seq[string]
+
+  for file in walkFiles(dir & "/*"):
+    if dir == "assets":
+      if file != "assets/qoute.json":
+        files.add file
+    else: files.add file
+    var procFile = file
+    procFile.removePrefix(dir & "/")
+    procFile[0] = procFile[0].toUpperAscii
+    procFile.removeSuffix ".json"
+    if dir == "assets":
+      if procFile != "Qoute":
+        names.add procFile
+    else: names.add procFile
+
+  for directory in walkDirs(dir & "/*"):
+    var procDir = directory
+    procDir.removePrefix(dir & "/")
+    procDir = procDir & "/"
+    if not(procDir[0].isUpperAscii()):
+      discard parseChar($procDir[0].toUpperAscii(), procDir[0])
+    dirs.add procDir
+
+  if dir == "assets": names.add "Notes"
+  return @[names, files, dirs]
+
 proc menu*(sub, file: string; sect = "";) =
   let
     list = initJsonLists(sub, file, sect)
@@ -340,18 +368,10 @@ proc menu*(sub, file: string; sect = "";) =
       except IndexDefect: inv()
     if j: break
 
-proc menu*(
-  names, files, dirs: seq[string];
-  mainScreen = false;
- ) =
-  if mainScreen:
-    if not(names is seq[string] and
-      files is seq[string]) and
-        dirs is seq[string]:
-      error("term.menu sub file dirs not seq")
-
+proc menu*(names, files, dirs: seq[string]) =
   while true:
     clear()
+    #add drawMenu
     say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
     sayPos 4,"Station Categories:"
     sayIter names&dirs, ret = false
