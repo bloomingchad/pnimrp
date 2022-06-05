@@ -192,29 +192,39 @@ proc init(parm:string,ctx: ptr Handle) =
   cE initialize ctx
   cE ctx.cmd file
 
+proc cleanLink(linke: string): string =
+  var link = linke
+  link.removePrefix "http://"
+  link.removePrefix "https://"
+  var findSlash = link.find "/"
+  if findSlash != -1:
+    link.delete(findSlash .. link.high)
+  else: discard
+  return link
+
+proc httpOrHttps(https: bool): string =
+  if https: "https://" else: "http://"
+
 proc checkHttpsOnly(link: var string): bool =
   try:
     var client = newHttpClient()
-    discard client.getContent(link & "/random")
+    link = cleanLink link
+    link = "http://" & link
+    discard client.getContent(link & "/currentsong")
   except ProtocolError:
     link.removePrefix "http://"
     link = "https://" & link
     return true
   except: return false
+  return false
 
 proc getCurrentSong(linke: string; https = false): string =
   var
     client = newHttpClient()
     link = linke
-    httpOrHttps =
-      if not https:
-        "http://"
-      else:
-        "https://"
-  link.removePrefix httpOrHttps
-  var findSlash = link.find "/"
-  if findSlash != -1:
-    link.delete(findSlash .. link.high)
+    httpOrHttps = httpOrHttps https
+
+  link = cleanLink link
   try: #shoutcast
     link = httpOrHttps & link
     return client.getContent(link & "/currentsong")
