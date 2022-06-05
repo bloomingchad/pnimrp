@@ -39,7 +39,7 @@ the files are arranged in an json array and has to be even as it should have
 name and link latter last respectively.
 
 .. note::
-  you have the choice to put http:// or not
+  cannot specify http or https because to save data in assets directory
 
 Qoutes
 ------
