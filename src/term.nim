@@ -205,7 +205,8 @@ proc cleanLink(linke: string): string =
 proc httpOrHttps(https: bool): string =
   if https: "https://" else: "http://"
 
-proc checkHttpsOnly(link: var string): bool =
+proc checkHttpsOnly(linke: string): bool =
+  var link = linke
   try:
     var client = newHttpClient()
     link = cleanLink link
@@ -237,7 +238,9 @@ proc getCurrentSong(linke: string; https = false): string =
        ){"icestats"}{"source"}[1]{"yp_currently_playing"},
         string
        )
+   except HttpRequestError: return "bad"
    except: return ""
+  except: return ""
 
 proc call*(sub:string; sect = ""; stat,linke:string):Natural {.discardable.} =
  var link = linke
@@ -268,9 +271,14 @@ proc call*(sub:string; sect = ""; stat,linke:string):Natural {.discardable.} =
     var currentSong =
       if isHttps: getCurrentSong link, https = true
       else: getCurrentSong link
-    if currentSong != "":
-     sayPos 4, "Now Playing: " & currentSong
-    else: nowPlayingExcept = true
+    case currentSong:
+      of "": nowPlayingExcept = true
+      of "bad":
+        warn "Bad Link?"
+        if not isPaused:
+          terminateDestroy ctx
+        break
+      else: sayPos 4, "Now Playing: " & currentSong
     sayPos 4, "Playing"
     cursorUp()
     echoPlay = false
