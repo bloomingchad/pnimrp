@@ -3,17 +3,17 @@
     "Air Progressive",
     "airprogressive.org:8000/stream",
 
-    "BBC",
-    "bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-einws",
+    "BBC World Service -data",
+    "a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_vlow/ak/bbc_world_service.m3u8",
 
-    "CBC",
-    "3153.live.streamtheworld.com:80/CBC_R1_MCT_L_SC",
+    "CBC Fresh Air",
+    "cbcradiolive.akamaized.net/hls/live/2041037/ES_R1ETT/master.m3u8",
 
     "GLT News & Ideas",
     "wgltradio.ilstu.edu:8000/wgltmain.mp3",
 
     "NPR",
-    "nprdmp-live01-mp3.akacast.akamaistream.net/7/998/364916/v1/npr.akacast.akamaistream.net/nprdmp_live01_mp3",
+    "https://npr-ice.streamguys1.com/live.mp3",
 
     "Newstalk 106-108",
     "vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high",
@@ -35,9 +35,6 @@
 
     "Freethought Radio",
     "212.48.126.146:9110",
-
-    "Infowars",
-    "50.7.79.22:80",
 
     "KSFC",
     "173.192.70.138:8710",
