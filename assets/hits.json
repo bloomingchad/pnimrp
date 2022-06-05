@@ -4,10 +4,13 @@
     "mp3channels.webradio.antenne.de:80/top-40",
 
     "Yes! 91.2",
-    "46.4.65.194:8039",
+    "http://5.9.17.142:8024/;7stream.nsv",
 
     "ChartHits FM",
     "95.141.24.3:80",
+
+    "Al Arabiya 99 - العربية",
+    "stream.radiojar.com/s1mygd1frxquv",
 
     "Dublins KISS",
     "uk4.internet-radio.com:15476",
@@ -18,10 +21,10 @@
     "Megahit Radio",
     "87.118.122.45:30710",
 
-    "Raute Music",
-    "193.34.51.67:80",
+    "Raute Musik",
+    "rautemusik-de-hz-fal-stream12.radiohost.de/charthits",
 
     "Venus FM",
-    "s3.onweb.gr:8808"
+    "s3.onweb.gr:8808/;stream"
    ]
 }
