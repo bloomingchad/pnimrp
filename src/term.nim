@@ -192,16 +192,31 @@ proc init(parm:string,ctx: ptr Handle) =
   cE initialize ctx
   cE ctx.cmd file
 
-proc getCurrentSong*(linke: string): string =
+proc checkHttpsOnly(link: var string): bool =
+  try:
+    var client = newHttpClient()
+    discard client.getContent(link & "/random")
+  except ProtocolError:
+    link.removePrefix "http://"
+    link = "https://" & link
+    return true
+  except: return false
+
+proc getCurrentSong(linke: string; https = false): string =
   var
     client = newHttpClient()
     link = linke
-  link.removePrefix "http://"
+    httpOrHttps =
+      if not https:
+        "http://"
+      else:
+        "https://"
+  link.removePrefix httpOrHttps
   var findSlash = link.find "/"
   if findSlash != -1:
     link.delete(findSlash .. link.high)
-  link = "http://" & link
   try: #shoutcast
+    link = httpOrHttps & link
     return client.getContent(link & "/currentsong")
   except HttpRequestError: #icecast
    try:
@@ -214,7 +229,8 @@ proc getCurrentSong*(linke: string): string =
        )
    except: return ""
 
-proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
+proc call*(sub:string; sect = ""; stat,linke:string):Natural {.discardable.} =
+ var link = linke
  if link == "": return 1
  elif link.contains " ":
    warn "link dont exist or is invalid"
@@ -226,7 +242,11 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
   sayPos 0,'-'.repeat(int terminalWidth() / 8) & '>'.repeat int terminalWidth() / 12
 
   let ctx = create()
-  init link, ctx
+  var isHttps = false
+  if checkHttpsOnly link:
+    init(link, ctx)
+    isHttps = true
+  else: init link, ctx
   var
    echoPlay = true
    event = ctx.waitEvent 1000
@@ -235,7 +255,9 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
 
   while true:
    if echoPlay:
-    var currentSong = getCurrentSong link
+    var currentSong =
+      if isHttps: getCurrentSong link, https = true
+      else: getCurrentSong link
     if currentSong != "":
      sayPos 4, "Now Playing: " & currentSong
     else: nowPlayingExcept = true
