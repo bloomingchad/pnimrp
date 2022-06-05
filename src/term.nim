@@ -2,7 +2,7 @@ import
   osproc, terminal, random, os,
   strformat, strutils, json,
   client, sequtils, parseutils,
-  httpclient, times, asyncdispatch
+  httpclient
 
 proc clear* =
   eraseScreen()
@@ -192,40 +192,27 @@ proc init(parm:string,ctx: ptr Handle) =
   cE initialize ctx
   cE ctx.cmd file
 
-
-#[proc onProgressChanged(total, progress, speed: BiggestInt) {.async.} =
-  let t0 = cpuTime()
-  let t1 = cpuTime() - t0
-  echo t1
-
-proc asyncProc(link: string):Future[string] {.async.} =
-  var client = newAsyncHttpClient()
-  client.onProgressChanged = onProgressChanged
-  return await client.getContent(link & "/status-json.xsl")
-]#
-
 proc getCurrentSong*(linke: string): string =
-  var client = newAsyncHttpClient()
-  var link = linke
-  link.removePrefix("http://")
-  link.delete(find(link, "/") .. link.high)
-  echo link
+  var
+    client = newHttpClient()
+    link = linke
+  link.removePrefix "http://"
+  var findSlash = link.find "/"
+  if findSlash != -1:
+    link.delete(findSlash .. link.high)
   link = "http://" & link
-  #try: #icecast
-  var xsl = waitFor asyncProc link
-  #var xsl = client.getContent(link & "/status-json.xsl")
-  return
-      to(
-        parseJson(
-          xsl
-         ){"icestats"}{"source"}[1]{"yp_currently_playing"},
+  try: #shoutcast
+    return client.getContent(link & "/currentsong")
+  except HttpRequestError: #icecast
+   try:
+    return
+     to(
+      parseJson(
+        client.getContent(link & "/status-json.xsl")
+       ){"icestats"}{"source"}[1]{"yp_currently_playing"},
         string
        )
-  #[except HttpRequestError, JsonParsingError: #shoutcast
-   return client.getContent(link & "/currentsong")
-  except:
-   return ""]#
-
+   except: return ""
 
 proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
  if link == "": return 1
@@ -244,10 +231,14 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
    echoPlay = true
    event = ctx.waitEvent 1000
    isPaused = false
+   nowPlayingExcept = false
 
   while true:
    if echoPlay:
-    sayPos 4, "Now Playing: " & getCurrentSong(link)
+    var currentSong = getCurrentSong link
+    if currentSong != "":
+     sayPos 4, "Now Playing: " & currentSong
+    else: nowPlayingExcept = true
     sayPos 4, "Playing"
     cursorUp()
     echoPlay = false
@@ -268,7 +259,13 @@ proc call*(sub:string; sect = ""; stat,link:string):Natural {.discardable.} =
    case getch():
     of 'p','m','P','M':
      if isPaused:
+      if nowPlayingExcept != true:
+        cursorUp()
+        eraseLine()
+        cursorDown()
       eraseLine()
+      if nowPlayingExcept != true:
+       cursorUp()
       let ctx = create()
       init link, ctx
       echoPlay = true
