@@ -209,8 +209,7 @@ proc checkHttpsOnly(linke: string): bool =
   var link = linke
   try:
     var client = newHttpClient()
-    link = cleanLink link
-    link = "http://" & link
+    link = "http://" & cleanLink link
     discard client.getContent(link & "/currentsong")
   except ProtocolError:
     link.removePrefix "http://"
@@ -268,9 +267,7 @@ proc call*(sub:string; sect = ""; stat,linke:string):Natural {.discardable.} =
 
   while true:
    if echoPlay:
-    var currentSong =
-      if isHttps: getCurrentSong link, https = true
-      else: getCurrentSong link
+    var currentSong = getCurrentSong(link, https = if isHttps: true else: false)
     case currentSong:
       of "": nowPlayingExcept = true
       of "bad":
@@ -342,26 +339,6 @@ proc call*(sub:string; sect = ""; stat,linke:string):Natural {.discardable.} =
      break
     of 'q','Q': exit ctx, isPaused
     else: inv()
-
-proc splitH*(chars: seq[string]): seq[seq[string]] =
-  let h = int(terminalHeight()/2)
-  var
-    num = 0
-    rest = false
-    length = chars.len
-
-  while length >= h:
-    num += 1
-    length -= h
-
-  if length < h:
-    rest = true
-
-  #it will never be > h
-  if rest:
-    return chars.distribute(num+1, spread = true)
-  else:
-    return chars.distribute(num, spread = false)
 
 proc initJsonLists(sub, file:string; sect = ""):seq[seq[string]] =
   var n, l: seq[string] = @[]
