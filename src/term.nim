@@ -6,9 +6,9 @@ import
 
 proc clear* =
   eraseScreen()
-  setCursorPos 0,0
+  setCursorPos 0, 0
 
-proc error*(str:string) =
+proc error*(str: string) =
   styledEcho fgRed, "Error: ", str
   quit QuitFailure
 
@@ -65,9 +65,9 @@ proc exitEcho* =
 
   when not defined(release) or
     not defined(danger):
-      echo fmt"free mem: {getFreeMem() / 1024} kB"
-      echo fmt"total/max mem: {getTotalMem() / 1024} kB"
-      echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
+    echo fmt"free mem: {getFreeMem() / 1024} kB"
+    echo fmt"total/max mem: {getTotalMem() / 1024} kB"
+    echo fmt"occupied mem: {getOccupiedMem() / 1024} kB"
 
   sayBye(
     qoutes[rand],
@@ -76,14 +76,14 @@ proc exitEcho* =
   )
 
 proc say*(txt: string) =
-  styledEcho fgYellow,txt
+  styledEcho fgYellow, txt
 
-proc sayPos*(x:int, a:string; echo = true) =
+proc sayPos*(x: int, a: string; echo = true) =
   setCursorXPos x
-  if echo: styledEcho fgGreen,a
-  else: stdout.styledWrite fgGreen,a
+  if echo: styledEcho fgGreen, a
+  else: stdout.styledWrite fgGreen, a
 
-proc sayIter*(txt:string) =
+proc sayIter*(txt: string) =
   for f in splitLines txt:
     setCursorXPos 5
     styledEcho fgBlue, f
@@ -108,9 +108,9 @@ proc sayIter*(txt: seq[string]; ret = true) =
   if ret: sayBlue "R Return"
   sayBlue "Q Quit"
 
-proc warn*(txt:string; x = -1) =
+proc warn*(txt: string; x = -1) =
   if x != -1: setCursorXPos x
-  styledEcho fgRed,txt
+  styledEcho fgRed, txt
   #if echo == false: stdout.styledWrite fgRed,txt
   #default Args dosent seem to be working?
   sleep 750
@@ -122,70 +122,71 @@ proc inv* =
   eraseLine()
   cursorUp()
 
-proc drawMenu*(sub: string ,x:string | seq[string], sect = "") =
+proc drawMenu*(sub: string, x: string | seq[string], sect = "") =
   clear()
   if sect == "":
     say fmt"PNimRP > {sub}"
   else:
     say fmt"PNimRP > {sub} > {sect}"
 
-  sayPos 0,'-'.repeat((terminalWidth()/8).int) & '>'.repeat int terminalWidth() / 12
+  sayPos 0, '-'.repeat((terminalWidth()/8).int) & '>'.repeat int terminalWidth() / 12
   if sect == "":
     sayPos 4, fmt"{sub} Station Playing Music:"
   else:
     sayPos 4, fmt"{sect} Station Playing Music:"
   sayIter x
 
-proc exec*(x:string,args:openArray[string]; stream = false) =
+proc exec*(x: string, args: openArray[string]; stream = false) =
   discard waitForExit startProcess(x, args = args,
     options =
-      if stream: {poUsePath,poParentStreams}
+    if stream: {poUsePath, poParentStreams}
       else: {poUsePath}
   )
 
-proc exit(ctx:ptr Handle, isPaused: bool) =
+proc exit(ctx: ptr Handle, isPaused: bool) =
   if not isPaused:
     terminateDestroy ctx
   exitEcho()
 
 proc notes* =
- while true:
-  var j = false
-  const sub = "Notes"
-  clear()
-  say "PNimRP > " & sub
-  sayPos 0, ('-'.repeat int terminalWidth() / 8) & ('>'.repeat int terminalWidth() / 12)
-  sayIter """PNimRP Copyright (C) 2021-2022 antonl05
+  while true:
+    var j = false
+    const sub = "Notes"
+    clear()
+    say "PNimRP > " & sub
+    sayPos 0, ('-'.repeat int terminalWidth() / 8) & (
+        '>'.repeat int terminalWidth() / 12)
+    sayIter """PNimRP Copyright (C) 2021-2022 antonl05
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
 under certain conditions. press `t` for details"""
-  while true:
-   case getch():
-    of 'T','t':
-     when defined windows: exec "notepad.exe",["LICENSE"], stream = true; break
-     when defined posix:
-      when defined android:
-       showCursor()
-       exec "editor",["LICENSE"], stream = true
-       hideCursor()
-       break
-      else:
-       warn "type esc, :q and enter to exit"
-       showCursor()
-       exec "vi",["LICENSE"], stream = true
-       hideCursor()
-     else:
-       showCursor()
-       echo "please open LICENSE file"
-       quit()
-    of 'r','R': j = true; break
-    of 'Q','q': exitEcho()
-    else: inv()
-  if j: break
+    while true:
+      case getch():
+        of 'T', 't':
+          when defined windows: exec "notepad.exe", ["LICENSE"], stream = true; break
+          when defined posix:
+            when defined android:
+              showCursor()
+              exec "editor", ["LICENSE"], stream = true
+              hideCursor()
+              break
+            else:
+              warn "type esc, :q and enter to exit"
+              showCursor()
+              exec "vi", ["LICENSE"], stream = true
+              hideCursor()
+          else:
+            showCursor()
+            echo "please open LICENSE file"
+            quit()
+        of 'r', 'R': j = true; break
+        of 'Q', 'q': exitEcho()
+        else: inv()
+    if j: break
 
 template cE(s: cint) = checkError s
 
-proc init(parm:string,ctx: ptr Handle) =
+proc init(parm: string, ctx: ptr Handle) =
   let file = allocCStringArray ["loadfile", parm] #couldbe file,link,playlistfile
   var val: cint = 1
   cE ctx.setOption("osc", fmtFlag, addr val)
@@ -229,118 +230,121 @@ proc getCurrentSong(linke: string; https = false): string =
     link = httpOrHttps & link
     return client.getContent(link & "/currentsong")
   except HttpRequestError: #icecast
-   try:
-    return
-     to(
-      parseJson(
-        client.getContent(link & "/status-json.xsl")
-       ){"icestats"}{"source"}[1]{"yp_currently_playing"},
-        string
-       )
-   except HttpRequestError: return "bad"
-   except: return ""
+    try:
+      return
+        to(
+         parseJson(
+           client.getContent(link & "/status-json.xsl")
+          ){"icestats"}{"source"}[1]{"yp_currently_playing"},
+           string
+          )
+    except HttpRequestError: return "bad"
+    except: return ""
   except: return ""
 
-proc call*(sub:string; sect = ""; stat,linke:string):Natural {.discardable.} =
- var link = linke
- if link == "": return 1
- elif link.contains " ":
-   warn "link dont exist or is invalid"
- else:
-  clear()
-  if sect == "": say fmt"PNimRP > {sub} > {stat}"
-  else: say fmt"PNimRP > {sub} > {sect} > {stat}"
+proc call*(sub: string; sect = ""; stat,
+    linke: string): Natural {.discardable.} =
+  var link = linke
+  if link == "": return 1
+  elif link.contains " ":
+    warn "link dont exist or is invalid"
+  else:
+    clear()
+    if sect == "": say fmt"PNimRP > {sub} > {stat}"
+    else: say fmt"PNimRP > {sub} > {sect} > {stat}"
 
-  sayPos 0,'-'.repeat(int terminalWidth() / 8) & '>'.repeat int terminalWidth() / 12
+    sayPos 0, '-'.repeat(int terminalWidth() / 8) &
+        '>'.repeat int terminalWidth() / 12
 
-  let ctx = create()
-  var isHttps = false
-  if checkHttpsOnly link:
-    init(link, ctx)
-    isHttps = true
-  else: init link, ctx
-  var
-   echoPlay = true
-   event = ctx.waitEvent 1000
-   isPaused = false
-   nowPlayingExcept = false
-
-  while true:
-   if echoPlay:
-    var currentSong = getCurrentSong(link, https = if isHttps: true else: false)
-    case currentSong:
-      of "": nowPlayingExcept = true
-      of "bad":
-        warn "Bad Link?"
-        if not isPaused:
-          terminateDestroy ctx
-        break
-      else: sayPos 4, "Now Playing: " & currentSong
-    sayPos 4, "Playing"
-    cursorUp()
-    echoPlay = false
-
-   #remove cursorUp?
-   #add time check playing error link
-   if not isPaused:
-     #var t0 = now().second
-     event = ctx.waitEvent 1000
-     #if now().second - t0 >= 5:
-      # error "timeout of 5s"
-
-   #remove casting?
-   case cast[EventID](event):
-     of IDShutdown, IDIdle: break
-     else: discard
-
-   case getch():
-    of 'p','m','P','M':
-     if isPaused:
-      if nowPlayingExcept != true:
-        cursorUp()
-        eraseLine()
-        cursorDown()
-      eraseLine()
-      if nowPlayingExcept != true:
-       cursorUp()
-      let ctx = create()
-      init link, ctx
+    let ctx = create()
+    var isHttps = false
+    if checkHttpsOnly link:
+      init(link, ctx)
+      isHttps = true
+    else: init link, ctx
+    var
       echoPlay = true
+      event = ctx.waitEvent 1000
       isPaused = false
+      nowPlayingExcept = false
 
-     else:
-      warn "Paused/Muted",4
-      cursorUp()
-      terminateDestroy ctx
-      isPaused = true
+    while true:
+      if echoPlay:
+        var currentSong = getCurrentSong(link,
+            https = if isHttps: true else: false)
+        case currentSong:
+          of "": nowPlayingExcept = true
+          of "bad":
+            warn "Bad Link?"
+            if not isPaused:
+              terminateDestroy ctx
+            break
+          else: sayPos 4, "Now Playing: " & currentSong
+        sayPos 4, "Playing"
+        cursorUp()
+        echoPlay = false
 
-    of '/','+':
-     when defined(linux) and not defined(android):
-      exec "amixer",["--quiet","set","PCM","5+"]
-      #when defined windows: exec "nircmd",["changesysvolume","5000"]
-     cursorDown()
-     warn "Volume+", 4
-     cursorUp()
-     eraseLine()
-     cursorUp()
+      #remove cursorUp?
+      #add time check playing error link
+      if not isPaused:
+        #var t0 = now().second
+        event = ctx.waitEvent 1000
+        #if now().second - t0 >= 5:
+          # error "timeout of 5s"
 
-    of '*','-':
-     when defined(linux) and not defined(android):
-      exec "amixer",["--quiet","set","PCM","5-"]
-      #when defined windows: exec "nircmd",["changesysvolume","-5000"]
-     cursorDown()
-     warn "Volume-", 4
-     cursorUp()
-     eraseLine()
-     cursorUp()
+        #remove casting?
+      case cast[EventID](event):
+        of IDShutdown, IDIdle: break
+        else: discard
 
-    of 'r','R':
-     if not isPaused: terminateDestroy ctx
-     break
-    of 'q','Q': exit ctx, isPaused
-    else: inv()
+      case getch():
+        of 'p', 'm', 'P', 'M':
+          if isPaused:
+            if nowPlayingExcept != true:
+              cursorUp()
+              eraseLine()
+              cursorDown()
+            eraseLine()
+            if nowPlayingExcept != true:
+              cursorUp()
+            let ctx = create()
+            init link, ctx
+            echoPlay = true
+            isPaused = false
 
-proc initJsonLists(sub, file:string; sect = ""):seq[seq[string]] =
+          else:
+            warn "Paused/Muted", 4
+            cursorUp()
+            terminateDestroy ctx
+            isPaused = true
+
+        of '/', '+':
+          when defined(linux) and not defined(android):
+            exec "amixer", ["--quiet", "set", "PCM", "5+"]
+            #when defined windows: exec "nircmd",["changesysvolume","5000"]
+          cursorDown()
+          warn "Volume+", 4
+          cursorUp()
+          eraseLine()
+          cursorUp()
+
+        of '*', '-':
+          when defined(linux) and not defined(android):
+            exec "amixer", ["--quiet", "set", "PCM", "5-"]
+            #when defined windows: exec "nircmd",["changesysvolume","-5000"]
+          cursorDown()
+          warn "Volume-", 4
+          cursorUp()
+          eraseLine()
+          cursorUp()
+
+        of 'r', 'R':
+          if not isPaused: terminateDestroy ctx
+          break
+        of 'q', 'Q': exit ctx, isPaused
+        else: inv()
+
+proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
   var n, l: seq[string] = @[]
   var input = parseJArray file
 
@@ -350,11 +354,11 @@ proc initJsonLists(sub, file:string; sect = ""):seq[seq[string]] =
       of 1:
         if input[f].startsWith("http://") or
           input[f].startsWith "https://":
-            l.add input[f]
+          l.add input[f]
         else:
           l.add "http://" & input[f]
       else: discard
-  return @[n,l]
+  return @[n, l]
 
 proc initIndx*(dir = "assets"): seq[seq[string]] =
   var files, names, dirs: seq[string]
@@ -384,7 +388,7 @@ proc initIndx*(dir = "assets"): seq[seq[string]] =
   if dir == "assets": names.add "Notes"
   return @[names, files, dirs]
 
-proc menu*(sub, file: string; sect = "";) =
+proc menu*(sub, file: string; sect = ""; ) =
   let
     list = initJsonLists(sub, file, sect)
     n = list[0]
@@ -392,29 +396,29 @@ proc menu*(sub, file: string; sect = "";) =
 
   while true:
     var j = false
-    drawMenu sub,n,sect
+    drawMenu sub, n, sect
     #add conditiinal check for every if len not thereown size
     #else no use danger use release
     while true:
       try:
         case getch():
-          of '1': call sub,sect,n[0],l[0]; break
-          of '2': call sub,sect,n[1],l[1]; break
-          of '3': call sub,sect,n[2],l[2]; break
-          of '4': call sub,sect,n[3],l[3]; break
-          of '5': call sub,sect,n[4],l[4]; break
-          of '6': call sub,sect,n[5],l[5]; break
-          of '7': call sub,sect,n[6],l[6]; break
-          of '8': call sub,sect,n[7],l[7]; break
-          of '9': call sub,sect,n[8],l[8]; break
-          of 'A','a': call sub,sect,n[9],l[9]; break
-          of 'B','b': call sub,sect,n[10],l[10]; break
-          of 'C','c': call sub,sect,n[11],l[11]; break
-          of 'D','d': call sub,sect,n[12],l[12]; break
-          of 'E','e': call sub,sect,n[13],l[13]; break
-          of 'F','f': call sub,sect,n[14],l[14]; break
-          of 'R','r': j = true; break
-          of 'Q','q': exitEcho()
+          of '1': call sub, sect, n[0], l[0]; break
+          of '2': call sub, sect, n[1], l[1]; break
+          of '3': call sub, sect, n[2], l[2]; break
+          of '4': call sub, sect, n[3], l[3]; break
+          of '5': call sub, sect, n[4], l[4]; break
+          of '6': call sub, sect, n[5], l[5]; break
+          of '7': call sub, sect, n[6], l[6]; break
+          of '8': call sub, sect, n[7], l[7]; break
+          of '9': call sub, sect, n[8], l[8]; break
+          of 'A', 'a': call sub, sect, n[9], l[9]; break
+          of 'B', 'b': call sub, sect, n[10], l[10]; break
+          of 'C', 'c': call sub, sect, n[11], l[11]; break
+          of 'D', 'd': call sub, sect, n[12], l[12]; break
+          of 'E', 'e': call sub, sect, n[13], l[13]; break
+          of 'F', 'f': call sub, sect, n[14], l[14]; break
+          of 'R', 'r': j = true; break
+          of 'Q', 'q': exitEcho()
           else: inv()
       except IndexDefect: inv()
     if j: break
@@ -424,7 +428,7 @@ proc menu*(names, files, dirs: seq[string]) =
     clear()
     #add drawMenu
     say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
-    sayPos 4,"Station Categories:"
+    sayPos 4, "Station Categories:"
     sayIter names&dirs, ret = false
     try:
       while true:
@@ -438,12 +442,12 @@ proc menu*(names, files, dirs: seq[string]) =
           of '7': menu names[6], files[6]; break
           of '8': menu names[7], files[7]; break
           of '9': menu names[8], files[8]; break
-          of 'A','a': menu names[9], files[9]; break
-          of 'B','b': menu names[10], files[10]; break
-          of 'C','c': menu names[11], files[11]; break
-          of 'D','d': menu names[12], files[12]; break
-          of 'E','e': menu names[13], files[13]; break
-          of 'F','f': menu names[14], files[14]; break
+          of 'A', 'a': menu names[9], files[9]; break
+          of 'B', 'b': menu names[10], files[10]; break
+          of 'C', 'c': menu names[11], files[11]; break
+          of 'D', 'd': menu names[12], files[12]; break
+          of 'E', 'e': menu names[13], files[13]; break
+          of 'F', 'f': menu names[14], files[14]; break
           of 'N', 'n': notes(); break
           of 'q', 'Q': exitEcho()
           else: inv()

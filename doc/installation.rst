@@ -10,6 +10,7 @@ Table of Contents
 -----------------
   * Dependencies
   * Compliling The Project
+  * Backporting to older version
 
 Dependencies
 ------------
@@ -76,3 +77,7 @@ Using Compiler Directly::
 
 Note:
  * project does not compile under JS backend
+
+Backporting to older version
+----------------------------
+on v1.2.14, try to not use nimble build
