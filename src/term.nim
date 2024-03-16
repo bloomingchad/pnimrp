@@ -2,7 +2,7 @@ import
   osproc, terminal, random, os,
   strformat, strutils, json,
   client, sequtils, parseutils,
-  httpclient
+  httpclient, net
 
 proc clear* =
   eraseScreen()
@@ -203,10 +203,8 @@ proc cleanLink(linke: string): string =
   else: discard
   return link
 
-proc httpOrHttps(https: bool): string =
-  if https: "https://" else: "http://"
 
-proc checkHttpsOnly(linke: string): bool =
+#[proc checkHttpsOnly(linke: string): bool =
   var link = linke
   try:
     var client = newHttpClient()
@@ -217,17 +215,17 @@ proc checkHttpsOnly(linke: string): bool =
     link = "https://" & link
     return true
   except: return false
-  return false
+  return false]#
 
-proc getCurrentSong(linke: string; https = false): string =
+proc getCurrentSong(linke: string): string =
+#https no get current song
   var
     client = newHttpClient()
     link = linke
-    httpOrHttps = httpOrHttps https
 
-  link = cleanLink link
+  link = "http://" & cleanLink link
   try: #shoutcast
-    link = httpOrHttps & link
+    echo link
     return client.getContent(link & "/currentsong")
   except HttpRequestError: #icecast
     try:
@@ -238,10 +236,23 @@ proc getCurrentSong(linke: string; https = false): string =
           ){"icestats"}{"source"}[1]{"yp_currently_playing"},
            string
           )
-    except HttpRequestError: return "bad"
-    except: return ""
-  except: return ""
+    except HttpRequestError: return "notimplemented"
 
+#[proc splitLink(str: string):seq[string] =
+  return rsplit(str, ":", maxSplit = 1)
+
+
+proc doesLinkWork(link: string): bool =
+  var seq = splitLink link
+  try: newSocket().connect(seq[0], Port(uint16(seq[1])))
+  except HttpRequestError: return false
+  except OSError:
+    warn "No Internet Connection, fellow."
+    return false
+  except TimeoutError:
+    warn "timeout of 2s failed"
+    return false
+]#
 proc call*(sub: string; sect = ""; stat,
     linke: string): Natural {.discardable.} =
   var link = linke
@@ -257,45 +268,50 @@ proc call*(sub: string; sect = ""; stat,
         '>'.repeat int terminalWidth() / 12
 
     let ctx = create()
-    var isHttps = false
-    if checkHttpsOnly link:
-      init(link, ctx)
-      isHttps = true
-    else: init link, ctx
+    init link, ctx
     var
       echoPlay = true
-      event = ctx.waitEvent 1000
+      #event = ctx.waitEvent 1000
       isPaused = false
       nowPlayingExcept = false
 
     while true:
+      var event = ctx.waitEvent 1000
+      #if cast[EventID](Event.eventID) == IDEndFile:
+      if ord(event.eventID) == ord(IDEndFile):
+        warn "end of file? bad link?"
+        terminateDestroy ctx
+        break
       if echoPlay:
-        var currentSong = getCurrentSong(link,
-            https = if isHttps: true else: false)
+        #var event = ctx.waitEvent 1000
+  
+        #[if not doesLinkWork(link):
+          warn "Bad Link?"
+          if not isPaused:
+            terminateDestroy ctx
+            break]#
+
+        var currentSong = getCurrentSong link
         case currentSong:
-          of "": nowPlayingExcept = true
-          of "bad":
-            warn "Bad Link?"
-            if not isPaused:
-              terminateDestroy ctx
-            break
+          of "notimplemented": sayPos 4, "Playing"
+          #of "": nowPlayingExcept = true
           else: sayPos 4, "Now Playing: " & currentSong
-        sayPos 4, "Playing"
+        #sayPos 4, "Playing"
         cursorUp()
         echoPlay = false
 
       #remove cursorUp?
       #add time check playing error link
-      if not isPaused:
+      #if not isPaused:
         #var t0 = now().second
-        event = ctx.waitEvent 1000
+        #event = ctx.waitEvent 1000
         #if now().second - t0 >= 5:
           # error "timeout of 5s"
 
         #remove casting?
-      case cast[EventID](event):
+      #[case cast[EventID](event):
         of IDShutdown, IDIdle: break
-        else: discard
+        else: discard]#
 
       case getch():
         of 'p', 'm', 'P', 'M':
