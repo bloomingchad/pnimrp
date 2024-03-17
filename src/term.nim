@@ -30,7 +30,7 @@ proc sayBye(str, auth: string, line = -1) =
     if line != -1:
       error fmt"@ line: {line} in qoute.json"
 
-  quit QuitFailure
+  quit QuitSuccess
 
 proc parseJ(x: string): JsonNode =
   try:
@@ -156,7 +156,7 @@ proc notes* =
     say "PNimRP > " & sub
     sayPos 0, ('-'.repeat int terminalWidth() / 8) & (
         '>'.repeat int terminalWidth() / 12)
-    sayIter """PNimRP Copyright (C) 2021-2022 antonl05
+    sayIter """PNimRP Copyright (C) 2021-2024 antonl05/bloomingchad
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
 under certain conditions. press `t` for details"""
@@ -225,8 +225,10 @@ proc getCurrentSong(linke: string): string =
 
   link = "http://" & cleanLink link
   try: #shoutcast
-    echo link
+    echo "getCurrentSong: ", link
     return client.getContent(link & "/currentsong")
+  except ProtocolError: #ICY404 Resource Not Found?
+    return "notimplemented"
   except HttpRequestError: #icecast
     try:
       return
@@ -236,29 +238,46 @@ proc getCurrentSong(linke: string): string =
           ){"icestats"}{"source"}[1]{"yp_currently_playing"},
            string
           )
-    except HttpRequestError: return "notimplemented"
+    except HttpRequestError,
+       JsonParsingError,    #different technique than implemented
+         ProtocolError,     #connection refused?
+           KeyError:
+      return "notimplemented"
 
-#[proc splitLink(str: string):seq[string] =
+
+proc splitLink(str: string):seq[string] =
   return rsplit(str, ":", maxSplit = 1)
 
 
 proc doesLinkWork(link: string): bool =
-  var seq = splitLink link
-  try: newSocket().connect(seq[0], Port(uint16(seq[1])))
-  except HttpRequestError: return false
+  echo "doeslinkworkInit: " & link
+  var seq = splitLink cleanLink link
+  
+  echo "doesLinkWorkSeq: ", seq
+  if seq.len == 1: return true #we cannot check w/o port
+  try:
+    newSocket().connect(
+       seq[0],
+       Port(uint16 parseInt seq[1]),
+       timeout = 3000)
+    echo "link dont cause except"
+    return true
+
+  except HttpRequestError:
+    warn "HttpRequestError. bad link?"
+    return false
   except OSError:
-    warn "No Internet Connection, fellow."
+    warn "OSError. No Internet? ConnectionRefused?"
     return false
   except TimeoutError:
-    warn "timeout of 2s failed"
+    warn "timeout of 3s failed"
     return false
-]#
+
 proc call*(sub: string; sect = ""; stat,
     linke: string): Natural {.discardable.} =
   var link = linke
-  if link == "": return 1
-  elif link.contains " ":
-    warn "link dont exist or is invalid"
+  if link == "": warn "link empty"
+  elif link.contains " ": warn "link dont exist or is invalid"
   else:
     clear()
     if sect == "": say fmt"PNimRP > {sub} > {stat}"
@@ -267,18 +286,24 @@ proc call*(sub: string; sect = ""; stat,
     sayPos 0, '-'.repeat(int terminalWidth() / 8) &
         '>'.repeat int terminalWidth() / 12
 
+
+    if not doesLinkWork link:
+      warn "no link work"
+      return
     let ctx = create()
     init link, ctx
     var
       echoPlay = true
-      #event = ctx.waitEvent 1000
+      event = ctx.waitEvent 1000 #pthread_mutex_lock
       isPaused = false
       nowPlayingExcept = false
+    echo "link in call() before while true: " & link
 
     while true:
-      var event = ctx.waitEvent 1000
-      #if cast[EventID](Event.eventID) == IDEndFile:
-      if ord(event.eventID) == ord(IDEndFile):
+      if not isPaused: #pthread_mutex_lock:
+       #destroyer pause called on mutex that was destroyed.
+        var event = ctx.waitEvent 1000
+      if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
         warn "end of file? bad link?"
         terminateDestroy ctx
         break
@@ -308,12 +333,16 @@ proc call*(sub: string; sect = ""; stat,
         #if now().second - t0 >= 5:
           # error "timeout of 5s"
 
-        #remove casting?
-      #[case cast[EventID](event):
-        of IDShutdown, IDIdle: break
-        else: discard]#
-
       case getch():
+        of 'u', 'U':
+          #lyrics update func -> just to restart while true
+
+          #[cursorDown()
+          sayPos 4, "Updated"
+          
+          eraseLine()
+          cursorUp()]#
+          discard
         of 'p', 'm', 'P', 'M':
           if isPaused:
             if nowPlayingExcept != true:
@@ -329,6 +358,7 @@ proc call*(sub: string; sect = ""; stat,
             isPaused = false
 
           else:
+            eraseLine()
             warn "Paused/Muted", 4
             cursorUp()
             terminateDestroy ctx
