@@ -17,6 +17,7 @@ let indx = initIndx()
 
 clear()
 say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
+
 sayPos 4, "Station Categories:"
 sayIter indx[0], ret = false
 
