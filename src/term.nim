@@ -115,25 +115,26 @@ proc warn*(txt: string; x = -1) =
   #default Args dosent seem to be working?
   sleep 750
 
-proc inv* =
+proc inv =
   cursorDown()
   warn "INVALID CHOICE", 4
   cursorUp()
   eraseLine()
   cursorUp()
 
-proc drawMenu*(sub: string, x: string | seq[string], sect = "") =
-  clear()
-  if sect == "":
-    say fmt"PNimRP > {sub}"
-  else:
-    say fmt"PNimRP > {sub} > {sect}"
-
+template sayTermDraw8*() =
+  say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
+proc sayTermDraw12*() =
   sayPos 0, '-'.repeat((terminalWidth()/8).int) & '>'.repeat int terminalWidth() / 12
-  if sect == "":
-    sayPos 4, fmt"{sub} Station Playing Music:"
-  else:
-    sayPos 4, fmt"{sect} Station Playing Music:"
+
+proc drawMenu(sub: string, x: string | seq[string], sect = "") =
+  clear()
+  if sect == "": say fmt"PNimRP > {sub}"
+  else: say fmt"PNimRP > {sub} > {sect}"
+
+  sayTermDraw12()
+  if sect == "": sayPos 4, fmt"{sub} Station Playing Music:"
+  else: sayPos 4, fmt"{sect} Station Playing Music:"
   sayIter x
 
 proc exec*(x: string, args: openArray[string]; stream = false) =
@@ -148,14 +149,14 @@ proc exit(ctx: ptr Handle, isPaused: bool) =
     terminateDestroy ctx
   exitEcho()
 
-proc notes* =
+proc notes =
   while true:
     var j = false
     const sub = "Notes"
     clear()
     say "PNimRP > " & sub
-    sayPos 0, ('-'.repeat int terminalWidth() / 8) & (
-        '>'.repeat int terminalWidth() / 12)
+    sayTermDraw12()
+    
     sayIter """PNimRP Copyright (C) 2021-2024 antonl05/bloomingchad
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
@@ -197,11 +198,7 @@ proc cleanLink(linke: string): string =
   var link = linke
   link.removePrefix "http://"
   link.removePrefix "https://"
-  var findSlash = link.find "/"
-  if findSlash != -1:
-    link.delete(findSlash .. link.high)
-  else: discard
-  link
+  rsplit(link, "/", maxSplit = 1)[0] #no use strutils.delete() for nimv1.2.14
 
 #[proc checkHttpsOnly(linke: string): bool =
   var link = linke
@@ -217,7 +214,8 @@ proc cleanLink(linke: string): string =
   return false]#
 
 proc getCurrentSong(linke: string): string =
-#https ->will become http
+#https and http can be connect checked w/o ssl
+#use mpv stream_lavf.c to get icy-title from audio buffer
   var
     client = newHttpClient()
     link = linke
@@ -240,7 +238,7 @@ proc getCurrentSong(linke: string): string =
        JsonParsingError,    #different technique than implemented
          ProtocolError,     #connection refused?
            KeyError:
-      "ntimplemented"
+      "notimplemented"
 
 
 proc splitLink(str: string):seq[string] = rsplit(str, ":", maxSplit = 1)
@@ -260,19 +258,13 @@ proc doesLinkWork(link: string; isHttps = false): bool =
        Port(uint16 parseInt seq[1]),
        timeout = 3000)
     echo "link dont cause except"
-    true
+    return true
+  except HttpRequestError: warn "HttpRequestError. bad link?"
+    #retuns false default in except
+  except OSError:warn "OSError. No Internet? ConnectionRefused?"
+  except TimeoutError: warn "timeout of 3s failed"
 
-  except HttpRequestError:
-    warn "HttpRequestError. bad link?"
-    false
-  except OSError:
-    warn "OSError. No Internet? ConnectionRefused?"
-    false
-  except TimeoutError:
-    warn "timeout of 3s failed"
-    false
-
-proc call*(sub: string; sect = ""; stat,
+proc call(sub: string; sect = ""; stat,
     linke: string): Natural {.discardable.} =
   var link = linke
   if link == "": warn "link empty"
@@ -281,10 +273,7 @@ proc call*(sub: string; sect = ""; stat,
     clear()
     if sect == "": say fmt"PNimRP > {sub} > {stat}"
     else: say fmt"PNimRP > {sub} > {sect} > {stat}"
-
-    sayPos 0, '-'.repeat(int terminalWidth() / 8) &
-        '>'.repeat int terminalWidth() / 12
-
+    sayTermDraw12()
 
     if not doesLinkWork(link, isHttps = isHttps(link)):
       warn "no link work"
@@ -472,9 +461,9 @@ proc menu*(names, files, dirs: seq[string]) =
   while true:
     clear()
     #add drawMenu
-    say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
+    sayTermDraw12()
     sayPos 4, "Station Categories:"
-    sayIter names&dirs, ret = false
+    sayIter names & dirs, ret = false
     try:
       while true:
         case getch():
