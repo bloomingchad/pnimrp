@@ -201,8 +201,7 @@ proc cleanLink(linke: string): string =
   if findSlash != -1:
     link.delete(findSlash .. link.high)
   else: discard
-  return link
-
+  link
 
 #[proc checkHttpsOnly(linke: string): bool =
   var link = linke
@@ -218,7 +217,7 @@ proc cleanLink(linke: string): string =
   return false]#
 
 proc getCurrentSong(linke: string): string =
-#https no get current song
+#https ->will become http
   var
     client = newHttpClient()
     link = linke
@@ -226,13 +225,12 @@ proc getCurrentSong(linke: string): string =
   link = "http://" & cleanLink link
   try: #shoutcast
     echo "getCurrentSong: ", link
-    return client.getContent(link & "/currentsong")
+    client.getContent(link & "/currentsong")
   except ProtocolError: #ICY404 Resource Not Found?
-    return "notimplemented"
+    "notimplemented"
   except HttpRequestError: #icecast
     try:
-      return
-        to(
+      to(
          parseJson(
            client.getContent(link & "/status-json.xsl")
           ){"icestats"}{"source"}[1]{"yp_currently_playing"},
@@ -242,15 +240,16 @@ proc getCurrentSong(linke: string): string =
        JsonParsingError,    #different technique than implemented
          ProtocolError,     #connection refused?
            KeyError:
-      return "notimplemented"
+      "ntimplemented"
 
 
-proc splitLink(str: string):seq[string] =
-  return rsplit(str, ":", maxSplit = 1)
+proc splitLink(str: string):seq[string] = rsplit(str, ":", maxSplit = 1)
 
+proc isHttps(link: string): bool = link.startsWith "https://"
 
-proc doesLinkWork(link: string): bool =
+proc doesLinkWork(link: string; isHttps = false): bool =
   echo "doeslinkworkInit: " & link
+  if isHttps: return true
   var seq = splitLink cleanLink link
   
   echo "doesLinkWorkSeq: ", seq
@@ -261,17 +260,17 @@ proc doesLinkWork(link: string): bool =
        Port(uint16 parseInt seq[1]),
        timeout = 3000)
     echo "link dont cause except"
-    return true
+    true
 
   except HttpRequestError:
     warn "HttpRequestError. bad link?"
-    return false
+    false
   except OSError:
     warn "OSError. No Internet? ConnectionRefused?"
-    return false
+    false
   except TimeoutError:
     warn "timeout of 3s failed"
-    return false
+    false
 
 proc call*(sub: string; sect = ""; stat,
     linke: string): Natural {.discardable.} =
@@ -287,7 +286,7 @@ proc call*(sub: string; sect = ""; stat,
         '>'.repeat int terminalWidth() / 12
 
 
-    if not doesLinkWork link:
+    if not doesLinkWork(link, isHttps = isHttps(link)):
       warn "no link work"
       return
     let ctx = create()
@@ -404,7 +403,7 @@ proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
         else:
           l.add "http://" & input[f]
       else: discard
-  return @[n, l]
+  @[n, l]
 
 proc initIndx*(dir = "assets"): seq[seq[string]] =
   var files, names, dirs: seq[string]
@@ -432,7 +431,7 @@ proc initIndx*(dir = "assets"): seq[seq[string]] =
     dirs.add procDir
 
   if dir == "assets": names.add "Notes"
-  return @[names, files, dirs]
+  @[names, files, dirs]
 
 proc menu*(sub, file: string; sect = ""; ) =
   let
