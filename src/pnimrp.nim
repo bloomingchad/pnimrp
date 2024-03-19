@@ -3,11 +3,6 @@ import term, os, terminal, strutils
 if not dirExists "assets":
   error "data or config files dont exist"
 
-#disable volControl in koch?
-when defined(linux) and not defined(android):
-  if findExe("amixer") == "":
-    error "install alsa mixer utils for volume control"
-
 when defined dragonfly:
   {.error: """PNimRP is not supported under DragonFlyBSD (see user.rst)""".}
 
