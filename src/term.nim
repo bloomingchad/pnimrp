@@ -146,7 +146,7 @@ proc exec*(x: string, args: openArray[string]; stream = false) =
 
 proc exit(ctx: ptr Handle, isPaused: bool) =
   if not isPaused:
-    terminateDestroy ctx
+    ctx.terminateDestroy
   exitEcho()
 
 proc notes =
@@ -240,7 +240,6 @@ proc getCurrentSong(linke: string): string =
            KeyError:
       "notimplemented"
 
-
 proc splitLink(str: string):seq[string] = rsplit(str, ":", maxSplit = 1)
 
 proc isHttps(link: string): bool = link.startsWith "https://"
@@ -289,7 +288,7 @@ proc call(sub: string; sect = ""; stat,
 
     while true:
       if not isPaused: #pthread_mutex_lock:
-       #destroyer pause called on mutex that was destroyed.
+       #(termux_arm)destroyer pause called on mutex that was destroyed.
         var event = ctx.waitEvent 1000
       if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
         warn "end of file? bad link?"
@@ -297,19 +296,11 @@ proc call(sub: string; sect = ""; stat,
         break
       if echoPlay:
         #var event = ctx.waitEvent 1000
-  
-        #[if not doesLinkWork(link):
-          warn "Bad Link?"
-          if not isPaused:
-            terminateDestroy ctx
-            break]#
 
         var currentSong = getCurrentSong link
         case currentSong:
           of "notimplemented": sayPos 4, "Playing"
-          #of "": nowPlayingExcept = true
           else: sayPos 4, "Now Playing: " & currentSong
-        #sayPos 4, "Playing"
         cursorUp()
         echoPlay = false
 
@@ -331,7 +322,7 @@ proc call(sub: string; sect = ""; stat,
           eraseLine()
           cursorUp()]#
           discard
-        of 'p', 'm', 'P', 'M':
+        of 'p', 'P':
           if isPaused:
             if nowPlayingExcept != true:
               cursorUp()
@@ -340,16 +331,45 @@ proc call(sub: string; sect = ""; stat,
             eraseLine()
             if nowPlayingExcept != true:
               cursorUp()
-            let ctx = create()
-            init link, ctx
+
+            var val: cint = 0
+            #ctx.setProperty "pause", fmtFlag, addr val
+            ctx.setProperty "pause", fmtFlag, addr val
             echoPlay = true
             isPaused = false
 
           else:
             eraseLine()
-            warn "Paused/Muted", 4
+            warn "Paused", 4
             cursorUp()
-            terminateDestroy ctx
+
+            var val: cint = 1
+            ctx.setProperty "pause", fmtFlag, addr val
+            isPaused = true
+
+        of 'm', 'M':
+          if isPaused:
+            if nowPlayingExcept != true:
+              cursorUp()
+              eraseLine()
+              cursorDown()
+              eraseLine()
+            if nowPlayingExcept != true:
+              cursorUp()
+          
+            var val: cint = 0
+            #ctx.setProperty "pause", fmtFlag, addr val
+            ctx.setProperty "mute", fmtFlag, addr val
+            echoPlay = true
+            isPaused = false
+          
+          else:
+            eraseLine()
+            warn "Muted", 4
+            cursorUp()
+          
+            var val: cint = 1
+            ctx.setProperty "mute", fmtFlag, addr val
             isPaused = true
 
         of '/', '+':
