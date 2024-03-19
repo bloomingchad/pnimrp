@@ -281,7 +281,7 @@ proc call(sub: string; sect = ""; stat,
     init link, ctx
     var
       echoPlay = true
-      event = ctx.waitEvent 1000 #pthread_mutex_lock
+      event = ctx.waitEvent 0 #arm: pthread_mutex_lock
       isPaused = false
       nowPlayingExcept = false
     echo "link in call() before while true: " & link
@@ -289,7 +289,7 @@ proc call(sub: string; sect = ""; stat,
     while true:
       if not isPaused: #pthread_mutex_lock:
        #(termux_arm)destroyer pause called on mutex that was destroyed.
-        var event = ctx.waitEvent 1000
+        var event = ctx.waitEvent 0
       if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
         warn "end of file? bad link?"
         terminateDestroy ctx
@@ -333,7 +333,6 @@ proc call(sub: string; sect = ""; stat,
               cursorUp()
 
             var val: cint = 0
-            #ctx.setProperty "pause", fmtFlag, addr val
             ctx.setProperty "pause", fmtFlag, addr val
             echoPlay = true
             isPaused = false
@@ -358,7 +357,6 @@ proc call(sub: string; sect = ""; stat,
               cursorUp()
           
             var val: cint = 0
-            #ctx.setProperty "pause", fmtFlag, addr val
             ctx.setProperty "mute", fmtFlag, addr val
             echoPlay = true
             isPaused = false
@@ -373,9 +371,19 @@ proc call(sub: string; sect = ""; stat,
             isPaused = true
 
         of '/', '+':
-          when defined(linux) and not defined(android):
-            exec "amixer", ["--quiet", "set", "PCM", "5+"]
-            #when defined windows: exec "nircmd",["changesysvolume","5000"]
+          var val: cint
+          cE ctx.getProperty("volume", fmtInt64, addr val) #nim do var block isolation
+            #mpv cant access it? ->dont put outside while true
+          val += 5
+          cE ctx.setProperty("volume", fmtInt64, addr val)
+          echo "Volume: ", val
+
+         #[var metadata: NodeList
+          echo "getPropreturnVal:", ctx.getProperty("metadata", fmtNodeMap, addr metadata)
+          echo "metadata", metadata.num
+          for i in 0 .. 100:
+            try:echo "metadatavalues", metadata.values[i]
+            except:discard]#
           cursorDown()
           warn "Volume+", 4
           cursorUp()
@@ -383,9 +391,12 @@ proc call(sub: string; sect = ""; stat,
           cursorUp()
 
         of '*', '-':
-          when defined(linux) and not defined(android):
-            exec "amixer", ["--quiet", "set", "PCM", "5-"]
-            #when defined windows: exec "nircmd",["changesysvolume","-5000"]
+          var val: cint
+          cE ctx.getProperty("volume", fmtInt64, addr val)
+          val -= 5
+          cE ctx.setProperty("volume", fmtInt64, addr val)
+          echo "newVolume: ", val
+
           cursorDown()
           warn "Volume-", 4
           cursorUp()
