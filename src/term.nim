@@ -255,7 +255,7 @@ proc doesLinkWork(link: string; isHttps = false): bool =
     newSocket().connect(
        seq[0],
        Port(uint16 parseInt seq[1]),
-       timeout = 3000)
+       timeout = 2000)
     echo "link dont cause except"
     return true
   except HttpRequestError: warn "HttpRequestError. bad link?"
@@ -489,10 +489,11 @@ proc menu*(sub, file: string; sect = ""; ) =
     if j: break
 
 proc menu*(names, files, dirs: seq[string]) =
+  #TODO menu dynamic selection; only 15 items possible!
   while true:
     clear()
     #add drawMenu
-    sayTermDraw12()
+    sayTermDraw8()
     sayPos 4, "Station Categories:"
     sayIter names & dirs, ret = false
     try:
