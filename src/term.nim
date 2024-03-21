@@ -4,7 +4,7 @@ import
   client, sequtils, parseutils,
   httpclient, net
 
-proc clear* =
+proc clear =
   eraseScreen()
   setCursorPos 0, 0
 
@@ -12,7 +12,7 @@ proc error*(str: string) =
   styledEcho fgRed, "Error: ", str
   quit QuitFailure
 
-proc sayBlue*(strList: varargs[string]) =
+proc sayBlue(strList: varargs[string]) =
   for str in strList:
     setCursorXPos 5
     styledEcho fgBlue, str
@@ -47,7 +47,7 @@ proc parseJArray(file: string): seq[string] =
   if result.len mod 2 != 0:
     error "JArrayResult.len not even"
 
-proc exitEcho* =
+proc exitEcho =
   showCursor()
   echo ""
   randomize()
@@ -75,20 +75,20 @@ proc exitEcho* =
     rand * 2
   )
 
-proc say*(txt: string) =
+proc say(txt: string) =
   styledEcho fgYellow, txt
 
-proc sayPos*(x: int, a: string; echo = true) =
+proc sayPos(x: int, a: string; echo = true) =
   setCursorXPos x
   if echo: styledEcho fgGreen, a
   else: stdout.styledWrite fgGreen, a
 
-proc sayIter*(txt: string) =
+proc sayIter(txt: string) =
   for f in splitLines txt:
     setCursorXPos 5
     styledEcho fgBlue, f
 
-proc sayIter*(txt: seq[string]; ret = true) =
+proc sayIter(txt: seq[string]; ret = true) =
   var
     chars =
       @[
@@ -108,7 +108,7 @@ proc sayIter*(txt: seq[string]; ret = true) =
   if ret: sayBlue "R Return"
   sayBlue "Q Quit"
 
-proc warn*(txt: string; x = -1) =
+proc warn(txt: string; x = -1) =
   if x != -1: setCursorXPos x
   styledEcho fgRed, txt
   #if echo == false: stdout.styledWrite fgRed,txt
@@ -122,9 +122,9 @@ proc inv =
   eraseLine()
   cursorUp()
 
-template sayTermDraw8*() =
+template sayTermDraw8() =
   say "Poor Mans Radio Player in Nim-lang " & '-'.repeat int terminalWidth() / 8
-proc sayTermDraw12*() =
+proc sayTermDraw12() =
   sayPos 0, '-'.repeat((terminalWidth()/8).int) & '>'.repeat int terminalWidth() / 12
 
 proc drawMenu(sub: string, x: string | seq[string], sect = "") =
@@ -137,12 +137,14 @@ proc drawMenu(sub: string, x: string | seq[string], sect = "") =
   else: sayPos 4, fmt"{sect} Station Playing Music:"
   sayIter x
 
-proc exec*(x: string, args: openArray[string]; stream = false) =
+proc exec(x: string, args: openArray[string]; stream = false) =
   discard waitForExit startProcess(x, args = args,
     options =
     if stream: {poUsePath, poParentStreams}
       else: {poUsePath}
   )
+
+template cE(s: cint) = checkError s
 
 proc exit(ctx: ptr Handle, isPaused: bool) =
   if not isPaused:
@@ -160,32 +162,13 @@ proc notes =
     sayIter """PNimRP Copyright (C) 2021-2024 antonl05/bloomingchad
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
-under certain conditions. press `t` for details"""
+under certain conditions."""
     while true:
       case getch():
-        of 'T', 't':
-          when defined windows: exec "notepad.exe", ["LICENSE"], stream = true; break
-          when defined posix:
-            when defined android:
-              showCursor()
-              exec "editor", ["LICENSE"], stream = true
-              hideCursor()
-              break
-            else:
-              warn "type esc, :q and enter to exit"
-              showCursor()
-              exec "vi", ["LICENSE"], stream = true
-              hideCursor()
-          else:
-            showCursor()
-            echo "please open LICENSE file"
-            quit()
         of 'r', 'R': j = true; break
         of 'Q', 'q': exitEcho()
         else: inv()
     if j: break
-
-template cE(s: cint) = checkError s
 
 proc init(parm: string, ctx: ptr Handle) =
   let file = allocCStringArray ["loadfile", parm] #couldbe file,link,playlistfile
@@ -333,7 +316,7 @@ proc call(sub: string; sect = ""; stat,
               cursorUp()
 
             var val: cint = 0
-            ctx.setProperty "pause", fmtFlag, addr val
+            cE ctx.setProperty("pause", fmtFlag, addr val)
             echoPlay = true
             isPaused = false
 
@@ -343,7 +326,7 @@ proc call(sub: string; sect = ""; stat,
             cursorUp()
 
             var val: cint = 1
-            ctx.setProperty "pause", fmtFlag, addr val
+            cE ctx.setProperty("pause", fmtFlag, addr val)
             isPaused = true
 
         of 'm', 'M':
@@ -357,7 +340,7 @@ proc call(sub: string; sect = ""; stat,
               cursorUp()
           
             var val: cint = 0
-            ctx.setProperty "mute", fmtFlag, addr val
+            cE ctx.setProperty("mute", fmtFlag, addr val)
             echoPlay = true
             isPaused = false
           
@@ -367,7 +350,7 @@ proc call(sub: string; sect = ""; stat,
             cursorUp()
           
             var val: cint = 1
-            ctx.setProperty "mute", fmtFlag, addr val
+            cE ctx.setProperty("mute", fmtFlag, addr val)
             isPaused = true
 
         of '/', '+':
@@ -376,7 +359,7 @@ proc call(sub: string; sect = ""; stat,
             #mpv cant access it? ->dont put outside while true
           val += 5
           cE ctx.setProperty("volume", fmtInt64, addr val)
-          echo "Volume: ", val
+          #echo "Volume: ", val
 
          #[var metadata: NodeList
           echo "getPropreturnVal:", ctx.getProperty("metadata", fmtNodeMap, addr metadata)
@@ -385,7 +368,7 @@ proc call(sub: string; sect = ""; stat,
             try:echo "metadatavalues", metadata.values[i]
             except:discard]#
           cursorDown()
-          warn "Volume+", 4
+          warn fmt"Volume+: {val}" , 4
           cursorUp()
           eraseLine()
           cursorUp()
@@ -453,7 +436,7 @@ proc initIndx*(dir = "assets"): seq[seq[string]] =
   if dir == "assets": names.add "Notes"
   @[names, files, dirs]
 
-proc menu*(sub, file: string; sect = ""; ) =
+proc menu(sub, file: string; sect = ""; ) =
   let
     list = initJsonLists(sub, file, sect)
     n = list[0]
