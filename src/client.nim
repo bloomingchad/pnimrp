@@ -43,11 +43,11 @@ from terminal import showCursor
 
 #templates
 template makeVersion*(major, minor: untyped): untyped =
- major shl 16 or minor or 0'u32 ##[
-  version is incremented on each change, minor = 16 lower bits, major = 16
-  higher bits. when api becomes incompatable with previous, major is
-  incremented, affecting only C parts and not properties and options
-  (see libmpv/docs/client-api-changes.rst for changelog)
+  major shl 16 or minor or 0'u32 ##[
+   version is incremented on each change, minor = 16 lower bits, major = 16
+   higher bits. when api becomes incompatable with previous, major is
+   incremented, affecting only C parts and not properties and options
+   (see libmpv/docs/client-api-changes.rst for changelog)
 ]##
 
 #consts
@@ -325,26 +325,26 @@ using
 proc abortAsyncCmd*(ctx; replyUserData)
     {.importc: "mpv_abort_async_command".}
 
-{.push discardable.}
+#{.push discardable.}
 proc cmd*(ctx; argsArr): cint
     {.importc: "mpv_command".}
 
 proc cmdAsync*(ctx; replyUserData; argsArr): cint
-   {.importc: "mpv_command_async".}
+    {.importc: "mpv_command_async".}
 
 proc cmdNode*(ctx; argsArr; result): cint
     {.importc: "mpv_command_node".}
 
 proc cmdNodeAsync*(ctx; replyUserData; result): cint
-   {.importc: "mpv_command_node_async".}
+    {.importc: "mpv_command_node_async".}
 
 proc cmdRet*(ctx; argsArr; result): cint
     {.importc: "mpv_command_ret".}
 
 proc cmdString*(ctx; argsStr): cint
-   {.importc: "mpv_command_string".}
+    {.importc: "mpv_command_string".}
 
-{.pop.}
+#{.pop.}
 proc create*: ptr Handle
     {.importc: "mpv_create".} ##[
   create and return a Handle used to control the instance
@@ -372,7 +372,7 @@ proc errorString*(error): cstring
  ]##
 
 proc EventName*(Event: EventID): cstring
-   {.importc: "mpv_event_name".}
+    {.importc: "mpv_event_name".}
 
 proc free*(data)
     {.importc: "mpv_free".} ##[
@@ -385,7 +385,7 @@ proc freeNodeContents*(node)
     {.importc: "mpv_free_node_contents".}
 
 proc getClientApiVersion*: culong
- {.importc: "mpv_client_api_version".}
+    {.importc: "mpv_client_api_version".}
  ##return api version of libmpv
 
 proc getClientName*(ctx): cstring
@@ -393,25 +393,25 @@ proc getClientName*(ctx): cstring
  ##return the unique client Handle name. isStaticConst
 
 proc getProperty*(ctx; name; fmt; data): cint
-   {.importc: "mpv_get_property".}
+    {.importc: "mpv_get_property".}
 
 proc getPropertyAsync*(ctx; replyUserData; name; fmt): cint
-   {.importc: "mpv_get_property_async".}
+    {.importc: "mpv_get_property_async".}
 
 proc getPropertyOSDString*(ctx; name): cstring
-   {.importc: "mpv_get_property_osd_string".}
+    {.importc: "mpv_get_property_osd_string".}
 
 proc getPropertyString*(ctx; name): cstring
-   {.importc: "mpv_get_property_string".}
+    {.importc: "mpv_get_property_string".}
 
 proc getTimeUS*(ctx): cint
     {.importc: "mpv_get_time_us".}
 
 proc hookAdd*(ctx; replyUserData; name; priority: cint): cint
-   {.importc: "mpv_hook_add".}
+    {.importc: "mpv_hook_add".}
 
 proc hookContinue*(ctx; id: cint): cint
-   {.importc: "mpv_hook_continue".}
+    {.importc: "mpv_hook_continue".}
 
 proc initialize*(ctx): cint
     {.importc: "mpv_initialize".} ##[
@@ -419,19 +419,19 @@ proc initialize*(ctx): cint
   very important proc for usage if used create() to preinit
  ]##
 
-{.push discardable.}
+#{.push discardable.}
 
 proc loadConfigFile*(ctx; filename: cstring): cint
     {.importc: "mpv_load_config_file".}
 
 proc observeProperty*(ctx; replyUserData; name; fmt): cint
-   {.importc: "mpv_observe_property".}
+    {.importc: "mpv_observe_property".}
 
 proc requestEvent*(ctx; Event: EventID; enable: cint): cint
-   {.importc: "mpv_request_event".}
+    {.importc: "mpv_request_event".}
 
 proc requestLogMsgs*(ctx; minLevel: cstring): cint
-   {.importc: "mpv_request_log_messages".}
+    {.importc: "mpv_request_log_messages".}
 
 proc setOption*(ctx; name; fmt; data): cint
     {.importc: "mpv_set_option".}
@@ -440,32 +440,32 @@ proc setOptionString*(ctx; name; data: cstring): cint
     {.importc: "mpv_set_option_string".}
 
 proc setProperty*(ctx; name; fmt; data): cint
-   {.importc: "mpv_set_property".}
+    {.importc: "mpv_set_property".}
 
 proc setPropertyAsync*(ctx; replyUserData; name; fmt; data): cint
-   {.importc: "mpv_set_property_async".}
+    {.importc: "mpv_set_property_async".}
 
 proc setPropertyString*(ctx; name; data: cstring): cint
-   {.importc: "mpv_set_property_string".}
+    {.importc: "mpv_set_property_string".}
 
 proc setWakeupCallback*(ctx; cb: proc (d: pointer); d: pointer)
-   {.importc: "mpv_set_wakeup_callback".}
+    {.importc: "mpv_set_wakeup_callback".}
 
 proc terminateDestroy*(ctx)
     {.importc: "mpv_terminate_destroy".}
 
 proc unobserveProperty*(ctx; registeredReplyUserData: cint): cint
-   {.importc: "mpv_unobserve_property".}
+    {.importc: "mpv_unobserve_property".}
 
-{.pop.}
+#{.pop.}
 proc waitAsyncRequests*(ctx)
-   {.importc: "mpv_wait_async_requests".}
+    {.importc: "mpv_wait_async_requests".}
 
 proc waitEvent*(ctx; timeout: cdouble): ptr Event
-   {.importc: "mpv_wait_event".}
+    {.importc: "mpv_wait_event".}
 
 proc wakeup*(ctx)
- {.importc: "mpv_wakeup".} ##[
+    {.importc: "mpv_wakeup".} ##[
   interrupt current waitEvent(), this will wakeup thread currently
   waiting in waitEvent(). waiting thread is woken up. if no thread is
   waiting, next waitEvent() will return to avoid lost wakeups. waitEvent()
@@ -478,7 +478,7 @@ proc checkError*(status: cint) = ##[
   quit with failure exit status if less than 0
  ]##
  if status < 0:
-  showCursor()
-  raise newException(CatchableError, "mpv API error: " & $errorString status)
+   showCursor()
+   raise newException(CatchableError, "mpv API error: " & $errorString status)
 
 {.pop.}
