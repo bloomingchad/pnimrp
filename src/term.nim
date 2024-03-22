@@ -1,7 +1,7 @@
 import
-  osproc, terminal, random, os,
+  terminal, random, os,
   strformat, strutils, json,
-  client, sequtils, parseutils,
+  client, sequtils,
   httpclient, net
 
 proc clear =
@@ -137,12 +137,12 @@ proc drawMenu(sub: string, x: string | seq[string], sect = "") =
   else: sayPos 4, fmt"{sect} Station Playing Music:"
   sayIter x
 
-proc exec(x: string, args: openArray[string]; stream = false) =
+#[proc exec(x: string, args: openArray[string]; stream = false) =
   discard waitForExit startProcess(x, args = args,
     options =
     if stream: {poUsePath, poParentStreams}
       else: {poUsePath}
-  )
+  )]#
 
 template cE(s: cint) = checkError s
 
@@ -223,7 +223,7 @@ proc getCurrentSong(linke: string): string =
            KeyError:
       "notimplemented"
 
-proc splitLink(str: string):seq[string] = rsplit(str, ":", maxSplit = 1)
+proc splitLink(str: string): seq[string] = rsplit(str, ":", maxSplit = 1)
 
 proc isHttps(link: string): bool = link.startsWith "https://"
 
@@ -266,13 +266,13 @@ proc call(sub: string; sect = ""; stat,
       echoPlay = true
       event = ctx.waitEvent 0 #arm: pthread_mutex_lock
       isPaused = false
-      nowPlayingExcept = false
+      #nowPlayingExcept = false
     echo "link in call() before while true: " & link
 
     while true:
       if not isPaused: #pthread_mutex_lock:
        #(termux_arm)destroyer pause called on mutex that was destroyed.
-        var event = ctx.waitEvent 0
+        event = ctx.waitEvent 0
       if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
         warn "end of file? bad link?"
         terminateDestroy ctx
@@ -307,13 +307,13 @@ proc call(sub: string; sect = ""; stat,
           discard
         of 'p', 'P':
           if isPaused:
-            if nowPlayingExcept != true:
-              cursorUp()
-              eraseLine()
-              cursorDown()
+            #if nowPlayingExcept != true:
+            cursorUp()
             eraseLine()
-            if nowPlayingExcept != true:
-              cursorUp()
+            cursorDown()
+            eraseLine()
+            #if nowPlayingExcept != true:
+            cursorUp()
 
             var val: cint = 0
             cE ctx.setProperty("pause", fmtFlag, addr val)
@@ -331,13 +331,13 @@ proc call(sub: string; sect = ""; stat,
 
         of 'm', 'M':
           if isPaused:
-            if nowPlayingExcept != true:
-              cursorUp()
-              eraseLine()
-              cursorDown()
-              eraseLine()
-            if nowPlayingExcept != true:
-              cursorUp()
+            #if nowPlayingExcept != true:
+            cursorUp()
+            eraseLine()
+            cursorDown()
+            eraseLine()
+            #if nowPlayingExcept != true:
+            cursorUp()
           
             var val: cint = 0
             cE ctx.setProperty("mute", fmtFlag, addr val)
@@ -354,12 +354,11 @@ proc call(sub: string; sect = ""; stat,
             isPaused = true
 
         of '/', '+':
-          var val: cint
-          cE ctx.getProperty("volume", fmtInt64, addr val) #nim do var block isolation
+          var volumeIncreased: cint
+          cE ctx.getProperty("volume", fmtInt64, addr volumeIncreased) #nim do var block isolation
             #mpv cant access it? ->dont put outside while true
-          val += 5
-          cE ctx.setProperty("volume", fmtInt64, addr val)
-          #echo "Volume: ", val
+          volumeIncreased += 5
+          cE ctx.setProperty("volume", fmtInt64, addr volumeIncreased)
 
          #[var metadata: NodeList
           echo "getPropreturnVal:", ctx.getProperty("metadata", fmtNodeMap, addr metadata)
@@ -368,20 +367,19 @@ proc call(sub: string; sect = ""; stat,
             try:echo "metadatavalues", metadata.values[i]
             except:discard]#
           cursorDown()
-          warn fmt"Volume+: {val}" , 4
+          warn fmt"Volume+: {volumeIncreased}" , 4
           cursorUp()
           eraseLine()
           cursorUp()
 
         of '*', '-':
-          var val: cint
-          cE ctx.getProperty("volume", fmtInt64, addr val)
-          val -= 5
-          cE ctx.setProperty("volume", fmtInt64, addr val)
-          echo "newVolume: ", val
+          var volumeDecreased: cint
+          cE ctx.getProperty("volume", fmtInt64, addr volumeDecreased)
+          volumeDecreased -= 5
+          cE ctx.setProperty("volume", fmtInt64, addr volumeDecreased)
 
           cursorDown()
-          warn "Volume-", 4
+          warn fmt"Volume-: {volumeDecreased}" , 4
           cursorUp()
           eraseLine()
           cursorUp()
@@ -425,12 +423,15 @@ proc initIndx*(dir = "assets"): seq[seq[string]] =
         names.add procFile
     else: names.add procFile
 
+  #TODO add directory parse support
   for directory in walkDirs(dir & "/*"):
     var procDir = directory
     procDir.removePrefix(dir & "/")
     procDir = procDir & "/"
-    if not(procDir[0].isUpperAscii()):
-      discard parseChar($procDir[0].toUpperAscii(), procDir[0])
+    procDir[0] = procDir[0].toUpperAscii()
+
+    #if not(procDir[0].isUpperAscii()):
+    #  discard parseChar($procDir[0].toUpperAscii(), procDir[0])
     dirs.add procDir
 
   if dir == "assets": names.add "Notes"
