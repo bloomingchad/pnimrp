@@ -8,10 +8,10 @@ when defined dragonfly:
 
 hideCursor()
 
-let indx = initIndx()
+#let indx = initIndx()
 
-menu(
-  indx[0], #names 
-  indx[1], #files
-  indx[2]   #dirs
+drawMainMenu(
+  #indx[0], #names
+  #indx[1], #files
+  #indx[2]   #dirs
 )

@@ -36,6 +36,7 @@ proc parseJ(x: string): JsonNode =
   try:
     return parseJson readFile x
   except IOError:
+    echo x
     error "base assets dont exist?"
 
 proc parseJArray(file: string): seq[string] =
@@ -273,6 +274,7 @@ proc call(sub: string; sect = ""; stat,
       if not isPaused: #pthread_mutex_lock:
        #(termux_arm)destroyer pause called on mutex that was destroyed.
         event = ctx.waitEvent 0
+      echo "event state: ", event.eventID
       if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
         warn "end of file? bad link?"
         terminateDestroy ctx
@@ -428,23 +430,28 @@ proc initIndx*(dir = "assets"): seq[seq[string]] =
     var procDir = directory
     procDir.removePrefix(dir & "/")
     procDir = procDir & "/"
-    procDir[0] = procDir[0].toUpperAscii()
+    #procDir[0] = procDir[0].toUpperAscii()
 
     #if not(procDir[0].isUpperAscii()):
     #  discard parseChar($procDir[0].toUpperAscii(), procDir[0])
-    dirs.add procDir
+    files.add procDir
+    names.add procDir
 
   if dir == "assets": names.add "Notes"
   @[names, files, dirs]
 
+proc drawMainMenu*(dir = "assets")
+
 proc menu(sub, file: string; sect = ""; ) =
+  if sub.endsWith "/":
+    drawMainMenu("assets/" & sub)
   let
     list = initJsonLists(sub, file, sect)
     n = list[0]
     l = list[1]
 
   while true:
-    var j = false
+    var returnBack = false
     drawMenu sub, n, sect
     #add conditiinal check for every if len not thereown size
     #else no use danger use release
@@ -466,23 +473,33 @@ proc menu(sub, file: string; sect = ""; ) =
           of 'D', 'd': call sub, sect, n[12], l[12]; break
           of 'E', 'e': call sub, sect, n[13], l[13]; break
           of 'F', 'f': call sub, sect, n[14], l[14]; break
-          of 'R', 'r': j = true; break
+          of 'R', 'r': returnBack = true; break
           of 'Q', 'q': exitEcho()
           else: inv()
       except IndexDefect: inv()
-    if j: break
+    if returnBack: break
 
-proc menu*(names, files, dirs: seq[string]) =
+proc drawMainMenu*(dir = "assets") =
+  let
+    indx = initIndx dir
+    names = indx[0]
+    files = indx[1]
+    dirs  = indx[2]
   #TODO menu dynamic selection; only 15 items possible!
   while true:
+    var returnBack = false
     clear()
+    #echo names
+    #echo files
+    #echo dirs
     #add drawMenu
     sayTermDraw8()
     sayPos 4, "Station Categories:"
     sayIter names & dirs, ret = false
     try:
       while true:
-        case getch():
+        var getch = getch()
+        case getch:
           of '1': menu names[0], files[0]; break
           of '2': menu names[1], files[1]; break
           of '3': menu names[2], files[2]; break
@@ -498,8 +515,20 @@ proc menu*(names, files, dirs: seq[string]) =
           of 'D', 'd': menu names[12], files[12]; break
           of 'E', 'e': menu names[13], files[13]; break
           of 'F', 'f': menu names[14], files[14]; break
+          of 'G', 'g': menu names[15], files[15]; break
+          of 'H', 'h': menu names[16], files[16]; break
+          of 'I', 'i': menu names[17], files[17]; break
+          of 'J', 'j': menu names[18], files[18]; break
           of 'N', 'n': notes(); break
+          of 'R', 'r':
+            if dir != "assets":
+              returnBack = true
+              break
+            else: inv()
           of 'q', 'Q': exitEcho()
-          else: inv()
+          else: echo getch; inv()
     except IndexDefect:
+      echo "indexdefet"
       inv()
+
+    if returnBack: break
