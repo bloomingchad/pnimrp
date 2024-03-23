@@ -36,7 +36,6 @@ proc parseJ(x: string): JsonNode =
   try:
     return parseJson readFile x
   except IOError:
-    echo x
     error "base assets dont exist?"
 
 proc parseJArray(file: string): seq[string] =
@@ -271,9 +270,7 @@ proc call(sub: string; sect = ""; stat,
     echo "link in call() before while true: " & link
 
     while true:
-      if not isPaused: #pthread_mutex_lock:
-       #(termux_arm)destroyer pause called on mutex that was destroyed.
-        event = ctx.waitEvent 0
+      if not isPaused: event = ctx.waitEvent 0
       echo "event state: ", event.eventID
       if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
         warn "end of file? bad link?"
@@ -442,9 +439,11 @@ proc initIndx*(dir = "assets"): seq[seq[string]] =
 
 proc drawMainMenu*(dir = "assets")
 
-proc menu(sub, file: string; sect = ""; ) =
+proc menu(sub, file: string; sect = ""; ): int16 {.discardable.} =
   if sub.endsWith "/":
     drawMainMenu("assets/" & sub)
+    return
+    #echo sub
   let
     list = initJsonLists(sub, file, sect)
     n = list[0]
@@ -473,7 +472,10 @@ proc menu(sub, file: string; sect = ""; ) =
           of 'D', 'd': call sub, sect, n[12], l[12]; break
           of 'E', 'e': call sub, sect, n[13], l[13]; break
           of 'F', 'f': call sub, sect, n[14], l[14]; break
-          of 'R', 'r': returnBack = true; break
+          of 'R', 'r':
+            returnBack = true
+            #writeStackTrace()
+            break
           of 'Q', 'q': exitEcho()
           else: inv()
       except IndexDefect: inv()
@@ -519,6 +521,7 @@ proc drawMainMenu*(dir = "assets") =
           of 'H', 'h': menu names[16], files[16]; break
           of 'I', 'i': menu names[17], files[17]; break
           of 'J', 'j': menu names[18], files[18]; break
+          of 'K', 'k': menu names[19], files[19]; break
           of 'N', 'n': notes(); break
           of 'R', 'r':
             if dir != "assets":
