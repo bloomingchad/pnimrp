@@ -108,9 +108,9 @@ proc sayIter(txt: seq[string]; ret = true) =
   if ret: sayBlue "R Return"
   sayBlue "Q Quit"
 
-proc warn(txt: string; x = -1) =
+proc warn(txt: string; x = -1; colour = fgRed) =
   if x != -1: setCursorXPos x
-  styledEcho fgRed, txt
+  styledEcho colour, txt
   #if echo == false: stdout.styledWrite fgRed,txt
   #default Args dosent seem to be working?
   sleep 750
@@ -205,7 +205,7 @@ proc getCurrentSong(linke: string): string =
 
   link = "http://" & cleanLink link
   try: #shoutcast
-    echo "getCurrentSong: ", link
+    #echo "getCurrentSong: ", link
     client.getContent(link & "/currentsong")
   except ProtocolError: #ICY404 Resource Not Found?
     "notimplemented"
@@ -228,27 +228,25 @@ proc splitLink(str: string): seq[string] = rsplit(str, ":", maxSplit = 1)
 proc isHttps(link: string): bool = link.startsWith "https://"
 
 proc doesLinkWork(link: string; isHttps = false): bool =
-  echo "doeslinkworkInit: " & link
+  #echo "doeslinkworkInit: " & link
   if isHttps: return true
   var seq = splitLink cleanLink link
   
-  echo "doesLinkWorkSeq: ", seq
+  #echo "doesLinkWorkSeq: ", seq
   if seq.len == 1: return true #we cannot check w/o port
   try:
     newSocket().connect(
        seq[0],
        Port(uint16 parseInt seq[1]),
        timeout = 2000)
-    echo "link dont cause except"
+    #echo "link dont cause except"
     return true
   except HttpRequestError: warn "HttpRequestError. bad link?"
     #retuns false default in except
   except OSError:warn "OSError. No Internet? ConnectionRefused?"
   except TimeoutError: warn "timeout of 3s failed"
 
-proc call(sub: string; sect = ""; stat,
-    linke: string): Natural {.discardable.} =
-  var link = linke
+proc call(sub: string; sect = ""; stat, link: string) =
   if link == "": warn "link empty"
   elif link.contains " ": warn "link dont exist or is invalid"
   else:
@@ -267,24 +265,26 @@ proc call(sub: string; sect = ""; stat,
       event = ctx.waitEvent 0 #arm: pthread_mutex_lock
       isPaused = false
       #nowPlayingExcept = false
-    echo "link in call() before while true: " & link
+    #echo "link in call() before while true: " & link
 
     while true:
       if not isPaused: event = ctx.waitEvent 0
       echo "event state: ", event.eventID
+
       if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
         warn "end of file? bad link?"
         terminateDestroy ctx
         break
-      if echoPlay:
+      if not isPaused: sayPos 4, "Playing"
+      #if echoPlay:
         #var event = ctx.waitEvent 1000
 
-        var currentSong = getCurrentSong link
-        case currentSong:
-          of "notimplemented": sayPos 4, "Playing"
-          else: sayPos 4, "Now Playing: " & currentSong
-        cursorUp()
-        echoPlay = false
+      var currentSong = getCurrentSong link
+      case currentSong:
+          of "notimplemented": discard
+          else: sayPos 4, "Now Streaming: " & currentSong
+      cursorUp()
+      #  echoPlay = false
 
       #remove cursorUp?
       #add time check playing error link
@@ -315,10 +315,9 @@ proc call(sub: string; sect = ""; stat,
             cursorUp()
 
             var val: cint = 0
-            cE ctx.setProperty("pause", fmtFlag, addr val)
-            echoPlay = true
             isPaused = false
-
+            cE ctx.setProperty("pause", fmtFlag, addr val)
+            #echoPlay = true
           else:
             eraseLine()
             warn "Paused", 4
@@ -406,7 +405,7 @@ proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
   @[n, l]
 
 proc initIndx*(dir = "assets"): seq[seq[string]] =
-  var files, names, dirs: seq[string]
+  var files, names: seq[string]
 
   for file in walkFiles(dir & "/*"):
     if dir == "assets":
@@ -435,11 +434,11 @@ proc initIndx*(dir = "assets"): seq[seq[string]] =
     names.add procDir
 
   if dir == "assets": names.add "Notes"
-  @[names, files, dirs]
+  @[names, files]
 
 proc drawMainMenu*(dir = "assets")
 
-proc menu(sub, file: string; sect = ""; ): int16 {.discardable.} =
+proc menu(sub, file: string; sect = "") =
   if sub.endsWith "/":
     drawMainMenu("assets/" & sub)
     return
@@ -452,6 +451,7 @@ proc menu(sub, file: string; sect = ""; ): int16 {.discardable.} =
   while true:
     var returnBack = false
     drawMenu sub, n, sect
+    #echo l
     #add conditiinal check for every if len not thereown size
     #else no use danger use release
     while true:
@@ -486,7 +486,6 @@ proc drawMainMenu*(dir = "assets") =
     indx = initIndx dir
     names = indx[0]
     files = indx[1]
-    dirs  = indx[2]
   #TODO menu dynamic selection; only 15 items possible!
   while true:
     var returnBack = false
@@ -497,7 +496,7 @@ proc drawMainMenu*(dir = "assets") =
     #add drawMenu
     sayTermDraw8()
     sayPos 4, "Station Categories:"
-    sayIter names & dirs, ret = false
+    sayIter names , ret = false
     try:
       while true:
         var getch = getch()
@@ -531,7 +530,7 @@ proc drawMainMenu*(dir = "assets") =
           of 'q', 'Q': exitEcho()
           else: echo getch; inv()
     except IndexDefect:
-      echo "indexdefet"
+      #warn "indexdefect"
       inv()
 
     if returnBack: break
