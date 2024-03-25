@@ -261,14 +261,16 @@ proc call(sub: string; sect = ""; stat, link: string) =
     let ctx = create()
     init link, ctx
     var
-      echoPlay = true
+      #echoPlay = true
       event = ctx.waitEvent 0 #arm: pthread_mutex_lock
       isPaused = false
+      currentSong = getCurrentSong link
       #nowPlayingExcept = false
     #echo "link in call() before while true: " & link
 
     while true:
       if not isPaused: event = ctx.waitEvent 0
+      setCursorPos 0, 2
       echo "event state: ", event.eventID
 
       if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
@@ -279,10 +281,8 @@ proc call(sub: string; sect = ""; stat, link: string) =
       #if echoPlay:
         #var event = ctx.waitEvent 1000
 
-      var currentSong = getCurrentSong link
-      case currentSong:
-          of "notimplemented": discard
-          else: sayPos 4, "Now Streaming: " & currentSong
+      if currentSong != "notimplemented":
+        sayPos 4, "Now Streaming: " & getCurrentSong link
       cursorUp()
       #  echoPlay = false
 
@@ -307,12 +307,12 @@ proc call(sub: string; sect = ""; stat, link: string) =
         of 'p', 'P':
           if isPaused:
             #if nowPlayingExcept != true:
-            cursorUp()
+            #cursorUp()
             eraseLine()
-            cursorDown()
-            eraseLine()
+            #cursorDown()
+            #eraseLine()
             #if nowPlayingExcept != true:
-            cursorUp()
+            #cursorUp()
 
             var val: cint = 0
             isPaused = false
@@ -330,16 +330,16 @@ proc call(sub: string; sect = ""; stat, link: string) =
         of 'm', 'M':
           if isPaused:
             #if nowPlayingExcept != true:
-            cursorUp()
+            #[cursorUp()
             eraseLine()
             cursorDown()
             eraseLine()
             #if nowPlayingExcept != true:
-            cursorUp()
+            cursorUp()]#
           
             var val: cint = 0
             cE ctx.setProperty("mute", fmtFlag, addr val)
-            echoPlay = true
+            #echoPlay = true
             isPaused = false
           
           else:
