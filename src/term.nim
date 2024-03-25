@@ -229,21 +229,23 @@ proc isHttps(link: string): bool = link.startsWith "https://"
 
 proc doesLinkWork(link: string; isHttps = false): bool =
   #echo "doeslinkworkInit: " & link
-  if isHttps: return true
   var seq = splitLink cleanLink link
-  
   #echo "doesLinkWorkSeq: ", seq
-  if seq.len == 1: return true #we cannot check w/o port
+  #if (seq.len == 1) and buisHttps: return true #we cannot check w/o port
+
   try:
     newSocket().connect(
        seq[0],
-       Port(uint16 parseInt seq[1]),
+       Port(
+         if not isHttps: uint16 parseInt seq[1] #for link with no port will except
+         else: 443),
        timeout = 2000)
-    #echo "link dont cause except"
+    echo "link dont cause except"
     return true
   except HttpRequestError: warn "HttpRequestError. bad link?"
+  except IndexDefect: return true #lmpv will error IDEndFile if badLink
     #retuns false default in except
-  except OSError:warn "OSError. No Internet? ConnectionRefused?"
+  except OSError: warn "OSError. No Internet? ConnectionRefused?"
   except TimeoutError: warn "timeout of 3s failed"
 
 proc call(sub: string; sect = ""; stat, link: string) =
@@ -264,6 +266,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
       #echoPlay = true
       event = ctx.waitEvent 0 #arm: pthread_mutex_lock
       isPaused = false
+      isMuted = false
       currentSong = getCurrentSong link
       #nowPlayingExcept = false
     #echo "link in call() before while true: " & link
@@ -277,8 +280,16 @@ proc call(sub: string; sect = ""; stat, link: string) =
         warn "end of file? bad link?"
         terminateDestroy ctx
         break
-      if not isPaused: sayPos 4, "Playing"
-      #if echoPlay:
+      if not isPaused:
+        if not isMuted:
+          sayPos 4, "Playing"
+        else: warn "Muted",4
+      else:
+        if not isMuted:
+          warn "Paused", 4
+        else: warn "paused and muted", 4
+      #if isMuted: warn "Muted", 4
+            #if echoPlay:
         #var event = ctx.waitEvent 1000
 
       if currentSong != "notimplemented":
@@ -320,7 +331,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
             #echoPlay = true
           else:
             eraseLine()
-            warn "Paused", 4
+            #warn "Paused", 4
             cursorUp()
 
             var val: cint = 1
@@ -328,7 +339,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
             isPaused = true
 
         of 'm', 'M':
-          if isPaused:
+          if isMuted:
             #if nowPlayingExcept != true:
             #[cursorUp()
             eraseLine()
@@ -340,16 +351,16 @@ proc call(sub: string; sect = ""; stat, link: string) =
             var val: cint = 0
             cE ctx.setProperty("mute", fmtFlag, addr val)
             #echoPlay = true
-            isPaused = false
+            isMuted = false
           
           else:
             eraseLine()
-            warn "Muted", 4
+            #warn "Muted", 4
             cursorUp()
           
             var val: cint = 1
             cE ctx.setProperty("mute", fmtFlag, addr val)
-            isPaused = true
+            isMuted = true
 
         of '/', '+':
           var volumeIncreased: cint
