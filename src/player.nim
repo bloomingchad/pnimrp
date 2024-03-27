@@ -8,8 +8,6 @@ proc init*(parm: string, ctx: ptr Handle) =
   cE ctx.setOption("osc", fmtFlag, addr val)
   cE initialize ctx
   cE ctx.cmd file
-
-
 proc pause*(ctx: ptr Handle; a: bool) =
   var val: cint = if a: 1 else: 0
   cE ctx.setProperty("pause", fmtFlag, addr val)

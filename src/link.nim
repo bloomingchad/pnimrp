@@ -23,9 +23,8 @@ proc cleanLink(str: string): string =
 proc getCurrentSong*(linke: string): string =
 #https and http can be connect checked w/o ssl
 #use mpv stream_lavf.c to get icy-title from audio buffer
-  var
-    client = newHttpClient()
-    link = linke
+  let client = newHttpClient()
+  var link = linke
 
   link = "http://" & cleanLink link
   try: #shoutcast
@@ -48,9 +47,9 @@ proc getCurrentSong*(linke: string): string =
 
 proc splitLink(str: string): seq[string] = rsplit(str, ":", maxSplit = 1)
 
-proc isHttps*(link: string): bool = link.startsWith "https://"
+template isHttps(link: string): bool = link.startsWith "https://"
 
-proc doesLinkWork*(link: string; isHttps = false): bool =
+proc doesLinkWork*(link: string): bool =
   #echo "doeslinkworkInit: " & link
   let seq = splitLink cleanLink link
   #echo "doesLinkWorkSeq: ", seq
@@ -59,8 +58,8 @@ proc doesLinkWork*(link: string; isHttps = false): bool =
     newSocket().connect(
        seq[0],
        Port(
-         if not isHttps: uint16 parseInt seq[
-             1] #for link with no port will except
+         if not isHttps link: uint16 parseInt seq[1]
+           #for link with no port will except
          else: 443),
        timeout = 2000)
     echo "link dont cause except"

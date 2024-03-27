@@ -12,7 +12,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
         " > " & stat))
     sayTermDraw12()
 
-    if not doesLinkWork(link, isHttps = isHttps(link)):
+    if not doesLinkWork link:
       warn "no link work"
       return
     let ctx = create()
@@ -22,19 +22,21 @@ proc call(sub: string; sect = ""; stat, link: string) =
       event = ctx.waitEvent 0
       isPaused = false
       isMuted = false
-      currentSong = getCurrentSong link
+    let currentSong = getCurrentSong link
       #nowPlayingExcept = false
     #echo "link in call() before while true: " & link
 
     while true:
       if not isPaused: event = ctx.waitEvent 0
       setCursorPos 0, 2
-      echo "event state: ", event.eventID
+      eraseLine()
+      echo "event state: ", eventName event.eventID
 
-      if event.eventID in [IDEndFile, IDShutdown, IDIdle]:
+      if event.eventID in [IDEndFile, IDShutdown]:
         warn "end of file? bad link?"
         terminateDestroy ctx
         break
+      eraseLine()
       if not isPaused:
         if not isMuted:
           sayPos "Playing"
@@ -113,7 +115,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
             isMuted = true
 
         of '/', '+':
-          var volumeIncreased = ctx.volume true
+          let volumeIncreased = ctx.volume true
 
         #[var metadata: NodeList
           echo "getPropreturnVal:", ctx.getProperty("metadata", fmtNodeMap, addr metadata)
@@ -128,7 +130,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
           cursorUp()
 
         of '*', '-':
-          var volumeDecreased = ctx.volume false
+          let volumeDecreased = ctx.volume false
 
           cursorDown()
           warn "Volume-: " & $volumeDecreased, 4
@@ -144,7 +146,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
 
 proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
   var n, l: seq[string] = @[]
-  var input = parseJArray file
+  let input = parseJArray file
 
   for f in input.low .. input.high:
     case f mod 2:
