@@ -10,12 +10,12 @@ proc error*(str: string) =
   styledEcho fgRed, "Error: ", str
   quit QuitFailure
 
-proc sayBlue*(strList: varargs[string]) =
+proc sayBlue(strList: varargs[string]) =
   for str in strList:
     setCursorXPos 5
     styledEcho fgBlue, str
 
-proc sayBye*(str, auth: string, line = -1) =
+proc sayBye(str, auth: string, line = -1) =
   if str == "": error "no qoute"
 
   styledEcho fgCyan, str, "..."
@@ -29,17 +29,13 @@ proc sayBye*(str, auth: string, line = -1) =
 
   quit QuitSuccess
 
-proc parseJ*(x: string): JsonNode =
-  try:
-    return parseJson readFile x
-  except IOError:
-    error "base assets dont exist?"
-
 proc parseJArray*(file: string): seq[string] =
-  result = to(
-    parseJ(file){"pnimrp"},
-    seq[string]
-  )
+  try:
+    result = to(
+      parseJson(readFile(file)){"pnimrp"},
+      seq[string]
+    )
+  except IOError: error "base assets dont exist?"
 
   if result.len mod 2 != 0:
     error "JArrayResult.len not even"
@@ -49,16 +45,15 @@ proc exitEcho* =
   echo ""
   randomize()
 
-  var
-    seq = parseJArray "assets/qoute.json"
-    qoutes, authors: seq[string] = @[]
+  let seq = parseJArray "assets/qoute.json"
+  var qoutes, authors: seq[string] = @[]
 
   for i in 0 .. seq.high:
     case i mod 2:
       of 0: qoutes.add seq[i]
       else: authors.add seq[i]
 
-  var rand = rand qoutes.low .. qoutes.high
+  let rand = rand 0 .. qoutes.high
 
   when not defined(release) or
     not defined(danger):
@@ -80,7 +75,7 @@ proc sayPos*(a: string; x = 4; echo = true) =
   if echo: styledEcho fgGreen, a
   else: stdout.styledWrite fgGreen, a
 
-proc sayIter*(txt: string) =
+proc sayIter(txt: string) =
   for f in splitLines txt:
     setCursorXPos 5
     styledEcho fgBlue, f

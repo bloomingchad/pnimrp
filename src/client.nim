@@ -101,7 +101,7 @@ type #enums
      but are always in windows (see libmpv/Encoding of Filenames)
 
      readableExample:
-      var result:cstring = nil
+      var result: cstring = nil
       if ctx.getProperty("property", formatString, addr result) < 0:
        echo "error"
       echo result
@@ -190,12 +190,6 @@ type #enums
      ##unloading, see EventID
     IDFileLoaded        = 8,  ##notification when file has been
      ##loaded (headers read..)
-    IDIdle              = 11, ##[
-     entered idle mode. now, no file is played and playback core waits
-     for commands, (mpv normally quits instead of going idleMode
-     (not when --idle)). if ctx strated using create(),
-     idleMode is not enabled by default
-   ]##
 
     IDClientMessage     = 16, ##[
      triggered by script-message input command, it uses first argument
@@ -222,7 +216,7 @@ type #enums
      to detect if seek is finished
     ]##
 
-    IDPropertyChange    = 22, ##Event sent due to observeProperty().m
+    IDEventPropertyChange    = 22, ##Event sent due to observeProperty().m
      ##see Event,EventProperty
     IDQueueOverFlow     = 24, ##[
      happens if internal Handle ringBuffer OverFlows, then atleast 1
@@ -232,7 +226,7 @@ type #enums
      normally once Event gets returned, this forces client to empty queue
   ]##
 
-    IDHook              = 25  ##[
+    IDEventHook              = 25  ##[
      triggered if hook Handler was registered with hookAdd()
      and hook is invoked. this must be manually Handled and continue
      hook with hookContinue() (see Event, EventHook)
@@ -371,7 +365,7 @@ proc errorString*(error): cstring
   isStaticConst, (see error: enum)
  ]##
 
-proc EventName*(Event: EventID): cstring
+proc eventName*(Event: EventID): cstring
     {.importc: "mpv_event_name".}
 
 proc free*(data)
