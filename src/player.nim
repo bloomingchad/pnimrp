@@ -2,7 +2,7 @@ import client
 
 template cE*(s: cint) = checkError s
 
-proc init*(parm: string, ctx: ptr Handle) =
+proc init*(ctx: ptr Handle, parm: string) =
   let file = allocCStringArray ["loadfile", parm] #couldbe file,link,parm
   var val: cint = 1
   cE ctx.setOption("osc", fmtFlag, addr val)

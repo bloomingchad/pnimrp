@@ -15,11 +15,11 @@ proc call(sub: string; sect = ""; stat, link: string) =
     if not doesLinkWork link:
       warn "no link work"
       return
-    let ctx = create()
-    init link, ctx
+    var ctx = create()
+    ctx.init link
     var
       #echoPlay = true
-      event = ctx.waitEvent 0
+      event = ctx.waitEvent
       isPaused = false
       isMuted = false
     let currentSong = getCurrentSong link
@@ -27,7 +27,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
     #echo "link in call() before while true: " & link
 
     while true:
-      if not isPaused: event = ctx.waitEvent 0
+      if not isPaused: event = ctx.waitEvent
       setCursorPos 0, 2
       eraseLine()
       echo "event state: ", eventName event.eventID
@@ -38,13 +38,11 @@ proc call(sub: string; sect = ""; stat, link: string) =
         break
       eraseLine()
       if not isPaused:
-        if not isMuted:
-          sayPos "Playing"
-        else: warn "Muted", 4
+        if not isMuted: sayPos "Playing"
+        else: warn "Muted"
       else:
-        if not isMuted:
-          warn "Paused", 4
-        else: warn "paused and muted", 4
+        if not isMuted: warn "Paused"
+        else: warn "paused and muted"
       #if isMuted: warn "Muted", 4
         #if echoPlay:
       #var event = ctx.waitEvent 1000
@@ -124,7 +122,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
             try:echo "metadatavalues", metadata.values[i]
             except:discard]#
           cursorDown()
-          warn "Volume+: " & $volumeIncreased, 4
+          warn "Volume+: " & $volumeIncreased
           cursorUp()
           eraseLine()
           cursorUp()
@@ -133,7 +131,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
           let volumeDecreased = ctx.volume false
 
           cursorDown()
-          warn "Volume-: " & $volumeDecreased, 4
+          warn "Volume-: " & $volumeDecreased
           cursorUp()
           eraseLine()
           cursorUp()

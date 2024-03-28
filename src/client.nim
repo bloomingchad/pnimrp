@@ -218,7 +218,7 @@ type #enums
 
     IDEventPropertyChange    = 22, ##Event sent due to observeProperty().m
      ##see Event,EventProperty
-    IDQueueOverFlow     = 24, ##[
+    IDQueueOverFlow          = 24, ##[
      happens if internal Handle ringBuffer OverFlows, then atleast 1
      Event has to be dropped, this can happen if client doesnt read
      Event queue quickly with waitEvent() or client makes very large
@@ -308,13 +308,13 @@ type #enums
 
 #procs
 using
- ctx: ptr Handle
- replyUserData,error: cint
- argsArr: cstringArray
- result, node: ptr Node
- argsStr, name: cstring
- data: pointer
- fmt: Format
+  ctx: ptr Handle
+  replyUserData,error: cint
+  argsArr: cstringArray
+  result, node: ptr Node
+  argsStr, name: cstring
+  data: pointer
+  fmt: Format
 
 proc abortAsyncCmd*(ctx; replyUserData)
     {.importc: "mpv_abort_async_command".}
@@ -455,7 +455,7 @@ proc unobserveProperty*(ctx; registeredReplyUserData: cint): cint
 proc waitAsyncRequests*(ctx)
     {.importc: "mpv_wait_async_requests".}
 
-proc waitEvent*(ctx; timeout: cdouble): ptr Event
+proc waitEvent*(ctx; timeout: cdouble = 0): ptr Event
     {.importc: "mpv_wait_event".}
 
 proc wakeup*(ctx)
