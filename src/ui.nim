@@ -99,7 +99,7 @@ proc sayIter*(txt: seq[string]; ret = true) =
   if ret: sayBlue "R Return"
   sayBlue "Q Quit"
 
-proc warn*(txt: string; x = -1; colour = fgRed) =
+proc warn*(txt: string; x = 4; colour = fgRed) =
   if x != -1: setCursorXPos x
   styledEcho colour, txt
 
@@ -109,7 +109,7 @@ proc warn*(txt: string; x = -1; colour = fgRed) =
 
 proc inv* =
   cursorDown()
-  warn "INVALID CHOICE", 4
+  warn "INVALID CHOICE"
   cursorUp()
   eraseLine()
   cursorUp()
@@ -128,7 +128,7 @@ proc drawMenu*(sub: string, x: string | seq[string], sect = "") =
 
   sayTermDraw12()
   sayPos( (if sect == "": sub else: sect) &
-      "  Station Playing Music:")
+      " Station Playing Music:")
   sayIter x
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
