@@ -21,7 +21,6 @@ proc cleanLink(str: string): string =
   return false]#
 
 proc getCurrentSong*(linke: string): string =
-#https and http can be connect checked w/o ssl
 #use mpv stream_lavf.c to get icy-title from audio buffer
   let client = newHttpClient()
   var link = linke
