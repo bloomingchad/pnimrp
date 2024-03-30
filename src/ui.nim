@@ -10,25 +10,6 @@ proc error*(str: string) =
   styledEcho fgRed, "Error: ", str
   quit QuitFailure
 
-proc sayBlue(strList: varargs[string]) =
-  for str in strList:
-    setCursorXPos 5
-    styledEcho fgBlue, str
-
-proc sayBye(str, auth: string, line = -1) =
-  if str == "": error "no qoute"
-
-  styledEcho fgCyan, str, "..."
-  setCursorXPos 15
-  styledEcho fgGreen, "—", auth
-
-  if auth == "":
-    error "there can no be qoute without man"
-    if line != -1:
-      error ("@ line: " & $line) & " in qoute.json"
-
-  quit QuitSuccess
-
 proc parseJArray*(file: string): seq[string] =
   try:
     result = to(
@@ -61,49 +42,54 @@ proc exitEcho* =
     echo ("total/max mem: " & $(getTotalMem() / 1024)) & " kB"
     echo ("occupied mem: " & $(getOccupiedMem() / 1024)) & " kB"
 
-  sayBye(
-    qoutes[rand],
-    authors[rand],
-    rand * 2
-  )
+  if qoutes[rand] == "": error "no qoute"
 
-proc say*(txt: string) =
-  styledEcho fgYellow, txt
+  styledEcho fgCyan, qoutes[rand], "..."
+  setCursorXPos 15
+  styledEcho fgGreen, "—", authors[rand]
 
-proc sayPos*(a: string; x = 4; echo = true) =
-  setCursorXPos x
-  if echo: styledEcho fgGreen, a
-  else: stdout.styledWrite fgGreen, a
+  if authors[rand] == "":
+    error "there can no be qoute without man"
+    if rand*2 != -1:
+      error ("@ line: " & $(rand*2)) & " in qoute.json"
 
-proc sayIter(txt: string) =
-  for f in splitLines txt:
-    setCursorXPos 5
-    styledEcho fgBlue, f
+  quit QuitSuccess
 
-proc sayIter*(txt: seq[string]; ret = true) =
-  const chars =
-    @[
-      '1', '2', '3', '4', '5',
-      '6', '7', '8', '9', 'A',
-      'B', 'C', 'D', 'E', 'F',
-      'G', 'H', 'I', 'J', 'K',
-      'L', 'M', 'N', 'O', 'P',
-      'Q', 'R', 'S', 'T', 'U',
-      'V', 'W', 'X', 'Y', 'Z'
-    ]
-  var num = 0
-  for f in txt:
-    if f != "Notes": sayBlue ($chars[num] & " ") & f
-    else: sayBlue "N Notes"
-    inc num
-  if ret: sayBlue "R Return"
-  sayBlue "Q Quit"
+proc say*(txt: string; color = fgYellow; x = 5; echo = true) =
+  if color == fgBlue: setCursorXPos x
+  if color == fgGreen:
+    setCursorXPos 4
+    if echo: styledEcho fgGreen, txt
+    else: stdout.styledWrite fgGreen, txt
+  else: styledEcho color, txt #fgBlue would get true here
+
+proc sayIter*(txt: string | seq[string]; ret = true) =
+  if txt is string:
+    for f in splitLines txt:
+      say f, fgBlue
+  else:
+    const chars =
+      @[
+        '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', 'A',
+        'B', 'C', 'D', 'E', 'F',
+        'G', 'H', 'I', 'J', 'K',
+        'L', 'M', 'N', 'O', 'P',
+        'Q', 'R', 'S', 'T', 'U',
+        'V', 'W', 'X', 'Y', 'Z'
+      ]
+    var num = 0
+    for f in txt:
+      if f != "Notes": say ($chars[num] & " ") & f, fgBlue
+      else: say "N Notes", fgBlue
+      inc num
+    if ret: say "R Return", fgBlue
+    say "Q Quit", fgBlue
 
 proc warn*(txt: string; x = 4; colour = fgRed) =
   if x != -1: setCursorXPos x
   styledEcho colour, txt
-
-#if echo == false: stdout.styledWrite fgRed,txt
+  #if echo == false: stdout.styledWrite fgRed,txt
   #default Args dosent seem to be working?
   sleep 750
 
@@ -118,8 +104,8 @@ template sayTermDraw8*() =
   say "Poor Mans Radio Player in Nim-lang " &
       '-'.repeat int terminalWidth() / 8
 proc sayTermDraw12*() =
-  sayPos '-'.repeat((terminalWidth()/8).int) &
-      '>'.repeat int terminalWidth() / 12
+  say '-'.repeat((terminalWidth()/8).int) &
+      '>'.repeat int terminalWidth() / 12, fgGreen
 
 proc drawMenu*(sub: string, x: string | seq[string], sect = "") =
   clear()
@@ -127,13 +113,12 @@ proc drawMenu*(sub: string, x: string | seq[string], sect = "") =
   else: say ("PNimRP > " & sub) & (" > " & sect)
 
   sayTermDraw12()
-  sayPos( (if sect == "": sub else: sect) &
-      " Station Playing Music:")
+  say( (if sect == "": sub else: sect) &
+      " Stations Playing Music:", fgGreen)
   sayIter x
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
-  if not isPaused:
-    ctx.terminateDestroy
+  if not isPaused: ctx.terminateDestroy
   exitEcho()
 
 proc notes* =
