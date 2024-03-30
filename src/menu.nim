@@ -38,7 +38,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
         break
       eraseLine()
       if not isPaused:
-        if not isMuted: sayPos "Playing"
+        if not isMuted: say "Playing", fgGreen
         else: warn "Muted"
       else:
         if not isMuted: warn "Paused"
@@ -48,7 +48,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
       #var event = ctx.waitEvent 1000
 
       if currentSong != "notimplemented":
-        sayPos "Now Streaming: " & getCurrentSong link
+        say "Now Streaming: " & getCurrentSong link, fgGreen
       cursorUp()
       #  echoPlay = false
 
@@ -153,8 +153,7 @@ proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
         if input[f].startsWith("http://") or
           input[f].startsWith "https://":
           l.add input[f]
-        else:
-          l.add "http://" & input[f]
+        else: l.add "http://" & input[f]
       else: discard
   @[n, l]
 
@@ -245,7 +244,7 @@ proc drawMainMenu*(dir = "assets") =
     #echo dirs
     #add drawMenu
     sayTermDraw8()
-    sayPos "Station Categories:"
+    say "Station Categories:", fgGreen
     sayIter names, ret = false
     try:
       while true:
