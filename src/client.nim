@@ -39,7 +39,11 @@ Terms Used
 
 from terminal import showCursor
 
-{.push dynlib: "(libmpv.so|mpv-1.dll)".}
+const dynlibName =
+  when defined windows: "mpv-1.dll"
+  else: "libmpv.so"
+
+{.push dynlib: dynlibName.}
 
 #templates
 template makeVersion*(major, minor: untyped): untyped =

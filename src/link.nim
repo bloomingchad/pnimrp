@@ -40,9 +40,9 @@ proc getCurrentSong*(linke: string): string =
         string
       )
     except HttpRequestError,
-       JsonParsingError, #different technique than implemented
-         ProtocolError, #connection refused?
-           KeyError: "notimplemented"
+      JsonParsingError, #different technique than implemented
+        ProtocolError, #connection refused?
+          KeyError: "notimplemented"
 
 proc splitLink(str: string): seq[string] = rsplit(str, ":", maxSplit = 1)
 
