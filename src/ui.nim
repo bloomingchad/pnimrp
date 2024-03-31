@@ -58,33 +58,33 @@ proc exitEcho* =
 proc say*(txt: string; color = fgYellow; x = 5; echo = true) =
   if color == fgBlue: setCursorXPos x
   if color == fgGreen:
-    setCursorXPos 4
+    setCursorXPos x
     if echo: styledEcho fgGreen, txt
     else: stdout.styledWrite fgGreen, txt
   else: styledEcho color, txt #fgBlue would get true here
 
-proc sayIter*(txt: string | seq[string]; ret = true) =
-  if txt is string:
-    for f in splitLines txt:
-      say f, fgBlue
-  else:
-    const chars =
-      @[
-        '1', '2', '3', '4', '5',
-        '6', '7', '8', '9', 'A',
-        'B', 'C', 'D', 'E', 'F',
-        'G', 'H', 'I', 'J', 'K',
-        'L', 'M', 'N', 'O', 'P',
-        'Q', 'R', 'S', 'T', 'U',
-        'V', 'W', 'X', 'Y', 'Z'
-      ]
-    var num = 0
-    for f in txt:
-      if f != "Notes": say ($chars[num] & " ") & f, fgBlue
-      else: say "N Notes", fgBlue
-      inc num
-    if ret: say "R Return", fgBlue
-    say "Q Quit", fgBlue
+proc sayIter(txt: string) =
+  for f in splitLines txt:
+    say f, fgBlue
+
+proc sayIter*(txt: seq[string]; ret = true) =
+  const chars =
+    @[
+      '1', '2', '3', '4', '5',
+      '6', '7', '8', '9', 'A',
+      'B', 'C', 'D', 'E', 'F',
+      'G', 'H', 'I', 'J', 'K',
+      'L', 'M', 'N', 'O', 'P',
+      'Q', 'R', 'S', 'T', 'U',
+      'V', 'W', 'X', 'Y', 'Z'
+    ]
+  var num = 0
+  for f in txt:
+    if f != "Notes": say ($chars[num] & " ") & f, fgBlue
+    else: say "N Notes", fgBlue
+    inc num
+  if ret: say "R Return", fgBlue
+  say "Q Quit", fgBlue
 
 proc warn*(txt: string; x = 4; colour = fgRed) =
   if x != -1: setCursorXPos x
@@ -104,16 +104,17 @@ template sayTermDraw8*() =
   say "Poor Mans Radio Player in Nim-lang " &
       '-'.repeat int terminalWidth() / 8
 proc sayTermDraw12*() =
-  say '-'.repeat((terminalWidth()/8).int) &
-      '>'.repeat int terminalWidth() / 12, fgGreen
+  say('-'.repeat((terminalWidth()/8).int) &
+      '>'.repeat int terminalWidth() / 12, fgGreen, x = 2)
 
-proc drawMenu*(sub: string, x: string | seq[string], sect = "") =
+proc drawMenu*(sub: string, x: string | seq[string], sect = ""; playingMusic = true) =
   clear()
   if sect == "": say "PNimRP > " & sub
   else: say ("PNimRP > " & sub) & (" > " & sect)
 
   sayTermDraw12()
-  say( (if sect == "": sub else: sect) &
+  if playingMusic:
+    say( (if sect == "": sub else: sect) &
       " Stations Playing Music:", fgGreen)
   sayIter x
 
@@ -124,15 +125,11 @@ proc exit*(ctx: ptr Handle, isPaused: bool) =
 proc notes* =
   while true:
     var returnBack = false
-    const sub = "Notes"
-    clear()
-    say "PNimRP > " & sub
-    sayTermDraw12()
 
-    sayIter """PNimRP Copyright (C) 2021-2024 antonl05/bloomingchad
+    drawMenu "Notes", """PNimRP Copyright (C) 2021-2024 antonl05/bloomingchad
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
-under certain conditions."""
+under certain conditions.""", playingMusic = false
     while true:
       case getch():
         of 'r', 'R': returnBack = true; break
