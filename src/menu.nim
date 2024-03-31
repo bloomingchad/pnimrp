@@ -245,7 +245,7 @@ proc drawMainMenu*(dir = "assets") =
     #add drawMenu
     sayTermDraw8()
     say "Station Categories:", fgGreen
-    sayIter names, ret = false
+    sayIter names, ret = if dir != "assets": true else: false
     try:
       while true:
         #var getch = getch()
