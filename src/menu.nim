@@ -157,19 +157,20 @@ proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
       else: discard
   @[n, l]
 
-proc initIndx*(dir = "assets"): seq[seq[string]] =
+proc initIndx*(dir = getAppDir() & "/assets"): seq[seq[string]] =
+  let appDir = getAppDir() & "/"
   var files, names: seq[string]
 
   for file in walkFiles(dir & "/*"):
-    if dir == "assets":
-      if file != "assets/qoute.json":
+    if dir == appDir & "assets":
+      if file != appDir & "/assets/qoute.json":
         files.add file
     else: files.add file
     var procFile = file
     procFile.removePrefix(dir & "/")
     procFile[0] = procFile[0].toUpperAscii
     procFile.removeSuffix ".json"
-    if dir == "assets":
+    if dir == appDir & "assets":
       if procFile != "Qoute":
         names.add procFile
     else: names.add procFile
@@ -182,14 +183,14 @@ proc initIndx*(dir = "assets"): seq[seq[string]] =
     files.add procDir
     names.add procDir
 
-  if dir == "assets": names.add "Notes"
+  if dir == appDir & "assets": names.add "Notes"
   @[names, files]
 
-proc drawMainMenu*(dir = "assets")
+proc drawMainMenu*(dir = getAppDir() & "/assets")
 
 proc menu(sub, file: string; sect = "") =
   if sub.endsWith "/":
-    drawMainMenu("assets/" & sub)
+    drawMainMenu(getAppDir() & "/assets/" & sub)
     return
     #echo sub
   let
@@ -230,7 +231,7 @@ proc menu(sub, file: string; sect = "") =
       except IndexDefect: inv()
     if returnBack: break
 
-proc drawMainMenu*(dir = "assets") =
+proc drawMainMenu*(dir = getAppDir() & "/assets") =
   let
     indx = initIndx dir
     names = indx[0]
@@ -245,7 +246,7 @@ proc drawMainMenu*(dir = "assets") =
     #add drawMenu
     sayTermDraw8()
     say "Station Categories:", fgGreen
-    sayIter names, ret = if dir != "assets": true else: false
+    sayIter names, ret = if dir != getAppDir() & "/assets": true else: false
     try:
       while true:
         #var getch = getch()
@@ -272,7 +273,7 @@ proc drawMainMenu*(dir = "assets") =
           of 'K', 'k': menu names[19], files[19]; break
           of 'N', 'n': notes(); break
           of 'R', 'r':
-            if dir != "assets":
+            if dir != getAppDir() & "/assets":
               returnBack = true
               break
             else: inv()
