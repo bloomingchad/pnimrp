@@ -1,6 +1,6 @@
-import ui, menu, os, terminal
+import os, terminal, src/[ui, menu]
 
-if not dirExists "assets":
+if not dirExists getAppDir() & "/assets":
   error "data or config files dont exist"
 
 when defined dragonfly:
