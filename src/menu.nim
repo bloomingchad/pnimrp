@@ -157,13 +157,13 @@ proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
       else: discard
   @[n, l]
 
-proc initIndx*(dir = getAppDir() & "/assets"): seq[seq[string]] =
-  let appDir = getAppDir() & "/"
+proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
+  let appDir = getAppDir() / ""
   var files, names: seq[string]
 
   for file in walkFiles(dir & "/*"):
     if dir == appDir & "assets":
-      if file != appDir & "/assets/qoute.json":
+      if file != appDir / "assets" / "qoute.json":
         files.add file
     else: files.add file
     var procFile = file
@@ -186,11 +186,11 @@ proc initIndx*(dir = getAppDir() & "/assets"): seq[seq[string]] =
   if dir == appDir & "assets": names.add "Notes"
   @[names, files]
 
-proc drawMainMenu*(dir = getAppDir() & "/assets")
+proc drawMainMenu*(dir = getAppDir() / "assets")
 
 proc menu(sub, file: string; sect = "") =
   if sub.endsWith "/":
-    drawMainMenu(getAppDir() & "/assets/" & sub)
+    drawMainMenu(getAppDir() / "assets" / sub)
     return
     #echo sub
   let
@@ -231,7 +231,7 @@ proc menu(sub, file: string; sect = "") =
       except IndexDefect: inv()
     if returnBack: break
 
-proc drawMainMenu*(dir = getAppDir() & "/assets") =
+proc drawMainMenu*(dir = getAppDir() / "assets") =
   let
     indx = initIndx dir
     names = indx[0]
@@ -246,7 +246,7 @@ proc drawMainMenu*(dir = getAppDir() & "/assets") =
     #add drawMenu
     sayTermDraw8()
     say "Station Categories:", fgGreen
-    sayIter names, ret = if dir != getAppDir() & "/assets": true else: false
+    sayIter names, ret = if dir != getAppDir() / "assets": true else: false
     try:
       while true:
         #var getch = getch()
@@ -273,7 +273,7 @@ proc drawMainMenu*(dir = getAppDir() & "/assets") =
           of 'K', 'k': menu names[19], files[19]; break
           of 'N', 'n': notes(); break
           of 'R', 'r':
-            if dir != getAppDir() & "/assets":
+            if dir != getAppDir() / "assets":
               returnBack = true
               break
             else: inv()
