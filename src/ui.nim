@@ -26,7 +26,7 @@ proc exitEcho* =
   echo ""
   randomize()
 
-  let seq = parseJArray getAppDir() & "/assets/qoute.json"
+  let seq = parseJArray getAppDir() / "assets" / "qoute.json"
   var qoutes, authors: seq[string] = @[]
 
   for i in 0 .. seq.high:
