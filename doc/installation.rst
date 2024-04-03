@@ -14,12 +14,12 @@ Table of Contents
 
 Dependencies
 ------------
-Internally, project uses Nim compiler and the stamdard library.
+Internally, project uses Nim compiler and the standard library.
 For Installation Purposes, visit https://nim-lang.org/install.html
 
 As of now, the only external dependency that project has is libmpv
 any version which is not too old is supported, the stable or developement
-version of api dont matter.
+version of api dont matter. (but it has to have mpv/client.h)
 
 In some POSIX OSes (ArchLinux,BSDs..), the package manager does not provide
 the library intact but only available as through installing mpv itself!
@@ -32,7 +32,7 @@ For Linux users, as distrobutions:
    sudo pacman -S mpv
 
  Gentoo-based::
-   sudo emerge
+   sudo emerge --ask media-video/mpv
 
  Fedora-based::
    sudo dnf install mpv
@@ -71,13 +71,10 @@ and is the same regardless the platform.
 
 Using Nimble Package Manager::
   nimble build
+  nimble install
 
 Using Compiler Directly::
-  nim c -d:release -o:pnimrp src/pnimrp
+  nim c -d:release pnimrp
 
 Note:
  * project does not compile under JS backend
-
-Backporting to older version
-----------------------------
-on v1.2.14, try to not use nimble build
