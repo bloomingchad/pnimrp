@@ -158,16 +158,16 @@ proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
   @[n, l]
 
 proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
-  let appDir = getAppDir() / ""
+  let appDir = getAppDir() & "/".unixToNativePath
   var files, names: seq[string]
 
-  for file in walkFiles(dir & "/*"):
+  for file in walkFiles(dir / "*".unixToNativePath):
     if dir == appDir & "assets":
       if file != appDir / "assets" / "qoute.json":
         files.add file
     else: files.add file
     var procFile = file
-    procFile.removePrefix(dir & "/")
+    procFile.removePrefix(dir & "/".unixToNativePath)
     procFile[0] = procFile[0].toUpperAscii
     procFile.removeSuffix ".json"
     if dir == appDir & "assets":
@@ -176,10 +176,10 @@ proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
     else: names.add procFile
 
   #TODO add directory parse support
-  for directory in walkDirs(dir & "/*"):
+  for directory in walkDirs(dir / "*".unixToNativePath):
     var procDir = directory
-    procDir.removePrefix(dir & "/")
-    procDir = procDir & "/"
+    procDir.removePrefix(dir & "/".unixToNativePath)
+    procDir = procDir & "/".unixToNativePath
     files.add procDir
     names.add procDir
 
@@ -189,7 +189,7 @@ proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
 proc drawMainMenu*(dir = getAppDir() / "assets")
 
 proc menu(sub, file: string; sect = "") =
-  if sub.endsWith "/":
+  if sub.endsWith "/".unixToNativePath:
     drawMainMenu(getAppDir() / "assets" / sub)
     return
     #echo sub
