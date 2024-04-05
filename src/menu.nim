@@ -175,7 +175,6 @@ proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
         names.add procFile
     else: names.add procFile
 
-  #TODO add directory parse support
   for directory in walkDirs(dir / "*".unixToNativePath):
     var procDir = directory
     procDir.removePrefix(dir & "/".unixToNativePath)
@@ -286,3 +285,5 @@ proc drawMainMenu*(dir = getAppDir() / "assets") =
       inv()
 
     if returnBack: break
+
+export hideCursor, error

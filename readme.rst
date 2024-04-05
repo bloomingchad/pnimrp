@@ -2,20 +2,34 @@
 pnimrp - Poor Man's radio Player in Nim-lang
 ============================================
 
-are you on the terminal and want to listen to music without opening
-the web browser?, We got you. with the collection of 30+ modifiable
-radio station link files (json) you can select through the radio stations
-and play, pause, mute, them without ever getting your hands dirty
-touching on pls files.
+Are you on the terminal and want to listen to music without opening
+the web browser?, We got you.
 
-with inspiration from `Poor Man's radio player <https://github.com/hakerdefo/pmrp>`_
+with the collection of 30+ modifiable radio station link files (json)
+you can select through the radio stations and play, pause, mute, them
+without ever getting your hands dirty touching on pls files.
+
+bleesed with the inspiration from `Poor Man's radio player <https://github.com/hakerdefo/pmrp>`_
 
 | see doc/user.rst for a basic level user usage documentation.
 | see doc/installation.rst for installation instructions.
 
+What we solve for you
+---------------------
+Disadvantages of pmrp::
+  - pmrp is not portable (windows)
+  - it is hard to hunt down links and edit them
+  - there is no way to check if the link is dead
+  - the source code is very redundant and repetitive
+
+What we give you::
+  - we solve all of that and
+  - you get the now playing song
+  - its easier to develop in
+
 Quick Installation
 ------------------
-first install mpv for your distrobution (it must be the developmental version).
+first install mpv for your distrobution (it must have the developmental files).
 
 then please install the `Nim compiler <https://nim-lang.org/install.html>`_
   - unix::
@@ -31,19 +45,6 @@ or to compile from here::
   nim c pnimrp
   ./pnimrp
 
-What we solve for you
----------------------
-Disadvantages of pmrp::
-  - pmrp is not portable (windows)
-  - it is hard to hunt down links and edit them
-  - there is no way to check if the link is dead
-  - the source code is very redundant and repetitive
-
-what we give you::
-  - we solve all of that
-  - you get the now playing song
-  - its easier to develop in
-
 Do you want to readme(read me) in html?
 ---------------------------------------
 documentation is written in RST so these can be viewed in a typical
@@ -55,19 +56,19 @@ then use a web browser to open htmldocs/file.html
 Cites
 -----
 - pmrp -> https://github.com/hakerdefo/pmrp
-   code was referenced and links were used.
+    code was referenced and links were used.
 
 - libmpv -> https://github.com/mpv-player/mpv
-   api library was used for playback.
+    api library was used for playback.
 
 - c2nim -> https://github.com/nim-lang/c2nim
-   helped wrapping objects.
+    helped wrapping objects.
 
 Thanks
 ------
 - hundreds of other people from which this code base was made
   possible from.
-  - Nim forums -> forum.nim-lang.org
+  - `Nim Forums <https://forum.nim-lang.org>`_
   - stackoverflow
   - github sources (mpv, other radio players)
   - chatgpt 3.5
