@@ -103,6 +103,7 @@ proc inv* =
 template sayTermDraw8*() =
   say "Poor Mans Radio Player in Nim-lang " &
       '-'.repeat int terminalWidth() / 8
+
 proc sayTermDraw12*() =
   say('-'.repeat((terminalWidth()/8).int) &
       '>'.repeat int terminalWidth() / 12, fgGreen, x = 2)

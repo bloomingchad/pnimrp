@@ -4,7 +4,7 @@ proc cleanLink(str: string): string =
   var link = str
   link.removePrefix "http://"
   link.removePrefix "https://"
-  link.rsplit("/", maxSplit = 1)[0]
+  link.split("/", maxSplit = 1)[0]
     #no use strutils.delete() for nimv1.2.14
 
 #[proc checkHttpsOnly(linke: string): bool =
@@ -44,7 +44,7 @@ proc getCurrentSong*(linke: string): string =
         ProtocolError, #connection refused?
           KeyError: "notimplemented"
 
-proc splitLink(str: string): seq[string] = rsplit(str, ":", maxSplit = 1)
+proc splitLink(str: string): seq[string] = split(str, ":", maxSplit = 1)
 
 template isHttps(link: string): bool = link.startsWith "https://"
 
@@ -57,9 +57,9 @@ proc doesLinkWork*(link: string): bool =
     newSocket().connect(
        seq[0],
        Port(
-         if not isHttps link: uint16 parseInt seq[1]
+         if link.isHttps: 443
            #for link with no port will except
-         else: 443),
+         else: parseInt seq[1]),
        timeout = 2000)
     echo "link dont cause except"
     return true
