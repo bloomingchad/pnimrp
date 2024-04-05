@@ -22,12 +22,21 @@ proc call(sub: string; sect = ""; stat, link: string) =
       event = ctx.waitEvent
       isPaused = false
       isMuted = false
-    let currentSong = getCurrentSong link
+      isSetToObserve = false
+    var currentSong =  ""#getCurrentSong link
+            #ctx.getCurrentSongv2
       #nowPlayingExcept = false
     #echo "link in call() before while true: " & link
 
     while true:
       if not isPaused: event = ctx.waitEvent
+      if event.eventID in [IDPlaybackRestart] and not isSetToObserve:
+        ctx.seeIfSongTitleChanges
+        isSetToObserve = true
+
+      if event.eventID in [IDEventPropertyChange]:
+        currentSong = $ctx.getCurrentSongV2
+
       setCursorPos 0, 2
       eraseLine()
       echo "event state: ", eventName event.eventID
@@ -47,8 +56,10 @@ proc call(sub: string; sect = ""; stat, link: string) =
         #if echoPlay:
       #var event = ctx.waitEvent 1000
 
-      if currentSong != "notimplemented":
-        say "Now Streaming: " & getCurrentSong link, fgGreen
+      if currentSong != "":
+        say "Now Streaming: " & #getCurrentSong link
+                    $getCurrentSongv2 ctx,
+                 fgGreen
       cursorUp()
       #  echoPlay = false
 
