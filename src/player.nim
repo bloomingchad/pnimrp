@@ -2,25 +2,34 @@ import client
 
 template cE*(s: cint) = checkError s
 
-proc init*(ctx: ptr Handle, parm: string) =
+using
+  ctx: ptr Handle
+
+proc init*(ctx; parm: string) =
   let file = allocCStringArray ["loadfile", parm] #couldbe file,link,parm
   var val: cint = 1
   cE ctx.setOption("osc", fmtFlag, addr val)
   cE initialize ctx
   cE ctx.cmd file
 
-proc pause*(ctx: ptr Handle; a: bool) =
+proc pause*(ctx; a: bool) =
   var val: cint = if a: 1 else: 0
   cE ctx.setProperty("pause", fmtFlag, addr val)
 
-proc mute*(ctx: ptr Handle; a: bool) =
+proc mute*(ctx; a: bool) =
   var val: cint = if a: 1 else: 0
   cE ctx.setProperty("mute", fmtFlag, addr val)
 
-proc volume*(ctx: ptr Handle, a: bool): cint =
+proc volume*(ctx; a: bool): cint =
   var volumeChanged: cint
   cE ctx.getProperty("volume", fmtInt64,
       addr volumeChanged)
   if a: volumeChanged += 5 else: volumeChanged -= 5
   cE ctx.setProperty("volume", fmtInt64, addr volumeChanged)
   volumeChanged
+
+proc seeIfSongTitleChanges*(ctx) =
+  cE observeProperty(ctx, 0 , "media-title", fmtNone);
+
+proc getCurrentSongv2*(ctx): cstring =
+  cE getProperty(ctx, "media-title", fmtString, addr result)
