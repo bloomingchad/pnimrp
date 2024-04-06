@@ -64,6 +64,9 @@ Cites
 - c2nim -> https://github.com/nim-lang/c2nim
     helped wrapping objects.
 
+- illwill -> https://github.com/johnnovak/illwill
+    provided us with async getch implementation.
+
 Thanks
 ------
 - hundreds of other people from which this code base was made
