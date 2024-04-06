@@ -1,4 +1,4 @@
-import strutils, json, httpclient, net, ui
+import strutils, #[json,]# httpclient, net, ui
 
 proc cleanLink(str: string): string =
   var link = str
@@ -20,7 +20,7 @@ proc cleanLink(str: string): string =
   except: return false
   return false]#
 
-proc getCurrentSong*(linke: string): string =
+#[proc getCurrentSong*(linke: string): string =
 #use mpv stream_lavf.c to get icy-title from audio buffer
   let client = newHttpClient()
   var link = linke
@@ -43,7 +43,7 @@ proc getCurrentSong*(linke: string): string =
       JsonParsingError, #different technique than implemented
         ProtocolError, #connection refused?
           KeyError: "notimplemented"
-
+]#
 proc splitLink(str: string): seq[string] = split(str, ":", maxSplit = 1)
 
 template isHttps(link: string): bool = link.startsWith "https://"

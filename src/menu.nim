@@ -1,130 +1,121 @@
 import
   terminal, os, ui, strutils,
-  client, net, player, link
+  client, net, player, link,
+  illwill
+
+template nowStreaming =
+  eraseLine()
+  say "Now Streaming: " & currentSong, fgGreen
+  cursorUp()
 
 proc call(sub: string; sect = ""; stat, link: string) =
-  if link == "": warn "link empty"
-  elif link.contains " ": warn "link dont exist or is invalid"
-  else:
-    clear()
-    if sect == "": say (("PNimRP > " & sub) & (" > " & stat))
-    else: say (("PNimRP > " & sub) & (" > " & sect) & (
+  if link == "":
+   warn "link empty"
+   return
+  elif link.contains " ":
+    warn "link dont exist or is invalid"
+    return
+
+  clear()
+  if sect == "": say (("PNimRP > " & sub) & (" > " & stat))
+  else: say (("PNimRP > " & sub) & (" > " & sect) & (
         " > " & stat))
-    sayTermDraw12()
+  sayTermDraw12()
 
-    if not doesLinkWork link:
-      warn "no link work"
-      return
-    var ctx = create()
-    ctx.init link
-    var
-      #echoPlay = true
-      event = ctx.waitEvent
-      isPaused = false
-      isMuted = false
-      isSetToObserve = false
-    var currentSong =  ""#getCurrentSong link
-            #ctx.getCurrentSongv2
-      #nowPlayingExcept = false
-    #echo "link in call() before while true: " & link
+  if not doesLinkWork link:
+    warn "no link work"
+    return
+  var ctx = create()
+  ctx.init link
+  var
+    event = ctx.waitEvent
+    isPaused = false
+    isMuted = false
+    isSetToObserve = false
+  try: illwillinit false
+  except IllWillError: discard
+  var currentSong =  ""
+  #echo "link in call() before while true: " & link
 
-    while true:
-      if not isPaused: event = ctx.waitEvent
-      if event.eventID in [IDPlaybackRestart] and not isSetToObserve:
-        ctx.seeIfSongTitleChanges
-        isSetToObserve = true
+  while true:
+    if not isPaused: event = ctx.waitEvent
+    if event.eventID in [IDPlaybackRestart] and not isSetToObserve:
+      ctx.seeIfSongTitleChanges
+      isSetToObserve = true
 
-      if event.eventID in [IDEventPropertyChange]:
-        currentSong = $ctx.getCurrentSongV2
+    if event.eventID in [IDEventPropertyChange]:
+      currentSong = $ctx.getCurrentSongV2
+      nowStreaming()
 
-      setCursorPos 0, 2
-      eraseLine()
-      echo "event state: ", eventName event.eventID
+    setCursorPos 0, 2
+    eraseLine()
+    #echo "event state: ", eventName event.eventID
 
-      if event.eventID in [IDEndFile, IDShutdown]:
-        warn "end of file? bad link?"
-        terminateDestroy ctx
-        break
-      eraseLine()
-      if not isPaused:
-        if not isMuted: say "Playing", fgGreen
-        else: warn "Muted"
-      else:
-        if not isMuted: warn "Paused"
-        else: warn "paused and muted"
+    if event.eventID in [IDEndFile, IDShutdown]:
+      warn "end of file? bad link?"
+      terminateDestroy ctx
+      break
+    eraseLine()
+    if not isPaused:
+      if isMuted: warn "Muted"
+      else: say "Playing", fgGreen
+    else:
+      if isMuted: warn "paused and muted"
+      else: warn "Paused"
       #if isMuted: warn "Muted", 4
         #if echoPlay:
       #var event = ctx.waitEvent 1000
 
-      if currentSong != "":
+      #[if currentSong != "":
         say "Now Streaming: " & #getCurrentSong link
                     $getCurrentSongv2 ctx,
                  fgGreen
-      cursorUp()
+      cursorUp()]#
       #  echoPlay = false
 
       #remove cursorUp?
-      #add time check playing error link
-      #if not isPaused:
-        #var t0 = now().second
-        #event = ctx.waitEvent 1000
-        #if now().second - t0 >= 5:
-          # error "timeout of 5s"
 
-      case getch():
-        of 'u', 'U':
-          #lyrics update func -> just to restart while true
-
-          #[cursorDown()
-          sayPos 4, "Updated"
-
+    case getKey():
+      of Key.P:
+        if isPaused:
+          #if nowPlayingExcept != true:
+          #cursorUp()
           eraseLine()
+          #cursorDown()
+          #eraseLine()
+          #if nowPlayingExcept != true:
+          #cursorUp()
+
+          isPaused = false
+          ctx.pause false
+        else:
+          eraseLine()
+          cursorUp()
+
+          ctx.pause true
+          isPaused = true
+
+      of Key.M:
+        if isMuted:
+          #if nowPlayingExcept != true:
+          #[cursorUp()
+          eraseLine()
+          cursorDown()
+          eraseLine()
+          #if nowPlayingExcept != true:
           cursorUp()]#
-          discard
-        of 'p', 'P':
-          if isPaused:
-            #if nowPlayingExcept != true:
-            #cursorUp()
-            eraseLine()
-            #cursorDown()
-            #eraseLine()
-            #if nowPlayingExcept != true:
-            #cursorUp()
 
-            isPaused = false
-            ctx.pause false
-            #echoPlay = true
-          else:
-            eraseLine()
-            #warn "Paused", 4
-            cursorUp()
+          ctx.mute false
+          isMuted = false
 
-            ctx.pause true
-            isPaused = true
+        else:
+          eraseLine()
+          cursorUp()
+          ctx.mute true
+          isMuted = true
 
-        of 'm', 'M':
-          if isMuted:
-            #if nowPlayingExcept != true:
-            #[cursorUp()
-            eraseLine()
-            cursorDown()
-            eraseLine()
-            #if nowPlayingExcept != true:
-            cursorUp()]#
-
-            ctx.mute false
-            #echoPlay = true
-            isMuted = false
-
-          else:
-            eraseLine()
-            #warn "Muted", 4
-            cursorUp()
-            ctx.mute true
-            isMuted = true
-
-        of '/', '+':
-          let volumeIncreased = ctx.volume true
+      of Key.Slash, Key.Plus:
+        let volumeIncreased = ctx.volume true
 
         #[var metadata: NodeList
           echo "getPropreturnVal:", ctx.getProperty("metadata", fmtNodeMap, addr metadata)
@@ -132,40 +123,43 @@ proc call(sub: string; sect = ""; stat, link: string) =
           for i in 0 .. 100:
             try:echo "metadatavalues", metadata.values[i]
             except:discard]#
-          cursorDown()
-          warn "Volume+: " & $volumeIncreased
-          cursorUp()
-          eraseLine()
-          cursorUp()
+        cursorDown()
+        warn "Volume+: " & $volumeIncreased
+        cursorUp()
+        eraseLine()
+        cursorUp()
 
-        of '*', '-':
-          let volumeDecreased = ctx.volume false
+      of Key.Asterisk, Key.Minus:
+        let volumeDecreased = ctx.volume false
 
-          cursorDown()
-          warn "Volume-: " & $volumeDecreased
-          cursorUp()
-          eraseLine()
-          cursorUp()
+        cursorDown()
+        warn "Volume-: " & $volumeDecreased
+        cursorUp()
+        eraseLine()
+        cursorUp()
 
-        of 'r', 'R':
-          if not isPaused: terminateDestroy ctx
-          break
-        of 'q', 'Q': exit ctx, isPaused
-        else: inv()
+      of Key.R:
+        if not isPaused: terminateDestroy ctx
+        illwillDeInit()
+        break
+      of Key.Q:
+        illwillDeInit()
+        exit ctx, isPaused
+      of Key.None: continue
+      else: inv()
 
 proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
   var n, l: seq[string] = @[]
   let input = parseJArray file
 
   for f in input.low .. input.high:
-    case f mod 2:
-      of 0: n.add input[f]
-      of 1:
+    case bool f mod 2:
+      of false: n.add input[f]
+      of true:
         if input[f].startsWith("http://") or
           input[f].startsWith "https://":
           l.add input[f]
         else: l.add "http://" & input[f]
-      else: discard
   @[n, l]
 
 proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
@@ -179,6 +173,9 @@ proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
     else: files.add file
     var procFile = file
     procFile.removePrefix(dir & "/".unixToNativePath)
+    if dir != appDir & "assets":
+      var procFile2 = procFile.rsplit("/".unixToNativePath)
+      procFile = procFile2[procFile2.high]
     procFile[0] = procFile[0].toUpperAscii
     procFile.removeSuffix ".json"
     if dir == appDir & "assets":
@@ -202,7 +199,6 @@ proc menu(sub, file: string; sect = "") =
   if sub.endsWith "/".unixToNativePath:
     drawMainMenu(getAppDir() / "assets" / sub)
     return
-    #echo sub
   let
     list = initJsonLists(sub, file, sect)
     n = list[0]
@@ -211,9 +207,7 @@ proc menu(sub, file: string; sect = "") =
   while true:
     var returnBack = false
     drawMenu sub, n, sect
-    #echo l
-    #add conditiinal check for every if len not thereown size
-    #else no use danger use release
+    hideCursor()
     while true:
       try:
         case getch():
@@ -246,14 +240,9 @@ proc drawMainMenu*(dir = getAppDir() / "assets") =
     indx = initIndx dir
     names = indx[0]
     files = indx[1]
-  #TODO menu dynamic selection; only 15 items possible!
   while true:
     var returnBack = false
     clear()
-    #echo names
-    #echo files
-    #echo dirs
-    #add drawMenu
     sayTermDraw8()
     say "Station Categories:", fgGreen
     sayIter names, ret = if dir != getAppDir() / "assets": true else: false
