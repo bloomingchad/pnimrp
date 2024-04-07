@@ -29,7 +29,7 @@ proc volume*(ctx; a: bool): cint =
   volumeChanged
 
 proc seeIfSongTitleChanges*(ctx) =
-  cE observeProperty(ctx, 0 , "media-title", fmtNone)
+  cE ctx.observeProperty(0, "media-title", fmtNone)
 
 proc getCurrentSongv2*(ctx): cstring =
-  cE getProperty(ctx, "media-title", fmtString, addr result)
+  cE ctx.getProperty("media-title", fmtString, addr result)
