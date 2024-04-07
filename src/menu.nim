@@ -8,6 +8,11 @@ template nowStreaming =
   say "Now Streaming: " & currentSong, fgGreen
   cursorUp()
 
+template endThisCall(str: string) =
+  warn str
+  terminateDestroy ctx
+  break
+
 proc call(sub: string; sect = ""; stat, link: string) =
   if link == "":
    warn "link empty"
@@ -50,6 +55,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
     setCursorPos 0, 2
     eraseLine()
     #echo "event state: ", eventName event.eventID
+    if bool ctx.seeIfCoreIsIdling: endThisCall "core idling"
 
     if event.eventID in [IDEndFile, IDShutdown]:
       warn "end of file? bad link?"
