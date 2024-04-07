@@ -31,5 +31,8 @@ proc volume*(ctx; a: bool): cint =
 proc seeIfSongTitleChanges*(ctx) =
   cE ctx.observeProperty(0, "media-title", fmtNone)
 
+proc seeIfCoreIsIdling*(ctx): cint =
+  cE ctx.getProperty("idle-active", fmtFlag, addr result)
+
 proc getCurrentSongv2*(ctx): cstring =
   cE ctx.getProperty("media-title", fmtString, addr result)
