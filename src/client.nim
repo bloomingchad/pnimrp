@@ -307,13 +307,15 @@ type #enums
 
   Event* {.bycopy.} = object
     eventID*: EventID
-    error*, replyUserData*: cint
+    error*: int
+    replyUserData*: uint64
     data*: pointer
 
 #procs
 using
   ctx: ptr Handle
-  replyUserData,error: cint
+  replyUserData: uint64
+  error: cint
   argsArr: cstringArray
   result, node: ptr Node
   argsStr, name: cstring
@@ -452,7 +454,7 @@ proc setWakeupCallback*(ctx; cb: proc (d: pointer); d: pointer)
 proc terminateDestroy*(ctx)
     {.importc: "mpv_terminate_destroy".}
 
-proc unobserveProperty*(ctx; registeredReplyUserData: cint): cint
+proc unobserveProperty*(ctx; registeredReplyUserData: uint64): cint
     {.importc: "mpv_unobserve_property".}
 
 #{.pop.}
