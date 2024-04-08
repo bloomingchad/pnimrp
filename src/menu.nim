@@ -4,6 +4,7 @@ import
   illwill
 
 template nowStreaming =
+  currentSong = $ctx.getCurrentSongV2
   eraseLine()
   say "Now Streaming: " & currentSong, fgGreen
   cursorUp()
@@ -37,9 +38,11 @@ proc call(sub: string; sect = ""; stat, link: string) =
     isPaused = false
     isMuted = false
     isSetToObserve = false
+    currentSong: string
+    counter: uint8
+
   try: illwillinit false
   except IllWillError: discard
-  var currentSong =  ""
   #echo "link in call() before while true: " & link
 
   while true:
@@ -49,13 +52,15 @@ proc call(sub: string; sect = ""; stat, link: string) =
       isSetToObserve = true
 
     if event.eventID in [IDEventPropertyChange]:
-      currentSong = $ctx.getCurrentSongV2
       nowStreaming()
 
     setCursorPos 0, 2
     eraseLine()
     #echo "event state: ", eventName event.eventID
-    if bool ctx.seeIfCoreIsIdling: endThisCall "core idling"
+    if counter == 25: #expensive fn; use counter
+      if bool ctx.seeIfCoreIsIdling: endThisCall "core idling"
+      counter = 0
+    counter += 1
 
     if event.eventID in [IDEndFile, IDShutdown]:
       warn "end of file? bad link?"
@@ -81,7 +86,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
 
       #remove cursorUp?
 
-    case getKey():
+    case getKeyWithTimeout(25): #highcpuUsage; use timeout
       of Key.P:
         if isPaused:
           #if nowPlayingExcept != true:
@@ -94,6 +99,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
 
           isPaused = false
           ctx.pause false
+
         else:
           eraseLine()
           cursorUp()
