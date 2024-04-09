@@ -5,45 +5,7 @@ proc cleanLink(str: string): string =
   link.removePrefix "http://"
   link.removePrefix "https://"
   link.split("/", maxSplit = 1)[0]
-    #no use strutils.delete() for nimv1.2.14
 
-#[proc checkHttpsOnly(linke: string): bool =
-  var link = linke
-  try:
-    var client = newHttpClient()
-    link = "http://" & cleanLink link
-    discard client.getContent(link & "/currentsong")
-  except ProtocolError:
-    link.removePrefix "http://"
-    link = "https://" & link
-    return true
-  except: return false
-  return false]#
-
-#[proc getCurrentSong*(linke: string): string =
-#use mpv stream_lavf.c to get icy-title from audio buffer
-  let client = newHttpClient()
-  var link = linke
-
-  link = "http://" & cleanLink link
-  try: #shoutcast
-    #echo "getCurrentSong: ", link
-    client.getContent(link & "/currentsong")
-  except ProtocolError: #ICY404 Resource Not Found?
-    "notimplemented"
-  except HttpRequestError: #icecast
-    try:
-      to(
-         parseJson(
-           client.getContent(link & "/status-json.xsl")
-        ){"icestats"}{"source"}[1]{"yp_currently_playing"},
-        string
-      )
-    except HttpRequestError,
-      JsonParsingError, #different technique than implemented
-        ProtocolError, #connection refused?
-          KeyError: "notimplemented"
-]#
 proc splitLink(str: string): seq[string] = split(str, ":", maxSplit = 1)
 
 template isHttps(link: string): bool = link.startsWith "https://"

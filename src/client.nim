@@ -41,7 +41,7 @@ from terminal import showCursor
 
 const dynlibName =
   when defined windows: "mpv-1.dll"
-  elif defined(macos) or defined(macosx): "libmpv.dylib #havent tested"
+  elif defined(macos) or defined(macosx): "libmpv.dylib" #havent tested
   else: "libmpv.so"
 
 {.push dynlib: dynlibName.}

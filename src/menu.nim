@@ -14,6 +14,16 @@ template endThisCall(str: string) =
   terminateDestroy ctx
   break
 
+template notifyplayerState =
+  cursorDown()
+  eraseLine()
+  if not isPaused:
+    if isMuted: warn "Muted"
+    else: say "Playing", fgGreen
+  else:
+    if isMuted: warn "paused and muted"
+    else: warn "Paused"
+
 proc call(sub: string; sect = ""; stat, link: string) =
   if link == "":
    warn "link empty"
@@ -43,6 +53,8 @@ proc call(sub: string; sect = ""; stat, link: string) =
 
   try: illwillinit false
   except IllWillError: discard
+  say "Playing", fgGreen
+  cursorDown()
   #echo "link in call() before while true: " & link
 
   while true:
@@ -55,76 +67,38 @@ proc call(sub: string; sect = ""; stat, link: string) =
       nowStreaming()
 
     setCursorPos 0, 2
-    eraseLine()
+
     #echo "event state: ", eventName event.eventID
     if counter == 25: #expensive fn; use counter
       if bool ctx.seeIfCoreIsIdling: endThisCall "core idling"
+      if event.eventID in [IDEndFile, IDShutdown]:
+        endThisCall "end of file? bad link?"
       counter = 0
     counter += 1
 
-    if event.eventID in [IDEndFile, IDShutdown]:
-      warn "end of file? bad link?"
-      terminateDestroy ctx
-      break
-    eraseLine()
-    if not isPaused:
-      if isMuted: warn "Muted"
-      else: say "Playing", fgGreen
-    else:
-      if isMuted: warn "paused and muted"
-      else: warn "Paused"
-      #if isMuted: warn "Muted", 4
-        #if echoPlay:
-      #var event = ctx.waitEvent 1000
-
-      #[if currentSong != "":
-        say "Now Streaming: " & #getCurrentSong link
-                    $getCurrentSongv2 ctx,
-                 fgGreen
-      cursorUp()]#
-      #  echoPlay = false
-
-      #remove cursorUp?
 
     case getKeyWithTimeout(25): #highcpuUsage; use timeout
       of Key.P:
         if isPaused:
-          #if nowPlayingExcept != true:
-          #cursorUp()
-          eraseLine()
-          #cursorDown()
-          #eraseLine()
-          #if nowPlayingExcept != true:
-          #cursorUp()
-
           isPaused = false
           ctx.pause false
+          notifyPlayerState()
 
         else:
-          eraseLine()
-          cursorUp()
-
           ctx.pause true
           isPaused = true
+          notifyPlayerState()
 
       of Key.M:
         if isMuted:
-          #if nowPlayingExcept != true:
-          #[cursorUp()
-          eraseLine()
-          cursorDown()
-          eraseLine()
-          #if nowPlayingExcept != true:
-          cursorUp()]#
-
           ctx.mute false
           isMuted = false
+          notifyPlayerState()
 
         else:
-          eraseLine()
-          cursorUp()
           ctx.mute true
           isMuted = true
+          notifyPlayerState()
 
       of Key.Slash, Key.Plus:
         let volumeIncreased = ctx.volume true
