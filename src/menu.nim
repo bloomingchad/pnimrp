@@ -14,7 +14,7 @@ template endThisCall(str: string) =
   terminateDestroy ctx
   break
 
-template notifyplayerState =
+proc notifyplayerState(isPaused, isMuted: bool) =
   cursorDown()
   eraseLine()
   if not isPaused:
@@ -53,6 +53,8 @@ proc call(sub: string; sect = ""; stat, link: string) =
 
   try: illwillinit false
   except IllWillError: discard
+
+  cursorDown()
   say "Playing", fgGreen
   cursorDown()
   #echo "link in call() before while true: " & link
@@ -82,46 +84,44 @@ proc call(sub: string; sect = ""; stat, link: string) =
         if isPaused:
           isPaused = false
           ctx.pause false
-          notifyPlayerState()
+          notifyPlayerState(isPaused, isMuted)
 
         else:
           ctx.pause true
           isPaused = true
-          notifyPlayerState()
+          notifyPlayerState(isPaused, isMuted)
 
       of Key.M:
         if isMuted:
           ctx.mute false
           isMuted = false
-          notifyPlayerState()
+          notifyPlayerState(isPaused, isMuted)
 
         else:
           ctx.mute true
           isMuted = true
-          notifyPlayerState()
+          notifyPlayerState(isPaused, isMuted)
 
       of Key.Slash, Key.Plus:
         let volumeIncreased = ctx.volume true
 
-        #[var metadata: NodeList
-          echo "getPropreturnVal:", ctx.getProperty("metadata", fmtNodeMap, addr metadata)
-          echo "metadata", metadata.num
-          for i in 0 .. 100:
-            try:echo "metadatavalues", metadata.values[i]
-            except:discard]#
+        cursorDown()
         cursorDown()
         warn "Volume+: " & $volumeIncreased
         cursorUp()
         eraseLine()
+        cursorUp()
         cursorUp()
 
       of Key.Asterisk, Key.Minus:
         let volumeDecreased = ctx.volume false
 
         cursorDown()
+        cursorDown()
         warn "Volume-: " & $volumeDecreased
         cursorUp()
         eraseLine()
+        cursorUp()
         cursorUp()
 
       of Key.R:
