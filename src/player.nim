@@ -1,7 +1,5 @@
 import client
 
-template cE*(s: cint) = checkError s
-
 using
   ctx: ptr Handle
 
@@ -36,3 +34,5 @@ proc seeIfCoreIsIdling*(ctx): cint =
 
 proc getCurrentSongv2*(ctx): cstring =
   cE ctx.getProperty("media-title", fmtString, addr result)
+
+export cE

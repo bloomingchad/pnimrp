@@ -259,59 +259,62 @@ type #enums
     llDebug  = 60, ##more noisy verbose info
     llTrace  = 70  ##extermely verbose
 
+{.push bycopy.}
+type
 #non-enum type objects
   Handle* = distinct pointer ##(private) basic type, used by api to
    ##infer the context
 
-  ClientUnionType* {.bycopy, union.} = object
+  ClientUnionType* {.union.} = object
     str*: cstring
     flag*, int*: cint
     double*: cdouble
     list*: ptr NodeList
     ba*: ptr ByteArray
 
-  Node* {.bycopy.} = object
+  Node* = object
     u*: ClientUnionType
     format*: Format
 
-  NodeList* {.bycopy.} = object
+  NodeList* = object
     num*: cint
     values*: ptr Node
     keys*: cstringArray
 
-  ByteArray* {.bycopy.} = object
+  ByteArray* = object
     data*: pointer
     size*: csize_t
 
-  EventProperty* {.bycopy.} = object
+  EventProperty* = object
     name*: cstring
     format*: Format
     data*: pointer
 
-  EventLogMessage* {.bycopy.} = object
+  EventLogMessage* = object
     prefix*, level*, text*: cstring
     logLevel*: LogLevel
 
-  EventEndFile* {.bycopy.} = object
+  EventEndFile* = object
     reason*, error*: cint
 
-  EventClientMessage* {.bycopy.} = object
+  EventClientMessage* = object
     numArgs*: cint
     args*: cstringArray
 
-  EventHook* {.bycopy.} = object
+  EventHook* = object
     name*: cstring
     id*: cint
 
-  EventCmd* {.bycopy.} = object
+  EventCmd* = object
     result*: Node
 
-  Event* {.bycopy.} = object
+  Event* = object
     eventID*: EventID
     error*: int
     replyUserData*: uint64
     data*: pointer
 
+{.pop.}
 #procs
 using
   ctx: ptr Handle
@@ -481,5 +484,7 @@ proc checkError*(status: cint) = ##[
  if status < 0:
    showCursor()
    raise newException(CatchableError, "mpv API error: " & $errorString status)
+
+template cE*(s: int) = checkError s
 
 {.pop.}

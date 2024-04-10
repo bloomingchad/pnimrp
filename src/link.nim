@@ -23,7 +23,7 @@ proc doesLinkWork*(link: string): bool =
            #for link with no port will except
          else: parseInt seq[1]),
        timeout = 2000)
-    echo "link dont cause except"
+#    echo "link dont cause except"
     return true
   except HttpRequestError: warn "HttpRequestError. bad link?"
   except IndexDefect: return true #lmpv will error IDEndFile if badLink

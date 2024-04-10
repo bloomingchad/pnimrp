@@ -95,10 +95,13 @@ proc warn*(txt: string; x = 4; colour = fgRed) =
 
 proc inv* =
   cursorDown()
+  cursorDown()
   warn "INVALID CHOICE"
   cursorUp()
   eraseLine()
   cursorUp()
+  cursorUp()
+
 
 template sayTermDraw8*() =
   say "Poor Mans Radio Player in Nim-lang " &
