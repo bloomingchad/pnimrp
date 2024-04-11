@@ -18,8 +18,8 @@ proc mute*(ctx; a: bool) =
   var val: cint = if a: 1 else: 0
   cE ctx.setProperty("mute", fmtFlag, addr val)
 
-proc volume*(ctx; a: bool): cint =
-  var volumeChanged: cint
+proc volume*(ctx; a: bool): int =
+  var volumeChanged: int
   cE ctx.getProperty("volume", fmtInt64,
       addr volumeChanged)
   if a: volumeChanged += 5 else: volumeChanged -= 5
