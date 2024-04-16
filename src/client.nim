@@ -167,71 +167,73 @@ type #enums
       ctx.setProperty("property", formatNone, addr value)
    ]##
 
-    fmtNodeArray  = 7, ##used with Node (not directly!)
-    fmtNodeMap    = 8, ##see formatNodeArray
-    fmtByteArray  = 9  ##raw, untyped byteArray, used with Node (used for
-    ##screenshot-raw command)
+    fmtNodeArray  = 7, #used with Node (not directly!)
+    fmtNodeMap    = 8, #see formatNodeArray
+    fmtByteArray  = 9  #raw, untyped byteArray, used with Node (used for
+    #screenshot-raw command)
 
-  EventID* = enum ##Event type
-    IDNone              = 0,  ##nothing happened (when timeouts or
+  EventID* = enum #Event type
+    IDNone              = 0,  #nothing happened (when timeouts or
      ##sporadic wakeups)
-    IDShutdown          = 1,  ##[ when player quits, it tries to
+    IDShutdown          = 1,  #[ when player quits, it tries to
      disconnect all clients but most requests to player will fail, so
      client should quit with destroy()
     ]##
 
-    IDLogMessage        = 2,  ##see requestLogMessages()
-    IDGetPropertyReply  = 3,  ##reply to getPropertyAsync(),
-     ##(see Event, EventProperty)
+    IDLogMessage        = 2,  #see requestLogMessages()
+    IDGetPropertyReply  = 3,  #reply to getPropertyAsync(),
+     #(see Event, EventProperty)
 
-    IDSetPropertyReply  = 4,  ##reply to setPropertyAsync(),
-     ##EventProperty is not used
-    IDCommandReply      = 5,  ##reply to commandAsync() or
-     ##commandNodeAsync() (see EventID, EventCmd)
+    IDSetPropertyReply  = 4,  #reply to setPropertyAsync(),
+     #EventProperty is not used
+    IDCommandReply      = 5,  #reply to commandAsync() or
+     #commandNodeAsync() (see EventID, EventCmd)
 
-    IDStartFile         = 6,  ##notification before playback start of
-     ##file (before loading)
-    IDEndFile           = 7,  ##notification after playback ends,after
-     ##unloading, see EventID
-    IDFileLoaded        = 8,  ##notification when file has been
-     ##loaded (headers read..)
+    IDStartFile         = 6,  #notification before playback start of
+     #file (before loading)
+    IDEndFile           = 7,  #notification after playback ends,after
+     #unloading, see EventID
+    IDFileLoaded        = 8,  #notification when file has been
+     #loaded (headers read..)
 
-    IDClientMessage     = 16, ##[
+    IDClientMessage     = 16, #[
      triggered by script-message input command, it uses first argument
      of command as clientName (see getclientName()). to dispatch mesage.
      passes all arguments from second arguemnt as strings.
      (see Event, ecentClientMessage)
-   ]##
+   ]#
 
-    IDVideoReConfig     = 17, ##[
+    IDVideoReConfig     = 17, #[
      happens when video gets changed. resolution, pixel format or video
      filter changes. Event is sent after video filters & VO are
      reconfigured. if using mpv window, app should listen this Event
      so to resize window if needed. this can happen sporadically and
      should manually check if video parameters changed
-   ]##
+   ]#
 
-    IDAudioReConfig     = 18, ##similar as EventIDVideoReConfig
-    IDSeek              = 20, ##happens when a seek was initiated
-     ##and will resume using EventIDPlaybackRestart when seek is finished
+    IDAudioReConfig     = 18, #similar as EventIDVideoReConfig
+    IDSeek              = 20, #[
+      happens when a seek was initiated and will resume
+      using EventIDPlaybackRestart when seek is finished
+    ]#
 
-    IDPlayBackRestart   = 21, ##[
+    IDPlayBackRestart   = 21, #[
      there was discontinuity like a seek, so playback was reinitialized
      (happens after seeking, chapter switches). mainly allows client
      to detect if seek is finished
-    ]##
+    ]#
 
-    IDEventPropertyChange    = 22, ##Event sent due to observeProperty().m
-     ##see Event,EventProperty
-    IDQueueOverFlow          = 24, ##[
-     happens if internal Handle ringBuffer OverFlows, then atleast 1
-     Event has to be dropped, this can happen if client doesnt read
-     Event queue quickly with waitEvent() or client makes very large
-     number of asynchronous calls at once. every delivery will continue
-     normally once Event gets returned, this forces client to empty queue
-  ]##
+    IDEventPropertyChange    = 22, #Event sent due to observeProperty().m
+     #see Event,EventProperty
+    IDQueueOverFlow          = 24, #[
+      happens if internal Handle ringBuffer OverFlows, then atleast 1
+      Event has to be dropped, this can happen if client doesnt read
+      Event queue quickly with waitEvent() or client makes very large
+      number of asynchronous calls at once. every delivery will continue
+      normally once Event gets returned, this forces client to empty queue
+    ]#
 
-    IDEventHook              = 25  ##[
+    IDEventHook              = 25  #[
      triggered if hook Handler was registered with hookAdd()
      and hook is invoked. this must be manually Handled and continue
      hook with hookContinue() (see Event, EventHook)
@@ -259,12 +261,12 @@ type #enums
     llDebug  = 60, ##more noisy verbose info
     llTrace  = 70  ##extermely verbose
 
-{.push bycopy.}
-type
 #non-enum type objects
   Handle* = distinct pointer ##(private) basic type, used by api to
    ##infer the context
 
+{.push bycopy.}
+type
   ClientUnionType* {.union.} = object
     str*: cstring
     flag*, int*: cint
@@ -329,7 +331,6 @@ using
 proc abortAsyncCmd*(ctx; replyUserData)
     {.importc: "mpv_abort_async_command".}
 
-#{.push discardable.}
 proc cmd*(ctx; argsArr): cint
     {.importc: "mpv_command".}
 
@@ -348,16 +349,15 @@ proc cmdRet*(ctx; argsArr; result): cint
 proc cmdString*(ctx; argsStr): cint
     {.importc: "mpv_command_string".}
 
-#{.pop.}
 proc create*: ptr Handle
-    {.importc: "mpv_create".} ##[
+    {.importc: "mpv_create".} #[
   create and return a Handle used to control the instance
   instance is in preinitialized state. and needs more initialisation
   for use with other procs. (see errUnitialised, libmpv/examples/simple.c)
   this gives more control over configuration. (see more..)
   NO concurrent accesses on uninitialised Handle.
   returns nil when out of memory
- ]##
+ ]#
 
 proc createClient*(ctx; name): ptr Handle
     {.importc: "mpv_create_client".}
@@ -367,30 +367,30 @@ proc createWeakClient*(ctx; name): ptr Handle
 
 proc destroy*(ctx)
     {.importc: "mpv_destroy".}
-  ##finish the Handle, ctx will be deallocated.
+  #finish the Handle, ctx will be deallocated.
 
 proc errorString*(error): cstring
-    {.importc: "mpv_error_string".} ##[
+    {.importc: "mpv_error_string".} #[
   return string describing error, if unknown: returns "unknown string",
   isStaticConst, (see error: enum)
- ]##
+ ]#
 
 proc eventName*(Event: EventID): cstring
     {.importc: "mpv_event_name".}
 
 proc free*(data)
-    {.importc: "mpv_free".} ##[
+    {.importc: "mpv_free".} #[
   general proc to dealloc() returned by api procs. !!explicitly used!!,
   if called on not mpv's memory: undefined behavoiur happens
   valid pointer returned or nil
- ]##
+ ]#
 
 proc freeNodeContents*(node)
     {.importc: "mpv_free_node_contents".}
 
 proc getClientApiVersion*: culong
     {.importc: "mpv_client_api_version".}
- ##return api version of libmpv
+ #return api version of libmpv
 
 proc getClientName*(ctx): cstring
     {.importc: "mpv_client_name".}
@@ -422,8 +422,6 @@ proc initialize*(ctx): cint
   initialise a preinit instance. error returned if instance is running,
   very important proc for usage if used create() to preinit
  ]##
-
-#{.push discardable.}
 
 proc loadConfigFile*(ctx; filename: cstring): cint
     {.importc: "mpv_load_config_file".}
@@ -461,7 +459,6 @@ proc terminateDestroy*(ctx)
 proc unobserveProperty*(ctx; registeredReplyUserData: uint64): cint
     {.importc: "mpv_unobserve_property".}
 
-#{.pop.}
 proc waitAsyncRequests*(ctx)
     {.importc: "mpv_wait_async_requests".}
 

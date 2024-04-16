@@ -1,4 +1,4 @@
-import os, terminal, src/[ui, menu]
+import os, src/menu
 
 if not dirExists getAppDir() / "assets":
   error "data or config files dont exist"
