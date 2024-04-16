@@ -1,16 +1,19 @@
 import strutils, httpclient, net, ui
 
-proc cleanLink(str: string): string =
+using
+  str, link: string
+
+proc cleanLink(str): string =
   var link = str
   link.removePrefix "http://"
   link.removePrefix "https://"
   link.split("/", maxSplit = 1)[0]
 
-proc splitLink(str: string): seq[string] = split(str, ":", maxSplit = 1)
+proc splitLink(str): seq[string] = split(str, ":", maxSplit = 1)
 
-template isHttps(link: string): bool = link.startsWith "https://"
+template isHttps(link): bool = link.startsWith "https://"
 
-proc doesLinkWork*(link: string): bool =
+proc doesLinkWork*(link): bool =
   #echo "doeslinkworkInit: " & link
   let seq = splitLink cleanLink link
   #echo "doesLinkWorkSeq: ", seq
