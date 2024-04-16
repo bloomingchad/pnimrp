@@ -6,7 +6,7 @@ import terminal
 when not defined windows: import unicode, macros, os
 
 type
-  Key* {.pure.} = enum      ## Supported single key presses and key combinations
+  Key* {.pure.} = enum      #Supported single key presses and key combinations
     None = (-1, "None"),
 
     # Special ASCII characters
@@ -239,7 +239,7 @@ when defined(windows):
   var gOldConsoleModeInput: DWORD
   var gOldConsoleMode: DWORD
 
-  proc consoleInit() =
+  proc consoleInit =
     discard getConsoleMode(getStdHandle(STD_INPUT_HANDLE), gOldConsoleModeInput.addr)
     if gFullScreen:
       if getConsoleMode(getStdHandle(STD_OUTPUT_HANDLE), gOldConsoleMode.addr) != 0:
@@ -248,7 +248,7 @@ when defined(windows):
     else:
       discard getConsoleMode(getStdHandle(STD_OUTPUT_HANDLE), gOldConsoleMode.addr)
 
-  proc consoleDeinit() =
+  proc consoleDeinit =
     if gOldConsoleMode != 0:
       discard setConsoleMode(getStdHandle(STD_OUTPUT_HANDLE), gOldConsoleMode)
 
@@ -341,7 +341,7 @@ else:  # OS X & Linux
     consoleInit()
     hideCursor()
 
-  proc installSignalHandlers() =
+  proc installSignalHandlers =
     signal(SIGCONT, SIGCONT_handler)
     signal(SIGTSTP, SIGTSTP_handler)
 
@@ -376,11 +376,11 @@ else:  # OS X & Linux
     discard select(STDIN_FILENO+1, fds.addr, nil, nil, tv.addr)
     return FD_ISSET(STDIN_FILENO, fds)
 
-  proc consoleInit() =
+  proc consoleInit =
     nonblock(true)
     installSignalHandlers()
 
-  proc consoleDeinit() =
+  proc consoleDeinit =
     nonblock(false)
 
   # surely a 100 char buffer is more than enough; the longest
@@ -437,7 +437,7 @@ when defined(posix):
     XtermColor    = "xterm-color"
     Xterm256Color = "xterm-256color"
 
-proc enterFullScreen() =
+proc enterFullScreen =
   ## Enters full-screen mode (clears the terminal).
   when defined(posix):
     case getEnv("TERM"):
@@ -450,7 +450,7 @@ proc enterFullScreen() =
   else:
     eraseScreen()
 
-proc exitFullScreen() =
+proc exitFullScreen =
   ## Exits full-screen mode (restores the previous contents of the terminal).
   when defined(posix):
     case getEnv("TERM"):
@@ -474,11 +474,11 @@ proc illwillInit*(fullScreen = true) =
   gIllwillInitialised = true
   resetAttributes()
 
-proc checkInit() =
+proc checkInit =
   if not gIllwillInitialised:
     raise newException(IllwillError, "Illwill not initialised")
 
-proc illwillDeinit*() =
+proc illwillDeinit* =
   checkInit()
   if gFullScreen: exitFullScreen()
   consoleDeinit()
@@ -486,7 +486,7 @@ proc illwillDeinit*() =
   resetAttributes()
   showCursor()
 
-proc getKey*(): Key =
+proc getKey*: Key =
   ## Reads the next keystroke in a non-blocking manner. If there are no
   ## keypress events in the buffer, `Key.None` is returned.
   ## If the module is not intialised, `IllwillError` is raised.

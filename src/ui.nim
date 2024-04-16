@@ -2,18 +2,21 @@ import
   terminal, client, random,
   json, strutils, os
 
+using
+  str: string
+
 proc clear* =
   eraseScreen()
   setCursorPos 0, 0
 
-proc error*(str: string) =
+proc error*(str) =
   styledEcho fgRed, "Error: ", str
   quit QuitFailure
 
-proc parseJArray*(file: string): seq[string] =
+proc parseJArray*(str): seq[string] =
   try:
     result = to(
-      parseJson(readFile(file)){"pnimrp"},
+      parseJson(readFile(str)){"pnimrp"},
       seq[string]
     )
   except IOError: error "base assets dont exist?"
@@ -55,16 +58,16 @@ proc exitEcho* =
 
   quit QuitSuccess
 
-proc say*(txt: string; color = fgYellow; x = 5; echo = true) =
+proc say*(str; color = fgYellow; x = 5; echo = true) =
   if color == fgBlue: setCursorXPos x
   if color == fgGreen:
     setCursorXPos x
-    if echo: styledEcho fgGreen, txt
-    else: stdout.styledWrite fgGreen, txt
-  else: styledEcho color, txt #fgBlue would get true here
+    if echo: styledEcho fgGreen, str
+    else: stdout.styledWrite fgGreen, str
+  else: styledEcho color, str #fgBlue would get true here
 
-proc sayIter(txt: string) =
-  for f in splitLines txt:
+proc sayIter(str) =
+  for f in splitLines str:
     say f, fgBlue
 
 proc sayIter*(txt: seq[string]; ret = true) =
@@ -86,28 +89,25 @@ proc sayIter*(txt: seq[string]; ret = true) =
   if ret: say "R Return", fgBlue
   say "Q Quit", fgBlue
 
-proc warn*(txt: string; x = 4; colour = fgRed) =
+proc warn*(str; x = 4; colour = fgRed) =
   if x != -1: setCursorXPos x
-  styledEcho colour, txt
-  #if echo == false: stdout.styledWrite fgRed,txt
-  #default Args dosent seem to be working?
+  styledEcho colour, str
   sleep 750
 
-proc inv* =
+proc inv*(str = "INVALID CHOICE") =
   cursorDown()
   cursorDown()
-  warn "INVALID CHOICE"
+  warn str
   cursorUp()
   eraseLine()
   cursorUp()
   cursorUp()
 
-
-template sayTermDraw8*() =
+proc sayTermDraw8* =
   say "Poor Mans Radio Player in Nim-lang " &
       '-'.repeat int terminalWidth() / 8
 
-proc sayTermDraw12*() =
+proc sayTermDraw12* =
   say('-'.repeat((terminalWidth()/8).int) &
       '>'.repeat int terminalWidth() / 12, fgGreen, x = 2)
 
