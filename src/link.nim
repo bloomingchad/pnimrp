@@ -1,4 +1,4 @@
-import strutils, #[json,]# httpclient, net, ui
+import strutils, httpclient, net, ui
 
 proc cleanLink(str: string): string =
   var link = str

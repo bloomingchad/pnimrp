@@ -9,10 +9,15 @@ template nowStreaming =
   say "Now Streaming: " & currentSong, fgGreen
   cursorUp()
 
-template endThisCall(str: string) =
+template endThisCall(str: string, ret = false) =
   warn str
-  terminateDestroy ctx
-  break
+  when ret: return
+  else:
+    terminateDestroy ctx
+    break
+
+proc volumeNotify(volumeUp: bool, val: int) =
+  inv((if volumeUp: "Volume+: " else: "Volume-: " ) & $val)
 
 proc notifyplayerState(isPaused, isMuted: bool) =
   cursorDown()
@@ -20,17 +25,14 @@ proc notifyplayerState(isPaused, isMuted: bool) =
   if not isPaused:
     if isMuted: warn "Muted"
     else: say "Playing", fgGreen
-  else:
-    if isMuted: warn "paused and muted"
-    else: warn "Paused"
+  else: warn if isMuted: "paused and muted"
+             else: "Paused"
 
 proc call(sub: string; sect = ""; stat, link: string) =
   if link == "":
-   warn "link empty"
-   return
+    endThisCall "link empty", ret = true
   elif link.contains " ":
-    warn "link dont exist or is invalid"
-    return
+    endThisCall "link dont exist or is invalid", ret = true
 
   clear()
   if sect == "": say (("PNimRP > " & sub) & (" > " & stat))
@@ -39,20 +41,17 @@ proc call(sub: string; sect = ""; stat, link: string) =
   sayTermDraw12()
 
   if not doesLinkWork link:
-    warn "no link work"
-    return
+    endThisCall "no link work", ret = true
   var ctx = create()
   ctx.init link
   var
     event = ctx.waitEvent
-    isPaused = false
-    isMuted = false
-    isSetToObserve = false
+    isPaused, isMuted, isSetToObserve = false
     currentSong: string
     counter: uint8
 
   try: illwillinit false
-  except IllWillError: discard
+  except: discard
 
   cursorDown()
   say "Playing", fgGreen
@@ -78,51 +77,32 @@ proc call(sub: string; sect = ""; stat, link: string) =
       counter = 0
     counter += 1
 
-
     case getKeyWithTimeout(25): #highcpuUsage; use timeout
       of Key.P:
         if isPaused:
           isPaused = false
           ctx.pause false
-          notifyPlayerState(isPaused, isMuted)
 
         else:
           ctx.pause true
           isPaused = true
-          notifyPlayerState(isPaused, isMuted)
+        notifyPlayerState(isPaused, isMuted)
 
       of Key.M:
         if isMuted:
           ctx.mute false
           isMuted = false
-          notifyPlayerState(isPaused, isMuted)
 
         else:
           ctx.mute true
           isMuted = true
-          notifyPlayerState(isPaused, isMuted)
+        notifyPlayerState(isPaused, isMuted)
 
       of Key.Slash, Key.Plus:
-        let volumeIncreased = ctx.volume true
-
-        cursorDown()
-        cursorDown()
-        warn "Volume+: " & $volumeIncreased
-        cursorUp()
-        eraseLine()
-        cursorUp()
-        cursorUp()
+        volumeNotify true, ctx.volume true
 
       of Key.Asterisk, Key.Minus:
-        let volumeDecreased = ctx.volume false
-
-        cursorDown()
-        cursorDown()
-        warn "Volume-: " & $volumeDecreased
-        cursorUp()
-        eraseLine()
-        cursorUp()
-        cursorUp()
+        volumeNotify true, ctx.volume false
 
       of Key.R:
         if not isPaused: terminateDestroy ctx
@@ -197,7 +177,7 @@ proc menu(sub, file: string; sect = "") =
     while true:
       try:
         case getch():
-          of '1': call sub, sect, n[0], l[0]; break
+          of '1': call sub, sect, n[1], l[1]; break
           of '2': call sub, sect, n[1], l[1]; break
           of '3': call sub, sect, n[2], l[2]; break
           of '4': call sub, sect, n[3], l[3]; break
@@ -214,7 +194,6 @@ proc menu(sub, file: string; sect = "") =
           of 'F', 'f': call sub, sect, n[14], l[14]; break
           of 'R', 'r':
             returnBack = true
-            #writeStackTrace()
             break
           of 'Q', 'q': exitEcho()
           else: inv()
@@ -234,7 +213,6 @@ proc drawMainMenu*(dir = getAppDir() / "assets") =
     sayIter names, ret = if dir != getAppDir() / "assets": true else: false
     try:
       while true:
-        #var getch = getch()
         case getch():
           of '1': menu names[0], files[0]; break
           of '2': menu names[1], files[1]; break
@@ -263,13 +241,8 @@ proc drawMainMenu*(dir = getAppDir() / "assets") =
               break
             else: inv()
           of 'q', 'Q': exitEcho()
-          else:
-            #echo getch
-            inv()
-    except IndexDefect:
-      #warn "indexdefect"
-      inv()
-
+          else: inv()
+    except IndexDefect: inv()
     if returnBack: break
 
 export hideCursor, error
