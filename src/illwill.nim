@@ -189,6 +189,8 @@ when not defined windows:
   var gFullRedrawNextFrame = false
 
 when defined(windows):
+  using ms: int32
+
   import winlean
 
   proc getConsoleMode(hConsoleHandle: Handle, dwMode: ptr DWORD): WINBOOL {.
@@ -253,7 +255,7 @@ when defined(windows):
       discard setConsoleMode(getStdHandle(STD_OUTPUT_HANDLE), gOldConsoleMode)
 
 
-  proc getchTimeout(ms: int32): KEY_EVENT_RECORD =
+  proc getchTimeout(ms): KEY_EVENT_RECORD =
     let fd = getStdHandle(STD_INPUT_HANDLE)
     var keyEvent = KEY_EVENT_RECORD()
     var numRead: cint
@@ -270,7 +272,7 @@ when defined(windows):
       else:
         doAssert(false)
 
-  proc getKeyAsync(ms: int): Key =
+  proc getKeyAsync(ms): Key =
     let event = getchTimeout(int32(ms))
 
     if event.eventType == -1:
@@ -309,6 +311,7 @@ when defined(windows):
       else:  return Key.None
 
 else:  # OS X & Linux
+  using ms: int
   import posix, tables, termios, strutils
 
   proc consoleInit()
@@ -365,7 +368,7 @@ else:  # OS X & Linux
     # set the terminal attributes.
     discard tcSetAttr(STDIN_FILENO, TCSANOW, ttyState.addr)
 
-  proc kbhit(ms: int): cint =
+  proc kbhit(ms): cint =
     var tv: Timeval
     tv.tv_sec = Time(ms div 1000)
     tv.tv_usec = 1000 * (int32(ms) mod 1000) # int32 because of macos

@@ -3,13 +3,16 @@ import
   client, net, player, link,
   illwill
 
+using
+  sub, file, str, stat, link: string
+
 template nowStreaming =
   currentSong = $ctx.getCurrentSongV2
   eraseLine()
   say "Now Streaming: " & currentSong, fgGreen
   cursorUp()
 
-template endThisCall(str: string, ret = false) =
+template endThisCall(str; ret = false) =
   warn str
   when ret: return
   else:
@@ -18,6 +21,9 @@ template endThisCall(str: string, ret = false) =
 
 proc volumeNotify(volumeUp: bool, val: int) =
   inv((if volumeUp: "Volume+: " else: "Volume-: " ) & $val)
+
+proc isPlaylist(link): bool =
+  link.endsWith(".pls") or link.endsWith ".m3u"
 
 proc notifyplayerState(isPaused, isMuted: bool) =
   cursorDown()
@@ -28,7 +34,7 @@ proc notifyplayerState(isPaused, isMuted: bool) =
   else: warn if isMuted: "paused and muted"
              else: "Paused"
 
-proc call(sub: string; sect = ""; stat, link: string) =
+proc call(sub; sect = ""; stat, link) =
   if link == "":
     endThisCall "link empty", ret = true
   elif link.contains " ":
@@ -49,6 +55,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
     isPaused, isMuted, isSetToObserve = false
     currentSong: string
     counter: uint8
+    letPlaylistPassOnce = false
 
   try: illwillinit false
   except: discard
@@ -73,7 +80,10 @@ proc call(sub: string; sect = ""; stat, link: string) =
     if counter == 25: #expensive fn; use counter
       if bool ctx.seeIfCoreIsIdling: endThisCall "core idling"
       if event.eventID in [IDEndFile, IDShutdown]:
-        endThisCall "end of file? bad link?"
+        if link.isPlaylist:
+          if letPlaylistPassOnce: endThisCall "end of file? bad link?"
+          letPlaylistPassOnce = true
+        else: endThisCall "end of file? bad link?"
       counter = 0
     counter += 1
 
@@ -114,7 +124,7 @@ proc call(sub: string; sect = ""; stat, link: string) =
       of Key.None: continue
       else: inv()
 
-proc initJsonLists(sub, file: string; sect = ""): seq[seq[string]] =
+proc initJsonLists(sub; file; sect = ""): seq[seq[string]] =
   var n, l: seq[string] = @[]
   let input = parseJArray file
 
@@ -161,7 +171,7 @@ proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
 
 proc drawMainMenu*(dir = getAppDir() / "assets")
 
-proc menu(sub, file: string; sect = "") =
+proc menu(sub; file; sect = "") =
   if sub.endsWith "/".unixToNativePath:
     drawMainMenu(getAppDir() / "assets" / sub)
     return
@@ -177,7 +187,7 @@ proc menu(sub, file: string; sect = "") =
     while true:
       try:
         case getch():
-          of '1': call sub, sect, n[1], l[1]; break
+          of '1': call sub, sect, n[0], l[0]; break
           of '2': call sub, sect, n[1], l[1]; break
           of '3': call sub, sect, n[2], l[2]; break
           of '4': call sub, sect, n[3], l[3]; break
