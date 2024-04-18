@@ -19,8 +19,11 @@ template endThisCall(str; ret = false) =
     terminateDestroy ctx
     break
 
+template setCur = setCursorPos 0, 2
+
 proc volumeNotify(volumeUp: bool, val: int) =
   inv((if volumeUp: "Volume+: " else: "Volume-: " ) & $val)
+  setCur()
 
 proc isPlaylist(link): bool =
   link.endsWith(".pls") or link.endsWith ".m3u"
@@ -33,6 +36,7 @@ proc notifyplayerState(isPaused, isMuted: bool) =
     else: say "Playing", fgGreen
   else: warn if isMuted: "paused and muted"
              else: "Paused"
+  setCur()
 
 proc call(sub; sect = ""; stat, link) =
   if link == "":
@@ -63,6 +67,7 @@ proc call(sub; sect = ""; stat, link) =
   cursorDown()
   say "Playing", fgGreen
   cursorDown()
+  setcur()
   #echo "link in call() before while true: " & link
 
   while true:
@@ -73,8 +78,6 @@ proc call(sub; sect = ""; stat, link) =
 
     if event.eventID in [IDEventPropertyChange]:
       nowStreaming()
-
-    setCursorPos 0, 2
 
     #echo "event state: ", eventName event.eventID
     if counter == 25: #expensive fn; use counter
