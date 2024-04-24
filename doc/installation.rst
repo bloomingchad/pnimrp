@@ -10,7 +10,6 @@ Table of Contents
 -----------------
   * Dependencies
   * Compliling The Project
-  * Backporting to older version
 
 Dependencies
 ------------
@@ -63,18 +62,3 @@ For BSD Users,
    sudo pkg install mpv
 
 For Information about supported platforms read user.rst
-
-Compiling The Project
----------------------
-Compilation is as simple as running this command at root project folder,
-and is the same regardless the platform.
-
-Using Nimble Package Manager::
-  nimble build
-  nimble install
-
-Using Compiler Directly::
-  nim c -d:release pnimrp
-
-Note:
- * project does not compile under JS backend
