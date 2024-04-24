@@ -9,10 +9,13 @@ with the collection of 30+ modifiable radio station link files (json)
 you can select through the radio stations and play, pause, mute, them
 without ever getting your hands dirty touching on pls files.
 
-bleesed with the inspiration from `Poor Man's radio player <https://github.com/hakerdefo/pmrp>`_
+blessed with the inspiration from `Poor Man's radio player <https://github.com/hakerdefo/pmrp>`_
 
 | see doc/user.rst for a basic level user usage documentation.
 | see doc/installation.rst for installation instructions.
+
+.. image:: img.svg
+.. image:: ../img.svg
 
 What we solve for you
 ---------------------
@@ -41,9 +44,16 @@ then please install the `Nim compiler <https://nim-lang.org/install.html>`_
 
 After installing the compiler run::
   nimble install pnimrp
-or to compile from here::
-  nim c pnimrp
+or to compile it afer cloning::
+  nim c -d:release pnimrp
   ./pnimrp
+
+In-Player Controls
+------------------
+General Controls are using given numbers or characters to select
+the menu. where R would return and q would quit out of the
+application. and when stream is being played, use p to pause,
+m to mute, + to volume up and - to volume down.
 
 Do you want to readme(read me) in html?
 ---------------------------------------
