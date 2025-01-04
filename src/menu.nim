@@ -1,261 +1,325 @@
 import
-  terminal, os, ui, strutils,
-  client, net, player, link,
+  terminal,
+  os,
+  ui,
+  strutils,
+  client,
+  net,
+  player,
+  link,
   illwill
 
-using
-  sub, file, str, stat, link: string
+type
+  MenuError* = object of CatchableError
+  PlayerState = object
+    isPaused: bool
+    isMuted: bool
+    currentSong: string
+    volume: int
+  
+  MenuConfig = object
+    ctx: ptr Handle
+    currentSection: string
+    currentSubsection: string
+    stationName: string
+    stationUrl: string
 
-template nowStreaming =
-  currentSong = $ctx.getCurrentSongV2
+const
+  CheckIdleInterval = 25  # Check idle state every N iterations
+  KeyTimeout = 25        # Milliseconds to wait for key input
+  ValidMenuKeys = {'1'..'9', 'A'..'K', 'N', 'R', 'Q'}
+
+proc updateNowPlaying(state: var PlayerState, ctx: ptr Handle) =
+  ## Updates the now playing display
+  state.currentSong = $ctx.getCurrentSongV2()
   eraseLine()
-  say "Now Streaming: " & currentSong, fgGreen
+  say("Now Streaming: " & state.currentSong, fgGreen)
   cursorUp()
 
-template endThisCall(str; ret = false) =
-  warn str
-  when ret: return
-  else:
-    terminateDestroy ctx
-    break
+proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false) =
+  ## Handles player errors consistently
+  warn(msg)
+  if ctx != nil:
+    ctx.terminateDestroy()
+  if shouldReturn:
+    return
 
-template setCur = setCursorPos 0, 2
-
-proc volumeNotify(volumeUp: bool, val: int) =
-  inv((if volumeUp: "Volume+: " else: "Volume-: " ) & $val)
-  setCur()
-
-proc isPlaylist(link): bool =
-  link.endsWith(".pls") or link.endsWith ".m3u"
-
-proc notifyplayerState(isPaused, isMuted: bool) =
+proc updatePlayerState(state: var PlayerState, ctx: ptr Handle) =
+  ## Updates and displays the player state
   cursorDown()
   eraseLine()
-  if not isPaused:
-    if isMuted: warn "Muted"
-    else: say "Playing", fgGreen
-  else: warn if isMuted: "paused and muted"
-             else: "Paused"
-  setCur()
+  
+  let stateMsg = case (state.isPaused, state.isMuted)
+    of (false, false): ("Playing", fgGreen)
+    of (false, true): ("Muted", fgRed)
+    of (true, false): ("Paused", fgYellow)
+    of (true, true): ("Paused and Muted", fgRed)
+  
+  say(stateMsg[0], stateMsg[1])
+  setCursorPos(0, 2)
 
-proc call(sub; sect = ""; stat, link) =
-  if link == "":
-    endThisCall "link empty", ret = true
-  elif link.contains " ":
-    endThisCall "link dont exist or is invalid", ret = true
+proc handleVolumeChange(ctx: ptr Handle, increase: bool) =
+  ## Handles volume changes and notifications
+  let newVolume = ctx.volume(increase)
+  let volumeMsg = (if increase: "Volume+: " else: "Volume-: ") & $newVolume
+  showInvalidChoice(volumeMsg)
+  setCursorPos(0, 2)
 
-  clear()
-  if sect == "": say (("PNimRP > " & sub) & (" > " & stat))
-  else: say (("PNimRP > " & sub) & (" > " & sect) & (
-        " > " & stat))
-  sayTermDraw12()
+proc isValidPlaylistUrl(url: string): bool =
+  ## Checks if URL points to a valid playlist format
+  result = url.endsWith(".pls") or url.endsWith(".m3u")
 
-  if not doesLinkWork link:
-    endThisCall "no link work", ret = true
-  var ctx = create()
-  ctx.init link
-  var
-    event = ctx.waitEvent
-    isPaused, isMuted, isSetToObserve = false
-    currentSong: string
-    counter: uint8
-    letPlaylistPassOnce = false
+proc playStation(config: MenuConfig) {.raises: [MenuError].} =
+  ## Plays a radio station and handles user input
+  try:
+    if config.stationUrl == "":
+      raise newException(MenuError, "Empty station URL")
+    elif " " in config.stationUrl:
+      raise newException(MenuError, "Invalid station URL")
+    elif not doesLinkWork(config.stationUrl):
+      raise newException(MenuError, "Station URL not accessible")
 
-  try: illwillinit false
-  except: discard
-
-  cursorDown()
-  say "Playing", fgGreen
-  cursorDown()
-  setcur()
-  #echo "link in call() before while true: " & link
-
-  while true:
-    if not isPaused: event = ctx.waitEvent
-    if event.eventID in [IDPlaybackRestart] and not isSetToObserve:
-      ctx.seeIfSongTitleChanges
-      isSetToObserve = true
-
-    if event.eventID in [IDEventPropertyChange]:
-      nowStreaming()
-
-    #echo "event state: ", eventName event.eventID
-    if counter == 25: #expensive fn; use counter
-      if bool ctx.seeIfCoreIsIdling: endThisCall "core idling"
-      if event.eventID in [IDEndFile, IDShutdown]:
-        if link.isPlaylist:
-          if letPlaylistPassOnce: endThisCall "end of file? bad link?"
-          letPlaylistPassOnce = true
-        else: endThisCall "end of file? bad link?"
-      counter = 0
-    counter += 1
-
-    case getKeyWithTimeout(25): #highcpuUsage; use timeout
-      of Key.P:
-        if isPaused:
-          isPaused = false
-          ctx.pause false
-
+    var
+      ctx = create()
+      state = PlayerState(isPaused: false, isMuted: false)
+      isObserving = false
+      counter: uint8
+      playlistFirstPass = false
+    
+    ctx.init(config.stationUrl)
+    var event = ctx.waitEvent()
+    
+    try:
+      illwillInit(false)
+    except:
+      discard  # Non-critical failure
+    
+    cursorDown()
+    say("Playing", fgGreen)
+    cursorDown()
+    setCursorPos(0, 2)
+    
+    while true:
+      if not state.isPaused:
+        event = ctx.waitEvent()
+      
+      # Handle playback events
+      if event.eventID in {IDPlaybackRestart} and not isObserving:
+        ctx.seeIfSongTitleChanges()
+        isObserving = true
+      
+      if event.eventID in {IDEventPropertyChange}:
+        updateNowPlaying(state, ctx)
+      
+      # Periodic checks
+      if counter >= CheckIdleInterval:
+        if bool(ctx.seeIfCoreIsIdling()):
+          handlePlayerError("Player core idle", ctx)
+          break
+        
+        if event.eventID in {IDEndFile, IDShutdown}:
+          if config.stationUrl.isValidPlaylistUrl():
+            if playlistFirstPass:
+              handlePlayerError("End of playlist reached", ctx)
+              break
+            playlistFirstPass = true
+          else:
+            handlePlayerError("Stream ended", ctx)
+            break
+        counter = 0
+      inc counter
+      
+      # Handle user input
+      case getKeyWithTimeout(KeyTimeout):
+        of Key.P:
+          state.isPaused = not state.isPaused
+          ctx.pause(state.isPaused)
+          updatePlayerState(state, ctx)
+        
+        of Key.M:
+          state.isMuted = not state.isMuted
+          ctx.mute(state.isMuted)
+          updatePlayerState(state, ctx)
+        
+        of Key.Slash, Key.Plus:
+          handleVolumeChange(ctx, true)
+        
+        of Key.Asterisk, Key.Minus:
+          handleVolumeChange(ctx, false)
+        
+        of Key.R:
+          if not state.isPaused:
+            ctx.terminateDestroy()
+          illwillDeinit()
+          break
+        
+        of Key.Q:
+          illwillDeinit()
+          exit(ctx, state.isPaused)
+        
+        of Key.None:
+          continue
+        
         else:
-          ctx.pause true
-          isPaused = true
-        notifyPlayerState(isPaused, isMuted)
+          showInvalidChoice()
+    
+  except Exception as e:
+    raise newException(MenuError, "Playback error: " & e.msg)
 
-      of Key.M:
-        if isMuted:
-          ctx.mute false
-          isMuted = false
-
+proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
+  ## Loads station names and URLs from JSON file
+  try:
+    let data = parseJArray(jsonPath)
+    result = (names: @[], urls: @[])
+    
+    for i in 0 .. data.high:
+      if i mod 2 == 0:
+        result.names.add(data[i])
+      else:
+        let url = if data[i].startsWith({"http://", "https://"}):
+          data[i]
         else:
-          ctx.mute true
-          isMuted = true
-        notifyPlayerState(isPaused, isMuted)
+          "http://" & data[i]
+        result.urls.add(url)
+  
+  except Exception as e:
+    raise newException(MenuError, "Failed to load station list: " & e.msg)
 
-      of Key.Slash, Key.Plus:
-        volumeNotify true, ctx.volume true
+proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[string]] =
+  ## Loads available station categories
+  result = (names: @[], paths: @[])
+  let nativePath = baseDir / "*".unixToNativePath
+  
+  # Load files
+  for file in walkFiles(nativePath):
+    if baseDir == getAppDir() / "assets" and file.endsWith("quote.json"):
+      continue
+      
+    let name = file.extractFilename.changeFileExt("")
+    if name != "quote":
+      result.names.add(name.capitalizeAscii)
+      result.paths.add(file)
+  
+  # Load directories
+  for dir in walkDirs(nativePath):
+    let name = dir.extractFilename & DirSep
+    result.names.add(name)
+    result.paths.add(dir)
+  
+  if baseDir == getAppDir() / "assets":
+    result.names.add("Notes")
 
-      of Key.Asterisk, Key.Minus:
-        volumeNotify true, ctx.volume false
-
-      of Key.R:
-        if not isPaused: terminateDestroy ctx
-        illwillDeInit()
-        break
-      of Key.Q:
-        illwillDeInit()
-        exit ctx, isPaused
-      of Key.None: continue
-      else: inv()
-
-proc initJsonLists(sub; file; sect = ""): seq[seq[string]] =
-  var n, l: seq[string] = @[]
-  let input = parseJArray file
-
-  for f in input.low .. input.high:
-    case bool f mod 2:
-      of false: n.add input[f]
-      of true:
-        if input[f].startsWith("http://") or
-          input[f].startsWith "https://":
-          l.add input[f]
-        else: l.add "http://" & input[f]
-  @[n, l]
-
-proc initIndx*(dir = getAppDir() / "assets"): seq[seq[string]] =
-  let appDir = getAppDir() & "/".unixToNativePath
-  var files, names: seq[string]
-
-  for file in walkFiles(dir / "*".unixToNativePath):
-    if dir == appDir & "assets":
-      if file != appDir / "assets" / "qoute.json":
-        files.add file
-    else: files.add file
-    var procFile = file
-    procFile.removePrefix(dir & "/".unixToNativePath)
-    if dir != appDir & "assets":
-      var procFile2 = procFile.rsplit("/".unixToNativePath)
-      procFile = procFile2[procFile2.high]
-    procFile[0] = procFile[0].toUpperAscii
-    procFile.removeSuffix ".json"
-    if dir == appDir & "assets":
-      if procFile != "Qoute":
-        names.add procFile
-    else: names.add procFile
-
-  for directory in walkDirs(dir / "*".unixToNativePath):
-    var procDir = directory
-    procDir.removePrefix(dir & "/".unixToNativePath)
-    procDir = procDir & "/".unixToNativePath
-    files.add procDir
-    names.add procDir
-
-  if dir == appDir & "assets": names.add "Notes"
-  @[names, files]
-
-proc drawMainMenu*(dir = getAppDir() / "assets")
-
-proc menu(sub; file; sect = "") =
-  if sub.endsWith "/".unixToNativePath:
-    drawMainMenu(getAppDir() / "assets" / sub)
+proc handleStationMenu*(section, jsonPath, subsection = "") {.raises: [MenuError].} =
+  ## Handles the station selection menu
+  if section.endsWith(DirSep):
+    drawMainMenu(getAppDir() / "assets" / section)
     return
-  let
-    list = initJsonLists(sub, file, sect)
-    n = list[0]
-    l = list[1]
-
+    
+  let stations = loadStationList(jsonPath)
+  
   while true:
-    var returnBack = false
-    drawMenu sub, n, sect
+    var returnToMain = false
+    drawMenu(section, stations.names, subsection)
     hideCursor()
+    
     while true:
       try:
-        case getch():
-          of '1': call sub, sect, n[0], l[0]; break
-          of '2': call sub, sect, n[1], l[1]; break
-          of '3': call sub, sect, n[2], l[2]; break
-          of '4': call sub, sect, n[3], l[3]; break
-          of '5': call sub, sect, n[4], l[4]; break
-          of '6': call sub, sect, n[5], l[5]; break
-          of '7': call sub, sect, n[6], l[6]; break
-          of '8': call sub, sect, n[7], l[7]; break
-          of '9': call sub, sect, n[8], l[8]; break
-          of 'A', 'a': call sub, sect, n[9], l[9]; break
-          of 'B', 'b': call sub, sect, n[10], l[10]; break
-          of 'C', 'c': call sub, sect, n[11], l[11]; break
-          of 'D', 'd': call sub, sect, n[12], l[12]; break
-          of 'E', 'e': call sub, sect, n[13], l[13]; break
-          of 'F', 'f': call sub, sect, n[14], l[14]; break
-          of 'R', 'r':
-            returnBack = true
+        let key = getch()
+        case key
+        of '1'..'9':
+          let idx = ord(key) - ord('1')
+          if idx < stations.names.len:
+            let config = MenuConfig(
+              currentSection: section,
+              currentSubsection: subsection,
+              stationName: stations.names[idx],
+              stationUrl: stations.urls[idx]
+            )
+            playStation(config)
             break
-          of 'Q', 'q': exitEcho()
-          else: inv()
-      except IndexDefect: inv()
-    if returnBack: break
+        
+        of 'A'..'K':
+          let idx = ord(key) - ord('A') + 9
+          if idx < stations.names.len:
+            let config = MenuConfig(
+              currentSection: section,
+              currentSubsection: subsection,
+              stationName: stations.names[idx],
+              stationUrl: stations.urls[idx]
+            )
+            playStation(config)
+            break
+        
+        of 'R', 'r':
+          returnToMain = true
+          break
+        
+        of 'Q', 'q':
+          exitEcho()
+        
+        else:
+          showInvalidChoice()
+      
+      except IndexDefect:
+        showInvalidChoice()
+    
+    if returnToMain:
+      break
 
-proc drawMainMenu*(dir = getAppDir() / "assets") =
-  let
-    indx = initIndx dir
-    names = indx[0]
-    files = indx[1]
+proc drawMainMenu*(baseDir = getAppDir() / "assets") {.raises: [MenuError].} =
+  ## Draws and handles the main category menu
+  let categories = loadCategories(baseDir)
+  
   while true:
-    var returnBack = false
+    var returnToParent = false
     clear()
     sayTermDraw8()
-    say "Station Categories:", fgGreen
-    sayIter names, ret = if dir != getAppDir() / "assets": true else: false
+    say("Station Categories:", fgGreen)
+    sayIter(categories.names, baseDir != getAppDir() / "assets")
+    
     try:
       while true:
-        case getch():
-          of '1': menu names[0], files[0]; break
-          of '2': menu names[1], files[1]; break
-          of '3': menu names[2], files[2]; break
-          of '4': menu names[3], files[3]; break
-          of '5': menu names[4], files[4]; break
-          of '6': menu names[5], files[5]; break
-          of '7': menu names[6], files[6]; break
-          of '8': menu names[7], files[7]; break
-          of '9': menu names[8], files[8]; break
-          of 'A', 'a': menu names[9], files[9]; break
-          of 'B', 'b': menu names[10], files[10]; break
-          of 'C', 'c': menu names[11], files[11]; break
-          of 'D', 'd': menu names[12], files[12]; break
-          of 'E', 'e': menu names[13], files[13]; break
-          of 'F', 'f': menu names[14], files[14]; break
-          of 'G', 'g': menu names[15], files[15]; break
-          of 'H', 'h': menu names[16], files[16]; break
-          of 'I', 'i': menu names[17], files[17]; break
-          of 'J', 'j': menu names[18], files[18]; break
-          of 'K', 'k': menu names[19], files[19]; break
-          of 'N', 'n': notes(); break
-          of 'R', 'r':
-            if dir != getAppDir() / "assets":
-              returnBack = true
-              break
-            else: inv()
-          of 'q', 'Q': exitEcho()
-          else: inv()
-    except IndexDefect: inv()
-    if returnBack: break
+        let key = getch()
+        case key
+        of '1'..'9':
+          let idx = ord(key) - ord('1')
+          if idx < categories.names.len:
+            handleStationMenu(categories.names[idx], categories.paths[idx])
+            break
+        
+        of 'A'..'K':
+          let idx = ord(key) - ord('A') + 9
+          if idx < categories.names.len:
+            handleStationMenu(categories.names[idx], categories.paths[idx])
+            break
+        
+        of 'N', 'n':
+          showNotes()
+          break
+        
+        of 'R', 'r':
+          if baseDir != getAppDir() / "assets":
+            returnToParent = true
+            break
+          else:
+            showInvalidChoice()
+        
+        of 'Q', 'q':
+          exitEcho()
+        
+        else:
+          showInvalidChoice()
+    
+    except IndexDefect:
+      showInvalidChoice()
+    
+    if returnToParent:
+      break
 
 export hideCursor, error
+
+when isMainModule:
+  try:
+    drawMainMenu()
+  except MenuError as e:
+    error("Menu error: " & e.msg)
