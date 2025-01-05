@@ -1,7 +1,7 @@
 import
-  os,
-  src/[menu, ui],
-  strutils
+  os, src/[menu, ui, player, link, client, illwill], 
+  strutils, terminal, strformat
+  
 
 type
   AppConfig = object
@@ -48,7 +48,7 @@ proc getAppConfig(): AppConfig =
 
 proc showBanner() =
   ## Displays application banner
-  styledEcho(fgCyan, &"""
+  styledEcho(fgCyan, fmt"""
 {AppName} v{Version}
 Copyright (c) 2021-2024
 """)
