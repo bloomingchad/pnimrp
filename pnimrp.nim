@@ -1,7 +1,8 @@
 import
-  os, src/[menu, ui, player, link, client, illwill], 
-  strutils, terminal, strformat
-  
+  os,
+  src/[menu, ui, illwill],
+  terminal, strformat,   std/exitprocs
+
 
 type
   AppConfig = object
@@ -24,20 +25,20 @@ proc validateEnvironment() =
     error "Assets directory not found: " & assetsDir
   
   # Verify required assets exist
-  for asset in RequiredAssets:
-    let assetPath = assetsDir / asset
-    if not fileExists(assetPath):
-      error "Required asset not found: " & assetPath
+  #for asset in RequiredAssets:
+  #  let assetPath = assetsDir / asset
+  #  if not fileExists(assetPath):
+  #    error "Required asset not found: " & assetPath
   
   # Check for write permissions in necessary directories
-  try:
-    let testFile = assetsDir / ".write_test"
-    writeFile(testFile, "")
-    removeFile(testFile)
-  except IOError:
-    error "No write permission in assets directory"
-  except Exception as e:
-    error "Failed to validate environment: " & e.msg
+  #try:
+  #  let testFile = assetsDir / ".write_test"
+  #  writeFile(testFile, "")
+  #  removeFile(testFile)
+  #except IOError:
+  #  error "No write permission in assets directory"
+  #except Exception as e:
+  #  error "Failed to validate environment: " & e.msg
 
 proc getAppConfig(): AppConfig =
   ## Initializes application configuration
@@ -53,7 +54,7 @@ proc showBanner() =
 Copyright (c) 2021-2024
 """)
 
-proc cleanup() {.noconv.} =
+proc cleanup()  =
   ## Performs cleanup on application exit
   showCursor()
   echo "\nThank you for using " & AppName
@@ -68,7 +69,7 @@ proc main() =
   ## Main application entry point
   try:
     # Set up cleanup handler
-    addQuitProc(cleanup)
+    addExitProc(cleanup)  # Updated: Replaced addQuitProc with addExitProc
     
     # Initialize
     validateEnvironment()
