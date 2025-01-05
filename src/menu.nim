@@ -297,7 +297,7 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   while true:
     var returnToParent = false
     clear()
-    sayTermDraw8()
+    drawHeader()
     say("Station Categories:", fgGreen)
     
     # Add numbered display of categories
