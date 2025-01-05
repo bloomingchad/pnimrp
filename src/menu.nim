@@ -223,13 +223,19 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
     result.names.add("Notes")
 
 
-proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
+proc handleStationMenu*(section, jsonPath, subsection = "") {.raises: [MenuError].} =
   ## Handles the station selection menu
   if section.endsWith(DirSep):
-    drawMenu("Main", @[], section)  # Updated: Replaced drawMainMenu with drawMenu
+    drawMenu("Main", @[], section)
     return
-    
+  
+  # Load station list
   let stations = loadStationList(jsonPath)
+  
+  # Check for empty station list
+  if stations.names.len == 0 or stations.urls.len == 0:
+    warn("No stations available. Please check the station list.")
+    return
   
   while true:
     var returnToMain = false
@@ -242,7 +248,7 @@ proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
         case key
         of '1'..'9':
           let idx = ord(key) - ord('1')
-          if idx < stations.names.len:
+          if idx >= 0 and idx < stations.names.len:
             let config = MenuConfig(
               currentSection: section,
               currentSubsection: subsection,
@@ -251,10 +257,12 @@ proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
             )
             playStation(config)
             break
+          else:
+            showInvalidChoice()
         
         of 'A'..'K':
           let idx = ord(key) - ord('A') + 9
-          if idx < stations.names.len:
+          if idx >= 0 and idx < stations.names.len:
             let config = MenuConfig(
               currentSection: section,
               currentSubsection: subsection,
@@ -263,13 +271,15 @@ proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
             )
             playStation(config)
             break
+          else:
+            showInvalidChoice()
         
         of 'R', 'r':
           returnToMain = true
           break
         
         of 'Q', 'q':
-          exitEcho()
+          exit(ctx, false)
           break
         
         else:
