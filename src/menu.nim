@@ -260,7 +260,7 @@ proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
           else:
             showInvalidChoice()
         
-        of 'A'..'K':
+        of 'A'..'K', 'a'..'k':
           let idx = ord(key) - ord('A') + 9
           if idx >= 0 and idx < stations.names.len:
             let config = MenuConfig(
@@ -312,7 +312,7 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
             handleStationMenu(categories.names[idx], categories.paths[idx])
             break
         
-        of 'A'..'K':
+        of 'A'..'K', 'a'..'k':
           let idx = ord(key) - ord('A') + 9
           if idx < categories.names.len:
             handleStationMenu(categories.names[idx], categories.paths[idx])
