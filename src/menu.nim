@@ -223,7 +223,7 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
     result.names.add("Notes")
 
 
-proc handleStationMenu*(section, jsonPath, subsection = "") =
+proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
   ## Handles the station selection menu
   if section.endsWith(DirSep):
     drawMenu("Main", @[], section)  # Updated: Replaced drawMainMenu with drawMenu
