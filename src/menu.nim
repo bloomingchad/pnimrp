@@ -297,11 +297,12 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   while true:
     var returnToParent = false
     clear()
+    sayTermDraw8()
     say("Station Categories:", fgGreen)
     
     # Add numbered display of categories
     for i, name in categories.names:
-      let prefix = if i < 9: $(i + 1) else: chr(ord('A') + i - 9)
+      let prefix = if i < 9: $(i + 1) else: $chr(ord('A') + i - 9)
       say(prefix & "  " & name, fgBlue)
     
     try:
