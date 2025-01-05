@@ -271,8 +271,8 @@ proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
             )
             playStation(config)
             break
-         else:
-           showInvalidChoice()
+          else:
+            showInvalidChoice()
         
         of 'R', 'r':
           returnToMain = true
