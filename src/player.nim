@@ -76,7 +76,7 @@ proc adjustVolume*(ctx: ptr Handle, increase: bool): int {.raises: [PlayerError]
     var currentVolume: int
     cE ctx.getProperty("volume", fmtInt64, addr currentVolume)
     
-    let newVolume = validateVolume(
+    var newVolume = validateVolume(
       if increase: currentVolume + VolumeStep
       else: currentVolume - VolumeStep
     )
