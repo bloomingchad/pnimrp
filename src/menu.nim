@@ -315,8 +315,8 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
         of 'A'..'K', 'a'..'k':
           let idx = ord(toLowerAscii(key)) - ord('a') + 9
           if idx < categories.names.len:
-          handleStationMenu(categories.names[idx], categories.paths[idx])
-          break
+            handleStationMenu(categories.names[idx], categories.paths[idx])
+            break
         
         of 'N', 'n':
           showNotes()
