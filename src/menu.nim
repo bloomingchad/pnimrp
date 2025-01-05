@@ -290,7 +290,6 @@ proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
     
     if returnToMain:
       break
-
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu
   let categories = loadCategories(baseDir)
@@ -298,9 +297,12 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   while true:
     var returnToParent = false
     clear()
-    say("Station Categories:", fgGreen)  # Updated: Replaced sayTermDraw12 with say
-    for name in categories.names:  # Updated: Replaced sayIter with a loop
-      say(name, fgBlue)
+    say("Station Categories:", fgGreen)
+    
+    # Add numbered display of categories
+    for i, name in categories.names:
+      let prefix = if i < 9: $(i + 1) else: chr(ord('A') + i - 9)
+      say(prefix & "  " & name, fgBlue)
     
     try:
       while true:
@@ -341,7 +343,6 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
     
     if returnToParent:
       break
-
 export hideCursor, error
 
 when isMainModule:
