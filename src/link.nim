@@ -1,4 +1,4 @@
-import std/[strutils, httpclient, net, uri, logging]
+import std/[strutils, net, uri, logging]
 
 type
   LinkCheckError* = object of CatchableError
