@@ -261,18 +261,18 @@ proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
             showInvalidChoice()
         
         of 'A'..'K', 'a'..'k':
-          let idx = ord(key) - ord('A') + 9
+          let idx = ord(toLowerAscii(key)) - ord('a') + 9
           if idx >= 0 and idx < stations.names.len:
             let config = MenuConfig(
-              currentSection: section,
-              currentSubsection: subsection,
-              stationName: stations.names[idx],
-              stationUrl: stations.urls[idx]
+               currentSection: section,
+               currentSubsection: subsection,
+               stationName: stations.names[idx],
+               stationUrl: stations.urls[idx]
             )
             playStation(config)
             break
-          else:
-            showInvalidChoice()
+         else:
+           showInvalidChoice()
         
         of 'R', 'r':
           returnToMain = true
@@ -313,10 +313,10 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
             break
         
         of 'A'..'K', 'a'..'k':
-          let idx = ord(key) - ord('A') + 9
+          let idx = ord(toLowerAscii(key)) - ord('a') + 9
           if idx < categories.names.len:
-            handleStationMenu(categories.names[idx], categories.paths[idx])
-            break
+          handleStationMenu(categories.names[idx], categories.paths[idx])
+          break
         
         of 'N', 'n':
           showNotes()
