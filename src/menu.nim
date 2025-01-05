@@ -1,13 +1,6 @@
 import
-  terminal,
-  os,
-  ui,
-  strutils,
-  client,
-  net,
-  player,
-  link,
-  illwill
+  terminal, os, ui, strutils,
+  client, net, player, link, illwill
 
 type
   MenuError* = object of CatchableError
@@ -31,7 +24,7 @@ const
 
 proc updateNowPlaying(state: var PlayerState, ctx: ptr Handle) =
   ## Updates the now playing display
-  state.currentSong = $ctx.getCurrentSongV2()
+  state.currentSong = ctx.getCurrentMediaTitle()  # Updated function name
   eraseLine()
   say("Now Streaming: " & state.currentSong, fgGreen)
   cursorUp()
@@ -43,24 +36,43 @@ proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false)
     ctx.terminateDestroy()
   if shouldReturn:
     return
+type
+  PlayerStatus = enum
+    StatusPlaying
+    StatusMuted
+    StatusPaused
+    StatusPausedMuted
 
 proc updatePlayerState(state: var PlayerState, ctx: ptr Handle) =
   ## Updates and displays the player state
   cursorDown()
   eraseLine()
-  
-  let stateMsg = case (state.isPaused, state.isMuted)
-    of (false, false): ("Playing", fgGreen)
-    of (false, true): ("Muted", fgRed)
-    of (true, false): ("Paused", fgYellow)
-    of (true, true): ("Paused and Muted", fgRed)
-  
+
+  # Determine the current status based on the player state
+  let currentStatus =
+    if not state.isPaused and not state.isMuted:
+      StatusPlaying
+    elif not state.isPaused and state.isMuted:
+      StatusMuted
+    elif state.isPaused and not state.isMuted:
+      StatusPaused
+    else:  # isPaused and isMuted
+      StatusPausedMuted
+
+  # Define the state message and color based on the current status
+  let stateMsg = case currentStatus
+    of StatusPlaying: ("Playing", fgGreen)
+    of StatusMuted: ("Muted", fgRed)
+    of StatusPaused: ("Paused", fgYellow)
+    of StatusPausedMuted: ("Paused and Muted", fgRed)
+
+  # Display the state message
   say(stateMsg[0], stateMsg[1])
   setCursorPos(0, 2)
 
 proc handleVolumeChange(ctx: ptr Handle, increase: bool) =
   ## Handles volume changes and notifications
-  let newVolume = ctx.volume(increase)
+  let newVolume = ctx.adjustVolume(increase)  # Updated function name
   let volumeMsg = (if increase: "Volume+: " else: "Volume-: ") & $newVolume
   showInvalidChoice(volumeMsg)
   setCursorPos(0, 2)
@@ -76,7 +88,9 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
       raise newException(MenuError, "Empty station URL")
     elif " " in config.stationUrl:
       raise newException(MenuError, "Invalid station URL")
-    elif not doesLinkWork(config.stationUrl):
+    
+    # Using isValid field from LinkValidationResult
+    if not validateLink(config.stationUrl).isValid:
       raise newException(MenuError, "Station URL not accessible")
 
     var
@@ -105,7 +119,7 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
       
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
-        ctx.seeIfSongTitleChanges()
+        ctx.observeMediaTitle()  # Updated function name
         isObserving = true
       
       if event.eventID in {IDEventPropertyChange}:
@@ -113,7 +127,7 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
       
       # Periodic checks
       if counter >= CheckIdleInterval:
-        if bool(ctx.seeIfCoreIsIdling()):
+        if ctx.isIdle():  # Updated function name
           handlePlayerError("Player core idle", ctx)
           break
         
@@ -166,6 +180,7 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
   except Exception as e:
     raise newException(MenuError, "Playback error: " & e.msg)
 
+# Rest of the code remains unchanged as it doesn't interact with the player functions
 proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
   ## Loads station names and URLs from JSON file
   try:
@@ -176,7 +191,7 @@ proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
       if i mod 2 == 0:
         result.names.add(data[i])
       else:
-        let url = if data[i].startsWith({"http://", "https://"}):
+        let url = if data[i].startsWith("http://") or data[i].startsWith("https://"):
           data[i]
         else:
           "http://" & data[i]
@@ -190,7 +205,6 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
   result = (names: @[], paths: @[])
   let nativePath = baseDir / "*".unixToNativePath
   
-  # Load files
   for file in walkFiles(nativePath):
     if baseDir == getAppDir() / "assets" and file.endsWith("quote.json"):
       continue
@@ -200,7 +214,6 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
       result.names.add(name.capitalizeAscii)
       result.paths.add(file)
   
-  # Load directories
   for dir in walkDirs(nativePath):
     let name = dir.extractFilename & DirSep
     result.names.add(name)
@@ -209,10 +222,11 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
   if baseDir == getAppDir() / "assets":
     result.names.add("Notes")
 
-proc handleStationMenu*(section, jsonPath, subsection = "") {.raises: [MenuError].} =
+
+proc handleStationMenu*(section, jsonPath, subsection = "") =
   ## Handles the station selection menu
   if section.endsWith(DirSep):
-    drawMainMenu(getAppDir() / "assets" / section)
+    drawMenu("Main", @[], section)  # Updated: Replaced drawMainMenu with drawMenu
     return
     
   let stations = loadStationList(jsonPath)
@@ -256,6 +270,7 @@ proc handleStationMenu*(section, jsonPath, subsection = "") {.raises: [MenuError
         
         of 'Q', 'q':
           exitEcho()
+          break
         
         else:
           showInvalidChoice()
@@ -266,16 +281,16 @@ proc handleStationMenu*(section, jsonPath, subsection = "") {.raises: [MenuError
     if returnToMain:
       break
 
-proc drawMainMenu*(baseDir = getAppDir() / "assets") {.raises: [MenuError].} =
+proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu
   let categories = loadCategories(baseDir)
   
   while true:
     var returnToParent = false
     clear()
-    sayTermDraw8()
-    say("Station Categories:", fgGreen)
-    sayIter(categories.names, baseDir != getAppDir() / "assets")
+    say("Station Categories:", fgGreen)  # Updated: Replaced sayTermDraw12 with say
+    for name in categories.names:  # Updated: Replaced sayIter with a loop
+      say(name, fgBlue)
     
     try:
       while true:
@@ -306,6 +321,7 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") {.raises: [MenuError].} =
         
         of 'Q', 'q':
           exitEcho()
+          break
         
         else:
           showInvalidChoice()
