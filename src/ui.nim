@@ -13,6 +13,7 @@ type
     quotes: seq[string]
     authors: seq[string]
 
+using str :string
 const
   AppName* = "Poor Mans Radio Player"
   AppNameShort* = "PNimRP"
@@ -26,6 +27,22 @@ const
     'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
     'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
   ]
+proc error*(message: string) =
+  ## Displays error message and exits program
+  styledEcho(fgRed, "Error: ", message)
+  quit(QuitFailure)
+
+proc parseJArray*(str): seq[string] =
+  try:
+    result = to(
+      parseJson(readFile(str)){"pnimrp"},
+      seq[string]
+    )
+  except IOError: error "base assets dont exist?"
+
+  if result.len mod 2 != 0:
+    error "JArrayResult.len not even"
+
 
 proc loadQuotes(filePath: string): QuoteData =
   ## Loads and validates quotes from JSON file
@@ -58,10 +75,6 @@ proc clear* =
   eraseScreen()
   setCursorPos(0, 0)
 
-proc error*(message: string) {.noReturn.} =
-  ## Displays error message and exits program
-  styledEcho(fgRed, "Error: ", message)
-  quit(QuitFailure)
 
 proc warn*(message: string, xOffset = 4, color = fgRed) =
   ## Displays warning message with delay
@@ -93,6 +106,40 @@ proc say*(
       styledEcho(color, message)
   else:
     styledEcho(color, message)
+
+proc exitEcho* =
+  showCursor()
+  echo ""
+  randomize()
+
+  let seq = parseJArray getAppDir() / "assets" / "qoute.json"
+  var qoutes, authors: seq[string] = @[]
+
+  for i in 0 .. seq.high:
+    case i mod 2:
+      of 0: qoutes.add seq[i]
+      else: authors.add seq[i]
+
+  let rand = rand 0 .. qoutes.high
+
+  when not defined(release) or
+    not defined(danger):
+    echo ("free mem: " & $(getFreeMem() / 1024)) & " kB"
+    echo ("total/max mem: " & $(getTotalMem() / 1024)) & " kB"
+    echo ("occupied mem: " & $(getOccupiedMem() / 1024)) & " kB"
+
+  if qoutes[rand] == "": error "no qoute"
+
+  styledEcho fgCyan, qoutes[rand], "..."
+  setCursorXPos 15
+  styledEcho fgGreen, "—", authors[rand]
+
+  if authors[rand] == "":
+    error "there can no be qoute without man"
+    if rand*2 != -1:
+      error ("@ line: " & $(rand*2)) & " in qoute.json"
+
+  quit QuitSuccess
 
 proc drawHeader* =
   ## Draws application header with decorative lines
