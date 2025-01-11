@@ -355,7 +355,7 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
     drawHeader()
     
     # Display the menu
-    drawMenu("Main", categories.names)
+    drawMenu("Main", categories.names, isMainMenu = true)
     
     try:
       while true:
