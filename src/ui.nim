@@ -1,17 +1,36 @@
 import
-  terminal, client, random,
-  json, strutils, os
+  terminal,
+  client,
+  random,
+  json,
+  strutils,
+  os
 
-using
-  str: string
+type
+  UIError* = object of CatchableError
+  MenuOptions* = seq[string]
+  QuoteData = object
+    quotes: seq[string]
+    authors: seq[string]
 
-proc clear* =
-  eraseScreen()
-  setCursorPos 0, 0
-
-proc error*(str) =
-  styledEcho fgRed, "Error: ", str
-  quit QuitFailure
+using str :string
+const
+  AppName* = "Poor Mans Radio Player"
+  AppNameShort* = "PNimRP"
+  DefaultErrorMsg = "INVALID CHOICE"
+  MinTerminalWidth = 40
+  
+  # Characters for menu options
+  MenuChars = @[
+    '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+    'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+  ]
+proc error*(message: string) =
+  ## Displays error message and exits program
+  styledEcho(fgRed, "Error: ", message)
+  quit(QuitFailure)
 
 proc parseJArray*(str): seq[string] =
   try:
@@ -23,6 +42,68 @@ proc parseJArray*(str): seq[string] =
 
   if result.len mod 2 != 0:
     error "JArrayResult.len not even"
+
+proc loadQuotes(filePath: string): QuoteData =
+  ## Loads and validates quotes from JSON file
+  try:
+    let jsonData = parseJArray(filePath)
+    if jsonData.len mod 2 != 0:
+      raise newException(UIError, "Quote data must have matching quotes and authors")
+    
+    result = QuoteData(quotes: @[], authors: @[])
+    for i in 0 .. jsonData.high:
+      if i mod 2 == 0:
+        result.quotes.add(jsonData[i])
+      else:
+        result.authors.add(jsonData[i])
+        
+    # Validate quotes and authors
+    for i in 0 ..< result.quotes.len:
+      if result.quotes[i].len == 0:
+        raise newException(UIError, "Empty quote found at index " & $i)
+      if result.authors[i].len == 0:
+        raise newException(UIError, "Empty author found for quote at index " & $i)
+        
+  except IOError:
+    raise newException(UIError, "Failed to load quotes: File not found")
+  except JsonParsingError:
+    raise newException(UIError, "Failed to parse quotes: Invalid JSON format")
+
+proc clear* =
+  ## Clears the screen and resets cursor position
+  eraseScreen()
+  setCursorPos(0, 0)
+
+proc warn*(message: string, xOffset = 4, color = fgRed) =
+  ## Displays warning message with delay
+  if xOffset >= 0:
+    setCursorXPos(xOffset)
+  styledEcho(color, message)
+  sleep(750)
+
+proc showInvalidChoice*(message = DefaultErrorMsg) =
+  ## Shows invalid choice message and repositions cursor
+  cursorDown(2)
+  warn(message)
+  cursorUp()
+  eraseLine()
+  cursorUp(2)
+
+proc say*(
+  message: string,
+  color = fgYellow,
+  xOffset = 5,
+  shouldEcho = true
+) =
+  ## Displays styled text at specified position
+  if color in {fgBlue, fgGreen}:
+    setCursorXPos(xOffset)
+    if color == fgGreen and not shouldEcho:
+      stdout.styledWrite(fgGreen, message)
+    else:
+      styledEcho(color, message)
+  else:
+    styledEcho(color, message)
 
 proc exitEcho* =
   showCursor()
@@ -58,85 +139,289 @@ proc exitEcho* =
 
   quit QuitSuccess
 
-proc say*(str; color = fgYellow; x = 5; echo = true) =
-  if color == fgBlue: setCursorXPos x
-  if color == fgGreen:
-    setCursorXPos x
-    if echo: styledEcho fgGreen, str
-    else: stdout.styledWrite fgGreen, str
-  else: styledEcho color, str #fgBlue would get true here
+proc drawHeader* =
+  ## Draws the application header with decorative lines and emojis.
+  let termWidth = terminalWidth()
+  if termWidth < MinTerminalWidth:
+    raise newException(UIError, "Terminal width too small.")
+  
+  # Draw the top border
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  
+  # Draw the application title with emojis
+  let title = "       🎧 " & AppName & " 🎧"
+  say(title, fgYellow, xOffset = (termWidth - title.len) div 2)
+  
+  # Draw the bottom border of the header
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
 
-proc sayIter(str) =
-  for f in splitLines str:
-    say f, fgBlue
+proc displayMenu*(
+  optionss: MenuOptions,
+  showReturnOption = true,
+  highlightActive = true,
+  isMainMenu = false
+) =
+  ## Displays menu options in a formatted multi-column layout.
+  ## Dynamically switches between 3 columns and 2 columns based on terminal width.
+  ## Columns are dynamically spaced based on the longest item in each column.
+  ## Spacing between columns adjusts dynamically (minimum 4 spaces).
+  ## Errors out if the terminal width is too small to display the menu.
+  let termWidth = terminalWidth()
+  
+  var options = optionss
+  if isMainMenu:
+    options.delete(options.len - 1) # Remove notes
 
-proc sayIter*(txt: seq[string]; ret = true) =
-  const chars =
-    @[
-      '1', '2', '3', '4', '5',
-      '6', '7', '8', '9', 'A',
-      'B', 'C', 'D', 'E', 'F',
-      'G', 'H', 'I', 'J', 'K',
-      'L', 'M', 'N', 'O', 'P',
-      'Q', 'R', 'S', 'T', 'U',
-      'V', 'W', 'X', 'Y', 'Z'
-    ]
-  var num = 0
-  for f in txt:
-    if f != "Notes": say ($chars[num] & " ") & f, fgBlue
-    else: say "N Notes", fgBlue
-    inc num
-  if ret: say "R Return", fgBlue
-  say "Q Quit", fgBlue
+  # Draw the "Station Categories" section header
+  let categoriesHeader = "         📻 Station Categories 📻"
+  say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
 
-proc warn*(str; x = 4; colour = fgRed) =
-  if x != -1: setCursorXPos x
-  styledEcho colour, str
-  sleep 750
+  # Draw the separator line
+  let separatorLine = "-".repeat(termWidth)
+  say(separatorLine, fgGreen, xOffset = 0)
 
-proc inv*(str = "INVALID CHOICE") =
-  cursorDown()
-  cursorDown()
-  warn str
-  cursorUp()
-  eraseLine()
-  cursorUp()
-  cursorUp()
+  # Determine the number of columns based on terminal width
+  const minColumns = 2
+  const maxColumns = 3
+  var numColumns = maxColumns
 
-proc sayTermDraw8* =
-  say "Poor Mans Radio Player in Nim-lang " &
-      '-'.repeat int terminalWidth() / 8
+  # Check if the terminal width is too small for 3 columns
+  if termWidth < 80:  # Adjust this threshold as needed
+    numColumns = minColumns
 
-proc sayTermDraw12* =
-  say('-'.repeat((terminalWidth()/8).int) &
-      '>'.repeat int terminalWidth() / 12, fgGreen, x = 2)
+  # Calculate the number of items per column
+  let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
-proc drawMenu*(sub: string, x: string | seq[string], sect = ""; playingMusic = true) =
+  # Find the maximum length of items in each column (including prefix)
+  var maxColumnLengths = newSeq[int](numColumns)  # Use a seq instead of an array
+  for i in 0 ..< options.len:
+    let columnIndex = i div itemsPerColumn
+    let prefix =
+      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
+      else:
+        if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
+        else: "?" # Fallback
+    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
+    if itemLength > maxColumnLengths[columnIndex]:
+      maxColumnLengths[columnIndex] = itemLength
+
+  # Calculate the total width required for all columns (without spacing)
+  var totalWidth = 0
+  for length in maxColumnLengths:
+    totalWidth += length
+
+  # Calculate the required spacing between columns
+  let minSpacing = 4  # Minimum spacing between columns
+  let maxSpacing = 6  # Maximum spacing between columns
+  var spacing = maxSpacing
+
+  # Adjust spacing if the terminal width is too small
+  while spacing >= minSpacing:
+    let totalWidthWithSpacing = totalWidth + spacing * (numColumns - 1)
+    if totalWidthWithSpacing <= termWidth:
+      break  # We have enough space with the current spacing
+    spacing -= 1  # Reduce spacing and try again
+
+  # Check if we have enough space even with the minimum spacing
+  if spacing < minSpacing:
+    raise newException(UIError, "Terminal width too small to display menu without overlap. Required width: " & $(totalWidth + minSpacing * (numColumns - 1)) & ", available width: " & $termWidth)
+
+  # Calculate the starting position for each column
+  var columnPositions = newSeq[int](numColumns)  # Use a seq instead of an array
+  columnPositions[0] = 0
+  for i in 1 ..< numColumns:
+    columnPositions[i] = columnPositions[i - 1] + maxColumnLengths[i - 1] + spacing
+
+  # Display menu options in a multi-column layout
+  for row in 0 ..< itemsPerColumn:
+    var currentLine = ""
+    for col in 0 ..< numColumns:
+      let index = row + col * itemsPerColumn
+      if index < options.len:
+        # Calculate the prefix for the menu option
+        let prefix =
+          if index < 9: $(index + 1) & "."  # Use numbers 1-9 for the first 9 options
+          else:
+            if index < MenuChars.len: $MenuChars[index] & "." # Use A-Z for the next options
+            else: "?" # Fallback
+
+        let formattedOption = prefix & " " & options[index]
+        let padding = maxColumnLengths[col] - formattedOption.len
+        currentLine.add(formattedOption & " ".repeat(padding))
+      else:
+        # Add empty space if there are no more items in this column
+        currentLine.add(" ".repeat(maxColumnLengths[col]))
+
+      # Add spacing between columns (dynamic spacing)
+      if col < numColumns - 1:
+        currentLine.add(" ".repeat(spacing))
+
+    say(currentLine, fgBlue)
+
+  # Draw the separator line
+  say(separatorLine, fgGreen, xOffset = 0)
+
+  # Display the footer options
+  let footerOptions = "[Q] Quit   [R] Return   [N] Notes"
+  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+
+  # Draw the bottom border
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+
+proc drawMenu*(
+  section: string,
+  options: string | MenuOptions,
+  subsection = "",
+  showNowPlaying = true,
+  isMainMenu = false) =
+  ## Draws a complete menu with header and options.
   clear()
-  if sect == "": say "PNimRP > " & sub
-  else: say ("PNimRP > " & sub) & (" > " & sect)
+  
+  # Draw header
+  drawHeader()
+  # Display menu options
+  when options is string:
+    for line in splitLines(options):
+      say(line, fgBlue)
+  else:
+    displayMenu(options)
 
-  sayTermDraw12()
-  if playingMusic:
-    say( (if sect == "": sub else: sect) &
-      " Stations Playing Music:", fgGreen)
-  sayIter x
+proc showExitMessage* =
+  ## Shows exit message with random quote
+  showCursor()
+  echo ""
+  
+  try:
+    randomize()
+    let 
+      quotePath = getAppDir() / "assets" / "quote.json"
+      quoteData = loadQuotes(quotePath)
+      randomIndex = rand(0 ..< quoteData.quotes.len)
+    
+    when not defined(release) or not defined(danger):
+      echo "Memory Statistics:"
+      echo "  Free: ", getFreeMem() div 1024, " kB"
+      echo "  Total: ", getTotalMem() div 1024, " kB"
+      echo "  Occupied: ", getOccupiedMem() div 1024, " kB"
+    
+    styledEcho(fgCyan, quoteData.quotes[randomIndex], "...")
+    setCursorXPos(15)
+    styledEcho(fgGreen, "—", quoteData.authors[randomIndex])
+    
+  except UIError as e:
+    error("Failed to show exit message: " & e.msg)
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
-  if not isPaused: ctx.terminateDestroy
-  exitEcho()
+  ## Cleanly exits the application
+  if not isPaused:
+    ctx.terminateDestroy()
+  showExitMessage()
+  quit(QuitSuccess)
 
-proc notes* =
+proc showNotes* =
+  ## Displays application notes/about section
   while true:
-    var returnBack = false
-
-    drawMenu "Notes", """PNimRP Copyright (C) 2021-2024 antonl05/bloomingchad
+    var shouldReturn = false
+    drawMenu(
+      "Notes",
+      """PNimRP Copyright (C) 2021-2024 antonl05/bloomingchad
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
-under certain conditions.""", playingMusic = false
+under certain conditions.""",
+      showNowPlaying = false
+    )
+    
     while true:
       case getch():
-        of 'r', 'R': returnBack = true; break
-        of 'Q', 'q': exitEcho()
-        else: inv()
-    if returnBack: break
+        of 'r', 'R':
+          shouldReturn = true
+          break
+        of 'q', 'Q':
+          showExitMessage()
+        else:
+          showInvalidChoice()
+    
+    if shouldReturn:
+      break
+
+proc drawHeader*(section: string) =
+  ## Draws the application header with the current section
+  let termWidth = terminalWidth()
+  if termWidth < MinTerminalWidth:
+    raise newException(UIError, "Terminal width too small")
+  
+  # Draw header
+  say(AppNameShort & " > " & section, fgGreen)
+  say("-".repeat(termWidth), fgGreen)
+
+# Module-level variable to track the previous volume
+var lastVolume*: int = -1
+
+proc volumeColor(volume: int): ForegroundColor =
+  if volume > 110: fgRed
+  elif volume < 60: fgBlue
+  else: 
+    fgGreen
+
+proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
+  ## Draws the modern music player UI with dynamic layout and visual enhancements.
+  ## Adjusts layout for wide and narrow screens, colors volume percentage, and anchors the footer to the bottom.
+  clear()
+  
+  let termWidth = terminalWidth()
+
+  # Draw header
+  setCursorPos(0, 0)  # Line 0
+  say(AppNameShort & " > " & section, fgYellow)
+  
+  # Draw separator
+  setCursorPos(1, 1)  # Line 1
+  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  
+  # Display "Now Playing"
+  setCursorPos(0, 2)  # Line 2 (below the separator)
+  say("Now Playing: " & nowPlaying, fgCyan)
+  
+  # Display status and volume
+  setCursorPos(0, 3)  # Line 3
+  let volumeColor = volumeColor(volume)
+  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+  styledEcho(volumeColor, $volume & "%")
+  
+  # Draw separator
+  setCursorPos(0, 4)  # Line 4
+  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  
+  # Add footer with controls at the bottom
+  setCursorPos(0, 6)  # Line 6
+  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"
+  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+  
+  # Draw bottom border
+  setCursorPos(0, 7)  # Line 7
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+
+proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
+  let termWidth = terminalWidth()
+
+  # Always update "Now Playing"
+  setCursorPos(0, 2)  # Line 2
+  eraseLine()
+  say("Now Playing: " & nowPlaying, fgCyan)
+
+  # Update volume (only if it has changed)
+  if volume != lastVolume:
+    setCursorPos(0, 3)  # Line 3
+    eraseLine()
+    let volumeColor = volumeColor(volume)
+    say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+    styledEcho(volumeColor, $volume & "%")
+    lastVolume = volume
+
+  # Ensure footer and bottom border remain visible
+  setCursorPos(0, 6)  # Line 6
+  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"
+  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+  
+  setCursorPos(0, 7)  # Line 7
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
