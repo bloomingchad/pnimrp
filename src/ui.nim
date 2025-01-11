@@ -162,52 +162,95 @@ proc displayMenu*(
   isMainMenu = false
 ) =
   ## Displays menu options in a formatted multi-column layout.
+  ## Columns are dynamically spaced based on the longest item in each column.
+  ## Spacing between columns adjusts dynamically (minimum 4 spaces).
+  ## Errors out if the terminal width is too small to display the menu.
   let termWidth = terminalWidth()
   
   var options = optionss
   if isMainMenu:
-    options.delete(options.len - 1) #remove notes
+    options.delete(options.len - 1) # Remove notes
 
   # Draw the "Station Categories" section header
-  let categoriesHeader = "           📻 Station Categories 📻"
+  let categoriesHeader = "          📻 Station Categories 📻"
   say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
 
   # Draw the separator line
-  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  let separatorLine = "-".repeat(termWidth)
+  say(separatorLine, fgGreen, xOffset = 0)
 
-  # Calculate column width and spacing
-  let columnWidth = (termWidth - 8) div 3  # Subtract 8 for margins and borders
-  let spacing = columnWidth - 5  # Subtract 5 for prefix (e.g., "1. ")
+  # Calculate the number of columns
+  const numColumns = 3
+  let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
-  # Display menu options in a 3-column layout
-  var currentLine = ""
-
+  # Find the maximum length of items in each column (including prefix)
+  var maxColumnLengths: array[numColumns, int]
   for i in 0 ..< options.len:
-
-    # Calculate the prefix for the menu option (CORRECTED LOGIC)
+    let columnIndex = i div itemsPerColumn
     let prefix =
       if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
       else:
         if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
-        else: "?" #fallback
+        else: "?" # Fallback
+    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
+    if itemLength > maxColumnLengths[columnIndex]:
+      maxColumnLengths[columnIndex] = itemLength
 
-    let
-      formattedOption = prefix & " " & options[i]
-      padding = max(0, spacing - formattedOption.len)  # Calculate padding
-    
-    currentLine.add(formattedOption & " ".repeat(padding)) # Add formatted option to current line with padding
+  # Calculate the total width required for all columns (without spacing)
+  var totalWidth = 0
+  for length in maxColumnLengths:
+    totalWidth += length
 
-    # Move to the next line if 3 columns are filled
-    if (i + 1) mod 3 == 0:
-      say(currentLine, fgBlue, xOffset = 4)
-      currentLine = ""
+  # Calculate the required spacing between columns
+  let minSpacing = 4  # Minimum spacing between columns
+  let maxSpacing = 6  # Maximum spacing between columns
+  var spacing = maxSpacing
 
-  # Display any remaining options in the last line
-  if currentLine.len > 0:
-    say(currentLine, fgBlue, xOffset = 4)
+  # Adjust spacing if the terminal width is too small
+  while spacing >= minSpacing:
+    let totalWidthWithSpacing = totalWidth + spacing * (numColumns - 1)
+    if totalWidthWithSpacing <= termWidth:
+      break  # We have enough space with the current spacing
+    spacing -= 1  # Reduce spacing and try again
+
+  # Check if we have enough space even with the minimum spacing
+  if spacing < minSpacing:
+    raise newException(UIError, "Terminal width too small to display menu without overlap. Required width: " & $(totalWidth + minSpacing * (numColumns - 1)) & ", available width: " & $termWidth)
+
+  # Calculate the starting position for each column
+  var columnPositions: array[numColumns, int]
+  columnPositions[0] = 0
+  for i in 1 ..< numColumns:
+    columnPositions[i] = columnPositions[i - 1] + maxColumnLengths[i - 1] + spacing
+
+  # Display menu options in a multi-column layout
+  for row in 0 ..< itemsPerColumn:
+    var currentLine = ""
+    for col in 0 ..< numColumns:
+      let index = row + col * itemsPerColumn
+      if index < options.len:
+        # Calculate the prefix for the menu option
+        let prefix =
+          if index < 9: $(index + 1) & "."  # Use numbers 1-9 for the first 9 options
+          else:
+            if index < MenuChars.len: $MenuChars[index] & "." # Use A-Z for the next options
+            else: "?" # Fallback
+
+        let formattedOption = prefix & " " & options[index]
+        let padding = maxColumnLengths[col] - formattedOption.len
+        currentLine.add(formattedOption & " ".repeat(padding))
+      else:
+        # Add empty space if there are no more items in this column
+        currentLine.add(" ".repeat(maxColumnLengths[col]))
+
+      # Add spacing between columns (dynamic spacing)
+      if col < numColumns - 1:
+        currentLine.add(" ".repeat(spacing))
+
+    say(currentLine, fgBlue)
 
   # Draw the separator line
-  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  say(separatorLine, fgGreen, xOffset = 0)
 
   # Display the footer options
   let footerOptions = "[Q] Quit   [R] Return   [N] Notes"
