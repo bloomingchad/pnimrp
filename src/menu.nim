@@ -89,13 +89,13 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
     elif " " in config.stationUrl:
       raise newException(MenuError, "Invalid station URL")
     
-    # Using isValid field from LinkValidationResult
+    # Validate the link
     if not validateLink(config.stationUrl).isValid:
       raise newException(MenuError, "Station URL not accessible")
 
     var
       ctx = create()
-      state = PlayerState(isPaused: false, isMuted: false)
+      state = PlayerState(isPaused: false, isMuted: false, volume: 50)
       isObserving = false
       counter: uint8
       playlistFirstPass = false
@@ -108,10 +108,8 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
     except:
       discard  # Non-critical failure
     
-    cursorDown()
-    say("Playing", fgGreen)
-    cursorDown()
-    setCursorPos(0, 2)
+    # Draw the initial player UI
+    drawPlayerUI(config.stationName, "Loading...", "Playing", state.volume)
     
     while true:
       if not state.isPaused:
@@ -119,15 +117,16 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
       
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
-        ctx.observeMediaTitle()  # Updated function name
+        ctx.observeMediaTitle()
         isObserving = true
       
       if event.eventID in {IDEventPropertyChange}:
-        updateNowPlaying(state, ctx)
+        state.currentSong = ctx.getCurrentMediaTitle()
+        updatePlayerUI(state.currentSong, "Playing", state.volume)
       
       # Periodic checks
       if counter >= CheckIdleInterval:
-        if ctx.isIdle():  # Updated function name
+        if ctx.isIdle():
           handlePlayerError("Player core idle", ctx)
           break
         
@@ -148,18 +147,22 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
         of Key.P:
           state.isPaused = not state.isPaused
           ctx.pause(state.isPaused)
-          updatePlayerState(state, ctx)
+          updatePlayerUI(state.currentSong, if state.isPaused: "Paused" else: "Playing", state.volume)
         
         of Key.M:
           state.isMuted = not state.isMuted
           ctx.mute(state.isMuted)
-          updatePlayerState(state, ctx)
+          updatePlayerUI(state.currentSong, if state.isMuted: "Muted" else: "Playing", state.volume)
         
         of Key.Slash, Key.Plus:
-          handleVolumeChange(ctx, true)
+          state.volume = min(state.volume + 5, 100)
+          cE ctx.setProperty("volume", fmtInt64, addr state.volume)
+          updatePlayerUI(state.currentSong, "Playing", state.volume)
         
         of Key.Asterisk, Key.Minus:
-          handleVolumeChange(ctx, false)
+          state.volume = max(state.volume - 5, 0)
+          cE ctx.setProperty("volume", fmtInt64, addr state.volume)
+          updatePlayerUI(state.currentSong, "Playing", state.volume)
         
         of Key.R:
           if not state.isPaused:
@@ -223,73 +226,131 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
     result.names.add("Notes")
 
 
-proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
-  ## Handles the station selection menu
-  if section.endsWith(DirSep):
-    drawMenu("Main", @[""], section)
-    return
-  
-  # Load station list
-  let stations = loadStationList(jsonPath)
-  
-  # Check for empty station list
-  if stations.names.len == 0 or stations.urls.len == 0:
-    warn("No stations available. Please check the station list.")
-    return
-  
-  while true:
-    var returnToMain = false
-    drawMenu(section, stations.names, subsection)
-    hideCursor()
-    
+proc handleStationMenu*(section = ""; jsonPathOrDir = ""; subsection = "") =
+  ## Handles the station selection menu, supporting both JSON files and folders.
+  ## 
+  ## Args:
+  ##   section: The current section name (e.g., "Main" or "Rock").
+  ##   jsonPathOrDir: Path to a JSON file or directory containing JSON files.
+  ##   subsection: The subsection name (e.g., "Rock" or "Jazz").
+  if dirExists(jsonPathOrDir):
+    # This is a directory, so list JSON files within it
+    var subStationNames: seq[string] = @[]
+    var subStationPaths: seq[string] = @[]
+
+    for file in walkFiles(jsonPathOrDir / "*.json"):
+      let name = file.extractFilename.changeFileExt("").capitalizeAscii
+      subStationNames.add(name)
+      subStationPaths.add(file)
+
+    if subStationNames.len == 0:
+      warn("No station lists available in this category.")
+      return
+
     while true:
-      try:
-        let key = getch()
-        case key
-        of '1'..'9':
-          let idx = ord(key) - ord('1')
-          if idx >= 0 and idx < stations.names.len:
-            let config = MenuConfig(
-              currentSection: section,
-              currentSubsection: subsection,
-              stationName: stations.names[idx],
-              stationUrl: stations.urls[idx]
-            )
-            playStation(config)
+      var returnToMain = false
+      drawMenu(section, subStationNames, subsection)
+      hideCursor()
+
+      while true:
+        try:
+          let key = getch()
+          case key
+          of '1'..'9':
+            let idx = ord(key) - ord('1')
+            if idx >= 0 and idx < subStationNames.len:
+              handleStationMenu(subStationNames[idx], subStationPaths[idx], section)
+              break
+            else:
+              showInvalidChoice()
+
+          of 'A'..'K', 'a'..'k':
+            let idx = ord(toLowerAscii(key)) - ord('a') + 9
+            if idx >= 0 and idx < subStationNames.len:
+              handleStationMenu(subStationNames[idx], subStationPaths[idx], section)
+              break
+            else:
+              showInvalidChoice()
+
+          of 'R', 'r':
+            returnToMain = true
             break
+
+          of 'Q', 'q':
+            exitEcho()
+            break
+
           else:
             showInvalidChoice()
-        
-        of 'A'..'K', 'a'..'k':
-          let idx = ord(toLowerAscii(key)) - ord('a') + 9
-          if idx >= 0 and idx < stations.names.len:
-            let config = MenuConfig(
-               currentSection: section,
-               currentSubsection: subsection,
-               stationName: stations.names[idx],
-               stationUrl: stations.urls[idx]
-            )
-            playStation(config)
-            break
-          else:
-            showInvalidChoice()
-        
-        of 'R', 'r':
-          returnToMain = true
-          break
-        
-        of 'Q', 'q':
-          exitEcho()
-          break
-        
-        else:
+
+        except IndexDefect:
           showInvalidChoice()
-      
-      except IndexDefect:
-        showInvalidChoice()
-    
-    if returnToMain:
-      break
+
+      if returnToMain:
+        break
+  elif fileExists(jsonPathOrDir):
+    # This is a JSON file, proceed as before
+    let stations = loadStationList(jsonPathOrDir)
+    if stations.names.len == 0 or stations.urls.len == 0:
+      warn("No stations available. Please check the station list.")
+      return
+
+    while true:
+      var returnToMain = false
+      drawMenu(section, stations.names, subsection)
+      hideCursor()
+
+      while true:
+        try:
+          let key = getch()
+          case key
+          of '1'..'9':
+            let idx = ord(key) - ord('1')
+            if idx >= 0 and idx < stations.names.len:
+              let config = MenuConfig(
+                currentSection: section,
+                currentSubsection: subsection,
+                stationName: stations.names[idx],
+                stationUrl: stations.urls[idx]
+              )
+              playStation(config)
+              break
+            else:
+              showInvalidChoice()
+
+          of 'A'..'K', 'a'..'k':
+            let idx = ord(toLowerAscii(key)) - ord('a') + 9
+            if idx >= 0 and idx < stations.names.len:
+              let config = MenuConfig(
+                currentSection: section,
+                currentSubsection: subsection,
+                stationName: stations.names[idx],
+                stationUrl: stations.urls[idx]
+              )
+              playStation(config)
+              break
+            else:
+              showInvalidChoice()
+
+          of 'R', 'r':
+            returnToMain = true
+            break
+
+          of 'Q', 'q':
+            exitEcho()
+            break
+
+          else:
+            showInvalidChoice()
+
+        except IndexDefect:
+          showInvalidChoice()
+
+      if returnToMain:
+        break
+  else:
+    warn("Invalid path: " & jsonPathOrDir)
+
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu
   let categories = loadCategories(baseDir)
