@@ -357,6 +357,12 @@ proc drawHeader*(section: string) =
 # Module-level variable to track the previous volume
 var lastVolume*: int = -1
 
+proc volumeColor(volume: int): ForegroundColor =
+  if volume > 110: fgRed
+  elif volume < 60: fgBlue
+  else: 
+    fgGreen
+
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.
   ## Adjusts layout for wide and narrow screens, colors volume percentage, and anchors the footer to the bottom.
@@ -378,11 +384,7 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   
   # Display status and volume
   setCursorPos(0, 3)  # Line 3
-  let volumeColor =
-    if volume <= 100:
-      fgBlue  # Blue shades for volume <= 100
-    else:
-      fgRed   # Red shades for volume > 100
+  let volumeColor = volumeColor(volume)
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
   
@@ -400,7 +402,6 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
 
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
-  ## Updates the player UI efficiently, only redrawing the volume if it has changed.
   let termWidth = terminalWidth()
 
   # Always update "Now Playing"
@@ -412,11 +413,7 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   if volume != lastVolume:
     setCursorPos(0, 3)  # Line 3
     eraseLine()
-    let volumeColor =
-      if volume <= 100:
-        fgBlue  # Blue shades for volume <= 100
-      else:
-        fgRed   # Red shades for volume > 100
+    let volumeColor = volumeColor(volume)
     say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
     styledEcho(volumeColor, $volume & "%")
     lastVolume = volume

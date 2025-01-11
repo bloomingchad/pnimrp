@@ -156,12 +156,12 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
           updatePlayerUI(state.currentSong, if state.isMuted: "Muted" else: "Playing", state.volume)
         
         of Key.Slash, Key.Plus:
-          state.volume = min(state.volume + 5, 100)
+          state.volume = min(state.volume + VolumeStep, MaxVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
           updatePlayerUI(state.currentSong, "Playing", state.volume)
         
         of Key.Asterisk, Key.Minus:
-          state.volume = max(state.volume - 5, 0)
+          state.volume = max(state.volume - VolumeStep, MinVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
           updatePlayerUI(state.currentSong, "Playing", state.volume)
         
