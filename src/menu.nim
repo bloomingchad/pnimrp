@@ -95,7 +95,7 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
 
     var
       ctx = create()
-      state = PlayerState(isPaused: false, isMuted: false, volume: 50)
+      state = PlayerState(isPaused: false, isMuted: false, volume: 100)
       isObserving = false
       counter: uint8
       playlistFirstPass = false
