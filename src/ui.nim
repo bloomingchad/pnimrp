@@ -278,17 +278,17 @@ proc drawHeader*(section: string) =
   say(AppNameShort & " > " & section, fgGreen)
   say("-".repeat(termWidth), fgGreen)
 
-proc drawPlayerUI*(section: string, nowPlaying: string, status: string, volume: int) =
+proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI
   clear()
   
   # Draw header
   setCursorPos(0, 0)  # Line 0
-  say(AppNameShort & " > " & section, fgGreen)
+  say(AppNameShort & " > " & section, fgYellow)
   
   # Draw separator
-  setCursorPos(0, 1)  # Line 1
-  say("-".repeat(terminalWidth()), fgGreen)
+  setCursorPos(1, 1)  # Line 1
+  say("-".repeat(terminalWidth() - 1), fgGreen, xOffSet = 0)
   
   # Display "Now Playing"
   setCursorPos(0, 2)  # Line 2 (below the separator)
@@ -296,16 +296,16 @@ proc drawPlayerUI*(section: string, nowPlaying: string, status: string, volume: 
   
   # Display status and volume
   setCursorPos(0, 3)  # Line 3
-  say("Status: " & status & " | Volume: " & $volume & "%", fgYellow)
+  say("Status: " & status & " | Volume: " & $volume & "%", fgGreen, xOffSet = 0)
   
   # Draw separator
   setCursorPos(0, 4)  # Line 4
-  say("-".repeat(terminalWidth()), fgGreen)
+  say("-".repeat(terminalWidth() - 1), fgGreen, xOffSet = 0)
   
   # Move cursor to input handling area (below the separator)
   setCursorPos(0, 5)  # Line 5
 
-proc updatePlayerUI*(nowPlaying: string, status: string, volume: int) =
+proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   ## Updates the player UI with new information
   # Update "Now Playing"
   setCursorPos(0, 2)  # Line 2
@@ -315,7 +315,7 @@ proc updatePlayerUI*(nowPlaying: string, status: string, volume: int) =
   # Update status and volume
   setCursorPos(0, 3)  # Line 3
   eraseLine()
-  say("Status: " & status & " | Volume: " & $volume & "%", fgYellow)
+  say("Status: " & status & " | Volume: " & $volume & "%", fgGreen, xOffSet = 0)
   
   # Move cursor back to input handling area (below the separator)
   setCursorPos(0, 5)  # Line 5
