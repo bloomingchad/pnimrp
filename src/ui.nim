@@ -7,49 +7,49 @@ import
   os
 
 type
-  UIError* = object of CatchableError
-  MenuOptions* = seq[string]
-  QuoteData = object
+  UIError* = object of CatchableError  # Custom error type for UI-related issues
+  MenuOptions* = seq[string]           # Sequence of strings representing menu options
+  QuoteData = object                   # Structure to hold quotes and authors
     quotes: seq[string]
     authors: seq[string]
 
-using str :string
+using str: string  # Convenience alias for string type
+
 const
-  AppName* = "Poor Mans Radio Player"
-  AppNameShort* = "PNimRP"
-  DefaultErrorMsg = "INVALID CHOICE"
-  MinTerminalWidth = 40
+  AppName* = "Poor Mans Radio Player"  # Full name of the application
+  AppNameShort* = "PNimRP"             # Short name of the application
+  DefaultErrorMsg = "INVALID CHOICE"   # Default error message for invalid choices
+  MinTerminalWidth = 40                # Minimum terminal width for proper display
   
-  # Characters for menu options
+  # Characters used for menu options
   MenuChars = @[
     '1', '2', '3', '4', '5', '6', '7', '8', '9',
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
     'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
     'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
   ]
+
 proc error*(message: string) =
-  ## Displays error message and exits program
+  ## Displays an error message and exits the program.
   styledEcho(fgRed, "Error: ", message)
   quit(QuitFailure)
 
 proc parseJArray*(str): seq[string] =
+  ## Parses a JSON array from a file and returns it as a sequence of strings.
   try:
-    result = to(
-      parseJson(readFile(str)){"pnimrp"},
-      seq[string]
-    )
-  except IOError: error "base assets dont exist?"
+    result = to(parseJson(readFile(str)){"pnimrp"}, seq[string])
+  except IOError:
+    error "Base assets do not exist."
 
   if result.len mod 2 != 0:
-    error "JArrayResult.len not even"
-
+    error "JArrayResult.len is not even."
 
 proc loadQuotes(filePath: string): QuoteData =
-  ## Loads and validates quotes from JSON file
+  ## Loads and validates quotes and authors from a JSON file.
   try:
     let jsonData = parseJArray(filePath)
     if jsonData.len mod 2 != 0:
-      raise newException(UIError, "Quote data must have matching quotes and authors")
+      raise newException(UIError, "Quote data must have matching quotes and authors.")
     
     result = QuoteData(quotes: @[], authors: @[])
     for i in 0 .. jsonData.high:
@@ -66,25 +66,24 @@ proc loadQuotes(filePath: string): QuoteData =
         raise newException(UIError, "Empty author found for quote at index " & $i)
         
   except IOError:
-    raise newException(UIError, "Failed to load quotes: File not found")
+    raise newException(UIError, "Failed to load quotes: File not found.")
   except JsonParsingError:
-    raise newException(UIError, "Failed to parse quotes: Invalid JSON format")
+    raise newException(UIError, "Failed to parse quotes: Invalid JSON format.")
 
 proc clear* =
-  ## Clears the screen and resets cursor position
+  ## Clears the terminal screen and resets the cursor position.
   eraseScreen()
   setCursorPos(0, 0)
 
-
 proc warn*(message: string, xOffset = 4, color = fgRed) =
-  ## Displays warning message with delay
+  ## Displays a warning message with a delay.
   if xOffset >= 0:
     setCursorXPos(xOffset)
   styledEcho(color, message)
   sleep(750)
 
 proc showInvalidChoice*(message = DefaultErrorMsg) =
-  ## Shows invalid choice message and repositions cursor
+  ## Displays an invalid choice message and repositions the cursor.
   cursorDown(2)
   warn(message)
   cursorUp()
@@ -97,7 +96,7 @@ proc say*(
   xOffset = 5,
   shouldEcho = true
 ) =
-  ## Displays styled text at specified position
+  ## Displays styled text at a specified position.
   if color in {fgBlue, fgGreen}:
     setCursorXPos(xOffset)
     if color == fgGreen and not shouldEcho:
@@ -108,38 +107,40 @@ proc say*(
     styledEcho(color, message)
 
 proc exitEcho* =
+  ## Displays a random quote and exits the program.
   showCursor()
   echo ""
   randomize()
 
-  let seq = parseJArray getAppDir() / "assets" / "qoute.json"
-  var qoutes, authors: seq[string] = @[]
+  let seq = parseJArray(getAppDir() / "assets" / "qoute.json")
+  var quotes, authors: seq[string] = @[]
 
   for i in 0 .. seq.high:
     case i mod 2:
-      of 0: qoutes.add seq[i]
-      else: authors.add seq[i]
+      of 0: quotes.add(seq[i])
+      else: authors.add(seq[i])
 
-  let rand = rand 0 .. qoutes.high
+  let rand = rand(0 .. quotes.high)
 
-  when not defined(release) or
-    not defined(danger):
-    echo ("free mem: " & $(getFreeMem() / 1024)) & " kB"
-    echo ("total/max mem: " & $(getTotalMem() / 1024)) & " kB"
-    echo ("occupied mem: " & $(getOccupiedMem() / 1024)) & " kB"
+  when not defined(release) or not defined(danger):
+    echo "Memory Statistics:"
+    echo "  Free: ", getFreeMem() div 1024, " kB"
+    echo "  Total: ", getTotalMem() div 1024, " kB"
+    echo "  Occupied: ", getOccupiedMem() div 1024, " kB"
 
-  if qoutes[rand] == "": error "no qoute"
+  if quotes[rand] == "":
+    error "No quote found."
 
-  styledEcho fgCyan, qoutes[rand], "..."
-  setCursorXPos 15
-  styledEcho fgGreen, "—", authors[rand]
+  styledEcho(fgCyan, quotes[rand], "...")
+  setCursorXPos(15)
+  styledEcho(fgGreen, "—", authors[rand])
 
   if authors[rand] == "":
-    error "there can no be qoute without man"
-    if rand*2 != -1:
-      error ("@ line: " & $(rand*2)) & " in qoute.json"
+    error "There cannot be a quote without an author."
+    if rand * 2 != -1:
+      error "@ line: " & $(rand * 2) & " in qoute.json"
 
-  quit QuitSuccess
+  quit(QuitSuccess)
 
 proc drawHeader* =
   ## Draws the application header with decorative lines and emojis.
@@ -229,7 +230,7 @@ proc drawMenu*(
     displayMenu(options)
 
 proc showExitMessage* =
-  ## Shows exit message with random quote
+  ## Displays an exit message with a random quote.
   showCursor()
   echo ""
   
@@ -254,14 +255,14 @@ proc showExitMessage* =
     error("Failed to show exit message: " & e.msg)
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
-  ## Cleanly exits the application
+  ## Cleanly exits the application.
   if not isPaused:
     ctx.terminateDestroy()
   showExitMessage()
   quit(QuitSuccess)
 
 proc showNotes* =
-  ## Displays application notes/about section
+  ## Displays the application notes/about section.
   while true:
     var shouldReturn = false
     drawMenu(
@@ -295,17 +296,17 @@ when isMainModule:
     error(e.msg)
 
 proc drawHeader*(section: string) =
-  ## Draws the application header with the current section
+  ## Draws the application header with the current section.
   let termWidth = terminalWidth()
   if termWidth < MinTerminalWidth:
-    raise newException(UIError, "Terminal width too small")
+    raise newException(UIError, "Terminal width too small.")
   
   # Draw header
   say(AppNameShort & " > " & section, fgGreen)
   say("-".repeat(termWidth), fgGreen)
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
-  ## Draws the modern music player UI
+  ## Draws the modern music player UI.
   clear()
   
   # Draw header
@@ -332,7 +333,7 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   setCursorPos(0, 5)  # Line 5
 
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
-  ## Updates the player UI with new information
+  ## Updates the player UI with new information.
   # Update "Now Playing"
   setCursorPos(0, 2)  # Line 2
   eraseLine()
