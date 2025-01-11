@@ -142,35 +142,72 @@ proc exitEcho* =
   quit QuitSuccess
 
 proc drawHeader* =
-  ## Draws application header with decorative lines
+  ## Draws the application header with decorative lines and emojis.
   let termWidth = terminalWidth()
   if termWidth < MinTerminalWidth:
-    raise newException(UIError, "Terminal width too small")
-    
-  say(AppName & " " & '-'.repeat(termWidth div 8))
-  say(
-    '-'.repeat(termWidth div 8) & '>'.repeat(termWidth div 12),
-    fgGreen,
-    xOffset = 2
-  )
+    raise newException(UIError, "Terminal width too small.")
+  
+  # Draw the top border
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  
+  # Draw the application title with emojis
+  let title = "       🎧 " & AppName & " 🎧"
+  say(title, fgYellow, xOffset = (termWidth - title.len) div 2)
+  
+  # Draw the bottom border of the header
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
 
 proc displayMenu*(
   options: MenuOptions,
   showReturnOption = true,
   highlightActive = true
 ) =
-  ## Displays menu options with optional return and quit choices
-  var optionNum = 0
-  for option in options:
-    if option != "Notes":
-      say(($MenuChars[optionNum] & " ") & option, fgBlue)
+  ## Displays menu options in a formatted multi-column layout.
+  let termWidth = terminalWidth()
+  
+  # Draw the "Station Categories" section header
+  let categoriesHeader = "           📻 Station Categories 📻"
+  say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
+  
+  # Draw the separator line
+  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  
+  # Display menu options in a 3-column layout
+  var currentLine = ""
+  
+  for i in 0 ..< options.len:
+    # Calculate the prefix for the menu option
+    let prefix = 
+      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
+      else: 
+        let charIndex = i - 9  # Calculate the index for MenuChars
+        if charIndex < MenuChars.len: $MenuChars[charIndex] & "."  # Use A-Z for the next 26 options
+        else: "?"  # Use "?" as a fallback for options beyond 35
+    let formattedOption = prefix & " " & options[i]
+    
+    # Add the option to the current line
+    currentLine.add(formattedOption)
+    
+    # Add spacing between columns
+    if (i + 1) mod 3 != 0:
+      currentLine.add(" " & " ".repeat(max(0, 20 - formattedOption.len)))  # Adjust spacing for alignment
     else:
-      say("N Notes", fgBlue)
-    inc optionNum
-
-  if showReturnOption:
-    say("R Return", fgBlue)
-  say("Q Quit", fgBlue)
+      say(currentLine, fgBlue, xOffset = 4)
+      currentLine = ""
+  
+  # Display any remaining options in the last line
+  if currentLine.len > 0:
+    say(currentLine, fgBlue, xOffset = 4)
+  
+  # Draw the separator line
+  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  
+  # Display the footer options
+  let footerOptions = "[Q] Quit   [R] Return   [N] Notes"
+  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+  
+  # Draw the bottom border
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
 
 proc drawMenu*(
   section: string,
@@ -178,24 +215,13 @@ proc drawMenu*(
   subsection = "",
   showNowPlaying = true
 ) =
-  ## Draws complete menu with header and options
+  ## Draws a complete menu with header and options.
   clear()
   
   # Draw header
-  let header = if subsection == "":
-    AppNameShort & " > " & section
-  else:
-    AppNameShort & " > " & section & " > " & subsection
-  say(header)
-  
   drawHeader()
   
-  # Show now playing if needed
-  if showNowPlaying:
-    let displaySection = if subsection == "": section else: subsection
-    say(displaySection & " Stations Playing Music:", fgGreen)
-  
-  # Display options
+  # Display menu options
   when options is string:
     for line in splitLines(options):
       say(line, fgBlue)
