@@ -11,12 +11,12 @@ type
     isPaused*: bool                        # Whether the player is paused
 
 const
-  VolumeStep = 5  # Step size for volume adjustments
-  MinVolume = 0   # Minimum allowed volume
-  MaxVolume = 100 # Maximum allowed volume
+  VolumeStep* = 5  # Step size for volume adjustments
+  MinVolume* = 0   # Minimum allowed volume
+  MaxVolume* = 150 # Maximum allowed volume
 
 proc validateVolume(volume: int): int =
-  ## Ensures the volume stays within valid bounds (0-100).
+  ## Ensures the volume stays within valid bounds (0-150).
   result = max(MinVolume, min(MaxVolume, volume))
 
 proc init*(ctx: ptr Handle, source: string) {.raises: [PlayerError].} =
