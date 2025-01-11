@@ -173,7 +173,7 @@ proc displayMenu*(
     options.delete(options.len - 1) # Remove notes
 
   # Draw the "Station Categories" section header
-  let categoriesHeader = "📻 Station Categories 📻"
+  let categoriesHeader = "         📻 Station Categories 📻"
   say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
 
   # Draw the separator line
