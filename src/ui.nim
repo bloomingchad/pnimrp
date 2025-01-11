@@ -267,3 +267,55 @@ when isMainModule:
     showNotes()
   except UIError as e:
     error(e.msg)
+
+proc drawHeader*(section: string) =
+  ## Draws the application header with the current section
+  let termWidth = terminalWidth()
+  if termWidth < MinTerminalWidth:
+    raise newException(UIError, "Terminal width too small")
+  
+  # Draw header
+  say(AppNameShort & " > " & section, fgGreen)
+  say("-".repeat(termWidth), fgGreen)
+
+proc drawPlayerUI*(section: string, nowPlaying: string, status: string, volume: int) =
+  ## Draws the modern music player UI
+  clear()
+  
+  # Draw header
+  setCursorPos(0, 0)  # Line 0
+  say(AppNameShort & " > " & section, fgGreen)
+  
+  # Draw separator
+  setCursorPos(0, 1)  # Line 1
+  say("-".repeat(terminalWidth()), fgGreen)
+  
+  # Display "Now Playing"
+  setCursorPos(0, 2)  # Line 2 (below the separator)
+  say("Now Playing: " & nowPlaying, fgCyan)
+  
+  # Display status and volume
+  setCursorPos(0, 3)  # Line 3
+  say("Status: " & status & " | Volume: " & $volume & "%", fgYellow)
+  
+  # Draw separator
+  setCursorPos(0, 4)  # Line 4
+  say("-".repeat(terminalWidth()), fgGreen)
+  
+  # Move cursor to input handling area (below the separator)
+  setCursorPos(0, 5)  # Line 5
+
+proc updatePlayerUI*(nowPlaying: string, status: string, volume: int) =
+  ## Updates the player UI with new information
+  # Update "Now Playing"
+  setCursorPos(0, 2)  # Line 2
+  eraseLine()
+  say("Now Playing: " & nowPlaying, fgCyan)
+  
+  # Update status and volume
+  setCursorPos(0, 3)  # Line 3
+  eraseLine()
+  say("Status: " & status & " | Volume: " & $volume & "%", fgYellow)
+  
+  # Move cursor back to input handling area (below the separator)
+  setCursorPos(0, 5)  # Line 5
