@@ -1,4 +1,4 @@
-import std/[strutils, net, uri, logging]
+import std/[strutils, net, uri]
 
 type
   LinkCheckError* = object of CatchableError
@@ -9,11 +9,7 @@ type
     domain*: string
     port*: Port
 
-proc initLogger() =
-  ## Initializes the logger for the module
-  var consoleLogger = newConsoleLogger()
-  addHandler(consoleLogger)
-  setLogFilter(lvlInfo)
+
 
 proc parseLink*(link: string): tuple[protocol, domain: string, port: Port] =
   ## Parses a URL into its components
@@ -99,9 +95,6 @@ proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
     )
 
 when isMainModule:
-  # Initialize logger when module is run directly
-  initLogger()
-  
   # Example usage
   let testUrls = [
     "https://example.com",
@@ -113,10 +106,10 @@ when isMainModule:
   for url in testUrls:
     let result = validateLink(url)
     if result.isValid:
-      info("✓ Valid link: ", url)
+      echo("✓ Valid link: ", url)
       echo "  Protocol: ", result.protocol
       echo "  Domain: ", result.domain
       echo "  Port: ", result.port
     else:
-      warn("✗ Invalid link: ", url)
+      echo("✗ Invalid link: ", url)
       echo "  Error: ", result.error
