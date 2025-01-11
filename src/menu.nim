@@ -3,48 +3,49 @@ import
   client, net, player, link, illwill
 
 type
-  MenuError* = object of CatchableError
-  PlayerState = object
-    isPaused: bool
-    isMuted: bool
-    currentSong: string
-    volume: int
+  MenuError* = object of CatchableError  # Custom error type for menu-related issues
+  PlayerState = object                   # Structure to hold the player's current state
+    isPaused: bool                       # Whether the player is paused
+    isMuted: bool                        # Whether the player is muted
+    currentSong: string                  # Currently playing song
+    volume: int                          # Current volume level
   
-  MenuConfig = object
-    ctx: ptr Handle
-    currentSection: string
-    currentSubsection: string
-    stationName: string
-    stationUrl: string
+  MenuConfig = object                    # Configuration for the menu and player
+    ctx: ptr Handle                      # Player handle
+    currentSection: string               # Current menu section
+    currentSubsection: string            # Current menu subsection
+    stationName: string                  # Name of the selected station
+    stationUrl: string                   # URL of the selected station
 
 const
-  CheckIdleInterval = 25  # Check idle state every N iterations
-  KeyTimeout = 25        # Milliseconds to wait for key input
-  ValidMenuKeys = {'1'..'9', 'A'..'K', 'N', 'R', 'Q'}
+  CheckIdleInterval = 25  # Interval to check if the player is idle
+  KeyTimeout = 25         # Timeout for key input in milliseconds
+  ValidMenuKeys = {'1'..'9', 'A'..'K', 'N', 'R', 'Q'}  # Valid keys for menu navigation
 
 proc updateNowPlaying(state: var PlayerState, ctx: ptr Handle) =
-  ## Updates the now playing display
-  state.currentSong = ctx.getCurrentMediaTitle()  # Updated function name
+  ## Updates the "Now Playing" display with the current song title.
+  state.currentSong = ctx.getCurrentMediaTitle()
   eraseLine()
   say("Now Streaming: " & state.currentSong, fgGreen)
   cursorUp()
 
 proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false) =
-  ## Handles player errors consistently
+  ## Handles player errors consistently and optionally destroys the player context.
   warn(msg)
   if ctx != nil:
     ctx.terminateDestroy()
   if shouldReturn:
     return
+
 type
-  PlayerStatus = enum
+  PlayerStatus = enum  # Enumeration for player states
     StatusPlaying
     StatusMuted
     StatusPaused
     StatusPausedMuted
 
 proc updatePlayerState(state: var PlayerState, ctx: ptr Handle) =
-  ## Updates and displays the player state
+  ## Updates and displays the player's current state (playing, paused, muted, etc.).
   cursorDown()
   eraseLine()
 
@@ -71,18 +72,18 @@ proc updatePlayerState(state: var PlayerState, ctx: ptr Handle) =
   setCursorPos(0, 2)
 
 proc handleVolumeChange(ctx: ptr Handle, increase: bool) =
-  ## Handles volume changes and notifications
-  let newVolume = ctx.adjustVolume(increase)  # Updated function name
+  ## Handles volume changes and displays a notification.
+  let newVolume = ctx.adjustVolume(increase)
   let volumeMsg = (if increase: "Volume+: " else: "Volume-: ") & $newVolume
   showInvalidChoice(volumeMsg)
   setCursorPos(0, 2)
 
 proc isValidPlaylistUrl(url: string): bool =
-  ## Checks if URL points to a valid playlist format
+  ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
 proc playStation(config: MenuConfig) {.raises: [MenuError].} =
-  ## Plays a radio station and handles user input
+  ## Plays a radio station and handles user input for playback control.
   try:
     if config.stationUrl == "":
       raise newException(MenuError, "Empty station URL")
@@ -183,9 +184,8 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
   except Exception as e:
     raise newException(MenuError, "Playback error: " & e.msg)
 
-# Rest of the code remains unchanged as it doesn't interact with the player functions
 proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
-  ## Loads station names and URLs from JSON file
+  ## Loads station names and URLs from a JSON file.
   try:
     let data = parseJArray(jsonPath)
     result = (names: @[], urls: @[])
@@ -204,7 +204,7 @@ proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
     raise newException(MenuError, "Failed to load station list: " & e.msg)
 
 proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[string]] =
-  ## Loads available station categories
+  ## Loads available station categories from the assets directory.
   result = (names: @[], paths: @[])
   let nativePath = baseDir / "*".unixToNativePath
   
@@ -225,14 +225,8 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
   if baseDir == getAppDir() / "assets":
     result.names.add("Notes")
 
-
 proc handleStationMenu*(section = ""; jsonPathOrDir = ""; subsection = "") =
-  ## Handles the station selection menu, supporting both JSON files and folders.
-  ## 
-  ## Args:
-  ##   section: The current section name (e.g., "Main" or "Rock").
-  ##   jsonPathOrDir: Path to a JSON file or directory containing JSON files.
-  ##   subsection: The subsection name (e.g., "Rock" or "Jazz").
+  ## Handles the station selection menu, supporting both JSON files and directories.
   if dirExists(jsonPathOrDir):
     # This is a directory, so list JSON files within it
     var subStationNames: seq[string] = @[]
@@ -352,7 +346,7 @@ proc handleStationMenu*(section = ""; jsonPathOrDir = ""; subsection = "") =
     warn("Invalid path: " & jsonPathOrDir)
 
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
-  ## Draws and handles the main category menu
+  ## Draws and handles the main category menu.
   let categories = loadCategories(baseDir)
   
   while true:
@@ -405,6 +399,7 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
     
     if returnToParent:
       break
+
 export hideCursor, error
 
 when isMainModule:
