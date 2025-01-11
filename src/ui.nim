@@ -354,17 +354,23 @@ proc drawHeader*(section: string) =
   say(AppNameShort & " > " & section, fgGreen)
   say("-".repeat(termWidth), fgGreen)
 
+# Module-level variable to track the previous volume
+var lastVolume*: int = -1
+
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
-  ## Draws the modern music player UI
+  ## Draws the modern music player UI with dynamic layout and visual enhancements.
+  ## Adjusts layout for wide and narrow screens, colors volume percentage, and anchors the footer to the bottom.
   clear()
   
+  let termWidth = terminalWidth()
+
   # Draw header
   setCursorPos(0, 0)  # Line 0
   say(AppNameShort & " > " & section, fgYellow)
   
   # Draw separator
   setCursorPos(1, 1)  # Line 1
-  say("-".repeat(terminalWidth() - 1), fgGreen, xOffSet = 0)
+  say("-".repeat(termWidth), fgGreen, xOffset = 0)
   
   # Display "Now Playing"
   setCursorPos(0, 2)  # Line 2 (below the separator)
@@ -372,26 +378,53 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   
   # Display status and volume
   setCursorPos(0, 3)  # Line 3
-  say("Status: " & status & " | Volume: " & $volume & "%", fgGreen, xOffSet = 0)
+  let volumeColor =
+    if volume <= 100:
+      fgBlue  # Blue shades for volume <= 100
+    else:
+      fgRed   # Red shades for volume > 100
+  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+  styledEcho(volumeColor, $volume & "%")
   
   # Draw separator
   setCursorPos(0, 4)  # Line 4
-  say("-".repeat(terminalWidth() - 1), fgGreen, xOffSet = 0)
+  say("-".repeat(termWidth), fgGreen, xOffset = 0)
   
-  # Move cursor to input handling area (below the separator)
-  setCursorPos(0, 5)  # Line 5
+  # Add footer with controls at the bottom
+  setCursorPos(0, 6)  # Line 6
+  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"
+  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+  
+  # Draw bottom border
+  setCursorPos(0, 7)  # Line 7
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
 
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
-  ## Updates the player UI with new information
-  # Update "Now Playing"
+  ## Updates the player UI efficiently, only redrawing the volume if it has changed.
+  let termWidth = terminalWidth()
+
+  # Always update "Now Playing"
   setCursorPos(0, 2)  # Line 2
   eraseLine()
   say("Now Playing: " & nowPlaying, fgCyan)
+
+  # Update volume (only if it has changed)
+  if volume != lastVolume:
+    setCursorPos(0, 3)  # Line 3
+    eraseLine()
+    let volumeColor =
+      if volume <= 100:
+        fgBlue  # Blue shades for volume <= 100
+      else:
+        fgRed   # Red shades for volume > 100
+    say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+    styledEcho(volumeColor, $volume & "%")
+    lastVolume = volume
+
+  # Ensure footer and bottom border remain visible
+  setCursorPos(0, 6)  # Line 6
+  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"
+  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
   
-  # Update status and volume
-  setCursorPos(0, 3)  # Line 3
-  eraseLine()
-  say("Status: " & status & " | Volume: " & $volume & "%", fgGreen, xOffSet = 0)
-  
-  # Move cursor back to input handling area (below the separator)
-  setCursorPos(0, 5)  # Line 5
+  setCursorPos(0, 7)  # Line 7
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
