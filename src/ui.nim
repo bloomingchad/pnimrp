@@ -158,13 +158,15 @@ proc drawHeader* =
 proc displayMenu*(
   optionss: MenuOptions,
   showReturnOption = true,
-  highlightActive = true
+  highlightActive = true,
+  isMainMenu = false
 ) =
   ## Displays menu options in a formatted multi-column layout.
   let termWidth = terminalWidth()
   
   var options = optionss
-  options.delete(options.len - 1) #remove notes
+  if isMainMenu:
+    options.delete(options.len - 1) #remove notes
 
   # Draw the "Station Categories" section header
   let categoriesHeader = "           📻 Station Categories 📻"
@@ -218,7 +220,8 @@ proc drawMenu*(
   section: string,
   options: string | MenuOptions,
   subsection = "",
-  showNowPlaying = true) =
+  showNowPlaying = true,
+  isMainMenu = false) =
   ## Draws a complete menu with header and options.
   clear()
   
