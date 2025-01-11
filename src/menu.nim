@@ -1,6 +1,6 @@
 import
   terminal, os, ui, strutils,
-  client, net, player, link, illwill, json
+  client, net, player, link, illwill
 
 type
   MenuError* = object of CatchableError
@@ -184,15 +184,17 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
 proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
   ## Loads station names and URLs from JSON file
   try:
-    let data = parseFile(jsonPath).getElems() # changed this to get an array
+    let data = parseJArray(jsonPath)
     result = (names: @[], urls: @[])
     
-    for i in 0 ..< data.len div 2:
-        result.names.add($data[i*2])
-        let url = if $data[i*2+1].startsWith("http://") or $data[i*2+1].startsWith("https://"):
-          $data[i*2+1]
+    for i in 0 .. data.high:
+      if i mod 2 == 0:
+        result.names.add(data[i])
+      else:
+        let url = if data[i].startsWith("http://") or data[i].startsWith("https://"):
+          data[i]
         else:
-          "http://" & $data[i*2+1]
+          "http://" & data[i]
         result.urls.add(url)
   
   except Exception as e:
@@ -220,122 +222,74 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
   if baseDir == getAppDir() / "assets":
     result.names.add("Notes")
 
-proc handleStationMenu*(section = ""; jsonPathOrDir = ""; subsection = "") =
+
+proc handleStationMenu*(section = ""; jsonPath = ""; subsection = "") =
   ## Handles the station selection menu
   if section.endsWith(DirSep):
-    # This is a directory, so list JSON files within it
-    var subStationNames: seq[string] = @[]
-    var subStationPaths: seq[string] = @[]
-
-    for file in walkFiles(jsonPathOrDir / "*.json"):
-      subStationNames.add(file.extractFilename.changeFileExt("").capitalizeAscii)
-      subStationPaths.add(file)
-
-    if subStationNames.len == 0:
-      warn("No station lists available in this category.")
-      return
-
+    drawMenu("Main", @[""], section)
+    return
+  
+  # Load station list
+  let stations = loadStationList(jsonPath)
+  
+  # Check for empty station list
+  if stations.names.len == 0 or stations.urls.len == 0:
+    warn("No stations available. Please check the station list.")
+    return
+  
+  while true:
+    var returnToMain = false
+    drawMenu(section, stations.names, subsection)
+    hideCursor()
+    
     while true:
-      var returnToMain = false
-      drawMenu(section, subStationNames, subsection)
-      hideCursor()
-
-      while true:
-        try:
-          let key = getch()
-          case key
-          of '1'..'9':
-            let idx = ord(key) - ord('1')
-            if idx >= 0 and idx < subStationNames.len:
-              handleStationMenu(subStationNames[idx], subStationPaths[idx], section)
-              break
-            else:
-              showInvalidChoice()
-
-          of 'A'..'K', 'a'..'k':
-            let idx = ord(toLowerAscii(key)) - ord('a') + 9
-            if idx >= 0 and idx < subStationNames.len:
-              handleStationMenu(subStationNames[idx], subStationPaths[idx], section)
-              break
-            else:
-              showInvalidChoice()
-
-          of 'R', 'r':
-            returnToMain = true
+      try:
+        let key = getch()
+        case key
+        of '1'..'9':
+          let idx = ord(key) - ord('1')
+          if idx >= 0 and idx < stations.names.len:
+            let config = MenuConfig(
+              currentSection: section,
+              currentSubsection: subsection,
+              stationName: stations.names[idx],
+              stationUrl: stations.urls[idx]
+            )
+            playStation(config)
             break
-
-          of 'Q', 'q':
-            exitEcho()
-            break
-
           else:
             showInvalidChoice()
-
-        except IndexDefect:
-          showInvalidChoice()
-
-      if returnToMain:
-        break
-  else:
-    # This is a JSON file, proceed as before
-    let stations = loadStationList(jsonPathOrDir)
-    if stations.names.len == 0 or stations.urls.len == 0:
-      warn("No stations available. Please check the station list.")
-      return
-
-    while true:
-      var returnToMain = false
-      drawMenu(section, stations.names, subsection)
-      hideCursor()
-
-      while true:
-        try:
-          let key = getch()
-          case key
-          of '1'..'9':
-            let idx = ord(key) - ord('1')
-            if idx >= 0 and idx < stations.names.len:
-              let config = MenuConfig(
-                currentSection: section,
-                currentSubsection: subsection,
-                stationName: stations.names[idx],
-                stationUrl: stations.urls[idx]
-              )
-              playStation(config)
-              break
-            else:
-              showInvalidChoice()
-
-          of 'A'..'K', 'a'..'k':
-            let idx = ord(toLowerAscii(key)) - ord('a') + 9
-            if idx >= 0 and idx < stations.names.len:
-              let config = MenuConfig(
-                currentSection: section,
-                currentSubsection: subsection,
-                stationName: stations.names[idx],
-                stationUrl: stations.urls[idx]
-              )
-              playStation(config)
-              break
-            else:
-              showInvalidChoice()
-
-          of 'R', 'r':
-            returnToMain = true
+        
+        of 'A'..'K', 'a'..'k':
+          let idx = ord(toLowerAscii(key)) - ord('a') + 9
+          if idx >= 0 and idx < stations.names.len:
+            let config = MenuConfig(
+               currentSection: section,
+               currentSubsection: subsection,
+               stationName: stations.names[idx],
+               stationUrl: stations.urls[idx]
+            )
+            playStation(config)
             break
-
-          of 'Q', 'q':
-            exitEcho()
-            break
-
           else:
             showInvalidChoice()
-
-        except IndexDefect:
+        
+        of 'R', 'r':
+          returnToMain = true
+          break
+        
+        of 'Q', 'q':
+          exitEcho()
+          break
+        
+        else:
           showInvalidChoice()
-
-      if returnToMain:
-        break
+      
+      except IndexDefect:
+        showInvalidChoice()
+    
+    if returnToMain:
+      break
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu
   let categories = loadCategories(baseDir)
