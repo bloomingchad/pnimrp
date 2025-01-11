@@ -504,7 +504,7 @@ proc getKeyWithTimeout*(ms = 1000): Key =
   ##
   ## If the module is not intialised, `IllwillError` is raised.
   checkInit()
-  result = getKeyAsync(ms)
+  result = getKeyAsync(int32 ms)
   when defined(windows):
     if result == Key.None: discard
 
