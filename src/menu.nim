@@ -20,14 +20,6 @@ type
 const
   CheckIdleInterval = 25  # Interval to check if the player is idle
   KeyTimeout = 25         # Timeout for key input in milliseconds
-  ValidMenuKeys = {'1'..'9', 'A'..'K', 'N', 'R', 'Q'}  # Valid keys for menu navigation
-
-proc updateNowPlaying(state: var PlayerState, ctx: ptr Handle) =
-  ## Updates the "Now Playing" display with the current song title.
-  state.currentSong = ctx.getCurrentMediaTitle()
-  eraseLine()
-  say("Now Streaming: " & state.currentSong, fgGreen)
-  cursorUp()
 
 proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false) =
   ## Handles player errors consistently and optionally destroys the player context.
@@ -69,13 +61,6 @@ proc updatePlayerState(state: var PlayerState, ctx: ptr Handle) =
 
   # Display the state message
   say(stateMsg[0], stateMsg[1])
-  setCursorPos(0, 2)
-
-proc handleVolumeChange(ctx: ptr Handle, increase: bool) =
-  ## Handles volume changes and displays a notification.
-  let newVolume = ctx.adjustVolume(increase)
-  let volumeMsg = (if increase: "Volume+: " else: "Volume-: ") & $newVolume
-  showInvalidChoice(volumeMsg)
   setCursorPos(0, 2)
 
 proc isValidPlaylistUrl(url: string): bool =
@@ -225,177 +210,132 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
   if baseDir == getAppDir() / "assets":
     result.names.add("Notes")
 
-proc handleStationMenu*(section = ""; jsonPathOrDir = ""; subsection = "") =
-  ## Handles the station selection menu, supporting both JSON files and directories.
-  if dirExists(jsonPathOrDir):
-    # This is a directory, so list JSON files within it
-    var subStationNames: seq[string] = @[]
-    var subStationPaths: seq[string] = @[]
-
-    for file in walkFiles(jsonPathOrDir / "*.json"):
-      let name = file.extractFilename.changeFileExt("").capitalizeAscii
-      subStationNames.add(name)
-      subStationPaths.add(file)
-
-    if subStationNames.len == 0:
-      warn("No station lists available in this category.")
-      return
-
-    while true:
-      var returnToMain = false
-      drawMenu(section, subStationNames, subsection)
-      hideCursor()
-
-      while true:
-        try:
-          let key = getch()
-          case key
-          of '1'..'9':
-            let idx = ord(key) - ord('1')
-            if idx >= 0 and idx < subStationNames.len:
-              handleStationMenu(subStationNames[idx], subStationPaths[idx], section)
-              break
-            else:
-              showInvalidChoice()
-
-          of 'A'..'K', 'a'..'k':
-            let idx = ord(toLowerAscii(key)) - ord('a') + 9
-            if idx >= 0 and idx < subStationNames.len:
-              handleStationMenu(subStationNames[idx], subStationPaths[idx], section)
-              break
-            else:
-              showInvalidChoice()
-
-          of 'R', 'r':
-            returnToMain = true
-            break
-
-          of 'Q', 'q':
-            exitEcho()
-            break
-
-          else:
-            showInvalidChoice()
-
-        except IndexDefect:
-          showInvalidChoice()
-
-      if returnToMain:
-        break
-  elif fileExists(jsonPathOrDir):
-    # This is a JSON file, proceed as before
-    let stations = loadStationList(jsonPathOrDir)
-    if stations.names.len == 0 or stations.urls.len == 0:
-      warn("No stations available. Please check the station list.")
-      return
-
-    while true:
-      var returnToMain = false
-      drawMenu(section, stations.names, subsection)
-      hideCursor()
-
-      while true:
-        try:
-          let key = getch()
-          case key
-          of '1'..'9':
-            let idx = ord(key) - ord('1')
-            if idx >= 0 and idx < stations.names.len:
-              let config = MenuConfig(
-                currentSection: section,
-                currentSubsection: subsection,
-                stationName: stations.names[idx],
-                stationUrl: stations.urls[idx]
-              )
-              playStation(config)
-              break
-            else:
-              showInvalidChoice()
-
-          of 'A'..'K', 'a'..'k':
-            let idx = ord(toLowerAscii(key)) - ord('a') + 9
-            if idx >= 0 and idx < stations.names.len:
-              let config = MenuConfig(
-                currentSection: section,
-                currentSubsection: subsection,
-                stationName: stations.names[idx],
-                stationUrl: stations.urls[idx]
-              )
-              playStation(config)
-              break
-            else:
-              showInvalidChoice()
-
-          of 'R', 'r':
-            returnToMain = true
-            break
-
-          of 'Q', 'q':
-            exitEcho()
-            break
-
-          else:
-            showInvalidChoice()
-
-        except IndexDefect:
-          showInvalidChoice()
-
-      if returnToMain:
-        break
-  else:
-    warn("Invalid path: " & jsonPathOrDir)
-
-proc drawMainMenu*(baseDir = getAppDir() / "assets") =
-  ## Draws and handles the main category menu.
-  let categories = loadCategories(baseDir)
-  
+proc handleMenu*(
+  section: string,
+  items: seq[string],
+  paths: seq[string],
+  isMainMenu: bool = false,
+  baseDir: string = getAppDir() / "assets"
+) =
+  ## Handles a generic menu for station selection or main category selection.
+  ## Supports both directories and JSON files.
   while true:
     var returnToParent = false
     clear()
     drawHeader()
     
     # Display the menu
-    drawMenu("Main", categories.names,   isMainMenu = true)
-    
-    try:
-      while true:
+    drawMenu(section, items, isMainMenu = isMainMenu)
+    hideCursor()
+
+    while true:
+      try:
         let key = getch()
         case key
         of '1'..'9':
           let idx = ord(key) - ord('1')
-          if idx < categories.names.len:
-            handleStationMenu(categories.names[idx], categories.paths[idx])
+          if idx >= 0 and idx < items.len:
+            if dirExists(paths[idx]):
+              # Handle directories (subcategories or station lists)
+              var subItems: seq[string] = @[]
+              var subPaths: seq[string] = @[]
+              for file in walkFiles(paths[idx] / "*.json"):
+                let name = file.extractFilename.changeFileExt("").capitalizeAscii
+                subItems.add(name)
+                subPaths.add(file)
+              if subItems.len == 0:
+                warn("No station lists available in this category.")
+              else:
+                handleMenu(items[idx], subItems, subPaths)
+            elif fileExists(paths[idx]) and paths[idx].endsWith(".json"):
+              # Handle JSON files (station lists)
+              let stations = loadStationList(paths[idx])
+              if stations.names.len == 0 or stations.urls.len == 0:
+                warn("No stations available. Please check the station list.")
+              else:
+                # Display a menu for the stations in the JSON file
+                handleMenu(items[idx], stations.names, stations.urls)
+            else:
+              # Treat as a station URL and play directly
+              let config = MenuConfig(
+                currentSection: section,
+                currentSubsection: "",
+                stationName: items[idx],
+                stationUrl: paths[idx]
+              )
+              playStation(config)
             break
-        
-        of 'A'..'K', 'a'..'k':
+          else:
+            showInvalidChoice()
+
+        of 'A'..'L', 'a'..'l':
           let idx = ord(toLowerAscii(key)) - ord('a') + 9
-          if idx < categories.names.len:
-            handleStationMenu(categories.names[idx], categories.paths[idx])
+          if idx >= 0 and idx < items.len:
+            if dirExists(paths[idx]):
+              # Handle directories (subcategories or station lists)
+              var
+                subItems: seq[string] = @[]
+                subPaths: seq[string] = @[]
+              for file in walkFiles(paths[idx] / "*.json"):
+                let name = file.extractFilename.changeFileExt("").capitalizeAscii
+                subItems.add(name)
+                subPaths.add(file)
+              if subItems.len == 0:
+                warn("No station lists available in this category.")
+              else:
+                handleMenu(items[idx], subItems, subPaths)
+            elif fileExists(paths[idx]) and paths[idx].endsWith(".json"):
+              # Handle JSON files (station lists)
+              let stations = loadStationList(paths[idx])
+              if stations.names.len == 0 or stations.urls.len == 0:
+                warn("No stations available. Please check the station list.")
+              else:
+                # Display a menu for the stations in the JSON file
+                handleMenu(items[idx], stations.names, stations.urls)
+            else:
+              # Treat as a station URL and play directly
+              let config = MenuConfig(
+                currentSection: section,
+                currentSubsection: "",
+                stationName: items[idx],
+                stationUrl: paths[idx]
+              )
+              playStation(config)
             break
-        
+          else:
+            showInvalidChoice()
+
         of 'N', 'n':
-          showNotes()
-          break
-        
+          if isMainMenu:
+            showNotes()
+            break
+          else:
+            showInvalidChoice()
+
         of 'R', 'r':
-          if baseDir != getAppDir() / "assets":
+          if not isMainMenu or baseDir != getAppDir() / "assets":
             returnToParent = true
             break
           else:
             showInvalidChoice()
-        
+
         of 'Q', 'q':
           exitEcho()
           break
-        
+
         else:
           showInvalidChoice()
-    
-    except IndexDefect:
-      showInvalidChoice()
-    
+
+      except IndexDefect:
+        showInvalidChoice()
+
     if returnToParent:
       break
+
+proc drawMainMenu*(baseDir = getAppDir() / "assets") =
+  ## Draws and handles the main category menu.
+  let categories = loadCategories(baseDir)
+  handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir)
 
 export hideCursor, error
 
