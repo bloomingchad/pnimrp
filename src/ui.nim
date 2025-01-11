@@ -162,6 +162,7 @@ proc displayMenu*(
   isMainMenu = false
 ) =
   ## Displays menu options in a formatted multi-column layout.
+  ## Dynamically switches between 3 columns and 2 columns based on terminal width.
   ## Columns are dynamically spaced based on the longest item in each column.
   ## Spacing between columns adjusts dynamically (minimum 4 spaces).
   ## Errors out if the terminal width is too small to display the menu.
@@ -172,19 +173,27 @@ proc displayMenu*(
     options.delete(options.len - 1) # Remove notes
 
   # Draw the "Station Categories" section header
-  let categoriesHeader = "          📻 Station Categories 📻"
+  let categoriesHeader = "📻 Station Categories 📻"
   say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
 
   # Draw the separator line
   let separatorLine = "-".repeat(termWidth)
   say(separatorLine, fgGreen, xOffset = 0)
 
-  # Calculate the number of columns
-  const numColumns = 3
+  # Determine the number of columns based on terminal width
+  const minColumns = 2
+  const maxColumns = 3
+  var numColumns = maxColumns
+
+  # Check if the terminal width is too small for 3 columns
+  if termWidth < 80:  # Adjust this threshold as needed
+    numColumns = minColumns
+
+  # Calculate the number of items per column
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
   # Find the maximum length of items in each column (including prefix)
-  var maxColumnLengths: array[numColumns, int]
+  var maxColumnLengths = newSeq[int](numColumns)  # Use a seq instead of an array
   for i in 0 ..< options.len:
     let columnIndex = i div itemsPerColumn
     let prefix =
@@ -218,7 +227,7 @@ proc displayMenu*(
     raise newException(UIError, "Terminal width too small to display menu without overlap. Required width: " & $(totalWidth + minSpacing * (numColumns - 1)) & ", available width: " & $termWidth)
 
   # Calculate the starting position for each column
-  var columnPositions: array[numColumns, int]
+  var columnPositions = newSeq[int](numColumns)  # Use a seq instead of an array
   columnPositions[0] = 0
   for i in 1 ..< numColumns:
     columnPositions[i] = columnPositions[i - 1] + maxColumnLengths[i - 1] + spacing
