@@ -352,19 +352,16 @@ proc handleStationMenu*(section = ""; jsonPathOrDir = ""; subsection = "") =
     warn("Invalid path: " & jsonPathOrDir)
 
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
-  ## Draws and handles the main category menu
+  ## Draws and handles the main category menu.
   let categories = loadCategories(baseDir)
   
   while true:
     var returnToParent = false
     clear()
     drawHeader()
-    say("Station Categories:", fgGreen)
     
-    # Add numbered display of categories
-    for i, name in categories.names:
-      let prefix = if i < 9: $(i + 1) else: $chr(ord('A') + i - 9)
-      say(prefix & "  " & name, fgBlue)
+    # Display the menu
+    drawMenu("Main", categories.names)
     
     try:
       while true:
@@ -405,10 +402,3 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
     
     if returnToParent:
       break
-export hideCursor, error
-
-when isMainModule:
-  try:
-    drawMainMenu()
-  except MenuError as e:
-    error("Menu error: " & e.msg)
