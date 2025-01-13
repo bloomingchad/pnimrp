@@ -194,21 +194,21 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
   let nativePath = baseDir / "*".unixToNativePath
   
   for file in walkFiles(nativePath):
-    if baseDir == getAppDir() / "assets" and file.endsWith("quote.json"):
+    let filename = file.extractFilename
+    
+    # Skip qoute.json (exact match, case-sensitive)
+    if filename == "qoute.json":
       continue
-      
-    let name = file.extractFilename.changeFileExt("")
-    if name != "quote":
-      result.names.add(name.capitalizeAscii)
-      result.paths.add(file)
+    
+    # Add the file to names and paths
+    let name = filename.changeFileExt("").capitalizeAscii
+    result.names.add(name)
+    result.paths.add(file)
   
   for dir in walkDirs(nativePath):
     let name = dir.extractFilename & DirSep
     result.names.add(name)
     result.paths.add(dir)
-  
-  if baseDir == getAppDir() / "assets":
-    result.names.add("Notes")
 
 proc handleMenu*(
   section: string,
