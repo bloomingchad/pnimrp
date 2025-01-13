@@ -27,6 +27,9 @@ const
     'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
     'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
   ]
+
+var termWidth* = terminalWidth()
+
 proc error*(message: string) =
   ## Displays error message and exits program
   styledEcho(fgRed, "Error: ", message)
@@ -42,6 +45,9 @@ proc parseJArray*(str): seq[string] =
 
   if result.len mod 2 != 0:
     error "JArrayResult.len not even"
+
+proc updateTermWidth* =
+  termWidth = terminalWidth()
 
 proc loadQuotes(filePath: string): QuoteData =
   ## Loads and validates quotes from JSON file
@@ -141,7 +147,7 @@ proc exitEcho* =
 
 proc drawHeader* =
   ## Draws the application header with decorative lines and emojis.
-  let termWidth = terminalWidth()
+  updateTermWidth()
   if termWidth < MinTerminalWidth:
     raise newException(UIError, "Terminal width too small.")
   
@@ -166,7 +172,7 @@ proc displayMenu*(
   ## Columns are dynamically spaced based on the longest item in each column.
   ## Spacing between columns adjusts dynamically (minimum 4 spaces).
   ## Errors out if the terminal width is too small to display the menu.
-  let termWidth = terminalWidth()
+  updateTermWidth()
   
   var options = optionss
   if isMainMenu:
@@ -286,6 +292,19 @@ proc drawMenu*(
   else:
     displayMenu(options)
 
+proc showFooter*(lineToDraw = 4, isNotes = false) =
+  updateTermWidth()
+  setCursorPos(0, lineToDraw)
+  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  
+  # Add footer with controls at the bottom
+  setCursorPos(0, lineToDraw + 1)
+  let footerOptions = "[Q] Quit   [R] Return   " & (if isNotes: "" else: "[P] Pause/Play   [-/+] Adjust Volume")
+  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+  # Draw bottom border
+  setCursorPos(0, lineToDraw + 2)
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+
 proc showExitMessage* =
   ## Shows exit message with random quote
   showCursor()
@@ -330,6 +349,7 @@ This is free software, and you are welcome to redistribute
 under certain conditions.""",
       showNowPlaying = false
     )
+    showFooter(9, isNotes = true)
     
     while true:
       case getch():
@@ -346,7 +366,8 @@ under certain conditions.""",
 
 proc drawHeader*(section: string) =
   ## Draws the application header with the current section
-  let termWidth = terminalWidth()
+  updateTermWidth()
+  
   if termWidth < MinTerminalWidth:
     raise newException(UIError, "Terminal width too small")
   
@@ -365,9 +386,8 @@ proc volumeColor(volume: int): ForegroundColor =
 
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
-  let termWidth = terminalWidth()
-
   # Draw header if section is provided
+  updateTermWidth()
   if section.len > 0:
     setCursorPos(0, 0)  # Line 0
     say(AppNameShort & " > " & section, fgYellow)
@@ -392,18 +412,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
   
-  # Draw separator
-  setCursorPos(0, 4)  # Line 4
-  say("-".repeat(termWidth), fgGreen, xOffset = 0)
-  
-  # Add footer with controls at the bottom
-  setCursorPos(0, 6)  # Line 6
-  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"
-  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
-  
-  # Draw bottom border
-  setCursorPos(0, 7)  # Line 7
-  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  showFooter()
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.
