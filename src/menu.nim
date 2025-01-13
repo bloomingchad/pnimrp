@@ -67,17 +67,24 @@ proc isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
-proc playStation(config: MenuConfig) {.raises: [MenuError].} =
+proc playStation(config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
   try:
     if config.stationUrl == "":
-      raise newException(MenuError, "Empty station URL")
-    elif " " in config.stationUrl:
-      raise newException(MenuError, "Invalid station URL")
-    
+      let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
+      warn("Empty station URL. Please check the station list in: " & fileHint & ".json")
+      return
+
     # Validate the link
-    if not validateLink(config.stationUrl).isValid:
-      raise newException(MenuError, "Station URL not accessible")
+    try:
+      if not validateLink(config.stationUrl).isValid:
+        let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
+        warn("Failed to access station: " & config.stationUrl & "\nEdit the station list in: " & fileHint & ".json")
+        return
+    except Exception:
+      let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
+      warn("Failed to access station: " & config.stationUrl & "\nEdit the station list in: " & fileHint & ".json")
+      return
 
     var
       ctx = create()
@@ -166,8 +173,10 @@ proc playStation(config: MenuConfig) {.raises: [MenuError].} =
         else:
           showInvalidChoice()
     
-  except Exception as e:
-    raise newException(MenuError, "Playback error: " & e.msg)
+  except Exception:
+    let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
+    warn("An error occurred during playback. Edit the station list in: " & fileHint & ".json")
+    return
 
 proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
   ## Loads station names and URLs from a JSON file.
