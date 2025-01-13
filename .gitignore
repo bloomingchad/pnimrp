@@ -1,5 +1,8 @@
-
+nimcache/
+nimblecache/
+htmldocs/
 pnimrp.exe
 mpv-1.dll
 libmpv.so
+libmpv.dynlib
 pnimrp
