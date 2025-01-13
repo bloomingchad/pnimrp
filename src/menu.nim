@@ -36,32 +36,11 @@ type
     StatusPaused
     StatusPausedMuted
 
-proc updatePlayerState(state: var PlayerState, ctx: ptr Handle) =
-  ## Updates and displays the player's current state (playing, paused, muted, etc.).
-  cursorDown()
-  eraseLine()
-
-  # Determine the current status based on the player state
-  let currentStatus =
-    if not state.isPaused and not state.isMuted:
-      StatusPlaying
-    elif not state.isPaused and state.isMuted:
-      StatusMuted
-    elif state.isPaused and not state.isMuted:
-      StatusPaused
-    else:  # isPaused and isMuted
-      StatusPausedMuted
-
-  # Define the state message and color based on the current status
-  let stateMsg = case currentStatus
-    of StatusPlaying: ("Playing", fgGreen)
-    of StatusMuted: ("Muted", fgRed)
-    of StatusPaused: ("Paused", fgYellow)
-    of StatusPausedMuted: ("Paused and Muted", fgRed)
-
-  # Display the state message
-  say(stateMsg[0], stateMsg[1])
-  setCursorPos(0, 2)
+proc currentStatus(state: PlayerState): PlayerStatus =
+  if not state.isPaused and not state.isMuted: StatusPlaying
+  elif not state.isPaused and state.isMuted: StatusMuted
+  elif state.isPaused and not state.isMuted: StatusPaused
+  else:                                      StatusPausedMuted
 
 proc isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
@@ -115,7 +94,8 @@ proc playStation(config: MenuConfig) =
       
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
-        updatePlayerUI(state.currentSong, "Playing", state.volume)
+
+        updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
       
       # Periodic checks
       if counter >= CheckIdleInterval:
@@ -140,22 +120,22 @@ proc playStation(config: MenuConfig) =
         of Key.P:
           state.isPaused = not state.isPaused
           ctx.pause(state.isPaused)
-          updatePlayerUI(state.currentSong, if state.isPaused: "Paused" else: "Playing", state.volume)
+          updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
         
         of Key.M:
           state.isMuted = not state.isMuted
           ctx.mute(state.isMuted)
-          updatePlayerUI(state.currentSong, if state.isMuted: "Muted" else: "Playing", state.volume)
+          updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
         
         of Key.Slash, Key.Plus:
           state.volume = min(state.volume + VolumeStep, MaxVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
-          updatePlayerUI(state.currentSong, "Playing", state.volume)
+          updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
         
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
-          updatePlayerUI(state.currentSong, "Playing", state.volume)
+          updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
         
         of Key.R:
           if not state.isPaused:
