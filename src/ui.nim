@@ -378,9 +378,13 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   setCursorPos(1, 1)  # Line 1
   say("-".repeat(termWidth), fgGreen, xOffset = 0)
   
-  # Display "Now Playing"
+  # Display "Now Playing" with truncation if necessary
   setCursorPos(0, 2)  # Line 2 (below the separator)
-  say("Now Playing: " & nowPlaying, fgCyan)
+  let nowPlayingText = "Now Playing: " & nowPlaying
+  if nowPlayingText.len > termWidth:
+    say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan)  # Truncate and add ellipsis
+  else:
+    say(nowPlayingText, fgCyan)
   
   # Display status and volume
   setCursorPos(0, 3)  # Line 3
@@ -404,10 +408,14 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   let termWidth = terminalWidth()
 
-  # Always update "Now Playing"
+  # Always update "Now Playing" with truncation if necessary
   setCursorPos(0, 2)  # Line 2
   eraseLine()
-  say("Now Playing: " & nowPlaying, fgCyan)
+  let nowPlayingText = "Now Playing: " & nowPlaying
+  if nowPlayingText.len > termWidth:
+    say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan)  # Truncate and add ellipsis
+  else:
+    say(nowPlayingText, fgCyan)
 
   # Update volume (only if it has changed)
   if volume != lastVolume:
