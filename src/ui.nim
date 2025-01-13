@@ -363,23 +363,22 @@ proc volumeColor(volume: int): ForegroundColor =
   else: 
     fgGreen
 
-proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
-  ## Draws the modern music player UI with dynamic layout and visual enhancements.
-  ## Adjusts layout for wide and narrow screens, colors volume percentage, and anchors the footer to the bottom.
-  clear()
-  
+proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
+  ## Internal function that handles the common logic for drawing and updating the player UI.
   let termWidth = terminalWidth()
 
-  # Draw header
-  setCursorPos(0, 0)  # Line 0
-  say(AppNameShort & " > " & section, fgYellow)
+  # Draw header if section is provided
+  if section.len > 0:
+    setCursorPos(0, 0)  # Line 0
+    say(AppNameShort & " > " & section, fgYellow)
   
   # Draw separator
-  setCursorPos(1, 1)  # Line 1
+  setCursorPos(0, 1)  # Line 1
   say("-".repeat(termWidth), fgGreen, xOffset = 0)
   
   # Display "Now Playing" with truncation if necessary
   setCursorPos(0, 2)  # Line 2 (below the separator)
+  eraseLine()
   let nowPlayingText = "Now Playing: " & nowPlaying
   if nowPlayingText.len > termWidth:
     say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan)  # Truncate and add ellipsis
@@ -388,6 +387,7 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   
   # Display status and volume
   setCursorPos(0, 3)  # Line 3
+  eraseLine()
   let volumeColor = volumeColor(volume)
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
@@ -405,31 +405,12 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   setCursorPos(0, 7)  # Line 7
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
 
+proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
+  ## Draws the modern music player UI with dynamic layout and visual enhancements.
+  ## Adjusts layout for wide and narrow screens, colors volume percentage, and anchors the footer to the bottom.
+  clear()
+  drawPlayerUIInternal(section, nowPlaying, status, volume)
+
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
-  let termWidth = terminalWidth()
-
-  # Always update "Now Playing" with truncation if necessary
-  setCursorPos(0, 2)  # Line 2
-  eraseLine()
-  let nowPlayingText = "Now Playing: " & nowPlaying
-  if nowPlayingText.len > termWidth:
-    say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan)  # Truncate and add ellipsis
-  else:
-    say(nowPlayingText, fgCyan)
-
-  # Update volume (only if it has changed)
-  if volume != lastVolume:
-    setCursorPos(0, 3)  # Line 3
-    eraseLine()
-    let volumeColor = volumeColor(volume)
-    say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
-    styledEcho(volumeColor, $volume & "%")
-    lastVolume = volume
-
-  # Ensure footer and bottom border remain visible
-  setCursorPos(0, 6)  # Line 6
-  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"
-  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
-  
-  setCursorPos(0, 7)  # Line 7
-  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  ## Updates the player UI with new information.
+  drawPlayerUIInternal("", nowPlaying, status, volume)
