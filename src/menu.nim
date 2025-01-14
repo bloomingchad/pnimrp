@@ -1,5 +1,5 @@
 import
-  terminal, os, ui, strutils,
+  terminal, os, ui, strutils, times,
   client, net, player, link, illwill
 
 type
@@ -21,47 +21,6 @@ const
   CheckIdleInterval = 25  # Interval to check if the player is idle
   KeyTimeout = 25         # Timeout for key input in milliseconds
 
-# Global variable to store whether the terminal supports emojis
-var terminalSupportsEmoji: bool
-
-# Check if the terminal supports emojis
-proc checkEmojiSupport(): bool =
-  let testEmoji = "🔊"
-  let testOutput = $testEmoji  # Convert to string
-  return testOutput == "🔊"    # If the output matches, emojis are supported
-
-# Initialize the global variable
-terminalSupportsEmoji = checkEmojiSupport()
-
-type
-  PlayerStatus = enum  # Enumeration for player states
-    StatusPlaying
-    StatusMuted
-    StatusPaused
-    StatusPausedMuted
-
-# Fallback symbols for each state
-proc getFallbackSymbol(status: PlayerStatus): string =
-  case status
-  of StatusPlaying: return "[>]"
-  of StatusMuted: return "[X]"
-  of StatusPaused: return "||"
-  of StatusPausedMuted: return "||[X]"
-
-proc getEmojiSymbol(status: PlayerStatus): string =
-  case status
-  of StatusPlaying: return "🔊"
-  of StatusMuted: return "🔇"
-  of StatusPaused: return "⏸"
-  of StatusPausedMuted: return "⏸ 🔇"
-
-# Function to get the appropriate symbol based on terminal support
-proc currentStatusEmoji(status: PlayerStatus): string =
-  if terminalSupportsEmoji:
-    return getEmojiSymbol(status)
-  else:
-    return getFallbackSymbol(status)
-
 proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false) =
   ## Handles player errors consistently and optionally destroys the player context.
   warn(msg)
@@ -80,6 +39,14 @@ proc isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
+proc updateAnimationOnly(status, currentSong: string) =
+  ## Updates only the animation symbol in the "Now Playing" section.
+  let animationSymbol = updateJinglingAnimation(status)  # Get the animation symbol
+  setCursorPos(0, 2)  # Move cursor to the "Now Playing" line
+  eraseLine()  # Clear the current line
+  
+  # Display the animation symbol and "Now Playing" text in cyan
+  styledEcho(fgCyan, animationSymbol & " Now Playing: ", fgCyan, currentSong)
 proc playStation(config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
   try:
@@ -105,6 +72,7 @@ proc playStation(config: MenuConfig) =
       isObserving = false
       counter: uint8
       playlistFirstPass = false
+      lastAnimationUpdate: DateTime = now()  # Track the last animation update time
     
     ctx.init(config.stationUrl)
     var event = ctx.waitEvent()
@@ -128,9 +96,19 @@ proc playStation(config: MenuConfig) =
       
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
-
+        # Update the full UI only when the song name changes
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
       
+      # Check if it's time to update the animation (2 FPS = every 500ms)
+      let currentTime = now()
+      let timeDiff = currentTime - lastAnimationUpdate
+      let timeDiffMs = timeDiff.inMilliseconds
+
+      if timeDiffMs >= 1350 and currentStatus(state) == StatusPlaying:
+        # Update the animation only if the player is playing
+        updateAnimationOnly(currentStatusEmoji(currentStatus(state)), state.currentSong)
+        lastAnimationUpdate = currentTime  # Update the last animation time
+
       # Periodic checks
       if counter >= CheckIdleInterval:
         if ctx.isIdle():
@@ -154,21 +132,25 @@ proc playStation(config: MenuConfig) =
         of Key.P:
           state.isPaused = not state.isPaused
           ctx.pause(state.isPaused)
+          # Update the full UI when the player is paused/unpaused
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         
         of Key.M:
           state.isMuted = not state.isMuted
           ctx.mute(state.isMuted)
+          # Update the full UI when the player is muted/unmuted
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         
         of Key.Slash, Key.Plus:
           state.volume = min(state.volume + VolumeStep, MaxVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
+          # Update the full UI when the volume changes
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
+          # Update the full UI when the volume changes
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         
         of Key.R:
