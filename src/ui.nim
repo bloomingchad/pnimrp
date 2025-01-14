@@ -1,10 +1,6 @@
 import
-  terminal,
-  client,
-  random,
-  json,
-  strutils,
-  os
+  terminal, client, random,
+  json, strutils, os, times
 
 type
   UIError* = object of CatchableError
@@ -13,7 +9,7 @@ type
     quotes: seq[string]
     authors: seq[string]
 
-using str :string
+using str: string
 const
   AppName* = "Poor Mans Radio Player"
   AppNameShort* = "PNimRP"
@@ -28,7 +24,38 @@ const
     'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
   ]
 
+type
+  PlayerStatus* = enum  # Enumeration for player states
+    StatusPlaying
+    StatusMuted
+    StatusPaused
+    StatusPausedMuted
+
+# Fallback symbols for each state
+proc getFallbackSymbol*(status: PlayerStatus): string =
+  case status
+  of StatusPlaying: return "[>]"
+  of StatusMuted: return "[X]"
+  of StatusPaused: return "||"
+  of StatusPausedMuted: return "||[X]"
+
+proc getEmojiSymbol*(status: PlayerStatus): string =
+  case status
+  of StatusPlaying: return "🔊"
+  of StatusMuted: return "🔇"
+  of StatusPaused: return "⏸"
+  of StatusPausedMuted: return "⏸ 🔇"
+
 var termWidth* = terminalWidth()
+
+# Check if the terminal supports emojis
+proc checkEmojiSupport(): bool =
+  let testEmoji = "🔊"
+  let testOutput = $testEmoji  # Convert to string
+  return testOutput == "🔊"    # If the output matches, emojis are supporte
+
+# Global variable to store whether the terminal supports emojis
+var terminalSupportsEmoji* = false #checkEmojiSupport()
 
 proc error*(message: string) =
   ## Displays error message and exits program
@@ -112,6 +139,8 @@ proc say*(
     styledEcho(color, message)
 
 proc showExitMessage* =
+  #if from playerUI:
+  setCursorYPos 6
   showCursor()
   echo ""
   randomize()
@@ -359,6 +388,15 @@ proc volumeColor(volume: int): ForegroundColor =
   else: 
     fgGreen
 
+var
+  animationFrame: int = 0  # Tracks the current frame of the animation
+  lastAnimationUpdate: DateTime = now()  # Tracks the last time the animation was updated
+
+# Animation frames for emoji and ASCII
+const
+  EmojiFrames = ["🎵", "🎶"]  # Emoji animation frames
+  AsciiFrames = ["♪♫", "♫♪"]  # ASCII fallback animation frames
+
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
   # Draw header if section is provided
@@ -389,12 +427,46 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   
   showFooter()
 
+# Function to get the appropriate symbol based on terminal support
+proc currentStatusEmoji*(status: PlayerStatus): string =
+  if terminalSupportsEmoji:
+    return getEmojiSymbol(status)
+  else:
+    return getFallbackSymbol(status)
+
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.
   ## Adjusts layout for wide and narrow screens, colors volume percentage, and anchors the footer to the bottom.
   clear()
   drawPlayerUIInternal(section, nowPlaying, status, volume)
 
+proc updateJinglingAnimation*(status: string): string =
+  ## Updates the jingling animation and returns the current frame.
+  ## Returns an empty string if the player is not in the StatusPlaying state.
+  let currentTime = now()  # Get the current time as DateTime
+
+  # Calculate the time difference in milliseconds
+  let timeDiff = currentTime - lastAnimationUpdate
+  let timeDiffMs = timeDiff.inMilliseconds
+
+  # Check if it's time to update the animation frame (2 FPS = every 500ms)
+  if timeDiffMs >= 500:
+    animationFrame = (animationFrame + 1) mod 2  # Alternate between 0 and 1
+    lastAnimationUpdate = currentTime  # Update the last animation time
+
+  # Determine the animation symbol based on terminal support and player status
+  if status == currentStatusEmoji(StatusPlaying):
+    if terminalSupportsEmoji:
+      return EmojiFrames[animationFrame]  # Use emoji frames
+    else:
+      return AsciiFrames[animationFrame]  # Use ASCII frames
+  else:
+    return ""  # No animation for other statuses
+
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   ## Updates the player UI with new information.
-  drawPlayerUIInternal("", nowPlaying, status, volume)
+  let animationSymbol = updateJinglingAnimation(status)  # Get the animation symbol
+  let nowPlayingText = animationSymbol & " " & nowPlaying  # Move animation to the start
+
+  # Draw the UI with the updated "Now Playing" text
+  drawPlayerUIInternal("", nowPlayingText, status, volume)
