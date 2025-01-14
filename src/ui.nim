@@ -53,6 +53,14 @@ proc checkEmojiSupport(): bool =
   let testEmoji = "🔊"
   let testOutput = $testEmoji  # Convert to string
   return testOutput == "🔊"    # If the output matches, emojis are supporte
+    let testEmojis = ["🔊", "⏸", "🔇", "🎵", "🎶"]
+
+    for emoji in testEmojis:
+        let testOutput = $emoji
+        if testOutput != emoji:
+            #echo "Emoji failed: ", emoji, " - Result: ", testOutput
+            return false
+    return true
 
 # Global variable to store whether the terminal supports emojis
 var terminalSupportsEmoji* = false #checkEmojiSupport()
@@ -140,7 +148,7 @@ proc say*(
 
 proc showExitMessage* =
   #if from playerUI:
-  setCursorYPos 6
+  setCursorPos 0, 6
   showCursor()
   echo ""
   randomize()
