@@ -50,9 +50,6 @@ var termWidth* = terminalWidth()
 
 # Check if the terminal supports emojis
 proc checkEmojiSupport(): bool =
-  let testEmoji = "🔊"
-  let testOutput = $testEmoji  # Convert to string
-  return testOutput == "🔊"    # If the output matches, emojis are supporte
     let testEmojis = ["🔊", "⏸", "🔇", "🎵", "🎶"]
 
     for emoji in testEmojis:
@@ -63,7 +60,7 @@ proc checkEmojiSupport(): bool =
     return true
 
 # Global variable to store whether the terminal supports emojis
-var terminalSupportsEmoji* = false #checkEmojiSupport()
+var terminalSupportsEmoji* = checkEmojiSupport()
 
 proc error*(message: string) =
   ## Displays error message and exits program
