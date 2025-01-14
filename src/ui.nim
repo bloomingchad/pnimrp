@@ -111,7 +111,7 @@ proc say*(
   else:
     styledEcho(color, message)
 
-proc exitEcho* =
+proc showExitMessage* =
   showCursor()
   echo ""
   randomize()
@@ -304,31 +304,6 @@ proc showFooter*(lineToDraw = 4, isNotes = false) =
   # Draw bottom border
   setCursorPos(0, lineToDraw + 2)
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
-
-proc showExitMessage* =
-  ## Shows exit message with random quote
-  showCursor()
-  echo ""
-  
-  try:
-    randomize()
-    let 
-      quotePath = getAppDir() / "assets" / "quote.json"
-      quoteData = loadQuotes(quotePath)
-      randomIndex = rand(0 ..< quoteData.quotes.len)
-    
-    when not defined(release) or not defined(danger):
-      echo "Memory Statistics:"
-      echo "  Free: ", getFreeMem() div 1024, " kB"
-      echo "  Total: ", getTotalMem() div 1024, " kB"
-      echo "  Occupied: ", getOccupiedMem() div 1024, " kB"
-    
-    styledEcho(fgCyan, quoteData.quotes[randomIndex], "...")
-    setCursorXPos(15)
-    styledEcho(fgGreen, "—", quoteData.authors[randomIndex])
-    
-  except UIError as e:
-    error("Failed to show exit message: " & e.msg)
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
   ## Cleanly exits the application
