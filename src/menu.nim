@@ -21,13 +21,17 @@ const
   CheckIdleInterval = 25  # Interval to check if the player is idle
   KeyTimeout = 25         # Timeout for key input in milliseconds
 
-proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false) =
-  ## Handles player errors consistently and optionally destroys the player context.
-  warn(msg)
-  if ctx != nil:
-    ctx.terminateDestroy()
-  if shouldReturn:
-    return
+# Global variable to store whether the terminal supports emojis
+var terminalSupportsEmoji: bool
+
+# Check if the terminal supports emojis
+proc checkEmojiSupport(): bool =
+  let testEmoji = "🔊"
+  let testOutput = $testEmoji  # Convert to string
+  return testOutput == "🔊"    # If the output matches, emojis are supported
+
+# Initialize the global variable
+terminalSupportsEmoji = checkEmojiSupport()
 
 type
   PlayerStatus = enum  # Enumeration for player states
@@ -35,6 +39,36 @@ type
     StatusMuted
     StatusPaused
     StatusPausedMuted
+
+# Fallback symbols for each state
+proc getFallbackSymbol(status: PlayerStatus): string =
+  case status
+  of StatusPlaying: return "[>]"
+  of StatusMuted: return "[X]"
+  of StatusPaused: return "||"
+  of StatusPausedMuted: return "||[X]"
+
+proc getEmojiSymbol(status: PlayerStatus): string =
+  case status
+  of StatusPlaying: return "🔊"
+  of StatusMuted: return "🔇"
+  of StatusPaused: return "⏸"
+  of StatusPausedMuted: return "⏸ 🔇"
+
+# Function to get the appropriate symbol based on terminal support
+proc currentStatusEmoji(status: PlayerStatus): string =
+  if terminalSupportsEmoji:
+    return getEmojiSymbol(status)
+  else:
+    return getFallbackSymbol(status)
+
+proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false) =
+  ## Handles player errors consistently and optionally destroys the player context.
+  warn(msg)
+  if ctx != nil:
+    ctx.terminateDestroy()
+  if shouldReturn:
+    return
 
 proc currentStatus(state: PlayerState): PlayerStatus =
   if not state.isPaused and not state.isMuted: StatusPlaying
@@ -81,7 +115,7 @@ proc playStation(config: MenuConfig) =
       discard  # Non-critical failure
     
     # Draw the initial player UI
-    drawPlayerUI(config.stationName, "Loading...", "Playing", state.volume)
+    drawPlayerUI(config.stationName, "Loading...", currentStatusEmoji(currentStatus(state)), state.volume)
     
     while true:
       if not state.isPaused:
@@ -95,7 +129,7 @@ proc playStation(config: MenuConfig) =
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
 
-        updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
+        updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
       
       # Periodic checks
       if counter >= CheckIdleInterval:
@@ -120,22 +154,22 @@ proc playStation(config: MenuConfig) =
         of Key.P:
           state.isPaused = not state.isPaused
           ctx.pause(state.isPaused)
-          updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
+          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         
         of Key.M:
           state.isMuted = not state.isMuted
           ctx.mute(state.isMuted)
-          updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
+          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         
         of Key.Slash, Key.Plus:
           state.volume = min(state.volume + VolumeStep, MaxVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
-          updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
+          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
-          updatePlayerUI(state.currentSong, $currentStatus(state), state.volume)
+          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         
         of Key.R:
           if not state.isPaused:
@@ -309,7 +343,7 @@ proc handleMenu*(
             showInvalidChoice()
 
         of 'Q', 'q':
-          exitEcho()
+          showExitMessage()
           break
 
         else:
