@@ -121,11 +121,11 @@ proc warn*(message: string, xOffset = 4, color = fgRed) =
 
 proc showInvalidChoice*(message = DefaultErrorMsg) =
   ## Shows invalid choice message and repositions cursor
-  cursorDown(2)
+  cursorDown(5)
   warn(message)
   cursorUp()
   eraseLine()
-  cursorUp(2)
+  cursorUp(5)
 
 proc say*(
   message: string,
@@ -399,8 +399,8 @@ var
 
 # Animation frames for emoji and ASCII
 const
-  EmojiFrames = ["🎵", "🎶"]  # Emoji animation frames
   AsciiFrames = ["♪♫", "♫♪"]  # ASCII fallback animation frames
+  EmojiFrames = AsciiFrames   # ["🎵", "🎶"]  # Emoji animation frames
 
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
@@ -424,13 +424,13 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
     say(nowPlayingText, fgCyan)
   
   # Display status and volume
-  setCursorPos(0, 3)  # Line 3
+  setCursorPos(0, 4)
   eraseLine()
   let volumeColor = volumeColor(volume)
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
   
-  showFooter()
+  showFooter(linetoDraw = 5)
 
 # Function to get the appropriate symbol based on terminal support
 proc currentStatusEmoji*(status: PlayerStatus): string =
@@ -455,7 +455,7 @@ proc updateJinglingAnimation*(status: string): string =
   let timeDiffMs = timeDiff.inMilliseconds
 
   # Check if it's time to update the animation frame (2 FPS = every 500ms)
-  if timeDiffMs >= 500:
+  if timeDiffMs >= 1350:
     animationFrame = (animationFrame + 1) mod 2  # Alternate between 0 and 1
     lastAnimationUpdate = currentTime  # Update the last animation time
 
