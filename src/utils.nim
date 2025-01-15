@@ -10,12 +10,6 @@ type
 
   MenuOptions* = seq[string]
 
-  PlayerStatus* = enum  # Enumeration for player states
-    StatusPlaying
-    StatusMuted
-    StatusPaused
-    StatusPausedMuted
-
 const
   # Characters for menu options
   MenuChars* = @[
