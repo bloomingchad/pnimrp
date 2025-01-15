@@ -1,6 +1,7 @@
 import
   terminal, os, ui, strutils, times,
-  client, net, player, link, illwill
+  client, net, player, link, illwill,
+  utils, animation
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
