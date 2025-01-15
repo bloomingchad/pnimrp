@@ -47,6 +47,7 @@ proc updateAnimationOnly(status, currentSong: string) =
   
   # Display the animation symbol and "Now Playing" text in cyan
   styledEcho(fgCyan, animationSymbol & " Now Playing: ", fgCyan, currentSong)
+
 proc playStation(config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
   try:
@@ -214,6 +215,14 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
     let name = dir.extractFilename & DirSep
     result.names.add(name)
     result.paths.add(dir)
+
+proc getFooterOptions(isMainMenu, isPlayerUI: bool): string =
+  ## Returns the footer options based on the context (main menu or submenu).
+  result =
+    if isMainMenu: "[Q] Quit   [N] Notes"
+    elif isPlayerUI: "[Q] Quit   [R] Return   [P][-/+] Adjust Volume "
+    else: "[Q] Quit   [R] Return"
+
 
 proc handleMenu*(
   section: string,
