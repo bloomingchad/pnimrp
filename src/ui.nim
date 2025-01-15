@@ -5,21 +5,6 @@ import
 
 using str: string
 
-# Fallback symbols for each state
-proc getFallbackSymbol*(status: PlayerStatus): string =
-  case status
-  of StatusPlaying: return "[>]"
-  of StatusMuted: return "[X]"
-  of StatusPaused: return "||"
-  of StatusPausedMuted: return "||[X]"
-
-proc getEmojiSymbol*(status: PlayerStatus): string =
-  case status
-  of StatusPlaying: return "🔊"
-  of StatusMuted: return "🔇"
-  of StatusPaused: return "⏸"
-  of StatusPausedMuted: return "⏸ 🔇"
-
 proc say*(
   message: string,
   color = fgYellow,
@@ -323,11 +308,6 @@ var
   animationFrame: int = 0  # Tracks the current frame of the animation
   lastAnimationUpdate: DateTime = now()  # Tracks the last time the animation was updated
 
-# Animation frames for emoji and ASCII
-const
-  AsciiFrames = ["♪♫", "♫♪"]  # ASCII fallback animation frames
-  EmojiFrames = AsciiFrames   # ["🎵", "🎶"]  # Emoji animation frames
-
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
   # Draw header if section is provided
@@ -357,13 +337,6 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   styledEcho(volumeColor, $volume & "%")
   
   showFooter(linetoDraw = 5)
-
-# Function to get the appropriate symbol based on terminal support
-proc currentStatusEmoji*(status: PlayerStatus): string =
-  if terminalSupportsEmoji:
-    return getEmojiSymbol(status)
-  else:
-    return getFallbackSymbol(status)
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.
