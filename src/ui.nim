@@ -1,36 +1,9 @@
 import
   terminal, client, random,
   json, strutils, os, times,
-  strformat
-
-type
-  UIError* = object of CatchableError
-  MenuOptions* = seq[string]
-  QuoteData = object
-    quotes: seq[string]
-    authors: seq[string]
+  strformat, animation, utils
 
 using str: string
-const
-  AppName* = "Poor Mans Radio Player"
-  AppNameShort* = "PNimRP"
-  DefaultErrorMsg = "INVALID CHOICE"
-  MinTerminalWidth = 40
-  
-  # Characters for menu options
-  MenuChars = @[
-    '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-    'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-  ]
-
-type
-  PlayerStatus* = enum  # Enumeration for player states
-    StatusPlaying
-    StatusMuted
-    StatusPaused
-    StatusPausedMuted
 
 # Fallback symbols for each state
 proc getFallbackSymbol*(status: PlayerStatus): string =
@@ -46,115 +19,6 @@ proc getEmojiSymbol*(status: PlayerStatus): string =
   of StatusMuted: return "🔇"
   of StatusPaused: return "⏸"
   of StatusPausedMuted: return "⏸ 🔇"
-
-var termWidth* = terminalWidth()
-
-# Check if the terminal supports emojis
-proc checkEmojiSupport(): bool =
-    let testEmojis = ["🔊", "⏸", "🔇", "🎵", "🎶"]
-
-    for emoji in testEmojis:
-        let testOutput = $emoji
-        if testOutput != emoji:
-            return false
-    return true
-
-# Global variable to store whether the terminal supports emojis
-var terminalSupportsEmoji* = checkEmojiSupport()
-
-proc error*(message: string) =
-  ## Displays error message and exits program
-  styledEcho(fgRed, "Error: ", message)
-  quit(QuitFailure)
-
-proc parseJArray*(str: string): seq[string] =
-  ## Parses a JSON array from a file and validates the length of its elements.
-  ## Raises a UIError if any element exceeds the maximum allowed length.
-  const
-    MaxElementLength = 10  # Maximum allowed length for each element
-    MaxAuthorLength = 10   # Maximum allowed length for authors (if applicable)
-
-  try:
-    result = to(parseJson(readFile(str)){"pnimrp"}, seq[string])
-
-    # Validate the length of each element
-    for i in 0 ..< result.len:
-      if result[i].len > MaxElementLength:
-        raise newException(
-          UIError,
-          fmt"""Element at index {$i} in file {str} is too long.
-          Maximum allowed length is {$MaxElementLength} characters."""
-        )
-
-    # Additional validation for quotes and authors (if applicable)
-    if result.len mod 2 != 0:
-      raise newException(UIError, "JArrayResult.len not even (quotes and authors must be paired)")
-
-    # Validate authors separately (if applicable)
-    for i in 1 ..< result.len:
-      if i mod 2 == 1 and result[i].len > MaxAuthorLength:  # Authors are at odd indices
-        raise newException(
-          UIError,
-          "Author at index " & $i & " in file " & str & " is too long. " &
-          "Maximum allowed length is " & $MaxAuthorLength & " characters."
-        )
-
-  except IOError:
-    raise newException(UIError, "Failed to load JSON file: File not found or inaccessible")
-  except JsonParsingError:
-    raise newException(UIError, "Failed to parse JSON file: Invalid JSON format")
-
-proc updateTermWidth* =
-  ## Updates the terminal width only if it has changed.
-  let newWidth = terminalWidth()
-  if newWidth != termWidth:
-    termWidth = newWidth
-
-proc loadQuotes(filePath: string): QuoteData =
-  ## Loads and validates quotes from JSON file
-  try:
-    let jsonData = parseJArray(filePath)
-    if jsonData.len mod 2 != 0:
-      raise newException(UIError, "Quote data must have matching quotes and authors")
-    
-    result = QuoteData(quotes: @[], authors: @[])
-    for i in 0 .. jsonData.high:
-      if i mod 2 == 0:
-        result.quotes.add(jsonData[i])
-      else:
-        result.authors.add(jsonData[i])
-        
-    # Validate quotes and authors
-    for i in 0 ..< result.quotes.len:
-      if result.quotes[i].len == 0:
-        raise newException(UIError, "Empty quote found at index " & $i)
-      if result.authors[i].len == 0:
-        raise newException(UIError, "Empty author found for quote at index " & $i)
-        
-  except IOError:
-    raise newException(UIError, "Failed to load quotes: File not found")
-  except JsonParsingError:
-    raise newException(UIError, "Failed to parse quotes: Invalid JSON format")
-
-proc clear* =
-  ## Clears the screen and resets cursor position
-  eraseScreen()
-  setCursorPos(0, 0)
-
-proc warn*(message: string, xOffset = 4, color = fgRed) =
-  ## Displays warning message with delay
-  if xOffset >= 0:
-    setCursorXPos(xOffset)
-  styledEcho(color, message)
-  sleep(750)
-
-proc showInvalidChoice*(message = DefaultErrorMsg) =
-  ## Shows invalid choice message and repositions cursor
-  cursorDown(5)
-  warn(message)
-  cursorUp()
-  eraseLine()
-  cursorUp(5)
 
 proc say*(
   message: string,
@@ -506,29 +370,6 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Adjusts layout for wide and narrow screens, colors volume percentage, and anchors the footer to the bottom.
   clear()
   drawPlayerUIInternal(section, nowPlaying, status, volume)
-
-proc updateJinglingAnimation*(status: string): string =
-  ## Updates the jingling animation and returns the current frame.
-  ## Returns an empty string if the player is not in the StatusPlaying state.
-  let currentTime = now()  # Get the current time as DateTime
-
-  # Calculate the time difference in milliseconds
-  let timeDiff = currentTime - lastAnimationUpdate
-  let timeDiffMs = timeDiff.inMilliseconds
-
-  # Check if it's time to update the animation frame (2 FPS = every 500ms)
-  if timeDiffMs >= 1350:
-    animationFrame = (animationFrame + 1) mod 2  # Alternate between 0 and 1
-    lastAnimationUpdate = currentTime  # Update the last animation time
-
-  # Determine the animation symbol based on terminal support and player status
-  if status == currentStatusEmoji(StatusPlaying):
-    if terminalSupportsEmoji:
-      return EmojiFrames[animationFrame]  # Use emoji frames
-    else:
-      return AsciiFrames[animationFrame]  # Use ASCII frames
-  else:
-    return ""  # No animation for other statuses
 
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   ## Updates the player UI with new information.
