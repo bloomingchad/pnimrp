@@ -55,7 +55,6 @@ proc checkEmojiSupport(): bool =
     for emoji in testEmojis:
         let testOutput = $emoji
         if testOutput != emoji:
-            #echo "Emoji failed: ", emoji, " - Result: ", testOutput
             return false
     return true
 
@@ -79,7 +78,10 @@ proc parseJArray*(str): seq[string] =
     error "JArrayResult.len not even"
 
 proc updateTermWidth* =
-  termWidth = terminalWidth()
+  ## Updates the terminal width only if it has changed.
+  let newWidth = terminalWidth()
+  if newWidth != termWidth:
+    termWidth = newWidth
 
 proc loadQuotes(filePath: string): QuoteData =
   ## Loads and validates quotes from JSON file
@@ -144,8 +146,7 @@ proc say*(
     styledEcho(color, message)
 
 proc showExitMessage* =
-  #if from playerUI:
-  setCursorPos 0, 6
+  setCursorPos 0, 15
   showCursor()
   echo ""
   randomize()
@@ -195,45 +196,40 @@ proc drawHeader* =
   # Draw the bottom border of the header
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
 
-proc displayMenu*(
-  optionss: MenuOptions,
-  showReturnOption = true,
-  highlightActive = true,
-  isMainMenu = false
-) =
-  ## Displays menu options in a formatted multi-column layout.
-  ## Dynamically switches between 3 columns and 2 columns based on terminal width.
-  ## Columns are dynamically spaced based on the longest item in each column.
-  ## Spacing between columns adjusts dynamically (minimum 4 spaces).
-  ## Errors out if the terminal width is too small to display the menu.
-  updateTermWidth()
-  
-  var options = optionss
-  if isMainMenu:
-    options.delete(options.len - 1) # Remove notes
-
-  # Draw the "Station Categories" section header
-  let categoriesHeader = "         📻 Station Categories 📻"
-  say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
-
-  # Draw the separator line
-  let separatorLine = "-".repeat(termWidth)
-  say(separatorLine, fgGreen, xOffset = 0)
-
-  # Determine the number of columns based on terminal width
+proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
+  ## Calculates the number of columns, max column lengths, and spacing.
   const minColumns = 2
   const maxColumns = 3
   var numColumns = maxColumns
 
-  # Check if the terminal width is too small for 3 columns
-  if termWidth < 80:  # Adjust this threshold as needed
+  # Calculate the maximum length of items including prefix
+  var maxItemLength = 0
+  for i in 0 ..< options.len:
+    let prefix =
+      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
+      else:
+        if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
+        else: "?" # Fallback
+    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
+    if itemLength > maxItemLength:
+      maxItemLength = itemLength
+
+  # Calculate the minimum required width for 3 columns
+  let minWidthFor3Columns = maxItemLength * 3 + 9  # 9 = 4.5 spaces between columns * 2 (halfway between 8 and 10)
+
+  # Switch to 2 columns if:
+  # 1. Terminal width is less than the minimum required for 3 columns, or
+  # 2. The longest item is more than 1/4.5 of the terminal width (slightly tighter threshold)
+  if termWidth < minWidthFor3Columns or maxItemLength > int(float(termWidth) / 4.5):
     numColumns = minColumns
+  else:
+    numColumns = maxColumns  # Otherwise, use 3 columns
 
   # Calculate the number of items per column
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
   # Find the maximum length of items in each column (including prefix)
-  var maxColumnLengths = newSeq[int](numColumns)  # Use a seq instead of an array
+  var maxColumnLengths = newSeq[int](numColumns)
   for i in 0 ..< options.len:
     let columnIndex = i div itemsPerColumn
     let prefix =
@@ -266,13 +262,12 @@ proc displayMenu*(
   if spacing < minSpacing:
     raise newException(UIError, "Terminal width too small to display menu without overlap. Required width: " & $(totalWidth + minSpacing * (numColumns - 1)) & ", available width: " & $termWidth)
 
-  # Calculate the starting position for each column
-  var columnPositions = newSeq[int](numColumns)  # Use a seq instead of an array
-  columnPositions[0] = 0
-  for i in 1 ..< numColumns:
-    columnPositions[i] = columnPositions[i - 1] + maxColumnLengths[i - 1] + spacing
+  return (numColumns, maxColumnLengths, spacing)
 
-  # Display menu options in a multi-column layout
+proc renderMenuOptions(options: MenuOptions, numColumns: int, maxColumnLengths: seq[int], spacing: int) =
+  ## Renders the menu options in a multi-column layout.
+  let itemsPerColumn = (options.len + numColumns - 1) div numColumns
+
   for row in 0 ..< itemsPerColumn:
     var currentLine = ""
     for col in 0 ..< numColumns:
@@ -297,6 +292,31 @@ proc displayMenu*(
         currentLine.add(" ".repeat(spacing))
 
     say(currentLine, fgBlue)
+
+proc displayMenu*(
+  optionss: MenuOptions,
+  showReturnOption = true,
+  highlightActive = true,
+  isMainMenu = false
+) =
+  ## Displays menu options in a formatted multi-column layout.
+  updateTermWidth()
+  
+  var options = optionss
+  if isMainMenu:
+    options.delete(options.len - 1) # Remove notes
+
+  # Draw the "Station Categories" section header
+  let categoriesHeader = "         📻 Station Categories 📻"
+  say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
+
+  # Draw the separator line
+  let separatorLine = "-".repeat(termWidth)
+  say(separatorLine, fgGreen, xOffset = 0)
+
+  # Calculate column layout and render menu options
+  let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
+  renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
 
   # Draw the separator line
   say(separatorLine, fgGreen, xOffset = 0)
@@ -326,18 +346,33 @@ proc drawMenu*(
   else:
     displayMenu(options)
 
-proc showFooter*(lineToDraw = 4, isNotes = false) =
+proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
+  ## Returns the footer options based on the context (main menu or submenu).
+  result =
+    if isMainMenu: "[Q] Quit   [N] Notes"
+    elif isPlayerUI: "[Q] Quit   [R] Return   [P] Pause/ Play [-/+] Adjust Volume "
+    else: "[Q] Quit   [R] Return"
+
+proc showFooter*(
+  lineToDraw = 4,
+  isMainMenu = false,
+  isPlayerUI = false,
+  separatorColor = fgGreen,
+  footerColor = fgYellow
+) =
+  ## Displays the footer with dynamic options based on the context.
   updateTermWidth()
   setCursorPos(0, lineToDraw)
-  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  say("-".repeat(termWidth), separatorColor, xOffset = 0)
   
   # Add footer with controls at the bottom
   setCursorPos(0, lineToDraw + 1)
-  let footerOptions = "[Q] Quit   [R] Return   " & (if isNotes: "" else: "[P] Pause/Play   [-/+] Adjust Volume")
-  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+  let footerOptions = getFooterOptions(isMainMenu, isPlayerUI)
+  say(footerOptions, footerColor, xOffset = (termWidth - footerOptions.len) div 2)
+  
   # Draw bottom border
   setCursorPos(0, lineToDraw + 2)
-  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  say("=".repeat(termWidth), separatorColor, xOffset = 0)
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
   ## Cleanly exits the application
@@ -358,7 +393,7 @@ This is free software, and you are welcome to redistribute
 under certain conditions.""",
       showNowPlaying = false
     )
-    showFooter(9, isNotes = true)
+    showFooter(lineToDraw = 9, isMainMenu = true)
     
     while true:
       case getch():
