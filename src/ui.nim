@@ -1,6 +1,7 @@
 import
   terminal, client, random,
-  json, strutils, os, times
+  json, strutils, os, times,
+  strformat
 
 type
   UIError* = object of CatchableError
@@ -66,16 +67,42 @@ proc error*(message: string) =
   styledEcho(fgRed, "Error: ", message)
   quit(QuitFailure)
 
-proc parseJArray*(str): seq[string] =
-  try:
-    result = to(
-      parseJson(readFile(str)){"pnimrp"},
-      seq[string]
-    )
-  except IOError: error "base assets dont exist?"
+proc parseJArray*(str: string): seq[string] =
+  ## Parses a JSON array from a file and validates the length of its elements.
+  ## Raises a UIError if any element exceeds the maximum allowed length.
+  const
+    MaxElementLength = 10  # Maximum allowed length for each element
+    MaxAuthorLength = 10   # Maximum allowed length for authors (if applicable)
 
-  if result.len mod 2 != 0:
-    error "JArrayResult.len not even"
+  try:
+    result = to(parseJson(readFile(str)){"pnimrp"}, seq[string])
+
+    # Validate the length of each element
+    for i in 0 ..< result.len:
+      if result[i].len > MaxElementLength:
+        raise newException(
+          UIError,
+          fmt"""Element at index {$i} in file {str} is too long.
+          Maximum allowed length is {$MaxElementLength} characters."""
+        )
+
+    # Additional validation for quotes and authors (if applicable)
+    if result.len mod 2 != 0:
+      raise newException(UIError, "JArrayResult.len not even (quotes and authors must be paired)")
+
+    # Validate authors separately (if applicable)
+    for i in 1 ..< result.len:
+      if i mod 2 == 1 and result[i].len > MaxAuthorLength:  # Authors are at odd indices
+        raise newException(
+          UIError,
+          "Author at index " & $i & " in file " & str & " is too long. " &
+          "Maximum allowed length is " & $MaxAuthorLength & " characters."
+        )
+
+  except IOError:
+    raise newException(UIError, "Failed to load JSON file: File not found or inaccessible")
+  except JsonParsingError:
+    raise newException(UIError, "Failed to parse JSON file: Invalid JSON format")
 
 proc updateTermWidth* =
   ## Updates the terminal width only if it has changed.
