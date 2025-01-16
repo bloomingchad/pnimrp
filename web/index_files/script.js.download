@@ -1,0 +1,22 @@
+function showTab(tabName) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // Remove active class from all buttons
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.classList.remove('active');
+  });
+
+  // Show the selected tab content
+  document.getElementById(tabName).classList.add('active');
+
+  // Add active class to the clicked button
+  document.querySelector(`button[onclick="showTab('${tabName}')"]`).classList.add('active');
+}
+
+// Initialize first tab as active
+document.addEventListener('DOMContentLoaded', () => {
+  showTab('unix');
+});
