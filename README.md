@@ -1,4 +1,3 @@
-```markdown
 # 🎵 pnimrp - Poor Man's Radio Player in Nim 🎵
 
 ![pnimrp Icon](ico.png)
