@@ -1,21 +1,33 @@
 /* General Styles */
+:root {
+    --primary-color: #FFD700;
+    --secondary-color: #90EE90;
+    --text-color: #333;
+    --white: #FFF;
+    --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
     font-size: 1rem;
-    color: #333;
-    background: linear-gradient(135deg, #FFD700, #90EE90);
+    color: var(--text-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     background-attachment: fixed;
 }
 
 h1, h2, h3 {
-    color: #333;
+    color: var(--text-color);
 }
 
 a {
-    color: #FFD700;
+    color: var(--primary-color);
     text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 .navbar {
@@ -26,28 +38,21 @@ a {
 
 .nav-links {
     display: flex;
-    gap: 20px; /* Space between links */
+    gap: 20px;
 }
 
 .nav-links a {
-    color: #333;
-    text-decoration: none;
+    color: var(--text-color);
     font-weight: 500;
     transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-    color: #FFD700; /* Highlight color on hover */
+    color: var(--primary-color);
 }
 
-
-a:hover {
-    text-decoration: underline;
-}
-
-section  {
-    padding: 40px 0; /* Reduced from 60px/80px */
-    margin: 10px 0; /* Reduced margin */
+section {
+    padding: 60px 0; /* Slightly increased for spacing */
 }
 
 .container {
@@ -59,19 +64,17 @@ section  {
 
 /* Hero Section */
 .hero {
-    padding: 10px 0;
+    padding: 20px 0;
     text-align: center;
-    background: linear-gradient(135deg, var(--light-green), var(--yellow));
-    backdrop-filter: blur(90px);
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
     border-radius: 20px;
-
+    backdrop-filter: blur(10px); /* Minimal blur */
 }
 
 .hero h1 {
     font-size: 3rem;
     margin-bottom: 20px;
     animation: fadeIn 2s ease-in-out;
-    color: black
 }
 
 .hero p {
@@ -80,14 +83,13 @@ section  {
     animation: fadeIn 2.5s ease-in-out;
 }
 
-/* Responsive GIF */
 .screenshot img {
-    max-width: 100%; /* Make the GIF responsive */
-    height: auto; /* Maintain aspect ratio */
+    max-width: 100%;
+    height: auto;
     border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    display: block; /* Ensure it behaves as a block element */
-    margin: 0 auto; /* Center the GIF horizontally */
+    box-shadow: var(--shadow);
+    display: block;
+    margin: 0 auto;
 }
 
 .download-buttons {
@@ -98,7 +100,7 @@ section  {
     display: inline-block;
     padding: 15px 30px;
     background-color: rgba(255, 255, 255, 0.7);
-    color: #333;
+    color: var(--text-color);
     border-radius: 10px;
     margin: 10px;
     transition: all 0.3s ease;
@@ -109,7 +111,7 @@ section  {
 .btn:hover {
     background-color: rgba(255, 229, 180, 0.8);
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow);
 }
 
 /* Features Section */
@@ -132,18 +134,18 @@ section  {
 
 .feature-card {
     background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(130px); /* Blur effect */
+    backdrop-filter: blur(10px); /* Minimal blur */
     padding: 25px;
-    scale: 103%;
     border-radius: 20px;
     text-align: center;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform; /* Optimize for GPU */
 }
 
 .feature-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px); /* Subtle hover effect */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .feature-card h3 {
@@ -155,7 +157,6 @@ section  {
     font-size: 1.1rem;
 }
 
-/* Installation Section */
 /* Installation Section */
 .installation {
     padding: 80px 0;
@@ -173,21 +174,10 @@ section  {
     padding: 20px;
     border-radius: 20px;
     overflow-x: auto;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow);
     font-size: 1.1rem;
-    margin-left: 10vh; /* Offset to the right */
-    max-width: calc(100% - 40px); /* Prevent overflow */
-}
-
-/* Optional: Add a subtle arrow or indicator to emphasize the offset */
-.instructions pre::before {
-    content: '→';
-    position: absolute;
-    left: -30px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.5rem;
-    color: #333;
+    margin-left: 10%; /* Relative margin */
+    max-width: calc(100% - 40px);
 }
 
 /* Demo Section */
@@ -206,7 +196,7 @@ section  {
     text-align: center;
     width: 100%;
     max-width: 80%;
-    border-radius: 36px;
+    border-radius: 20px;
     overflow: hidden;
     margin: auto;
 }
@@ -214,83 +204,28 @@ section  {
 video {
     max-width: 100%;
     border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Documentation Section */
-.documentation {
-    padding: 80px 0;
-}
-
-.documentation h2 {
-    text-align: center;
-    margin-bottom: 50px;
-    font-size: 2.5rem;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.doc-buttons {
-    text-align: center;
-}
-
-/* Contributing Section */
-.contributing {
-    background-color: rgba(245, 228, 195, 0.5);
-    padding: 80px 0;
-    text-align: center;
-    border-radius: 20px;
-    margin: 40px 0;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.contributing h2 {
-    font-size: 2.5rem;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-/* Credits Section */
-.credits {
-    padding: 80px 0;
-}
-
-.credits h2 {
-    text-align: center;
-    margin-bottom: 50px;
-    font-size: 2.5rem;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.credits ul {
-    list-style: none;
-    padding: 0;
-}
-
-.credits li {
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-/* License Section */
-.license {
-    padding: 80px 0;
-    text-align: center;
-}
-
-.license h2 {
-    font-size: 2.5rem;
-    animation: fadeIn 1.5s ease-in-out;
+    box-shadow: var(--shadow);
 }
 
 /* Footer */
 footer {
     background-color: rgba(51, 51, 51, 0.9);
-    color: #FFF;
+    color: var(--white);
     padding: 60px 0;
     text-align: center;
 }
 
 footer a {
-    color: #FFD700;
+    color: var(--primary-color);
+}
+/* Rounded GIF */
+.rounded-gif {
+    border-radius: 20px; /* Adjust the radius as needed */
+    width: 100%; /* Ensure the GIF is responsive */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensure it behaves as a block element */
+    margin: 0 auto; /* Center the GIF horizontally */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
 }
 
 .social-links {
@@ -306,41 +241,10 @@ footer a {
 @keyframes fadeIn {
     from {
         opacity: 0;
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
-    }
-}
-
-@keyframes float {
-    0%, 100% {
         transform: translateY(0);
     }
-    50% {
-        transform: translateY(-20px);
-    }
-}
-/* Credits Section */
-.credits {
-    padding: 80px 0;
-    text-align: center; /* Center the text */
-}
-
-.credits h2 {
-    text-align: center;
-    margin-bottom: 50px;
-    font-size: 2.5rem;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.credits ul {
-    list-style: none;
-    padding: 0;
-    display: inline-block; /* Center the list */
-    text-align: left; /* Align list items to the left within the centered container */
-}
-
-.credits li {
-    margin-bottom: 15px;
-    font-size: 1.1rem;
 }
