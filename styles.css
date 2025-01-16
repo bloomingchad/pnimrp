@@ -192,14 +192,16 @@ section {
     animation: fadeIn 1.5s ease-in-out;
 }
 
+/* Video Container */
 .video-container {
-    text-align: center;
+    position: relative;
     width: 100%;
-    max-width: 80%;
-    border-radius: 20px;
-    overflow: hidden;
-    margin: auto;
-}
+    max-width: 800px; /* Adjust based on your preferred maximum size */
+    margin: 0 auto; /* Center the container */
+    border-radius: 20px; /* Rounded corners */
+    overflow: hidden; /* Ensure the GIF stays within the rounded container */
+    aspect-ratio: 16 / 9; /* Maintain a 16:9 aspect ratio (adjust as needed) */
+  }
 
 video {
     max-width: 100%;
@@ -218,15 +220,16 @@ footer {
 footer a {
     color: var(--primary-color);
 }
-/* Rounded GIF */
-.rounded-gif {
-    border-radius: 20px; /* Adjust the radius as needed */
-    width: 100%; /* Ensure the GIF is responsive */
-    height: auto; /* Maintain aspect ratio */
+
+  
+  /* Responsive GIF */
+  .rounded-gif {
+    width: 100%;
+    height: 100%; /* Ensure the GIF fills the container */
+    object-fit: cover; /* Prevent distortion */
+    border-radius: 20px; /* Rounded corners */
     display: block; /* Ensure it behaves as a block element */
-    margin: 0 auto; /* Center the GIF horizontally */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
-}
+  }
 
 .social-links {
     margin-bottom: 30px;
