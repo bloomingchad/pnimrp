@@ -1,0 +1,111 @@
+buildHtml
+baseUrl https://pnimrp.scroll.pub
+metaTags
+editButton /edit.html
+title Poor Man's Radio Player in Nim
+style.css
+header
+ class hero
+ nav
+  div pnimrp
+   class logo
+  div
+   class nav-links
+   a Features
+    href #features
+   a Installation
+    href #installation
+   a Demo
+    href #demo
+   a GitHub
+    class cta-button
+    href https://github.com/bloomingchad/pnimrp
+ div
+  class hero-content
+  h1 Listen to Internet Radio, Straight from Your Terminal
+  p A lightweight, portable, and easy-to-use terminal-based internet radio player
+  div
+   class download-buttons
+   a Install for Unix
+    class primary-button
+    href #installation
+   a Install for Windows
+    class primary-button
+    href #installation
+main
+ section
+  id features
+  class features
+  h2 Features
+  div
+   class feature-grid
+   div
+    class feature-card
+    div 📦
+     class feature-icon
+    h3 Portable
+    p Works seamlessly on Unix and Windows systems
+   div
+    class feature-card
+    div 🎛️
+     class feature-icon
+    h3 Menu-Driven
+    p Intuitive interface for easy navigation
+   div
+    class feature-card
+    div 🎵
+     class feature-icon
+    h3 Customizable
+    p Edit JSON files to add your favorite stations
+   div
+    class feature-card
+    div ⚡
+     class feature-icon
+    h3 Lightweight
+    p Minimal dependencies, fast performance
+ section
+  id installation
+  class installation
+  h2 Installation
+  div
+   class platform-tabs
+   button Unix
+    class tab-button active
+    onclick showTab('unix')
+   button Windows
+    class tab-button
+    onclick showTab('windows')
+  div
+   id unix
+   class tab-content active
+   pre
+    class code-snippet
+    nimble install pnimrp
+  div
+   id windows
+   class tab-content
+   pre
+    class code-snippet
+    choco install pnimrp
+ section
+  id demo
+  class demo
+  h2 Demo
+  div
+   class demo-container
+   img
+    src demo.gif
+    alt pnimrp in action
+footer
+ div
+  class footer-content
+  div
+   class footer-links
+   a Documentation
+    href #installation
+   a Contribute
+    href https://github.com/yourusername/pnimrp
+   a License
+    href https://opensource.org/licenses/MPL-2.0
+  p Made with ❤️ by the pnimrp community
+script.js
