@@ -1,0 +1,109 @@
+{
+  "themes": {
+    "default": {
+      "header": "fgYellow",
+      "separator": "fgGreen",
+      "menu": "fgBlue",
+      "footer": "fgYellow",
+      "error": "fgRed",
+      "warning": "fgYellow",
+      "success": "fgGreen",
+      "nowPlaying": "fgCyan",
+      "volumeLow": "fgBlue",
+      "volumeMedium": "fgGreen",
+      "volumeHigh": "fgRed"
+    },
+    "dark": {
+      "header": "fgWhite",
+      "separator": "fgBlack",
+      "menu": "fgWhite",
+      "footer": "fgWhite",
+      "error": "fgRed",
+      "warning": "fgYellow",
+      "success": "fgGreen",
+      "nowPlaying": "fgBlue",
+      "volumeLow": "fgBlue",
+      "volumeMedium": "fgGreen",
+      "volumeHigh": "fgRed"
+    },
+    "vibrant": {
+      "header": "fgMagenta",
+      "separator": "fgCyan",
+      "menu": "fgYellow",
+      "footer": "fgMagenta",
+      "error": "fgRed",
+      "warning": "fgYellow",
+      "success": "fgGreen",
+      "nowPlaying": "fgCyan",
+      "volumeLow": "fgBlue",
+      "volumeMedium": "fgGreen",
+      "volumeHigh": "fgRed"
+    },
+    "OceanBreeze": {
+      "header": "fgCyan",
+      "separator": "fgBlue",
+      "menu": "fgWhite",
+      "footer": "fgCyan",
+      "error": "fgRed",
+      "warning": "fgYellow",
+      "success": "fgGreen",
+      "nowPlaying": "fgBlue",
+      "volumeLow": "fgBlue",
+      "volumeMedium": "fgGreen",
+      "volumeHigh": "fgRed"
+    },
+    "SunsetGlow": {
+      "header": "fgMagenta",
+      "separator": "fgYellow",
+      "menu": "fgRed",
+      "footer": "fgMagenta",
+      "error": "fgRed",
+      "warning": "fgYellow",
+      "success": "fgGreen",
+      "nowPlaying": "fgYellow",
+      "volumeLow": "fgBlue",
+      "volumeMedium": "fgGreen",
+      "volumeHigh": "fgRed"
+    },
+    "ForestMist": {
+      "header": "fgGreen",
+      "separator": "fgWhite",
+      "menu": "fgCyan",
+      "footer": "fgGreen",
+      "error": "fgRed",
+      "warning": "fgYellow",
+      "success": "fgGreen",
+      "nowPlaying": "fgCyan",
+      "volumeLow": "fgBlue",
+      "volumeMedium": "fgGreen",
+      "volumeHigh": "fgRed"
+    },
+    "MidnightShadow": {
+      "header": "fgBlue",
+      "separator": "fgWhite",
+      "menu": "fgMagenta",
+      "footer": "fgBlue",
+      "error": "fgRed",
+      "warning": "fgYellow",
+      "success": "fgGreen",
+      "nowPlaying": "fgMagenta",
+      "volumeLow": "fgBlue",
+      "volumeMedium": "fgGreen",
+      "volumeHigh": "fgRed"
+    },
+    "GoldenHour": {
+      "header": "fgYellow",
+      "separator": "fgRed",
+      "menu": "fgMagenta",
+      "footer": "fgYellow",
+      "error": "fgRed",
+      "warning": "fgYellow",
+      "success": "fgGreen",
+      "nowPlaying": "fgMagenta",
+      "volumeLow": "fgBlue",
+      "volumeMedium": "fgGreen",
+      "volumeHigh": "fgRed"
+    }
+  },
+  "currentTheme": "default"
+}

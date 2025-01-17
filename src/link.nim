@@ -13,7 +13,7 @@ type
 
 proc parseLink*(link: string): tuple[protocol, domain: string, port: Port] =
   ## Parses a URL into its components
-  ## 
+  ##
   ## Args:
   ##   link: The URL to parse
   ##
@@ -33,17 +33,17 @@ proc parseLink*(link: string): tuple[protocol, domain: string, port: Port] =
                  if protocol == "https": Port(443) else: Port(80)
                else:
                  Port(parseInt(uri.port))
-    
+
     if domain == "":
       raise newException(LinkCheckError, "Invalid domain")
-    
+
     return (protocol, domain, port)
   except ValueError:
     raise newException(LinkCheckError, "Invalid URL format")
 
 proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   ## Validates if a link is reachable
-  ## 
+  ##
   ## Args:
   ##   link: The URL to validate
   ##   timeout: Connection timeout in milliseconds (default: 2000)
@@ -57,15 +57,15 @@ proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   ##     echo "Link is valid!"
   ##   else:
   ##     echo "Link error: ", result.error
-  
+
   try:
     let (protocol, domain, port) = parseLink(link)
     var socket = newSocket()
-    
+
     # Attempt connection
     socket.connect(domain, port, timeout = timeout)
     socket.close()
-    
+
     result = LinkValidationResult(
       isValid: true,
       error: "",
@@ -102,7 +102,7 @@ when isMainModule:
     "invalid-url",
     "https://nonexistent.domain:443"
   ]
-  
+
   for url in testUrls:
     let result = validateLink(url)
     if result.isValid:

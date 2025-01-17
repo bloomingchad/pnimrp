@@ -16,12 +16,13 @@ improvements.
 
 ## 🌟 Key Features
 
-- **Portable**: Works seamlessly on Unix and Windows.
-- **Easy to Use**: Simple menu-driven interface.
-- **Modifiable Stations**: Edit JSON files to add or remove stations.
-- **Now Playing**: Displays the currently playing song.
+- **Portable**: Works seamlessly on Unix and Windows. 📦
+- **Easy to Use**: Simple menu-driven interface. 💡🎮
+- **Modifiable Stations**: Edit JSON files to add or remove stations.🔧
+- **Now Playing**: Displays the currently playing song.📻
 - **Async Input**: Non-blocking key polling for smooth controls.
-- **Lightweight**: Minimal dependencies, fast and efficient.
+- **Lightweight**: Minimal dependencies, fast and efficient.⚡
+- **Customizable Themes**: Easily switch between themes by editing `config.json`. 🎨
 
 ## 🚀 Installation
 
@@ -64,6 +65,14 @@ nim c -d:release pnimrp
 | **M**          | Mute/unmute                             |
 | **+**          | Increase volume                         |
 | **-**          | Decrease volume                         |
+
+## 🎨 Customizing Themes
+
+You can easily switch between themes by editing the `config.json` file located in the root directory of the project. Here's how:
+
+1. Open `config.json` in a text editor.
+2. Change the `currentTheme` field to the desired theme (e.g., `default`, `dark`, `vibrant`).
+3. Save the file and restart the application.
 
 ## 📖 Documentation
 
