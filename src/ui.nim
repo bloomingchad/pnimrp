@@ -1,9 +1,13 @@
 import
   terminal, client, random,
   json, strutils, os, times,
-  strformat, animation, utils
+  strformat, animation, utils,
+  theme
 
 using str: string
+
+# Global variable to hold the current theme
+var currentTheme*: Theme
 
 proc say*(
   message: string,
@@ -56,21 +60,21 @@ proc showExitMessage* =
 
   quit QuitSuccess
 
-proc drawHeader* =
+proc drawHeader*() =
   ## Draws the application header with decorative lines and emojis.
   updateTermWidth()
   if termWidth < MinTerminalWidth:
     raise newException(UIError, "Terminal width too small.")
-  
-  # Draw the top border
-  say("=".repeat(termWidth), fgGreen, xOffset = 0)
-  
-  # Draw the application title with emojis
+
+  # Draw the top border using the theme's separator color
+  say("=".repeat(termWidth), currentTheme.separator, xOffset = 0)
+
+  # Draw the application title with emojis using the theme's header color
   let title = "       🎧 " & AppName & " 🎧"
-  say(title, fgYellow, xOffset = (termWidth - title.len) div 2)
-  
-  # Draw the bottom border of the header
-  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  say(title, currentTheme.header, xOffset = (termWidth - title.len) div 2)
+
+  # Draw the bottom border of the header using the theme's separator color
+  say("=".repeat(termWidth), currentTheme.separator, xOffset = 0)
 
 proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   ## Calculates the number of columns, max column lengths, and spacing.
@@ -82,16 +86,17 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   var maxItemLength = 0
   for i in 0 ..< options.len:
     let prefix =
-      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
+      if i < 9: $(i + 1) & "." # Use numbers 1-9 for the first 9 options
       else:
         if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
-        else: "?" # Fallback
-    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
+        else: "?"              # Fallback
+    let itemLength = prefix.len + 1 + options[i].len # Include prefix and space
     if itemLength > maxItemLength:
       maxItemLength = itemLength
 
   # Calculate the minimum required width for 3 columns
-  let minWidthFor3Columns = maxItemLength * 3 + 9  # 9 = 4.5 spaces between columns * 2 (halfway between 8 and 10)
+  let minWidthFor3Columns = maxItemLength * 3 +
+      9 # 9 = 4.5 spaces between columns * 2 (halfway between 8 and 10)
 
   # Switch to 2 columns if:
   # 1. Terminal width is less than the minimum required for 3 columns, or
@@ -99,7 +104,7 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   if termWidth < minWidthFor3Columns or maxItemLength > int(float(termWidth) / 4.5):
     numColumns = minColumns
   else:
-    numColumns = maxColumns  # Otherwise, use 3 columns
+    numColumns = maxColumns # Otherwise, use 3 columns
 
   # Calculate the number of items per column
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
@@ -109,11 +114,11 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   for i in 0 ..< options.len:
     let columnIndex = i div itemsPerColumn
     let prefix =
-      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
+      if i < 9: $(i + 1) & "." # Use numbers 1-9 for the first 9 options
       else:
         if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
-        else: "?" # Fallback
-    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
+        else: "?"              # Fallback
+    let itemLength = prefix.len + 1 + options[i].len # Include prefix and space
     if itemLength > maxColumnLengths[columnIndex]:
       maxColumnLengths[columnIndex] = itemLength
 
@@ -123,24 +128,26 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
     totalWidth += length
 
   # Calculate the required spacing between columns
-  let minSpacing = 4  # Minimum spacing between columns
-  let maxSpacing = 6  # Maximum spacing between columns
+  let minSpacing = 4 # Minimum spacing between columns
+  let maxSpacing = 6 # Maximum spacing between columns
   var spacing = maxSpacing
 
   # Adjust spacing if the terminal width is too small
   while spacing >= minSpacing:
     let totalWidthWithSpacing = totalWidth + spacing * (numColumns - 1)
     if totalWidthWithSpacing <= termWidth:
-      break  # We have enough space with the current spacing
-    spacing -= 1  # Reduce spacing and try again
+      break # We have enough space with the current spacing
+    spacing -= 1 # Reduce spacing and try again
 
   # Check if we have enough space even with the minimum spacing
   if spacing < minSpacing:
-    raise newException(UIError, "Terminal width too small to display menu without overlap. Required width: " & $(totalWidth + minSpacing * (numColumns - 1)) & ", available width: " & $termWidth)
+    raise newException(UIError, "Terminal width too small to display menu without overlap. Required width: " &
+        $(totalWidth + minSpacing * (numColumns - 1)) & ", available width: " & $termWidth)
 
   return (numColumns, maxColumnLengths, spacing)
 
-proc renderMenuOptions(options: MenuOptions, numColumns: int, maxColumnLengths: seq[int], spacing: int) =
+proc renderMenuOptions(options: MenuOptions, numColumns: int,
+    maxColumnLengths: seq[int], spacing: int) =
   ## Renders the menu options in a multi-column layout.
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
@@ -151,7 +158,7 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int, maxColumnLengths: 
       if index < options.len:
         # Calculate the prefix for the menu option
         let prefix =
-          if index < 9: $(index + 1) & "."  # Use numbers 1-9 for the first 9 options
+          if index < 9: $(index + 1) & "." # Use numbers 1-9 for the first 9 options
           else:
             if index < MenuChars.len: $MenuChars[index] & "." # Use A-Z for the next options
             else: "?" # Fallback
@@ -177,14 +184,15 @@ proc displayMenu*(
 ) =
   ## Displays menu options in a formatted multi-column layout.
   updateTermWidth()
-  
+
   var options = optionss
   if isMainMenu:
     options.delete(options.len - 1) # Remove notes
 
   # Draw the "Station Categories" section header
   let categoriesHeader = "         📻 Station Categories 📻"
-  say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
+  say(categoriesHeader, fgCyan, xOffset = (termWidth -
+      categoriesHeader.len) div 2)
 
   # Draw the separator line
   let separatorLine = "-".repeat(termWidth)
@@ -212,7 +220,7 @@ proc drawMenu*(
   isMainMenu = false) =
   ## Draws a complete menu with header and options.
   clear()
-  
+
   # Draw header
   drawHeader()
   # Display menu options
@@ -240,12 +248,13 @@ proc showFooter*(
   updateTermWidth()
   setCursorPos(0, lineToDraw)
   say("-".repeat(termWidth), separatorColor, xOffset = 0)
-  
+
   # Add footer with controls at the bottom
   setCursorPos(0, lineToDraw + 1)
   let footerOptions = getFooterOptions(isMainMenu, isPlayerUI)
-  say(footerOptions, footerColor, xOffset = (termWidth - footerOptions.len) div 2)
-  
+  say(footerOptions, footerColor, xOffset = (termWidth -
+      footerOptions.len) div 2)
+
   # Draw bottom border
   setCursorPos(0, lineToDraw + 2)
   say("=".repeat(termWidth), separatorColor, xOffset = 0)
@@ -270,7 +279,7 @@ under certain conditions.""",
       showNowPlaying = false
     )
     showFooter(lineToDraw = 9, isMainMenu = true)
-    
+
     while true:
       case getch():
         of 'r', 'R':
@@ -280,17 +289,17 @@ under certain conditions.""",
           showExitMessage()
         else:
           showInvalidChoice()
-    
+
     if shouldReturn:
       break
 
 proc drawHeader*(section: string) =
   ## Draws the application header with the current section
   updateTermWidth()
-  
+
   if termWidth < MinTerminalWidth:
     raise newException(UIError, "Terminal width too small")
-  
+
   # Draw header
   say(AppNameShort & " > " & section, fgGreen)
   say("-".repeat(termWidth), fgGreen)
@@ -301,41 +310,42 @@ var lastVolume*: int = -1
 proc volumeColor(volume: int): ForegroundColor =
   if volume > 110: fgRed
   elif volume < 60: fgBlue
-  else: 
+  else:
     fgGreen
 
 var
-  animationFrame: int = 0  # Tracks the current frame of the animation
-  lastAnimationUpdate: DateTime = now()  # Tracks the last time the animation was updated
+  animationFrame: int = 0 # Tracks the current frame of the animation
+  lastAnimationUpdate: DateTime = now() # Tracks the last time the animation was updated
 
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
   # Draw header if section is provided
   updateTermWidth()
   if section.len > 0:
-    setCursorPos(0, 0)  # Line 0
+    setCursorPos(0, 0) # Line 0
     say(AppNameShort & " > " & section, fgYellow)
-  
+
   # Draw separator
-  setCursorPos(0, 1)  # Line 1
+  setCursorPos(0, 1) # Line 1
   say("-".repeat(termWidth), fgGreen, xOffset = 0)
-  
+
   # Display "Now Playing" with truncation if necessary
-  setCursorPos(0, 2)  # Line 2 (below the separator)
+  setCursorPos(0, 2) # Line 2 (below the separator)
   eraseLine()
   let nowPlayingText = "Now Playing: " & nowPlaying
   if nowPlayingText.len > termWidth:
-    say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan)  # Truncate and add ellipsis
+    say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan) # Truncate and add ellipsis
   else:
     say(nowPlayingText, fgCyan)
-  
+
   # Display status and volume
   setCursorPos(0, 4)
   eraseLine()
   let volumeColor = volumeColor(volume)
-  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0,
+      shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
-  
+
   showFooter(linetoDraw = 5)
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
@@ -346,8 +356,8 @@ proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
 
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   ## Updates the player UI with new information.
-  let animationSymbol = updateJinglingAnimation(status)  # Get the animation symbol
-  let nowPlayingText = animationSymbol & " " & nowPlaying  # Move animation to the start
+  let animationSymbol = updateJinglingAnimation(status) # Get the animation symbol
+  let nowPlayingText = animationSymbol & " " & nowPlaying # Move animation to the start
 
   # Draw the UI with the updated "Now Playing" text
   drawPlayerUIInternal("", nowPlayingText, status, volume)
