@@ -1,5 +1,5 @@
 <div style="display: flex; align-items: center;">
-  <img src="ico.ico" alt="pnimrp Icon" width="90" style="margin-right: 10px;" />
+  <img src="https://github.com/bloomingchad/pnimrp/raw/main/ico.ico" alt="pnimrp Icon" width="90" style="margin-right: 10px;" />
   <h1>♪♫ pnimrp - Poor Man's Radio Player in Nim ♫♪</h1>
 </div>
 
@@ -52,19 +52,19 @@ nim c -d:release pnimrp
 
 ## 🎥 Demo
 
-![pnimrp Demo](demo.gif)
+![pnimrp Demo](https://github.com/bloomingchad/pnimrp/raw/main/demo.gif)
 
 ## 🎮 Controls
 
-| Key            | Action                                  |
-|----------------|-----------------------------------------|
-| **1-9, a-l**   | Select menu options                     |
-| **R**          | Return to the previous menu             |
-| **Q**          | Quit the application                    |
-| **P**          | Pause/resume playback                   |
-| **M**          | Mute/unmute                             |
-| **+**          | Increase volume                         |
-| **-**          | Decrease volume                         |
+| Key          | Action                      |
+| ------------ | --------------------------- |
+| **1-9, a-l** | Select menu options         |
+| **R**        | Return to the previous menu |
+| **Q**        | Quit the application        |
+| **P**        | Pause/resume playback       |
+| **M**        | Mute/unmute                 |
+| **+**        | Increase volume             |
+| **-**        | Decrease volume             |
 
 ## 🎨 Customizing Themes
 
