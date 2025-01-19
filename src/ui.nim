@@ -182,11 +182,20 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
 
     say(currentLine, fgBlue)
 
+proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
+  ## Returns the footer options based on the context (main menu or submenu).
+  #echo "DEBUG: getFooterOptions - isMainMenu = ", isMainMenu, ", isPlayerUI = ", isPlayerUI  # Debug log
+  result =
+    if isMainMenu: "[Q] Quit   [N] Notes   [U] Help"
+    elif isPlayerUI: "[Q] Quit   [R] Return   [P] Pause/Play   [-/+] Adjust Volume"
+    else: "[Q] Quit   [R] Return   [U] Help"
+
 proc displayMenu*(
   options: MenuOptions,
   showReturnOption = true,
   highlightActive = true,
-  isMainMenu = false
+  isMainMenu = false,
+  isPlayerUI = false  # Add this parameter
 ) =
   ## Displays menu options in a formatted multi-column layout.
   updateTermWidth()
@@ -211,7 +220,7 @@ proc displayMenu*(
   say(separatorLine, fgGreen, xOffset = 0)
 
   # Display the footer options
-  let footerOptions = "[Q] Quit   [R] Return   [N] Notes"
+  let footerOptions = getFooterOptions(isMainMenu, isPlayerUI)  # Pass isPlayerUI here
   say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
 
   # Draw the bottom border
@@ -222,7 +231,8 @@ proc drawMenu*(
   options: string | MenuOptions,
   subsection = "",
   showNowPlaying = true,
-  isMainMenu = false
+  isMainMenu = false,
+  isPlayerUI = false  # Add this parameter
 ) =
   ## Draws a complete menu with header and options.
   clear()
@@ -234,14 +244,7 @@ proc drawMenu*(
     for line in splitLines(options):
       say(line, fgBlue)
   else:
-    displayMenu(options)
-
-proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
-  ## Returns the footer options based on the context (main menu or submenu).
-  result =
-    if isMainMenu: "[Q] Quit   [N] Notes"
-    elif isPlayerUI: "[Q] Quit   [R] Return   [P] Pause/Play [-/+] Adjust Volume"
-    else: "[Q] Quit   [R] Return"
+    displayMenu(options, isMainMenu = isMainMenu, isPlayerUI = isPlayerUI)
 
 proc showFooter*(
   lineToDraw = 4,
@@ -350,7 +353,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
 
-  showFooter(lineToDraw = 5)
+  showFooter(isPlayerUI = true)  # Ensure the footer is drawn with isPlayerUI = true
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.

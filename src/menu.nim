@@ -86,6 +86,7 @@ proc playStation(config: MenuConfig) =
 
     # Draw the initial player UI
     drawPlayerUI(config.stationName, "Loading...", currentStatusEmoji(currentStatus(state)), state.volume)
+    showFooter(isPlayerUI = true)  # Ensure the footer is drawn with isPlayerUI = true
 
     while true:
       if not state.isPaused:
@@ -235,14 +236,6 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
     result.names.add(name)
     result.paths.add(dir)
 
-proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
-  ## Returns the footer options based on the context (main menu or submenu).
-  echo "DEBUG: getFooterOptions - isMainMenu = ", isMainMenu, ", isPlayerUI = ", isPlayerUI  # Debug log
-  result =
-    if isMainMenu: "[Q] Quit   [N] Notes   [U] Help"
-    elif isPlayerUI: "[Q] Quit   [R] Return   [P] Pause/Play [-/+] Adjust Volume"
-    else: "[Q] Quit   [R] Return   [U] Help"
-
 proc handleMenu*(
   section: string,
   items: seq[string],
@@ -252,28 +245,31 @@ proc handleMenu*(
 ) =
   ## Handles a generic menu for station selection or main category selection.
   ## Supports both directories and JSON files.
-  echo "DEBUG: handleMenu - isMainMenu = ", isMainMenu  # Debug log
   while true:
     var returnToParent = false
     clear()
     drawHeader()
     
     # Display the menu
-    drawMenu(section, items, isMainMenu = isMainMenu)
+    drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false)  # Pass isPlayerUI here
     hideCursor()
 
     while true:
       try:
         let key = getch()
         case key
-        of '1'..'9':
-          let idx = ord(key) - ord('1')
+        of '1'..'9', 'A'..'L', 'a'..'l':
+          let idx = 
+            if key in {'1'..'9'}: ord(key) - ord('1')
+            else: ord(toLowerAscii(key)) - ord('a') + 9
+          
           if idx >= 0 and idx < items.len:
-            if dirExists(paths[idx]):
+            let selectedPath = paths[idx]
+            if dirExists(selectedPath):
               # Handle directories (subcategories or station lists)
               var subItems: seq[string] = @[]
               var subPaths: seq[string] = @[]
-              for file in walkFiles(paths[idx] / "*.json"):
+              for file in walkFiles(selectedPath / "*.json"):
                 let name = file.extractFilename.changeFileExt("").capitalizeAscii
                 subItems.add(name)
                 subPaths.add(file)
@@ -282,9 +278,9 @@ proc handleMenu*(
               else:
                 # Navigate to subcategories with isMainMenu = false
                 handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir)
-            elif fileExists(paths[idx]) and paths[idx].endsWith(".json"):
+            elif fileExists(selectedPath) and selectedPath.endsWith(".json"):
               # Handle JSON files (station lists)
-              let stations = loadStationList(paths[idx])
+              let stations = loadStationList(selectedPath)
               if stations.names.len == 0 or stations.urls.len == 0:
                 warn("No stations available. Please check the station list.")
               else:
@@ -296,45 +292,7 @@ proc handleMenu*(
                 currentSection: section,
                 currentSubsection: "",
                 stationName: items[idx],
-                stationUrl: paths[idx]
-              )
-              playStation(config)
-            break
-          else:
-            showInvalidChoice()
-
-        of 'A'..'L', 'a'..'l':
-          let idx = ord(toLowerAscii(key)) - ord('a') + 9
-          if idx >= 0 and idx < items.len:
-            if dirExists(paths[idx]):
-              # Handle directories (subcategories or station lists)
-              var
-                subItems: seq[string] = @[]
-                subPaths: seq[string] = @[]
-              for file in walkFiles(paths[idx] / "*.json"):
-                let name = file.extractFilename.changeFileExt("").capitalizeAscii
-                subItems.add(name)
-                subPaths.add(file)
-              if subItems.len == 0:
-                warn("No station lists available in this category.")
-              else:
-                # Navigate to subcategories with isMainMenu = false
-                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir)
-            elif fileExists(paths[idx]) and paths[idx].endsWith(".json"):
-              # Handle JSON files (station lists)
-              let stations = loadStationList(paths[idx])
-              if stations.names.len == 0 or stations.urls.len == 0:
-                warn("No stations available. Please check the station list.")
-              else:
-                # Navigate to station list with isMainMenu = false
-                handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir)
-            else:
-              # Treat as a station URL and play directly
-              let config = MenuConfig(
-                currentSection: section,
-                currentSubsection: "",
-                stationName: items[idx],
-                stationUrl: paths[idx]
+                stationUrl: selectedPath
               )
               playStation(config)
             break
