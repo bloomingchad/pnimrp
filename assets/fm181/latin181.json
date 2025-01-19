@@ -1,9 +1,6 @@
 {
-  "pnimrp": [
-    "Reggae Roots",
-    "relay.181.fm:8096",
-
-    "Salsa",
-    "relay.181.fm:8098"
-  ]
+	"stations": {
+		"Reggae Roots": "relay.181.fm:8096",
+		"Salsa": "relay.181.fm:8098"
+	}
 }

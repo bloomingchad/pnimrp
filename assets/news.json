@@ -1,54 +1,21 @@
 {
-  "pnimrp": [
-    "Air Progressive",
-    "airprogressive.org:8000/stream",
-
-    "BBC World Service -data",
-    "a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_vlow/ak/bbc_world_service.m3u8",
-
-    "CBC Fresh Air",
-    "cbcradiolive.akamaized.net/hls/live/2041037/ES_R1ETT/master.m3u8",
-
-    "GLT News & Ideas",
-    "wgltradio.ilstu.edu:8000/wgltmain.mp3",
-
-    "NPR",
-    "npr-ice.streamguys1.com/live.mp3",
-
-    "Newstalk 106-108",
-    "vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high",
-
-    "RFI",
-    "stream.rfi.fr/2588/rfi_en_anglais/rfianglais.mp3",
-
-    "Sputnik",
-    "audio1.video.ria.ru:80/voiceeng",
-
-    "The Source",
-    "stream.wmnf.org:8000/wmnf_hd3",
-
-    "WKSU News",
-    "66.225.205.8:8020",
-
-    "ΣΚΑΪ",
-    "skai.live24.gr/skai1003",
-
-    "Radio France FranceInfo",
-    "stream.radiofrance.fr/franceinfo/franceinfo_hifi.m3u8",
-
-    "detour TALK",
-    "arizona.thedetour.us:8000/;",
-
-    "Freethought Radio",
-    "212.48.126.146:9110",
-
-    "KSFC",
-    "173.192.70.138:8710",
-
-    "Radio Newark",
-    "98.114.57.7:8000",
-
-    "Talk 790",
-    "208.85.240.2:8310"
-  ]
+	"stations": {
+		"Air Progressive": "airprogressive.org:8000/stream",
+		"BBC World Service -data": "a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_vlow/ak/bbc_world_service.m3u8",
+		"CBC Fresh Air": "cbcradiolive.akamaized.net/hls/live/2041037/ES_R1ETT/master.m3u8",
+		"GLT News & Ideas": "wgltradio.ilstu.edu:8000/wgltmain.mp3",
+		"NPR": "npr-ice.streamguys1.com/live.mp3",
+		"Newstalk 106-108": "vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high",
+		"RFI": "stream.rfi.fr/2588/rfi_en_anglais/rfianglais.mp3",
+		"Sputnik": "audio1.video.ria.ru:80/voiceeng",
+		"The Source": "stream.wmnf.org:8000/wmnf_hd3",
+		"WKSU News": "66.225.205.8:8020",
+		"ΣΚΑΪ": "skai.live24.gr/skai1003",
+		"Radio France FranceInfo": "stream.radiofrance.fr/franceinfo/franceinfo_hifi.m3u8",
+		"detour TALK": "arizona.thedetour.us:8000/;",
+		"Freethought Radio": "212.48.126.146:9110",
+		"KSFC": "173.192.70.138:8710",
+		"Radio Newark": "98.114.57.7:8000",
+		"Talk 790": "208.85.240.2:8310"
+	}
 }

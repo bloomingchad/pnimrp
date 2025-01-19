@@ -1,33 +1,14 @@
 {
-  "pnimrp": [
-    "ANTENNE BAYERN Oldies Goldies",
-    "stream.antenne.de/oldie-antenne",
-
-    "E.P. Express Radio",
-    "37.187.79.56:9246",
-
-    "Flower Power Radio",
-    "50.7.129.122:8433",
-
-    "Rewound Radio",
-    "71.125.37.66:8000",
-
-    "FUN45s",
-    "198.178.123.20:8376",
-
-    "Oldies 104",
-    "66.85.88.2:7142",
-
-    "Oldie Party",
-    "212.48.110.146:8410",
-
-    "Oldiesradio RGR",
-    "streams.lazernet.be:2620",
-
-    "Pure Gold 95FM",
-    "198.178.123.20:8374",
-
-    "Vinylgodis",
-    "89.236.16.230:8000"
-  ]
+	"stations": {
+		"ANTENNE BAYERN Oldies Goldies": "stream.antenne.de/oldie-antenne",
+		"E.P. Express Radio": "37.187.79.56:9246",
+		"Flower Power Radio": "50.7.129.122:8433",
+		"Rewound Radio": "71.125.37.66:8000",
+		"FUN45s": "198.178.123.20:8376",
+		"Oldies 104": "66.85.88.2:7142",
+		"Oldie Party": "212.48.110.146:8410",
+		"Oldiesradio RGR": "streams.lazernet.be:2620",
+		"Pure Gold 95FM": "198.178.123.20:8374",
+		"Vinylgodis": "89.236.16.230:8000"
+	}
 }

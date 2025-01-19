@@ -1,27 +1,12 @@
 {
-  "pnimrp": [
-    "Party 181",
-    "relay.181.fm:8036",
-  
-    "Power 181",
-    "relay.181.fm:8128",
-  
-    "Smooth AC",
-    "relay.181.fm:8094",
-  
-    "The Heart",
-    "relay.181.fm:8006",
-  
-    "The Mix",
-    "relay.181.fm:8032",
-  
-    "The Office",
-    "relay.181.fm:8002",
-  
-    "The Point",
-    "relay.181.fm:8010",
-  
-    "UK Top 40",
-    "relay.181.fm:8070"
-  ]
+	"stations": {
+		"Party 181": "relay.181.fm:8036",
+		"Power 181": "relay.181.fm:8128",
+		"Smooth AC": "relay.181.fm:8094",
+		"The Heart": "relay.181.fm:8006",
+		"The Mix": "relay.181.fm:8032",
+		"The Office": "relay.181.fm:8002",
+		"The Point": "relay.181.fm:8010",
+		"UK Top 40": "relay.181.fm:8070"
+	}
 }

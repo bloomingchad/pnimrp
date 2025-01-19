@@ -1,18 +1,9 @@
 {
-  "pnimrp": [
-    "90's Alternative",
-    "relay.181.fm:8052",
-
-    "90's Country",
-    "relay.181.fm:8050",
-
-    "90's Dance",
-    "relay.181.fm:8140",
-
-    "Lite 90's",
-    "relay.181.fm:8048",
-
-    "Star 90's",
-    "relay.181.fm:8012"
-  ]
+	"stations": {
+		"90's Alternative": "relay.181.fm:8052",
+		"90's Country": "relay.181.fm:8050",
+		"90's Dance": "relay.181.fm:8140",
+		"Lite 90's": "relay.181.fm:8048",
+		"Star 90's": "relay.181.fm:8012"
+	}
 }
