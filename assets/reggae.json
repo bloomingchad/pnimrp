@@ -1,24 +1,11 @@
 {
-  "pnimrp": [
-    "Joint Radio",
-    "72.9.152.111:9998",
-
-    "Reggae Rasta & Roots",
-    "192.152.23.243:8470",
-
-    "Feel Jah FM",
-    "50.7.98.106:8447",
-
-    "Fimi Radio",
-    "198.178.123.8:8266",
-
-    "La Grosse Radio Reggae",
-    "176.31.246.159:8300",
-
-    "Reggae Mix",
-    "195.154.80.65:8142",
-
-    "Scratch Radio",
-    "173.192.198.244:8042"
-  ]
+	"stations": {
+		"Joint Radio": "72.9.152.111:9998",
+		"Reggae Rasta & Roots": "192.152.23.243:8470",
+		"Feel Jah FM": "50.7.98.106:8447",
+		"Fimi Radio": "198.178.123.8:8266",
+		"La Grosse Radio Reggae": "176.31.246.159:8300",
+		"Reggae Mix": "195.154.80.65:8142",
+		"Scratch Radio": "173.192.198.244:8042"
+	}
 }

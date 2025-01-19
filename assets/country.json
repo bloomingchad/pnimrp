@@ -1,24 +1,11 @@
 {
-  "pnimrp": [
-    "Absolutely Country Hits Radio",
-    "185.33.22.15:7800",
-
-    "Always Country",
-    "208.85.240.89:80",
-
-    "Big R Radio - Country Gold",
-    "107.155.126.42:8230",
-
-    "Americana Boogie Radio",
-    "us1.internet-radio.com:8182/live",
-
-    "Bluegrass Mix",
-    "192.81.248.194:8072/stream",
-
-    "Country Music 24",
-    "countrymusic24.powerstream.de:9000",
-
-    "Country Radio Switzerland",
-    "212.48.126.146:8000"
-   ]
+	"stations": {
+		"Absolutely Country Hits Radio": "185.33.22.15:7800",
+		"Always Country": "208.85.240.89:80",
+		"Big R Radio - Country Gold": "107.155.126.42:8230",
+		"Americana Boogie Radio": "us1.internet-radio.com:8182/live",
+		"Bluegrass Mix": "192.81.248.194:8072/stream",
+		"Country Music 24": "countrymusic24.powerstream.de:9000",
+		"Country Radio Switzerland": "212.48.126.146:8000"
+	}
 }

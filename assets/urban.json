@@ -1,15 +1,8 @@
 {
-  "pnimrp": [
-    "100hitz Rap",
-    "206.217.213.236:8170",
-
-    "RauteMusik - BlackBeats FM",
-    "rautemusik-de-hz-fal-stream15.radiohost.de/blackbeats",
-
-    "HOT 108 Jamz",
-    "live.powerhitz.com/realrnb?esPlayer",
-
-    "Street Style Radio",
-    "streaming.live365.com/a95865"
-  ]
+	"stations": {
+		"100hitz Rap": "206.217.213.236:8170",
+		"RauteMusik - BlackBeats FM": "rautemusik-de-hz-fal-stream15.radiohost.de/blackbeats",
+		"HOT 108 Jamz": "live.powerhitz.com/realrnb?esPlayer",
+		"Street Style Radio": "streaming.live365.com/a95865"
+	}
 }

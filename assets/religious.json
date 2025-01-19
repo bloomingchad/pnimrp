@@ -1,12 +1,7 @@
 {
-	"pnimrp": [
-		"Orthodox Chants",
-		"orthodox-chants.ru:8000/64kb",
-
-		"RadioVaticana",
-		"https://radio.vaticannews.va/stream-en",
-
-		"OCR Rudder 24",
-		"radio.myocn.net:8080/stream"
-	]
+	"stations": {
+		"Orthodox Chants": "orthodox-chants.ru:8000/64kb",
+		"RadioVaticana": "https://radio.vaticannews.va/stream-en",
+		"OCR Rudder 24": "radio.myocn.net:8080/stream"
+	}
 }

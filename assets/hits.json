@@ -1,33 +1,14 @@
 {
-  "pnimrp": [
-    "ANTENNE BAYERN Top 40",
-    "s6-webradio.antenne.de/top-40/stream",
-
-    "Yes! 91.2",
-    "5.9.17.142:8024/;7stream.nsv",
-
-    "Al Arabiya 99",
-    "stream.radiojar.com/s1mygd1frxquv",
-
-    "Dublins KISS FM",
-    "daniel.torontocast.com:2985/stream",
-
-    "Hit Station FM",
-    "46.163.124.61:8450",
-
-    "M Radio Francais",
-    "mfm.ice.infomaniak.ch/mfm-64.aac",
-
-    "Radio France Mouv",
-    "stream.radiofrance.fr/mouv/mouv_hifi.m3u8",
-
-    "Megahit Radio",
-    "38.96.175.97:5216/;",
-
-    "Raute Musik",
-    "rautemusik-de-hz-fal-stream12.radiohost.de/charthits",
-
-    "Venus FM",
-    "s3.onweb.gr:8808/;stream"
-   ]
+	"stations": {
+		"ANTENNE BAYERN Top 40": "s6-webradio.antenne.de/top-40/stream",
+		"Yes! 91.2": "5.9.17.142:8024/;7stream.nsv",
+		"Al Arabiya 99": "stream.radiojar.com/s1mygd1frxquv",
+		"Dublins KISS FM": "daniel.torontocast.com:2985/stream",
+		"Hit Station FM": "46.163.124.61:8450",
+		"M Radio Francais": "mfm.ice.infomaniak.ch/mfm-64.aac",
+		"Radio France Mouv": "stream.radiofrance.fr/mouv/mouv_hifi.m3u8",
+		"Megahit Radio": "38.96.175.97:5216/;",
+		"Raute Musik": "rautemusik-de-hz-fal-stream12.radiohost.de/charthits",
+		"Venus FM": "s3.onweb.gr:8808/;stream"
+	}
 }

@@ -1,6 +1,5 @@
 {
-  "pnimrp": [
-    "Comedy Club",
-    "relay.181.fm:8026"
-  ]
+	"stations": {
+		"Comedy Club": "relay.181.fm:8026"
+	}
 }
