@@ -15,7 +15,13 @@ proc say*(
   xOffset = 5,
   shouldEcho = true
 ) =
-  ## Displays styled text at specified position
+  ## Displays styled text at a specified position.
+  ##
+  ## Args:
+  ##   message: The text to display.
+  ##   color: The foreground color of the text (default: fgYellow).
+  ##   xOffset: The horizontal offset for the cursor (default: 5).
+  ##   shouldEcho: Whether to echo the message to stdout (default: true).
   if color in {fgBlue, fgGreen}:
     setCursorXPos(xOffset)
     if color == fgGreen and not shouldEcho:
@@ -26,39 +32,40 @@ proc say*(
     styledEcho(color, message)
 
 proc showExitMessage* =
-  setCursorPos 0, 15
+  ## Displays an exit message with a random quote from the quotes file.
+  setCursorPos(0, 15)
   showCursor()
   echo ""
   randomize()
 
-  let seq = parseJArray getAppDir() / "assets" / "qoute.json"
-  var qoutes, authors: seq[string] = @[]
+  let seq = parseJArray(getAppDir() / "assets" / "qoute.json")
+  var quotes, authors: seq[string] = @[]
 
   for i in 0 .. seq.high:
     case i mod 2:
-      of 0: qoutes.add seq[i]
-      else: authors.add seq[i]
+      of 0: quotes.add(seq[i])
+      else: authors.add(seq[i])
 
-  let rand = rand 0 .. qoutes.high
+  let rand = rand(0 .. quotes.high)
 
-  when not defined(release) or
-    not defined(danger):
-    echo ("free mem: " & $(getFreeMem() / 1024)) & " kB"
-    echo ("total/max mem: " & $(getTotalMem() / 1024)) & " kB"
-    echo ("occupied mem: " & $(getOccupiedMem() / 1024)) & " kB"
+  when not defined(release) or not defined(danger):
+    echo "free mem: ", $(getFreeMem() / 1024), " kB"
+    echo "total/max mem: ", $(getTotalMem() / 1024), " kB"
+    echo "occupied mem: ", $(getOccupiedMem() / 1024), " kB"
 
-  if qoutes[rand] == "": error "no qoute"
+  if quotes[rand] == "":
+    error("no quote found")
 
-  styledEcho fgCyan, qoutes[rand], "..."
-  setCursorXPos 15
-  styledEcho fgGreen, "—", authors[rand]
+  styledEcho(fgCyan, quotes[rand], "...")
+  setCursorXPos(15)
+  styledEcho(fgGreen, "—", authors[rand])
 
   if authors[rand] == "":
-    error "there can no be qoute without man"
-    if rand*2 != -1:
-      error ("@ line: " & $(rand*2)) & " in qoute.json"
+    error("there can be no quote without an author")
+    if rand * 2 != -1:
+      error("@ line: " & $(rand * 2) & " in qoute.json")
 
-  quit QuitSuccess
+  quit(QuitSuccess)
 
 proc drawHeader*() =
   ## Draws the application header with decorative lines and emojis.
@@ -95,12 +102,11 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
       maxItemLength = itemLength
 
   # Calculate the minimum required width for 3 columns
-  let minWidthFor3Columns = maxItemLength * 3 +
-      9 # 9 = 4.5 spaces between columns * 2 (halfway between 8 and 10)
+  let minWidthFor3Columns = maxItemLength * 3 + 9 # 9 = 4.5 spaces between columns * 2
 
   # Switch to 2 columns if:
   # 1. Terminal width is less than the minimum required for 3 columns, or
-  # 2. The longest item is more than 1/4.5 of the terminal width (slightly tighter threshold)
+  # 2. The longest item is more than 1/4.5 of the terminal width
   if termWidth < minWidthFor3Columns or maxItemLength > int(float(termWidth) / 4.5):
     numColumns = minColumns
   else:
@@ -128,8 +134,8 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
     totalWidth += length
 
   # Calculate the required spacing between columns
-  let minSpacing = 4 # Minimum spacing between columns
-  let maxSpacing = 6 # Maximum spacing between columns
+  const minSpacing = 4 # Minimum spacing between columns
+  const maxSpacing = 6 # Maximum spacing between columns
   var spacing = maxSpacing
 
   # Adjust spacing if the terminal width is too small
@@ -177,7 +183,7 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
     say(currentLine, fgBlue)
 
 proc displayMenu*(
-  optionss: MenuOptions,
+  options: MenuOptions,
   showReturnOption = true,
   highlightActive = true,
   isMainMenu = false
@@ -185,14 +191,13 @@ proc displayMenu*(
   ## Displays menu options in a formatted multi-column layout.
   updateTermWidth()
 
-  var options = optionss
+  var options = options
   if isMainMenu:
     options.delete(options.len - 1) # Remove notes
 
   # Draw the "Station Categories" section header
   let categoriesHeader = "         📻 Station Categories 📻"
-  say(categoriesHeader, fgCyan, xOffset = (termWidth -
-      categoriesHeader.len) div 2)
+  say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
 
   # Draw the separator line
   let separatorLine = "-".repeat(termWidth)
@@ -217,7 +222,8 @@ proc drawMenu*(
   options: string | MenuOptions,
   subsection = "",
   showNowPlaying = true,
-  isMainMenu = false) =
+  isMainMenu = false
+) =
   ## Draws a complete menu with header and options.
   clear()
 
@@ -234,7 +240,7 @@ proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns the footer options based on the context (main menu or submenu).
   result =
     if isMainMenu: "[Q] Quit   [N] Notes"
-    elif isPlayerUI: "[Q] Quit   [R] Return   [P] Pause/ Play [-/+] Adjust Volume "
+    elif isPlayerUI: "[Q] Quit   [R] Return   [P] Pause/Play [-/+] Adjust Volume"
     else: "[Q] Quit   [R] Return"
 
 proc showFooter*(
@@ -252,22 +258,21 @@ proc showFooter*(
   # Add footer with controls at the bottom
   setCursorPos(0, lineToDraw + 1)
   let footerOptions = getFooterOptions(isMainMenu, isPlayerUI)
-  say(footerOptions, footerColor, xOffset = (termWidth -
-      footerOptions.len) div 2)
+  say(footerOptions, footerColor, xOffset = (termWidth - footerOptions.len) div 2)
 
   # Draw bottom border
   setCursorPos(0, lineToDraw + 2)
   say("=".repeat(termWidth), separatorColor, xOffset = 0)
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
-  ## Cleanly exits the application
+  ## Cleanly exits the application.
   if not isPaused:
     ctx.terminateDestroy()
   showExitMessage()
   quit(QuitSuccess)
 
 proc showNotes* =
-  ## Displays application notes/about section
+  ## Displays application notes/about section.
   while true:
     var shouldReturn = false
     drawMenu(
@@ -294,7 +299,7 @@ under certain conditions.""",
       break
 
 proc drawHeader*(section: string) =
-  ## Draws the application header with the current section
+  ## Draws the application header with the current section.
   updateTermWidth()
 
   if termWidth < MinTerminalWidth:
@@ -342,15 +347,13 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   setCursorPos(0, 4)
   eraseLine()
   let volumeColor = volumeColor(volume)
-  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0,
-      shouldEcho = false)
+  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
 
-  showFooter(linetoDraw = 5)
+  showFooter(lineToDraw = 5)
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.
-  ## Adjusts layout for wide and narrow screens, colors volume percentage, and anchors the footer to the bottom.
   clear()
   drawPlayerUIInternal(section, nowPlaying, status, volume)
 
@@ -361,3 +364,138 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
 
   # Draw the UI with the updated "Now Playing" text
   drawPlayerUIInternal("", nowPlayingText, status, volume)
+
+when isMainModule:
+  import unittest
+
+  suite "UI Tests":
+    test "say procedure":
+      # Test basic functionality
+      say("Hello, World!", fgGreen)
+      say("This is a test.", fgBlue, xOffset = 10)
+
+      # Test with shouldEcho = false
+      say("This should not echo", fgGreen, shouldEcho = false)
+
+    test "showExitMessage procedure":
+      # Test with a valid quotes file
+      showExitMessage()
+
+      # Test with an empty quotes file (should raise an error)
+      let emptyQuotesFile = getAppDir() / "assets" / "empty_quotes.json"
+      writeFile(emptyQuotesFile, """{"pnimrp": []}""")
+      expect UIError:
+        showExitMessage()
+      removeFile(emptyQuotesFile)
+
+    test "drawHeader procedure":
+      # Test with a valid terminal width
+      drawHeader()
+
+      # Test with a terminal width that's too small (should raise an error)
+      let originalTermWidth = termWidth
+      termWidth = MinTerminalWidth - 1
+      expect UIError:
+        drawHeader()
+      termWidth = originalTermWidth
+
+    test "calculateColumnLayout procedure":
+      let options = @["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]
+
+      # Test with a wide terminal
+      termWidth = 100
+      let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
+      check numColumns == 3
+      check maxColumnLengths.len == 3
+      check spacing >= 4
+
+      # Test with a narrow terminal
+      termWidth = 50
+      let (numColumnsNarrow, maxColumnLengthsNarrow, spacingNarrow) = calculateColumnLayout(options)
+      check numColumnsNarrow == 2
+      check maxColumnLengthsNarrow.len == 2
+      check spacingNarrow >= 4
+
+      # Test with too few options
+      let singleOption = @["Option 1"]
+      let (numColumnsSingle, maxColumnLengthsSingle, spacingSingle) = calculateColumnLayout(singleOption)
+      check numColumnsSingle == 1
+      check maxColumnLengthsSingle.len == 1
+      check spacingSingle >= 4
+
+    test "renderMenuOptions procedure":
+      let options = @["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]
+      let numColumns = 2
+      let maxColumnLengths = @[10, 10]
+      let spacing = 4
+
+      # Test rendering
+      renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
+
+    test "displayMenu procedure":
+      let options = @["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]
+
+      # Test with isMainMenu = false
+      displayMenu(options)
+
+      # Test with isMainMenu = true
+      displayMenu(options, isMainMenu = true)
+
+    test "drawMenu procedure":
+      # Test with string options
+      drawMenu("Test Section", "Line 1\nLine 2\nLine 3")
+
+      # Test with MenuOptions
+      let options = @["Option 1", "Option 2", "Option 3"]
+      drawMenu("Test Section", options)
+
+    test "getFooterOptions procedure":
+      # Test for main menu
+      check getFooterOptions(true, false) == "[Q] Quit   [N] Notes"
+
+      # Test for player UI
+      check getFooterOptions(false, true) == "[Q] Quit   [R] Return   [P] Pause/Play [-/+] Adjust Volume"
+
+      # Test for submenu
+      check getFooterOptions(false, false) == "[Q] Quit   [R] Return"
+
+    test "showFooter procedure":
+      # Test with default parameters
+      showFooter()
+
+      # Test with custom parameters
+      showFooter(lineToDraw = 10, isMainMenu = true, isPlayerUI = false, separatorColor = fgRed, footerColor = fgBlue)
+
+    test "exit procedure":
+      # Test with isPaused = true
+      let ctx = create()
+      exit(ctx, isPaused = true)
+
+      # Test with isPaused = false
+      exit(ctx, isPaused = false)
+
+    test "showNotes procedure":
+      # Test displaying notes
+      showNotes()
+
+    test "volumeColor procedure":
+      # Test low volume
+      check volumeColor(50) == fgBlue
+
+      # Test medium volume
+      check volumeColor(80) == fgGreen
+
+      # Test high volume
+      check volumeColor(120) == fgRed
+
+    test "drawPlayerUI procedure":
+      # Test with a valid section and nowPlaying text
+      drawPlayerUI("Test Section", "Now Playing: Song Title", "Playing", 75)
+
+      # Test with a long nowPlaying text
+      let longNowPlaying = "Now Playing: " & "A".repeat(100)
+      drawPlayerUI("Test Section", longNowPlaying, "Playing", 75)
+
+    test "updatePlayerUI procedure":
+      # Test updating the player UI
+      updatePlayerUI("Now Playing: Song Title", "Playing", 75)

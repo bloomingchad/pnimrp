@@ -9,10 +9,8 @@ type
     domain*: string
     port*: Port
 
-
-
 proc parseLink*(link: string): tuple[protocol, domain: string, port: Port] =
-  ## Parses a URL into its components
+  ## Parses a URL into its components.
   ##
   ## Args:
   ##   link: The URL to parse
@@ -20,11 +18,8 @@ proc parseLink*(link: string): tuple[protocol, domain: string, port: Port] =
   ## Returns:
   ##   A tuple containing the protocol, domain, and port
   ##
-  ## Example:
-  ##   let parts = parseLink("https://example.com:8080")
-  ##   echo parts.protocol  # "https"
-  ##   echo parts.domain   # "example.com"
-  ##   echo parts.port     # Port(8080)
+  ## Raises:
+  ##   LinkCheckError: If the URL is invalid or the domain is missing
   try:
     let uri = parseUri(link)
     let protocol = if uri.scheme == "": "http" else: uri.scheme
@@ -42,7 +37,7 @@ proc parseLink*(link: string): tuple[protocol, domain: string, port: Port] =
     raise newException(LinkCheckError, "Invalid URL format")
 
 proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
-  ## Validates if a link is reachable
+  ## Validates if a link is reachable.
   ##
   ## Args:
   ##   link: The URL to validate
@@ -51,13 +46,8 @@ proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   ## Returns:
   ##   LinkValidationResult object containing validation details
   ##
-  ## Example:
-  ##   let result = validateLink("https://example.com")
-  ##   if result.isValid:
-  ##     echo "Link is valid!"
-  ##   else:
-  ##     echo "Link error: ", result.error
-
+  ## Raises:
+  ##   LinkCheckError: If the URL is invalid or the domain is missing
   try:
     let (protocol, domain, port) = parseLink(link)
     var socket = newSocket()
@@ -94,22 +84,25 @@ proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
       error: "Unexpected error: " & e.msg
     )
 
+# Unit tests for link.nim
 when isMainModule:
-  # Example usage
-  let testUrls = [
-    "https://example.com",
-    "http://localhost:8080",
-    "invalid-url",
-    "https://nonexistent.domain:443"
-  ]
+  import unittest
 
-  for url in testUrls:
-    let result = validateLink(url)
-    if result.isValid:
-      echo("✓ Valid link: ", url)
-      echo "  Protocol: ", result.protocol
-      echo "  Domain: ", result.domain
-      echo "  Port: ", result.port
-    else:
-      echo("✗ Invalid link: ", url)
-      echo "  Error: ", result.error
+  suite "Link Tests":
+    test "parseLink":
+      let (protocol, domain, port) = parseLink("https://example.com:8080")
+      check protocol == "https"
+      check domain == "example.com"
+      check port == Port(8080)
+
+    test "validateLink":
+      let result = validateLink("https://example.com")
+      check result.isValid == true
+      check result.protocol == "https"
+      check result.domain == "example.com"
+      check result.port == Port(443)
+
+    test "invalidLink":
+      let result = validateLink("invalid-url")
+      check result.isValid == false
+      check "Invalid URL" in result.error
