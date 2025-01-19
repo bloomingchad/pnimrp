@@ -14,21 +14,6 @@ const
   AsciiFrames* = ["♪♫", "♫♪"] # ASCII fallback animation frames
   EmojiFrames* = ["🎵", "🎶"]     # Emoji animation frames
 
-# Fallback symbols for each state
-proc getFallbackSymbol*(status: PlayerStatus): string =
-  case status
-  of StatusPlaying: return "[>]"
-  of StatusMuted: return "[X]"
-  of StatusPaused: return "||"
-  of StatusPausedMuted: return "||[X]"
-
-proc getEmojiSymbol*(status: PlayerStatus): string =
-  case status
-  of StatusPlaying: return "🔊"
-  of StatusMuted: return "🔇"
-  of StatusPaused: return "⏸"
-  of StatusPausedMuted: return "⏸ 🔇"
-
 var
   animationFrame*: int = 0 # Tracks the current frame of the animation
   lastAnimationUpdate*: DateTime = now() # Tracks the last time the animation was updated
@@ -43,15 +28,45 @@ proc checkEmojiSupport(): bool =
       return false
   return true
 
-# Global variable to store whether the terminal supports emojis
+
+proc getSymbol*(status: PlayerStatus, useEmoji: bool): string =
+  ## Returns the appropriate symbol for the player status.
+  ##
+  ## Args:
+  ##   status: The player status (e.g., StatusPlaying, StatusMuted).
+  ##   useEmoji: Whether to use emoji symbols or fallback ASCII symbols.
+  ##
+  ## Returns:
+  ##   The symbol corresponding to the player status.
+  if useEmoji:
+    case status
+    of StatusPlaying: return "🔊"
+    of StatusMuted: return "🔇"
+    of StatusPaused: return "⏸"
+    of StatusPausedMuted: return "⏸ 🔇"
+  else:
+    case status
+    of StatusPlaying: return "[>]"
+    of StatusMuted: return "[X]"
+    of StatusPaused: return "||"
+    of StatusPausedMuted: return "||[X]"
+
 var terminalSupportsEmoji* = checkEmojiSupport()
 
-# Function to get the appropriate symbol based on terminal support
 proc currentStatusEmoji*(status: PlayerStatus): string =
-  if terminalSupportsEmoji:
-    return getEmojiSymbol(status)
-  else:
-    return getFallbackSymbol(status)
+  ## Returns the appropriate symbol for the player status based on terminal emoji support.
+  ##
+  ## Args:
+  ##   status: The player status (e.g., StatusPlaying, StatusMuted).
+  ##
+  ## Returns:
+  ##   The symbol corresponding to the player status.
+  return getSymbol(status, terminalSupportsEmoji)
+# Global variable to store whether the terminal supports emojis
+
+
+# Function to get the appropriate symbol based on terminal support
+
 
 proc updateJinglingAnimation*(status: string): string =
   ## Updates the jingling animation and returns the current frame.
