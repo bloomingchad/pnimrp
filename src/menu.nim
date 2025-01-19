@@ -10,7 +10,7 @@ type
     isMuted: bool                        # Whether the player is muted
     currentSong: string                  # Currently playing song
     volume: int                          # Current volume level
-  
+
   MenuConfig = object                    # Configuration for the menu and player
     ctx: ptr Handle                      # Player handle
     currentSection: string               # Current menu section
@@ -45,7 +45,7 @@ proc updateAnimationOnly(status, currentSong: string) =
   let animationSymbol = updateJinglingAnimation(status)  # Get the animation symbol
   setCursorPos(0, 2)  # Move cursor to the "Now Playing" line
   eraseLine()  # Clear the current line
-  
+
   # Display the animation symbol and "Now Playing" text in cyan
   styledEcho(fgCyan, animationSymbol & " Now Playing: ", fgCyan, currentSong)
 
@@ -75,32 +75,32 @@ proc playStation(config: MenuConfig) =
       counter: uint8
       playlistFirstPass = false
       lastAnimationUpdate: DateTime = now()  # Track the last animation update time
-    
+
     ctx.init(config.stationUrl)
     var event = ctx.waitEvent()
-    
+
     try:
       illwillInit(false)
     except:
       discard  # Non-critical failure
-    
+
     # Draw the initial player UI
     drawPlayerUI(config.stationName, "Loading...", currentStatusEmoji(currentStatus(state)), state.volume)
-    
+
     while true:
       if not state.isPaused:
         event = ctx.waitEvent()
-      
+
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
         ctx.observeMediaTitle()
         isObserving = true
-      
+
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
         # Update the full UI only when the song name changes
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-      
+
       # Check if it's time to update the animation (2 FPS = every 500ms)
       let currentTime = now()
       let timeDiff = currentTime - lastAnimationUpdate
@@ -116,7 +116,7 @@ proc playStation(config: MenuConfig) =
         if ctx.isIdle():
           handlePlayerError("Player core idle", ctx)
           break
-        
+
         if event.eventID in {IDEndFile, IDShutdown}:
           if config.stationUrl.isValidPlaylistUrl():
             if playlistFirstPass:
@@ -128,7 +128,7 @@ proc playStation(config: MenuConfig) =
             break
         counter = 0
       inc counter
-      
+
       # Handle user input
       case getKeyWithTimeout(KeyTimeout):
         of Key.P:
@@ -136,52 +136,70 @@ proc playStation(config: MenuConfig) =
           ctx.pause(state.isPaused)
           # Update the full UI when the player is paused/unpaused
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-        
+
         of Key.M:
           state.isMuted = not state.isMuted
           ctx.mute(state.isMuted)
           # Update the full UI when the player is muted/unmuted
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-        
+
         of Key.Slash, Key.Plus:
           state.volume = min(state.volume + VolumeStep, MaxVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
           # Update the full UI when the volume changes
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-        
+
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
           # Update the full UI when the volume changes
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-        
+
         of Key.R:
           if not state.isPaused:
             ctx.terminateDestroy()
           illwillDeinit()
           break
-        
+
         of Key.Q:
           illwillDeinit()
           exit(ctx, state.isPaused)
-        
+
         of Key.None:
           continue
-        
+
         else:
           showInvalidChoice()
-    
+
   except Exception:
     let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
     warn("An error occurred during playback. Edit the station list in: " & fileHint & ".json")
     return
+
+proc showHelp*() =
+  ## Displays instructions on how to use the app.
+  clear()
+  drawHeader("Help")
+  say("Welcome to " & AppName & "!", fgYellow)
+  say("Here's how to use the app:", fgGreen)
+  say("1. Use the number keys (1-9) or letters (A-Z) to select a station.", fgBlue)
+  say("2. In the player UI, use the following keys:", fgBlue)
+  say("   - [P] Pause/Play", fgBlue)
+  say("   - [-/+] Adjust Volume", fgBlue)
+  say("   - [R] Return to the previous menu", fgBlue)
+  say("   - [Q] Quit the application", fgBlue)
+  say("3. Press [N] in the main menu to view notes.", fgBlue)
+  say("4. Press [H] in the main menu to view this help screen.", fgBlue)
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  say("Press any key to return to the main menu.", fgYellow)
+  discard getch()  # Wait for any key press
 
 proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
   ## Loads station names and URLs from a JSON file.
   try:
     let data = parseJArray(jsonPath)
     result = (names: @[], urls: @[])
-    
+
     for i in 0 .. data.high:
       if i mod 2 == 0:
         result.names.add(data[i])
@@ -191,7 +209,7 @@ proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
         else:
           "http://" & data[i]
         result.urls.add(url)
-  
+
   except Exception as e:
     raise newException(MenuError, "Failed to load station list: " & e.msg)
 
@@ -199,31 +217,31 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
   ## Loads available station categories from the assets directory.
   result = (names: @[], paths: @[])
   let nativePath = baseDir / "*".unixToNativePath
-  
+
   for file in walkFiles(nativePath):
     let filename = file.extractFilename
-    
+
     # Skip qoute.json (exact match, case-sensitive)
     if filename == "qoute.json":
       continue
-    
+
     # Add the file to names and paths
     let name = filename.changeFileExt("").capitalizeAscii
     result.names.add(name)
     result.paths.add(file)
-  
+
   for dir in walkDirs(nativePath):
     let name = dir.extractFilename & DirSep
     result.names.add(name)
     result.paths.add(dir)
 
-proc getFooterOptions(isMainMenu, isPlayerUI: bool): string =
+proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns the footer options based on the context (main menu or submenu).
+  echo "DEBUG: getFooterOptions - isMainMenu = ", isMainMenu, ", isPlayerUI = ", isPlayerUI  # Debug log
   result =
-    if isMainMenu: "[Q] Quit   [N] Notes"
-    elif isPlayerUI: "[Q] Quit   [R] Return   [P][-/+] Adjust Volume "
-    else: "[Q] Quit   [R] Return"
-
+    if isMainMenu: "[Q] Quit   [N] Notes   [U] Help"
+    elif isPlayerUI: "[Q] Quit   [R] Return   [P] Pause/Play [-/+] Adjust Volume"
+    else: "[Q] Quit   [R] Return   [U] Help"
 
 proc handleMenu*(
   section: string,
@@ -234,6 +252,7 @@ proc handleMenu*(
 ) =
   ## Handles a generic menu for station selection or main category selection.
   ## Supports both directories and JSON files.
+  echo "DEBUG: handleMenu - isMainMenu = ", isMainMenu  # Debug log
   while true:
     var returnToParent = false
     clear()
@@ -261,15 +280,16 @@ proc handleMenu*(
               if subItems.len == 0:
                 warn("No station lists available in this category.")
               else:
-                handleMenu(items[idx], subItems, subPaths)
+                # Navigate to subcategories with isMainMenu = false
+                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir)
             elif fileExists(paths[idx]) and paths[idx].endsWith(".json"):
               # Handle JSON files (station lists)
               let stations = loadStationList(paths[idx])
               if stations.names.len == 0 or stations.urls.len == 0:
                 warn("No stations available. Please check the station list.")
               else:
-                # Display a menu for the stations in the JSON file
-                handleMenu(items[idx], stations.names, stations.urls)
+                # Navigate to station list with isMainMenu = false
+                handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir)
             else:
               # Treat as a station URL and play directly
               let config = MenuConfig(
@@ -298,15 +318,16 @@ proc handleMenu*(
               if subItems.len == 0:
                 warn("No station lists available in this category.")
               else:
-                handleMenu(items[idx], subItems, subPaths)
+                # Navigate to subcategories with isMainMenu = false
+                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir)
             elif fileExists(paths[idx]) and paths[idx].endsWith(".json"):
               # Handle JSON files (station lists)
               let stations = loadStationList(paths[idx])
               if stations.names.len == 0 or stations.urls.len == 0:
                 warn("No stations available. Please check the station list.")
               else:
-                # Display a menu for the stations in the JSON file
-                handleMenu(items[idx], stations.names, stations.urls)
+                # Navigate to station list with isMainMenu = false
+                handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir)
             else:
               # Treat as a station URL and play directly
               let config = MenuConfig(
@@ -321,11 +342,15 @@ proc handleMenu*(
             showInvalidChoice()
 
         of 'N', 'n':
-          if isMainMenu:
+          if isMainMenu:  # Only allow Notes in the main menu
             showNotes()
             break
           else:
             showInvalidChoice()
+
+        of 'U', 'u':
+          showHelp()
+          break
 
         of 'R', 'r':
           if not isMainMenu or baseDir != getAppDir() / "assets":
