@@ -1,21 +1,10 @@
 {
-  "pnimrp": [
-    "104 Classic Rock",
-    "173.193.14.166:80",
-
-    "1055 ROCK",
-    "85.17.121.228:8078",
-
-    "Classic Deep Cuts",
-    "208.85.240.10:8134",
-
-    "Classic Rock 109",
-    "174.36.237.118:10042",
-
-    "Deep Jams Radio",
-    "74.50.122.103:9748",
-
-    "ROCK ANTENNE",
-    "mp3channels.webradio.antenne.de:80/rockantenne"
-  ]
+	"stations": {
+		"104 Classic Rock": "173.193.14.166:80",
+		"1055 ROCK": "85.17.121.228:8078",
+		"Classic Deep Cuts": "208.85.240.10:8134",
+		"Classic Rock 109": "174.36.237.118:10042",
+		"Deep Jams Radio": "74.50.122.103:9748",
+		"ROCK ANTENNE": "mp3channels.webradio.antenne.de:80/rockantenne"
+	}
 }

@@ -1,9 +1,6 @@
 {
-  "pnimrp": [
-    "Bombay Beats Radio",
-    "https://strm112.1.fm/bombaybeats_mobile_mp3",
-
-    "Punjabi Bollywood Radio",
-    "node-19.zeno.fm/1k0y9f0cm0quv"
-  ]
+  "stations": {
+    "Bombay Beats Radio": "https://strm112.1.fm/bombaybeats_mobile_mp3",
+    "Punjabi Bollywood Radio": "node-19.zeno.fm/1k0y9f0cm0quv"
+  }
 }

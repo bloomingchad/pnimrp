@@ -1,27 +1,12 @@
 {
-  "pnimrp": [
-    "80's Hairband",
-    "relay.181.fm:8014",
-
-    "Chloe",
-    "relay.181.fm:8100",
-
-    "Classic Buzz",
-    "relay.181.fm:8038",
-
-    "Rock 181",
-    "relay.181.fm:8008",
-
-    "Rock 40",
-    "relay.181.fm:8028",
-
-    "The Buzz",
-    "relay.181.fm:8126",
-
-    "The Eagle",
-    "relay.181.fm:8030",
-
-    "The Rock",
-    "relay.181.fm:8064"
-  ]
+	"stations": {
+		"80's Hairband": "relay.181.fm:8014",
+		"Chloe": "relay.181.fm:8100",
+		"Classic Buzz": "relay.181.fm:8038",
+		"Rock 181": "relay.181.fm:8008",
+		"Rock 40": "relay.181.fm:8028",
+		"The Buzz": "relay.181.fm:8126",
+		"The Eagle": "relay.181.fm:8030",
+		"The Rock": "relay.181.fm:8064"
+	}
 }

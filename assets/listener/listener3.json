@@ -1,48 +1,19 @@
 {
-  "pnimrp": [
-    "TSF Jazz",
-    "tsfjazz.ice.infomaniak.ch:80/tsfjazz-high",
-
-    "KUVO",
-    "kuvo-ice.streamguys.org/kuvo-mp3-64",
-
-    "KUVO HD2",
-    "kuvo-ice.streamguys.org/kuvohd2-mp3-64",
-
-    "KUVO HD3",
-    "kuvo-ice.streamguys.org/kuvohd3-mp3-64",
-
-    "ROK Old Time",
-    "s1.viastreaming.net:9180",
-
-    "ROK British Comedy",
-    "s1.viastreaming.net:9155",
-
-    "ROK American Comedy",
-    "s1.viastreaming.net:9160",
-
-    "ROK Crime & Suspense",
-    "s1.viastreaming.net:9165",
-
-    "ROK Science Fiction",
-    "s1.viastreaming.net:9185",
-
-    "MJoy Radio M",
-    "stream.mjoy.ua:8000/radio-m",
-
-    "MJoy Radio M Live",
-    "stream.mjoy.ua:8000/radio-m-live",
-
-    "MJoy Radio great",
-    "stream.mjoy.ua:8000/radio-great",
-
-    "MJoy Mousse Radio",
-    "stream.mjoy.ua:8000/radio-mousse",
-
-    "MJoy Kredens Cafe",
-    "stream.mjoy.ua:8000/kredens-cafe-radio_mp3",
-
-    "MJoy Radio egoisty",
-    "stream.mjoy.ua:8000/radio-egoisty"
-  ]
+	"stations": {
+		"TSF Jazz": "tsfjazz.ice.infomaniak.ch:80/tsfjazz-high",
+		"KUVO": "kuvo-ice.streamguys.org/kuvo-mp3-64",
+		"KUVO HD2": "kuvo-ice.streamguys.org/kuvohd2-mp3-64",
+		"KUVO HD3": "kuvo-ice.streamguys.org/kuvohd3-mp3-64",
+		"ROK Old Time": "s1.viastreaming.net:9180",
+		"ROK British Comedy": "s1.viastreaming.net:9155",
+		"ROK American Comedy": "s1.viastreaming.net:9160",
+		"ROK Crime & Suspense": "s1.viastreaming.net:9165",
+		"ROK Science Fiction": "s1.viastreaming.net:9185",
+		"MJoy Radio M": "stream.mjoy.ua:8000/radio-m",
+		"MJoy Radio M Live": "stream.mjoy.ua:8000/radio-m-live",
+		"MJoy Radio great": "stream.mjoy.ua:8000/radio-great",
+		"MJoy Mousse Radio": "stream.mjoy.ua:8000/radio-mousse",
+		"MJoy Kredens Cafe": "stream.mjoy.ua:8000/kredens-cafe-radio_mp3",
+		"MJoy Radio egoisty": "stream.mjoy.ua:8000/radio-egoisty"
+	}
 }

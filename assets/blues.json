@@ -1,6 +1,5 @@
 {
-  "pnimrp": [
-     "Big Blue Swing",
-     "209.236.126.18:8002"
-   ]
+	"stations": {
+		"Big Blue Swing": "209.236.126.18:8002"
+	}
 }

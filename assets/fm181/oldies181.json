@@ -1,21 +1,10 @@
 {
-  "pnimrp": [
-  "Beatles",
-  "relay.181.fm:8062",
-
-  "Classic Hits",
-  "relay.181.fm:8132",
-
-  "Good Time Oldies",
-  "relay.181.fm:8046",
-
-  "Mellow Gold",
-  "relay.181.fm:8060",
-
-  "Soul",
-  "relay.181.fm:8058",
-
-  "Super 70s",
-  "relay.181.fm:8066"
-  ]
+	"stations": {
+		"Beatles": "relay.181.fm:8062",
+		"Classic Hits": "relay.181.fm:8132",
+		"Good Time Oldies": "relay.181.fm:8046",
+		"Mellow Gold": "relay.181.fm:8060",
+		"Soul": "relay.181.fm:8058",
+		"Super 70s": "relay.181.fm:8066"
+	}
 }

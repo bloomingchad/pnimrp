@@ -1,15 +1,8 @@
 {
-	"pnimrp": [
-		"92.6 Fujairah",
-		"https://fujairah.fm/stream.php",
-
-		"mix FM arab",
-		"https://s1.voscast.com:11377/live.mp3",
-
-		"LiveQuranRadio",
-		"104.167.2.55:2199/tunein/qasiuran.pls",
-
-		"QuranVerse24",
-		"verse24.com:3344/listen.mp3"
-	]
+	"stations": {
+		"92.6 Fujairah": "https://fujairah.fm/stream.php",
+		"mix FM arab": "https://s1.voscast.com:11377/live.mp3",
+		"LiveQuranRadio": "104.167.2.55:2199/tunein/qasiuran.pls",
+		"QuranVerse24": "verse24.com:3344/listen.mp3"
+	}
 }

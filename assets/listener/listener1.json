@@ -1,48 +1,19 @@
 {
- "pnimrp": [
-    "AI-Radio",
-    "ai-radio.org/128.ogg",
-
-    "C89.5 FM",
-    "208.76.152.74:8000",
-
-    "CHIRP Radio",
-    "chirpradio.org/stream",
-
-    "HPR 1",
-    "50.7.77.179:8024",
-
-    "HPR 2",
-    "50.7.77.179:8022",
-
-    "HPR 3",
-    "50.7.70.58:8708",
-
-    "KING FM",
-    "icy2.abacast.com:80/king-kingmp3-96",
-
-    "KPFA",
-    "streams1.kpfa.org:8000/kpfa_64",
-
-    "KALX Radio",
-    "icecast.media.berkeley.edu:8000/kalx-128.mp3",
-
-    "MPR",
-    "current.stream.publicradio.org/kcmp.mp3",
-
-    "NOFM",
-    "gal.bitsyu.net:8000",
-
-    "Radio Paradise",
-    "stream-tx4.radioparadise.com:80/mp3-128",
-
-    "Radio Velvet",
-    "212.37.80.142:8814",
-
-    "90.5 WBER",
-    "wber-ice-encoder.monroe.edu:80/wber-high.mp3",
-
-    "WDCB",
-    "wdcb-ice.streamguys.org:80/wdcb128"
- ]
+	"stations": {
+		"AI-Radio": "ai-radio.org/128.ogg",
+		"C89.5 FM": "208.76.152.74:8000",
+		"CHIRP Radio": "chirpradio.org/stream",
+		"HPR 1": "50.7.77.179:8024",
+		"HPR 2": "50.7.77.179:8022",
+		"HPR 3": "50.7.70.58:8708",
+		"KING FM": "icy2.abacast.com:80/king-kingmp3-96",
+		"KPFA": "streams1.kpfa.org:8000/kpfa_64",
+		"KALX Radio": "icecast.media.berkeley.edu:8000/kalx-128.mp3",
+		"MPR": "current.stream.publicradio.org/kcmp.mp3",
+		"NOFM": "gal.bitsyu.net:8000",
+		"Radio Paradise": "stream-tx4.radioparadise.com:80/mp3-128",
+		"Radio Velvet": "212.37.80.142:8814",
+		"90.5 WBER": "wber-ice-encoder.monroe.edu:80/wber-high.mp3",
+		"WDCB": "wdcb-ice.streamguys.org:80/wdcb128"
+	}
 }

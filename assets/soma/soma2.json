@@ -1,48 +1,19 @@
 {
-  "pnimrp": [
-    "Folk Forward",
-    "ice.somafm.com/folkfwd",
- 
-    "Groove Salad",
-    "ice.somafm.com/groovesalad",
- 
-    "Illinois Street Lounge",
-    "ice.somafm.com/illstreet",
- 
-    "Indie Pop Rocks",
-    "ice.somafm.com/indiepop",
- 
-    "Left Coast 70s",
-    "ice.somafm.com/seventies",
- 
-    "Lush",
-    "ice.somafm.com/lush",
- 
-    "Mission Control",
-    "ice.somafm.com/missioncontrol",
- 
-    "PopTron",
-    "ice.somafm.com/poptron",
- 
-    "SF 1033",
-    "ice.somafm.com/sf1033",
- 
-    "Secret Agent",
-    "ice.somafm.com/secretagent",
- 
-    "Sonic Universe",
-    "ice.somafm.com/sonicuniverse",
- 
-    "Space Station Soma",
-    "ice.somafm.com/spacestation",
- 
-    "Suburbs of Goa",
-    "ice.somafm.com/suburbsofgoa",
- 
-    "The Trip",
-    "ice.somafm.com/thetrip",
- 
-    "ThistleRadio",
-    "ice.somafm.com/thistle"
-  ]
+	"stations": {
+		"Folk Forward": "ice.somafm.com/folkfwd",
+		"Groove Salad": "ice.somafm.com/groovesalad",
+		"Illinois Street Lounge": "ice.somafm.com/illstreet",
+		"Indie Pop Rocks": "ice.somafm.com/indiepop",
+		"Left Coast 70s": "ice.somafm.com/seventies",
+		"Lush": "ice.somafm.com/lush",
+		"Mission Control": "ice.somafm.com/missioncontrol",
+		"PopTron": "ice.somafm.com/poptron",
+		"SF 1033": "ice.somafm.com/sf1033",
+		"Secret Agent": "ice.somafm.com/secretagent",
+		"Sonic Universe": "ice.somafm.com/sonicuniverse",
+		"Space Station Soma": "ice.somafm.com/spacestation",
+		"Suburbs of Goa": "ice.somafm.com/suburbsofgoa",
+		"The Trip": "ice.somafm.com/thetrip",
+		"ThistleRadio": "ice.somafm.com/thistle"
+	}
 }

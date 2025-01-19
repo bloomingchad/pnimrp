@@ -1,18 +1,9 @@
 {
-  "pnimrp": [
-    "Jammin 181",
-    "relay.181.fm:8042",
-
-    "Old School HipHop",
-    "relay.181.fm:8068",
-
-    "The Beat",
-    "relay.181.fm:8054",
-
-    "The Box",
-    "relay.181.fm:8024",
-
-    "True R&B",
-    "relay.181.fm:8022"
-  ]
+	"stations": {
+		"Jammin 181": "relay.181.fm:8042",
+		"Old School HipHop": "relay.181.fm:8068",
+		"The Beat": "relay.181.fm:8054",
+		"The Box": "relay.181.fm:8024",
+		"True R&B": "relay.181.fm:8022"
+	}
 }

@@ -1,21 +1,8 @@
 {
-  "pnimrp": [
-    "When I Die, Keep Playing The Records",
-    "Jimi Hendrix",
-
-    "Where words fail, music speaks",
-    "Hans Christian",
-
-    "Country music is three chords and truth",
-    "Harlan Howard",
-
-    "There are two ways of refuge from misery — music and cats",
-    "Albert Schweitzer",
-
-    "Music is a safe kind of high",
-    "Jimi Hendrix",
-
-    "You enjoy music when you're happy, you understand lyrics when you're sad",
-    "Frank Ocean"
-  ]
+  "When I Die, Keep Playing The Records": "Jimi Hendrix",
+  "Where words fail, music speaks": "Hans Christian",
+  "Country music is three chords and truth": "Harlan Howard",
+  "There are two ways of refuge from misery — music and cats": "Albert Schweitzer",
+  "Music is a safe kind of high": "Jimi Hendrix",
+  "You enjoy music when you're happy, you understand lyrics when you're sad": "Frank Ocean"
 }

@@ -1,48 +1,19 @@
 {
-  "pnimrp": [
-    "WEVL 89.9",
-    "peace.str3am.com:6030",
-
-    "WERU 89.9 FM",
-    "stream.weru.org:80/weru-high.mp3",
-
-    "WFMU",
-    "stream0.wfmu.org/freeform-128k",
-
-    "WNCU",
-    "pubint.ic.llnwd.net/stream/pubint_wncu",
-
-    "WNRN-FM",
-    "broadcast.wnrn.org:8000/wnrn.mp3",
-
-    "WNYC 93.9 FM",
-    "fm939.wnyc.org/wnycfm",
-
-    "WQXR New York",
-    "stream.wqxr.org/wqxr",
-
-    "WSGE FM",
-    "amber.streamguys.com:4890/live",
-
-    "WWOZ",
-    "50.31.135.43:80/wwoz-hi.mp3",
-
-    "Xenicus Radio",
-    "192.99.35.93:6744/stream",
-
-    "andHow FM",
-    "199.180.75.6:80",
-
-    "FIP",
-    "audio.scdn.arkena.com/11016/fip-midfi128.mp3",
-
-    "PBB",
-    "pbb.laurentgarnier.com:8000",
-
-    "ABN Antioch",
-    "lin2.ash.fast-serv.com:9022",
-
-    "TCAN",
-    "206.190.144.154:8060"
-  ]
+	"stations": {
+		"WEVL 89.9": "peace.str3am.com:6030",
+		"WERU 89.9 FM": "stream.weru.org:80/weru-high.mp3",
+		"WFMU": "stream0.wfmu.org/freeform-128k",
+		"WNCU": "pubint.ic.llnwd.net/stream/pubint_wncu",
+		"WNRN-FM": "broadcast.wnrn.org:8000/wnrn.mp3",
+		"WNYC 93.9 FM": "fm939.wnyc.org/wnycfm",
+		"WQXR New York": "stream.wqxr.org/wqxr",
+		"WSGE FM": "amber.streamguys.com:4890/live",
+		"WWOZ": "50.31.135.43:80/wwoz-hi.mp3",
+		"Xenicus Radio": "192.99.35.93:6744/stream",
+		"andHow FM": "199.180.75.6:80",
+		"FIP": "audio.scdn.arkena.com/11016/fip-midfi128.mp3",
+		"PBB": "pbb.laurentgarnier.com:8000",
+		"ABN Antioch": "lin2.ash.fast-serv.com:9022",
+		"TCAN": "206.190.144.154:8060"
+	}
 }

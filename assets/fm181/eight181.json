@@ -1,12 +1,7 @@
 {
-  "pnimrp": [
-    "80's Country",
-    "relay.181.fm:8134",
-
-    "Awesome 80's",
-    "relay.181.fm:8000",
-
-    "Lite 80's",
-    "relay.181.fm:8040"
-  ]
+	"stations": {
+		"80's Country": "relay.181.fm:8134",
+		"Awesome 80's": "relay.181.fm:8000",
+		"Lite 80's": "relay.181.fm:8040"
+	}
 }

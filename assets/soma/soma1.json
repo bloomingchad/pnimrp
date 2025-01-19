@@ -1,48 +1,19 @@
 {
-  "pnimrp": [
-    "7 Inch Soul",
-    "ice.somafm.com/7soul",
-
-    "BAGeL Radio",
-    "ice.somafm.com/bagel",
-
-    "Beat Blender",
-    "ice.somafm.com/beatblender",
-
-    "Black Rock FM",
-    "ice.somafm.com/brfm",
-
-    "Boot Liquor",
-    "ice.somafm.com/bootliquor",
-
-    "Cliqhop idm",
-    "ice.somafm.com/cliqhop",
-
-    "Covers",
-    "ice.somafm.com/covers",
-
-    "DEF CON Radio",
-    "ice.somafm.com/defcon",
-
-    "Deep Space One",
-    "ice.somafm.com/deepspaceone",
-
-    "Digitalis",
-    "ice.somafm.com/digitalis",
-
-    "Doomed",
-    "ice.somafm.com/doomed",
-
-    "Drone Zone",
-    "ice.somafm.com/dronezone",
-
-    "Dub Step Beyond",
-    "ice.somafm.com/dubstep",
-
-    "Earwaves",
-    "ice.somafm.com/earwaves",
-
-    "Fluid",
-    "ice.somafm.com/fluid"
-  ]
+	"stations": {
+		"7 Inch Soul": "ice.somafm.com/7soul",
+		"BAGeL Radio": "ice.somafm.com/bagel",
+		"Beat Blender": "ice.somafm.com/beatblender",
+		"Black Rock FM": "ice.somafm.com/brfm",
+		"Boot Liquor": "ice.somafm.com/bootliquor",
+		"Cliqhop idm": "ice.somafm.com/cliqhop",
+		"Covers": "ice.somafm.com/covers",
+		"DEF CON Radio": "ice.somafm.com/defcon",
+		"Deep Space One": "ice.somafm.com/deepspaceone",
+		"Digitalis": "ice.somafm.com/digitalis",
+		"Doomed": "ice.somafm.com/doomed",
+		"Drone Zone": "ice.somafm.com/dronezone",
+		"Dub Step Beyond": "ice.somafm.com/dubstep",
+		"Earwaves": "ice.somafm.com/earwaves",
+		"Fluid": "ice.somafm.com/fluid"
+	}
 }

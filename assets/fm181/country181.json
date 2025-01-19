@@ -1,18 +1,9 @@
 {
-  "pnimrp": [
-    "Front Porch",
-    "relay.181.fm:8016",
-
-    "Highway 181",
-    "relay.181.fm:8018",
-
-    "Kickin' Country",
-    "relay.181.fm:8130",
-
-    "Real Country",
-    "relay.181.fm:8034",
-
-    "US 181",
-    "relay.181.fm:8056"
-  ]
+	"stations": {
+		"Front Porch": "relay.181.fm:8016",
+		"Highway 181": "relay.181.fm:8018",
+		"Kickin' Country": "relay.181.fm:8130",
+		"Real Country": "relay.181.fm:8034",
+		"US 181": "relay.181.fm:8056"
+	}
 }

@@ -1,9 +1,6 @@
 {
-  "pnimrp": [
-    "RealHardStyle.Nl",
-    "https://stream.realhardstyle.nl",
-
-    "Chuck N Jane -data",
-    "https://listen.chucknjane.com/32kbps"
-  ]
+	"stations": {
+		"RealHardStyle.Nl": "https://stream.realhardstyle.nl",
+		"Chuck N Jane -data": "https://listen.chucknjane.com/32kbps"
+	}
 }
