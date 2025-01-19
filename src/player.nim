@@ -1,14 +1,14 @@
 import client
-export cE # Export the error-checking macro for external use
+export cE  # Export the error-checking macro for external use
 
 type
-  PlayerError* = object of CatchableError # Custom error type for player-related issues
-  MediaInfo* = object # Structure to hold media player state
-    title*: string    # Current media title
-    isIdle*: bool     # Whether the player is idle
-    volume*: int      # Current volume level
-    isMuted*: bool    # Whether the player is muted
-    isPaused*: bool   # Whether the player is paused
+  PlayerError* = object of CatchableError  # Custom error type for player-related issues
+  MediaInfo* = object                      # Structure to hold media player state
+    title*: string                         # Current media title
+    isIdle*: bool                          # Whether the player is idle
+    volume*: int                           # Current volume level
+    isMuted*: bool                         # Whether the player is muted
+    isPaused*: bool                        # Whether the player is paused
 
 const
   VolumeStep* = 5  # Step size for volume adjustments
@@ -63,8 +63,7 @@ proc mute*(ctx: ptr Handle, shouldMute: bool) {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to set mute state: " & e.msg)
 
-proc adjustVolume*(ctx: ptr Handle, increase: bool): int {.raises: [
-    PlayerError].} =
+proc adjustVolume*(ctx: ptr Handle, increase: bool): int {.raises: [PlayerError].} =
   ## Adjusts the volume up or down by `VolumeStep`.
   ##
   ## Args:
@@ -155,15 +154,20 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
 
+# Unit tests for player.nim
 when isMainModule:
-  # Example usage of the media player
-  var ctx: ptr Handle
-  try:
-    init(ctx, "example.mp3")
-    let info = getMediaInfo(ctx)
-    echo "Now playing: ", info.title
-    echo "Volume: ", info.volume
-    echo "Paused: ", info.isPaused
-    echo "Muted: ", info.isMuted
-  except PlayerError as e:
-    echo "Player error: ", e.msg
+  import unittest
+
+  suite "Player Tests":
+    test "validateVolume":
+      check validateVolume(-10) == 0
+      check validateVolume(50) == 50
+      check validateVolume(200) == 150
+
+    test "adjustVolume":
+      var ctx: ptr Handle
+      init(ctx, "example.mp3")
+      let initialVolume = getMediaInfo(ctx).volume
+      let newVolume = adjustVolume(ctx, true)
+      check newVolume == initialVolume + VolumeStep
+      ctx.terminateDestroy()
