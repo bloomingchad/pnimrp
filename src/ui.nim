@@ -318,27 +318,28 @@ var
 
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
-  # Draw header if section is provided
   updateTermWidth()
+
+  # Draw header if section is provided
   if section.len > 0:
-    setCursorPos(0, 0) # Line 0
+    setCursorPos(0, 0)  # Line 0
     say(AppNameShort & " > " & section, fgYellow)
 
   # Draw separator
-  setCursorPos(0, 1) # Line 1
+  setCursorPos(0, 1)  # Line 1
   say("-".repeat(termWidth), fgGreen, xOffset = 0)
 
   # Display "Now Playing" with truncation if necessary
-  setCursorPos(0, 2) # Line 2 (below the separator)
+  setCursorPos(0, 2)  # Line 2 (below the separator)
   eraseLine()
   let nowPlayingText = "Now Playing: " & nowPlaying
   if nowPlayingText.len > termWidth:
-    say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan) # Truncate and add ellipsis
+    say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan)  # Truncate and add ellipsis
   else:
     say(nowPlayingText, fgCyan)
 
   # Display status and volume
-  setCursorPos(0, 4)
+  setCursorPos(0, 4)  # Line 4
   eraseLine()
   let volumeColor = volumeColor(volume)
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
@@ -358,6 +359,13 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
 
   # Draw the UI with the updated "Now Playing" text
   drawPlayerUIInternal("", nowPlayingText, status, volume)
+
+  # Display status and volume
+  setCursorPos(0, 4)  # Line 4
+  eraseLine()
+  let volumeColor = volumeColor(volume)
+  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+  styledEcho(volumeColor, $volume & "%")
 
 when isMainModule:
   import unittest
