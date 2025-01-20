@@ -11,6 +11,7 @@ type
 
 proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   ## Validates if a link is reachable and parses its components.
+  ## If the link does not have a protocol prefix (e.g., "http://"), it defaults to "http://".
   ##
   ## Args:
   ##   link: The URL to validate.
@@ -18,9 +19,13 @@ proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   ##
   ## Returns:
   ##   LinkValidationResult object containing validation details.
+  var finalLink = link
+  if not finalLink.startsWith("http://") and not finalLink.startsWith("https://"):
+    finalLink = "http://" & finalLink  # Default to HTTP if no protocol is specified
+
   try:
     # Parse the URL
-    let uri = parseUri(link)
+    let uri = parseUri(finalLink)
     let protocol = if uri.scheme == "": "http" else: uri.scheme
     let domain = uri.hostname
     let port = if uri.port == "":
