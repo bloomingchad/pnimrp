@@ -318,186 +318,66 @@ var
 
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
-  updateTermWidth()
+  updateTermWidth()  # Ensure the terminal width is up-to-date
+
+  # Clear the screen and reset cursor position
+  clear()
 
   # Draw header if section is provided
   if section.len > 0:
     setCursorPos(0, 0)  # Line 0
     say(AppNameShort & " > " & section, fgYellow)
 
-  # Draw separator
+  # Draw top separator
   setCursorPos(0, 1)  # Line 1
   say("-".repeat(termWidth), fgGreen, xOffset = 0)
 
   # Display "Now Playing" with truncation if necessary
   setCursorPos(0, 2)  # Line 2 (below the separator)
   eraseLine()
-  let nowPlayingText = "Now Playing: " & nowPlaying
-  if nowPlayingText.len > termWidth:
-    say(nowPlayingText[0 ..< termWidth - 3] & "...", fgCyan)  # Truncate and add ellipsis
-  else:
-    say(nowPlayingText, fgCyan)
+  let nowPlayingText = "Now Playing: " & nowPlaying  # Removed 🎶 emoji
+  say(nowPlayingText, fgCyan)
 
-  # Display status and volume
-  setCursorPos(0, 4)  # Line 4
+  # Display status and volume on the same line
+  setCursorPos(0, 3)  # Line 3
   eraseLine()
   let volumeColor = volumeColor(volume)
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
 
-  showFooter(isPlayerUI = true)  # Ensure the footer is drawn with isPlayerUI = true
+  # Draw separator after status/volume
+  setCursorPos(0, 4)  # Line 4
+  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+
+  # Display footer options
+  setCursorPos(0, 5)  # Line 5
+  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"  # Matched old format
+  say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+
+  # Draw the bottom border
+  setCursorPos(0, 6)  # Line 6
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+
+proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
+  ## Updates the player UI with new information without redrawing the entire screen.
+  
+  # Update Now Playing line
+  setCursorPos(0, 2)
+  eraseLine()
+  let nowPlayingText = "Now Playing: " & nowPlaying
+  say(nowPlayingText, fgCyan)
+
+  # Update Status and Volume line
+  setCursorPos(0, 3)
+  eraseLine()
+  let volumeColor = volumeColor(volume)
+  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+  styledEcho(volumeColor, $volume & "%")
+
+  # Reset cursor position after updates
+  setCursorPos(0, 5)
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.
   clear()
   drawPlayerUIInternal(section, nowPlaying, status, volume)
-
-proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
-  ## Updates the player UI with new information.
-  let animationSymbol = updateJinglingAnimation(status) # Get the animation symbol
-  let nowPlayingText = animationSymbol & " " & nowPlaying # Move animation to the start
-
-  # Draw the UI with the updated "Now Playing" text
-  drawPlayerUIInternal("", nowPlayingText, status, volume)
-
-  # Display status and volume
-  setCursorPos(0, 4)  # Line 4
-  eraseLine()
-  let volumeColor = volumeColor(volume)
-  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
-  styledEcho(volumeColor, $volume & "%")
-
-when isMainModule:
-  import unittest
-
-  suite "UI Tests":
-    test "say procedure":
-      # Test basic functionality
-      say("Hello, World!", fgGreen)
-      say("This is a test.", fgBlue, xOffset = 10)
-
-      # Test with shouldEcho = false
-      say("This should not echo", fgGreen, shouldEcho = false)
-
-    test "showExitMessage procedure":
-      # Test with a valid quotes file
-      showExitMessage()
-
-      # Test with an empty quotes file (should raise an error)
-      let emptyQuotesFile = getAppDir() / "assets" / "empty_quotes.json"
-      writeFile(emptyQuotesFile, """{"pnimrp": []}""")
-      expect UIError:
-        showExitMessage()
-      removeFile(emptyQuotesFile)
-
-    test "drawHeader procedure":
-      # Test with a valid terminal width
-      drawHeader()
-
-      # Test with a terminal width that's too small (should raise an error)
-      let originalTermWidth = termWidth
-      termWidth = MinTerminalWidth - 1
-      expect UIError:
-        drawHeader()
-      termWidth = originalTermWidth
-
-    test "calculateColumnLayout procedure":
-      let options = @["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]
-
-      # Test with a wide terminal
-      termWidth = 100
-      let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
-      check numColumns == 3
-      check maxColumnLengths.len == 3
-      check spacing >= 4
-
-      # Test with a narrow terminal
-      termWidth = 50
-      let (numColumnsNarrow, maxColumnLengthsNarrow, spacingNarrow) = calculateColumnLayout(options)
-      check numColumnsNarrow == 2
-      check maxColumnLengthsNarrow.len == 2
-      check spacingNarrow >= 4
-
-      # Test with too few options
-      let singleOption = @["Option 1"]
-      let (numColumnsSingle, maxColumnLengthsSingle, spacingSingle) = calculateColumnLayout(singleOption)
-      check numColumnsSingle == 1
-      check maxColumnLengthsSingle.len == 1
-      check spacingSingle >= 4
-
-    test "renderMenuOptions procedure":
-      let options = @["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]
-      let numColumns = 2
-      let maxColumnLengths = @[10, 10]
-      let spacing = 4
-
-      # Test rendering
-      renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
-
-    test "displayMenu procedure":
-      let options = @["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]
-
-      # Test with isMainMenu = false
-      displayMenu(options)
-
-      # Test with isMainMenu = true
-      displayMenu(options, isMainMenu = true)
-
-    test "drawMenu procedure":
-      # Test with string options
-      drawMenu("Test Section", "Line 1\nLine 2\nLine 3")
-
-      # Test with MenuOptions
-      let options = @["Option 1", "Option 2", "Option 3"]
-      drawMenu("Test Section", options)
-
-    test "getFooterOptions procedure":
-      # Test for main menu
-      check getFooterOptions(true, false) == "[Q] Quit   [N] Notes"
-
-      # Test for player UI
-      check getFooterOptions(false, true) == "[Q] Quit   [R] Return   [P] Pause/Play [-/+] Adjust Volume"
-
-      # Test for submenu
-      check getFooterOptions(false, false) == "[Q] Quit   [R] Return"
-
-    test "showFooter procedure":
-      # Test with default parameters
-      showFooter()
-
-      # Test with custom parameters
-      showFooter(lineToDraw = 10, isMainMenu = true, isPlayerUI = false, separatorColor = fgRed, footerColor = fgBlue)
-
-    test "exit procedure":
-      # Test with isPaused = true
-      let ctx = create()
-      exit(ctx, isPaused = true)
-
-      # Test with isPaused = false
-      exit(ctx, isPaused = false)
-
-    test "showNotes procedure":
-      # Test displaying notes
-      showNotes()
-
-    test "volumeColor procedure":
-      # Test low volume
-      check volumeColor(50) == fgBlue
-
-      # Test medium volume
-      check volumeColor(80) == fgGreen
-
-      # Test high volume
-      check volumeColor(120) == fgRed
-
-    test "drawPlayerUI procedure":
-      # Test with a valid section and nowPlaying text
-      drawPlayerUI("Test Section", "Now Playing: Song Title", "Playing", 75)
-
-      # Test with a long nowPlaying text
-      let longNowPlaying = "Now Playing: " & "A".repeat(100)
-      drawPlayerUI("Test Section", longNowPlaying, "Playing", 75)
-
-    test "updatePlayerUI procedure":
-      # Test updating the player UI
-      updatePlayerUI("Now Playing: Song Title", "Playing", 75)

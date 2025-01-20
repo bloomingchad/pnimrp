@@ -2,6 +2,8 @@
 	"stations": {
 		"Orthodox Chants": "orthodox-chants.ru:8000/64kb",
 		"RadioVaticana": "https://radio.vaticannews.va/stream-en",
-		"OCR Rudder 24": "radio.myocn.net:8080/stream"
+		"OCR Rudder 24": "radio.myocn.net:8080/stream",
+		"LiveQuranRadio": "104.167.2.55:2199/tunein/qasiuran.pls",
+		"QuranVerse24": "verse24.com:3344/listen.mp3"
 	}
 }
