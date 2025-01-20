@@ -76,6 +76,12 @@ proc drawHeader*() =
   # Draw the bottom border of the header using the theme's separator color
   say("=".repeat(termWidth), currentTheme.separator, xOffset = 0)
 
+proc truncateName(name: string, maxLength: int): string =
+  ## Truncates a station name to the specified maximum length and adds ellipsis.
+  if termWidth <= MinTerminalWidth or name.len > maxLength:
+    name[0 ..< maxLength - 3] & "..."  # Always truncate at minimum width
+  else: name
+
 proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   ## Calculates the number of columns, max column lengths, and spacing.
   const minColumns = 2
@@ -86,16 +92,16 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   var maxItemLength = 0
   for i in 0 ..< options.len:
     let prefix =
-      if i < 9: $(i + 1) & "." # Use numbers 1-9 for the first 9 options
+      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
       else:
-        if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
-        else: "?"              # Fallback
-    let itemLength = prefix.len + 1 + options[i].len # Include prefix and space
+        if i < MenuChars.len: $MenuChars[i] & "."  # Use A-Z for the next options
+        else: "?"  # Fallback
+    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
     if itemLength > maxItemLength:
       maxItemLength = itemLength
 
   # Calculate the minimum required width for 3 columns
-  let minWidthFor3Columns = maxItemLength * 3 + 9 # 9 = 4.5 spaces between columns * 2
+  let minWidthFor3Columns = maxItemLength * 3 + 9  # 9 = 4.5 spaces between columns * 2
 
   # Switch to 2 columns if:
   # 1. Terminal width is less than the minimum required for 3 columns, or
@@ -103,7 +109,7 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   if termWidth < minWidthFor3Columns or maxItemLength > int(float(termWidth) / 4.5):
     numColumns = minColumns
   else:
-    numColumns = maxColumns # Otherwise, use 3 columns
+    numColumns = maxColumns  # Otherwise, use 3 columns
 
   # Calculate the number of items per column
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
@@ -113,11 +119,11 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   for i in 0 ..< options.len:
     let columnIndex = i div itemsPerColumn
     let prefix =
-      if i < 9: $(i + 1) & "." # Use numbers 1-9 for the first 9 options
+      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
       else:
-        if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
-        else: "?"              # Fallback
-    let itemLength = prefix.len + 1 + options[i].len # Include prefix and space
+        if i < MenuChars.len: $MenuChars[i] & "."  # Use A-Z for the next options
+        else: "?"  # Fallback
+    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
     if itemLength > maxColumnLengths[columnIndex]:
       maxColumnLengths[columnIndex] = itemLength
 
@@ -127,28 +133,49 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
     totalWidth += length
 
   # Calculate the required spacing between columns
-  const minSpacing = 4 # Minimum spacing between columns
-  const maxSpacing = 6 # Maximum spacing between columns
+  const minSpacing = 4  # Minimum spacing between columns
+  const maxSpacing = 6  # Maximum spacing between columns
   var spacing = maxSpacing
 
   # Adjust spacing if the terminal width is too small
   while spacing >= minSpacing:
     let totalWidthWithSpacing = totalWidth + spacing * (numColumns - 1)
     if totalWidthWithSpacing <= termWidth:
-      break # We have enough space with the current spacing
-    spacing -= 1 # Reduce spacing and try again
+      break  # We have enough space with the current spacing
+    spacing -= 1  # Reduce spacing and try again
 
   # Check if we have enough space even with the minimum spacing
   if spacing < minSpacing:
-    raise newException(UIError, "Terminal width too small to display menu without overlap. Required width: " &
-        $(totalWidth + minSpacing * (numColumns - 1)) & ", available width: " & $termWidth)
+    # Aggressively truncate station names to fit within the terminal width
+    for i in 0 ..< maxColumnLengths.len:
+      let maxAllowedLength = (termWidth div numColumns - spacing) - 2  # Additional bias
+      if maxColumnLengths[i] > maxAllowedLength:
+        maxColumnLengths[i] = maxAllowedLength
 
   return (numColumns, maxColumnLengths, spacing)
+
+var lastTermWidth = termWidth  # Track the last terminal width
+
+proc updateTermWidth* =
+  ## Updates the terminal width only if it has changed significantly.
+  let newWidth = terminalWidth()
+  if abs(newWidth - lastTermWidth) >= 5:  # Only update if the change is significant
+    termWidth = newWidth
+    lastTermWidth = newWidth
 
 proc renderMenuOptions(options: MenuOptions, numColumns: int,
     maxColumnLengths: seq[int], spacing: int) =
   ## Renders the menu options in a multi-column layout.
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
+
+  # Wait for the terminal width to stabilize
+  var stableWidth = false
+  while not stableWidth:
+    updateTermWidth()
+    if abs(termWidth - lastTermWidth) < 5:  # Terminal width is stable
+      stableWidth = true
+    else:
+      sleep(100)  # Wait for 100ms before checking again
 
   for row in 0 ..< itemsPerColumn:
     var currentLine = ""
@@ -157,12 +184,14 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
       if index < options.len:
         # Calculate the prefix for the menu option
         let prefix =
-          if index < 9: $(index + 1) & "." # Use numbers 1-9 for the first 9 options
+          if index < 9: $(index + 1) & "."  # Use numbers 1-9 for the first 9 options
           else:
-            if index < MenuChars.len: $MenuChars[index] & "." # Use A-Z for the next options
-            else: "?" # Fallback
+            if index < MenuChars.len: $MenuChars[index] & "."  # Use A-Z for the next options
+            else: "?"  # Fallback
 
-        let formattedOption = prefix & " " & options[index]
+        # Truncate the station name if necessary
+        let truncatedName = truncateName(options[index], maxColumnLengths[col] - prefix.len - 1)
+        let formattedOption = prefix & " " & truncatedName
         let padding = maxColumnLengths[col] - formattedOption.len
         currentLine.add(formattedOption & " ".repeat(padding))
       else:
@@ -173,6 +202,7 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
       if col < numColumns - 1:
         currentLine.add(" ".repeat(spacing))
 
+    # Render the line
     say(currentLine, fgBlue)
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
