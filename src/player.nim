@@ -123,7 +123,7 @@ proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [PlayerError].} =
     var title: cstring
     cE ctx.getProperty("media-title", fmtString, addr title)
     result = if title != nil: $title else: ""
-    result = result.substr(0, int(terminalWidth().toFloat() / 1.65))
+    result = result.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
       #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
   except Exception as e:
     raise newException(PlayerError, "Failed to get media title: " & e.msg)
