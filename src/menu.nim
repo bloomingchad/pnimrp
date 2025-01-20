@@ -1,7 +1,7 @@
 import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
-  utils, animation
+  utils, animation, json
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
@@ -49,8 +49,14 @@ proc updateAnimationOnly(status, currentSong: string) =
   # Display the animation symbol and "Now Playing" text in cyan
   styledEcho(fgCyan, animationSymbol & " Now Playing: ", fgCyan, currentSong)
 
+proc cleanupPlayer(ctx: ptr Handle) =
+  ## Cleans up player resources.
+  ctx.terminateDestroy()
+  illwillDeinit()
+
 proc playStation(config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
+  var ctx: ptr Handle = nil
   try:
     if config.stationUrl == "":
       let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
@@ -68,13 +74,12 @@ proc playStation(config: MenuConfig) =
       warn("Failed to access station: " & config.stationUrl & "\nEdit the station list in: " & fileHint & ".json")
       return
 
-    var
-      ctx = create()
-      state = PlayerState(isPaused: false, isMuted: false, volume: 100)
-      isObserving = false
-      counter: uint8
-      playlistFirstPass = false
-      lastAnimationUpdate: DateTime = now()  # Track the last animation update time
+    ctx = create()
+    var state = PlayerState(isPaused: false, isMuted: false, volume: 100)
+    var isObserving = false
+    var counter: uint8
+    var playlistFirstPass = false
+    var lastAnimationUpdate: DateTime = now()
 
     ctx.init(config.stationUrl)
     var event = ctx.waitEvent()
@@ -86,7 +91,7 @@ proc playStation(config: MenuConfig) =
 
     # Draw the initial player UI
     drawPlayerUI(config.stationName, "Loading...", currentStatusEmoji(currentStatus(state)), state.volume)
-    showFooter(isPlayerUI = true)  # Ensure the footer is drawn with isPlayerUI = true
+    showFooter(isPlayerUI = true)
 
     while true:
       if not state.isPaused:
@@ -99,18 +104,16 @@ proc playStation(config: MenuConfig) =
 
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
-        # Update the full UI only when the song name changes
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
-      # Check if it's time to update the animation (2 FPS = every 500ms)
+      # Check if it's time to update the animation
       let currentTime = now()
       let timeDiff = currentTime - lastAnimationUpdate
       let timeDiffMs = timeDiff.inMilliseconds
 
       if timeDiffMs >= 1350 and currentStatus(state) == StatusPlaying:
-        # Update the animation only if the player is playing
         updateAnimationOnly(currentStatusEmoji(currentStatus(state)), state.currentSong)
-        lastAnimationUpdate = currentTime  # Update the last animation time
+        lastAnimationUpdate = currentTime
 
       # Periodic checks
       if counter >= CheckIdleInterval:
@@ -135,35 +138,30 @@ proc playStation(config: MenuConfig) =
         of Key.P:
           state.isPaused = not state.isPaused
           ctx.pause(state.isPaused)
-          # Update the full UI when the player is paused/unpaused
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
         of Key.M:
           state.isMuted = not state.isMuted
           ctx.mute(state.isMuted)
-          # Update the full UI when the player is muted/unmuted
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
         of Key.Slash, Key.Plus:
           state.volume = min(state.volume + VolumeStep, MaxVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
-          # Update the full UI when the volume changes
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)
           cE ctx.setProperty("volume", fmtInt64, addr state.volume)
-          # Update the full UI when the volume changes
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
         of Key.R:
           if not state.isPaused:
-            ctx.terminateDestroy()
-          illwillDeinit()
+            cleanupPlayer(ctx)
           break
 
         of Key.Q:
-          illwillDeinit()
+          cleanupPlayer(ctx)
           exit(ctx, state.isPaused)
 
         of Key.None:
@@ -175,6 +173,7 @@ proc playStation(config: MenuConfig) =
   except Exception:
     let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
     warn("An error occurred during playback. Edit the station list in: " & fileHint & ".json")
+    cleanupPlayer(ctx)
     return
 
 proc showHelp*() =
@@ -197,22 +196,40 @@ proc showHelp*() =
 
 proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
   ## Loads station names and URLs from a JSON file.
+  ## If a URL does not have a protocol prefix (e.g., "http://"), it defaults to "http://".
   try:
-    let data = parseJArray(jsonPath)
+    let jsonData = parseJson(readFile(jsonPath))
+    
+    # Check if the "stations" key exists
+    if not jsonData.hasKey("stations"):
+      raise newException(MenuError, "Missing 'stations' key in JSON file.")
+    
+    let stations = jsonData["stations"]
     result = (names: @[], urls: @[])
-
-    for i in 0 .. data.high:
-      if i mod 2 == 0:
-        result.names.add(data[i])
-      else:
-        let url = if data[i].startsWith("http://") or data[i].startsWith("https://"):
-          data[i]
+    
+    # Iterate over the stations and add names and URLs
+    for stationName, stationUrl in stations.pairs:
+      result.names.add(stationName)  # Add station name (key)
+      
+      # Ensure the URL has a protocol prefix
+      let url = 
+        if stationUrl.getStr.startsWith("http://") or stationUrl.getStr.startsWith("https://"):
+          stationUrl.getStr  # Use the URL as-is
         else:
-          "http://" & data[i]
-        result.urls.add(url)
-
+          "http://" & stationUrl.getStr  # Prepend "http://" if no protocol is specified
+      
+      result.urls.add(url)  # Add the processed URL
+    
+    # Validate that we have at least one station
+    if result.names.len == 0 or result.urls.len == 0:
+      raise newException(MenuError, "No stations found in the JSON file.")
+    
+  except IOError:
+    raise newException(MenuError, "Failed to read JSON file: " & jsonPath)
+  except JsonParsingError:
+    raise newException(MenuError, "Failed to parse JSON file: " & jsonPath)
   except Exception as e:
-    raise newException(MenuError, "Failed to load station list: " & e.msg)
+    raise newException(MenuError, "An error occurred while loading the station list: " & e.msg)
 
 proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[string]] =
   ## Loads available station categories from the assets directory.

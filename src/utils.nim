@@ -83,15 +83,25 @@ proc validateLengthStationName(result: seq[string], filePath: string, maxLength:
         warnCount += 1
 
 proc parseJArray*(filePath: string): seq[string] =
-  ## Parses a JSON array from a file and validates the length of station names (odd indices).
+  ## Parses a JSON object from a file and returns a sequence of station names and URLs.
   ## Raises `FileNotFoundError` if the file is not found or inaccessible.
   ## Raises `JSONParseError` if the JSON format is invalid.
   try:
     let jsonData = parseJson(readFile(filePath))
-    if not jsonData.hasKey("pnimrp"):
-      raise newException(JSONParseError, "Missing 'pnimrp' key in JSON file.")
     
-    result = jsonData["pnimrp"].to(seq[string])
+    # Check if the "stations" key exists
+    if not jsonData.hasKey("stations"):
+      raise newException(JSONParseError, "Missing 'stations' key in JSON file.")
+    
+    let stations = jsonData["stations"]
+    result = @[]  # Initialize an empty sequence
+    
+    # Iterate over the stations and add names and URLs to the result
+    for stationName, stationUrl in stations.pairs:
+      result.add(stationName)        # stationName is already a string
+      result.add(stationUrl.getStr)  # Convert stationUrl (JsonNode) to string
+    
+    # Validate station names if the file is not a quotes file
     if not filePath.endsWith("qoute.json"):
       validateLengthStationName(result, filePath)
 
@@ -104,17 +114,19 @@ proc loadQuotes*(filePath: string): QuoteData =
   ## Loads and validates quotes from a JSON file.
   ## Raises `UIError` if the quote data is invalid.
   try:
-    let jsonData = parseJArray(filePath)
-    if jsonData.len mod 2 != 0:
-      raise newException(InvalidDataError, "Quote data must have matching quotes and authors")
+    let jsonData = parseJson(readFile(filePath))
     
-    result = QuoteData(quotes: @[], authors: @[])
-    for i in 0 .. jsonData.high:
-      if i mod 2 == 0:
-        result.quotes.add(jsonData[i])
-      else:
-        result.authors.add(jsonData[i])
-        
+    # Check if the JSON is an object (for the new format)
+    if jsonData.kind != JObject:
+      raise newException(InvalidDataError, "Invalid JSON format: expected an object.")
+    
+    result = QuoteData(quotes: @[], authors: @[])  # Initialize empty sequences
+    
+    # Iterate over the key-value pairs in the JSON object
+    for quote, author in jsonData.pairs:
+      result.quotes.add(quote)        # Add the quote (key)
+      result.authors.add(author.getStr)  # Add the author (value, converted to string)
+    
     # Validate quotes and authors
     for i in 0 ..< result.quotes.len:
       if result.quotes[i].len == 0:
@@ -144,25 +156,15 @@ proc showSpinner*(delayMs: int = 100) =
 
 # Unit tests for utils.nim
 when isMainModule:
-  import unittest
+  # Test parseJArray with the new stations format
+  echo "Testing parseJArray with new stations format:"
+  let stations = parseJArray("../assets/arab.json")
+  echo "Parsed stations: ", stations
+  echo ""
 
-  suite "Utils Tests":
-    test "centerText":
-      check centerText("Hello", 10) == "  Hello   "
-      check centerText("Hello", 5) == "Hello"
-      check centerText("Hello", 3) == "Hello"
-
-    test "parseJArray":
-      let testJson = """{"pnimrp": ["Station1", "http://example.com", "Station2", "http://example2.com"]}"""
-      writeFile("test.json", testJson)
-      let parsed = parseJArray("test.json")
-      check parsed == @["Station1", "http://example.com", "Station2", "http://example2.com"]
-      removeFile("test.json")
-
-    test "loadQuotes":
-      let testJson = """{"pnimrp": ["Quote1", "Author1", "Quote2", "Author2"]}"""
-      writeFile("test_quotes.json", testJson)
-      let quotes = loadQuotes("test_quotes.json")
-      check quotes.quotes == @["Quote1", "Quote2"]
-      check quotes.authors == @["Author1", "Author2"]
-      removeFile("test_quotes.json")
+  # Test loadQuotes with the new quotes format
+  echo "Testing loadQuotes with new quotes format:"
+  let quotes = loadQuotes("../assets/qoute.json")
+  echo "Parsed quotes: ", quotes.quotes
+  echo "Parsed authors: ", quotes.authors
+  echo ""

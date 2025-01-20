@@ -38,29 +38,22 @@ proc showExitMessage* =
   echo ""
   randomize()
 
-  let seq = parseJArray(getAppDir() / "assets" / "qoute.json")
-  var quotes, authors: seq[string] = @[]
-
-  for i in 0 .. seq.high:
-    case i mod 2:
-      of 0: quotes.add(seq[i])
-      else: authors.add(seq[i])
-
-  let rand = rand(0 .. quotes.high)
+  let quotesData = loadQuotes(getAppDir() / "assets" / "qoute.json")
+  let rand = rand(0 .. quotesData.quotes.high)
 
   when not defined(release) or not defined(danger):
     echo "free mem: ", $(getFreeMem() / 1024), " kB"
     echo "total/max mem: ", $(getTotalMem() / 1024), " kB"
     echo "occupied mem: ", $(getOccupiedMem() / 1024), " kB"
 
-  if quotes[rand] == "":
+  if quotesData.quotes[rand] == "":
     error("no quote found")
 
-  styledEcho(fgCyan, quotes[rand], "...")
+  styledEcho(fgCyan, quotesData.quotes[rand], "...")
   setCursorXPos(15)
-  styledEcho(fgGreen, "—", authors[rand])
+  styledEcho(fgGreen, "—", quotesData.authors[rand])
 
-  if authors[rand] == "":
+  if quotesData.authors[rand] == "":
     error("there can be no quote without an author")
     if rand * 2 != -1:
       error("@ line: " & $(rand * 2) & " in qoute.json")
@@ -269,8 +262,6 @@ proc showFooter*(
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
   ## Cleanly exits the application.
-  if not isPaused:
-    ctx.terminateDestroy()
   showExitMessage()
   quit(QuitSuccess)
 
