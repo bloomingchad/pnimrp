@@ -6,6 +6,7 @@ description   = "simple terminal radio station player in nim making life easier"
 license       = "GPL-3.0-or-later"
 bin           = @["pnimrp"]
 installDirs   = @["assets"]
+installFiles  = @["themes.json"]
 
 # Dependencies
 
