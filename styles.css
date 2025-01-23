@@ -1,7 +1,7 @@
 /* General Styles */
 :root {
-    --primary-color: #FFD700;
-    --secondary-color: #90EE90;
+    --primary-color: #FFD700; /* Yellow */
+    --secondary-color: #90EE90; /* Light Green */
     --text-color: #333;
     --white: #FFF;
     --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -13,8 +13,16 @@ body {
     padding: 0;
     font-size: 1rem;
     color: var(--text-color);
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), #FFD700, #90EE90);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     background-attachment: fixed;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 h1, h2, h3 {
