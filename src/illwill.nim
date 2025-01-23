@@ -1,7 +1,27 @@
-##  :Authors: John Novak
+## This file is adapted from the original work by John Novak and is licensed under the
+## "DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE" (WTFPL).
 ##
-## adapted to use in pnimrp.
-## * Non-blocking keyboard input
+## Original work: https://github.com/johnnovak/illwill
+##
+## This adaptation is part of a project licensed under the Mozilla Public License 2.0 (MPL-2.0).
+## For more details on the MPL-2.0, see: https://www.mozilla.org/en-US/MPL/2.0/
+##
+## WTFPL License Text:
+##
+##            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+##                    Version 2, December 2004
+##
+## Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+##
+## Everyone is permitted to copy and distribute verbatim or modified
+## copies of this license document, and changing it is allowed as long
+## as the name is changed.
+##
+##            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+##   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+##
+##  0. You just DO WHAT THE FUCK YOU WANT TO.
+
 import terminal
 when not defined windows: import unicode, macros, os
 
