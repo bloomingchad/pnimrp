@@ -99,8 +99,10 @@ Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
 
 ## 📜 License
 
-**pnimrp** is licensed under the **Mozilla Public License 2.0 (MPL-2.0)**. See the [LICENSE](LICENSE) file
-for details.
+**pnimrp** is primarily licensed under the **Mozilla Public License 2.0 (MPL-2.0)**. See the [LICENSE](LICENSE) file for details.
+However, the following component is licensed under the **DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE (WTFPL)**:
+- **illwill.nim**: Adapted from [illwill](https://github.com/johnnovak/illwill), this file is used for non-blocking input handling and is licensed under the WTFPL. The original license text is included in the file.
+For more information about the WTFPL, see: [WTFPL License](http://www.wtfpl.net/).
 
 ## 🙏 Credits
 
