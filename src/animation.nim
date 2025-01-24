@@ -68,25 +68,26 @@ proc currentStatusEmoji*(status: PlayerStatus): string =
 # Function to get the appropriate symbol based on terminal support
 
 
-proc updateJinglingAnimation*(status: string): string =
+proc updateJinglingAnimation*(status: string, animationCounter: int): string =
   ## Updates the jingling animation and returns the current frame.
   ## Returns an empty string if the player is not in the StatusPlaying state.
-  let currentTime = now() # Get the current time as DateTime
+  ##
+  ## Args:
+  ##   status: The player status (e.g., "🔊" for playing).
+  ##   animationCounter: The current counter value (incremented every 25ms).
+  ##
+  ## Returns:
+  ##   The current animation frame (emoji or ASCII).
 
-  # Calculate the time difference in milliseconds
-  let timeDiff = currentTime - lastAnimationUpdate
-  let timeDiffMs = timeDiff.inMilliseconds
-
-  # Check if it's time to update the animation frame (2 FPS = every 500ms)
-  if timeDiffMs >= 1350:
-    animationFrame = (animationFrame + 1) mod 2 # Alternate between 0 and 1
-    lastAnimationUpdate = currentTime # Update the last animation time
+  # Check if it's time to update the animation frame (1350ms / 25ms = 54 iterations)
+  if animationCounter >= 54:
+    animationFrame = (animationFrame + 1) mod 2  # Alternate between 0 and 1
 
   # Determine the animation symbol based on terminal support and player status
   if status == currentStatusEmoji(StatusPlaying):
     if terminalSupportsEmoji:
-      return EmojiFrames[animationFrame] # Use emoji frames
+      return EmojiFrames[animationFrame]  # Use emoji frames
     else:
-      return AsciiFrames[animationFrame] # Use ASCII frames
+      return AsciiFrames[animationFrame]  # Use ASCII frames
   else:
-    return "" # No animation for other statuses
+    return ""  # No animation for other statuses
