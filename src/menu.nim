@@ -40,13 +40,19 @@ proc isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
-proc updateAnimationOnly(status, currentSong: string) =
+proc updateAnimationOnly(status, currentSong: string, animationCounter: int) =
   ## Updates only the animation symbol in the "Now Playing" section.
-  let animationSymbol = updateJinglingAnimation(status)  # Get the animation symbol
-  setCursorPos(0, 2)  # Move cursor to the "Now Playing" line
-  eraseLine()  # Clear the current line
+  ##
+  ## Args:
+  ##   status: The player status (e.g., "🔊" for playing).
+  ##   currentSong: The currently playing song.
+  ##   animationCounter: The current counter value (incremented every 25ms).
+  let animationSymbol = updateJinglingAnimation(status, animationCounter)  # Get the animation symbol
 
-  # Display the animation symbol and "Now Playing" text in cyan
+  # Move the cursor to the start of the "Now Playing" line (line 2)
+  setCursorPos(0, 2)
+
+  # Write the animation symbol and the rest of the "Now Playing" text
   styledEcho(fgCyan, animationSymbol & " Now Playing: ", fgCyan, currentSong)
 
 proc cleanupPlayer(ctx: ptr Handle) =
@@ -79,7 +85,7 @@ proc playStation(config: MenuConfig) =
     var isObserving = false
     var counter: uint8
     var playlistFirstPass = false
-    var lastAnimationUpdate: DateTime = now()
+    var animationCounter: int = 0  # Counter for animation updates
 
     ctx.init(config.stationUrl)
     var event = ctx.waitEvent()
@@ -106,14 +112,13 @@ proc playStation(config: MenuConfig) =
         state.currentSong = ctx.getCurrentMediaTitle()
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
-      # Check if it's time to update the animation
-      let currentTime = now()
-      let timeDiff = currentTime - lastAnimationUpdate
-      let timeDiffMs = timeDiff.inMilliseconds
+      # Increment the animation counter every 25ms (getKeyWithTimeout interval)
+      animationCounter += 1
 
-      if timeDiffMs >= 1350 and currentStatus(state) == StatusPlaying:
-        updateAnimationOnly(currentStatusEmoji(currentStatus(state)), state.currentSong)
-        lastAnimationUpdate = currentTime
+      # Check if it's time to update the animation (1350ms / 25ms = 54 iterations)
+      if animationCounter >= 54:
+        updateAnimationOnly(currentStatusEmoji(currentStatus(state)), state.currentSong, animationCounter)
+        animationCounter = 0  # Reset the counter
 
       # Periodic checks
       if counter >= CheckIdleInterval:
