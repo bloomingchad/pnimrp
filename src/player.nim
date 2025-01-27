@@ -68,30 +68,6 @@ proc mute*(ctx: ptr Handle, shouldMute: bool) {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to set mute state: " & e.msg)
 
-proc adjustVolume*(ctx: ptr Handle, increase: bool): int {.raises: [PlayerError].} =
-  ## Adjusts the volume up or down by `VolumeStep`.
-  ##
-  ## Args:
-  ##   ctx: Player handle
-  ##   increase: True to increase volume, False to decrease
-  ##
-  ## Returns:
-  ##   New volume level
-  try:
-    var currentVolume: int
-    cE ctx.getProperty("volume", fmtInt64, addr currentVolume)
-
-    var newVolume = validateVolume(
-      if increase: currentVolume + VolumeStep
-      else: currentVolume - VolumeStep
-    )
-
-    cE ctx.setProperty("volume", fmtInt64, addr newVolume)
-    lastVolume = newVolume  # Update the last volume
-    result = newVolume
-  except Exception as e:
-    raise newException(PlayerError, "Failed to adjust volume: " & e.msg)
-
 proc observeMediaTitle*(ctx: ptr Handle) {.raises: [PlayerError].} =
   ## Starts observing changes to the media title.
   ##
@@ -172,11 +148,3 @@ when isMainModule:
       check validateVolume(-10) == 0
       check validateVolume(50) == 50
       check validateVolume(200) == 150
-
-    test "adjustVolume":
-      var ctx: ptr Handle
-      init(ctx, "example.mp3")
-      let initialVolume = getMediaInfo(ctx).volume
-      let newVolume = adjustVolume(ctx, true)
-      check newVolume == initialVolume + VolumeStep
-      ctx.terminateDestroy()
