@@ -1,6 +1,6 @@
 import
   json, strutils, os, terminal,
-  sequtils, strformat, times
+  sequtils, strformat, times, player
 
 type
   QuoteData* = object
@@ -153,6 +153,24 @@ proc showSpinner*(delayMs: int = 100) =
     stdout.flushFile()
     frame = (frame + 1) mod spinner.len
     sleep(delayMs)
+
+proc appendToLikedSongs* =
+  ## Appends a song to the likedSongs.txt file.
+  const likedSongsFile = "likedSongs.txt"
+  try:
+    # Open the file in append mode (creates the file if it doesn't exist)
+    let file = open(likedSongsFile, fmAppend)
+    defer: file.close()
+    
+    # Append the song and a newline
+    file.writeLine(fullMediaTitle)
+    cursorDown 5
+    warn("Song added to likedSongs.txt")  # Notify the user
+    cursorUp()
+    eraseLine()
+    cursorUp 5
+  except IOError as e:
+    warn("Failed to save song to likedSongs.txt: " & e.msg)
 
 # Unit tests for utils.nim
 when isMainModule:
