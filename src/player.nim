@@ -16,6 +16,7 @@ const
   MaxVolume* = 150 # Maximum allowed volume
 
 var lastVolume* {.global.} = 100  # Default volume is 100
+var fullMediaTitle* {.global.} = ""
 
 proc validateVolume(volume: int): int =
   ## Ensures the volume stays within valid bounds (0-150).
@@ -105,6 +106,7 @@ proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [PlayerError].} =
     var title: cstring
     cE ctx.getProperty("media-title", fmtString, addr title)
     result = if title != nil: $title else: ""
+    fullMediaTitle = result
     if result.len > int(terminalWidth().toFloat() / 1.65):
       result = result.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
       #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 

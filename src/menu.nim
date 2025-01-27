@@ -169,6 +169,12 @@ proc playStation(config: MenuConfig) =
           cleanupPlayer(ctx)
           exit(ctx, state.isPaused)
 
+        of Key.L:  # New key binding for "Like" action
+          if state.currentSong != "":
+            appendToLikedSongs()
+          else:
+            warn("No song is currently playing.")
+
         of Key.None:
           continue
 

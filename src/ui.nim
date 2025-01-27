@@ -210,7 +210,7 @@ proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   #echo "DEBUG: getFooterOptions - isMainMenu = ", isMainMenu, ", isPlayerUI = ", isPlayerUI  # Debug log
   result =
     if isMainMenu: "[Q] Quit   [N] Notes   [U] Help"
-    elif isPlayerUI: "[Q] Quit   [R] Return   [P] Pause/Play   [-/+] Adjust Volume"
+    elif isPlayerUI: "[Q] Quit | [R] Return | [P] Pause/Play | [-/+] Vol | [L] Like"
     else: "[Q] Quit   [R] Return   [U] Help"
 
 proc displayMenu*(
