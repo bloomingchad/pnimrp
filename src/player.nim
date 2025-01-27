@@ -15,6 +15,8 @@ const
   MinVolume* = 0   # Minimum allowed volume
   MaxVolume* = 150 # Maximum allowed volume
 
+var lastVolume* {.global.} = 100  # Default volume is 100
+
 proc validateVolume(volume: int): int =
   ## Ensures the volume stays within valid bounds (0-150).
   result = max(MinVolume, min(MaxVolume, volume))
@@ -36,6 +38,9 @@ proc init*(ctx: ptr Handle, source: string) {.raises: [PlayerError].} =
     cE ctx.setOption("osc", fmtFlag, addr oscEnabled)
     cE initialize(ctx)
     cE ctx.cmd(fileArgs)
+
+    # Set the volume to the last volume
+    cE ctx.setProperty("volume", fmtInt64, addr lastVolume)
   except Exception as e:
     raise newException(PlayerError, "Failed to initialize player: " & e.msg)
 
@@ -82,6 +87,7 @@ proc adjustVolume*(ctx: ptr Handle, increase: bool): int {.raises: [PlayerError]
     )
 
     cE ctx.setProperty("volume", fmtInt64, addr newVolume)
+    lastVolume = newVolume  # Update the last volume
     result = newVolume
   except Exception as e:
     raise newException(PlayerError, "Failed to adjust volume: " & e.msg)

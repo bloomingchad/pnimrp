@@ -333,8 +333,6 @@ proc drawHeader*(section: string) =
   say(AppNameShort & " > " & section, fgGreen)
   say("-".repeat(termWidth), fgGreen)
 
-# Module-level variable to track the previous volume
-var lastVolume*: int = -1
 
 proc volumeColor(volume: int): ForegroundColor =
   if volume > 110: fgRed

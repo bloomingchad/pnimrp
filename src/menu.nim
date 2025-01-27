@@ -81,7 +81,7 @@ proc playStation(config: MenuConfig) =
       return
 
     ctx = create()
-    var state = PlayerState(isPaused: false, isMuted: false, volume: 100)
+    var state = PlayerState(isPaused: false, isMuted: false, volume: lastVolume)  # Use lastVolume
     var isObserving = false
     var counter: uint8
     var playlistFirstPass = false
@@ -174,6 +174,7 @@ proc playStation(config: MenuConfig) =
 
         else:
           showInvalidChoice()
+    lastVolume = state.volume #update last state volume to be persistent
 
   except Exception:
     let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
