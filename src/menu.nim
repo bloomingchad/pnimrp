@@ -1,7 +1,7 @@
 import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
-  utils, animation, json
+  utils, animation, json, tables, metadata
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
@@ -21,6 +21,8 @@ type
 const
   CheckIdleInterval = 25  # Interval to check if the player is idle
   KeyTimeout = 25         # Timeout for key input in milliseconds
+
+var globalMetadata {.global.}: Table[string, string]
 
 proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false) =
   ## Handles player errors consistently and optionally destroys the player context.
@@ -106,11 +108,22 @@ proc playStation(config: MenuConfig) =
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
         ctx.observeMediaTitle()
+        ce(client.observeProperty(ctx, 0, "metadata", client.fmtNone))
         isObserving = true
 
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
+        globalMetadata = metadata(ctx)
+        var goingDown: uint8
+        if globalMetadata.len > 0:
+          cursorDown 6
+          for key, value in globalMetadata:
+            if (value == "") or (key.contains("title")) : continue
+            styledEcho fgCyan, "  " & key & ": '" & value.truncateMe() & "'"
+            goingDown += 1
+          cursorUp int(goingDown)
+          cursorUp 6
 
       # Increment the animation counter every 25ms (getKeyWithTimeout interval)
       animationCounter += 1
