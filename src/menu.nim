@@ -24,9 +24,20 @@ const
 
 var globalMetadata {.global.}: Table[string, string]
 
-proc handlePlayerError(msg: string, ctx: ptr Handle = nil, shouldReturn = false) =
+proc editBadFileHint(config: MenuConfig, extraMsg = "") =
+  if extraMsg != "": warn(extraMsg)
+  let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
+  cursorDown 3
+  warn(
+      "Failed to access station: " & config.stationUrl &
+      "\nEdit the station list in: " & fileHint & ".json",
+    delayMs = 1350
+  )
+  cursorUp 5
+
+proc handlePlayerError(msg: string; ctx: ptr Handle; config: MenuConfig; shouldReturn = false) =
   ## Handles player errors consistently and optionally destroys the player context.
-  warn(msg)
+  editBadFileHint(config, msg)
   if ctx != nil:
     ctx.terminateDestroy()
   if shouldReturn:
@@ -67,19 +78,16 @@ proc playStation(config: MenuConfig) =
   var ctx: ptr Handle = nil
   try:
     if config.stationUrl == "":
-      let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
-      warn("Empty station URL. Please check the station list in: " & fileHint & ".json")
+      editBadFileHint(config)
       return
 
     # Validate the link
     try:
       if not validateLink(config.stationUrl).isValid:
-        let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
-        warn("Failed to access station: " & config.stationUrl & "\nEdit the station list in: " & fileHint & ".json")
+        editBadFileHint(config)
         return
     except Exception:
-      let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
-      warn("Failed to access station: " & config.stationUrl & "\nEdit the station list in: " & fileHint & ".json")
+      editBadFileHint(config)
       return
 
     ctx = create()
@@ -136,17 +144,17 @@ proc playStation(config: MenuConfig) =
       # Periodic checks
       if counter >= CheckIdleInterval:
         if ctx.isIdle():
-          handlePlayerError("Player core idle", ctx)
+          handlePlayerError("Player core idle", ctx, config)
           break
 
         if event.eventID in {IDEndFile, IDShutdown}:
           if config.stationUrl.isValidPlaylistUrl():
             if playlistFirstPass:
-              handlePlayerError("End of playlist reached", ctx)
+              handlePlayerError("End of playlist reached", ctx, config)
               break
             playlistFirstPass = true
           else:
-            handlePlayerError("Stream ended", ctx)
+            handlePlayerError("Stream ended", ctx, config)
             break
         counter = 0
       inc counter
