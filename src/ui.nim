@@ -224,8 +224,6 @@ proc displayMenu*(
   updateTermWidth()
 
   var options = options
-  if isMainMenu:
-    options.delete(options.len - 1) # Remove notes
 
   # Draw the "Station Categories" section header
   let categoriesHeader = "         📻 Station Categories 📻"
