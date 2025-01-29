@@ -47,19 +47,48 @@ iterator items(iter: var NodeListIterator): tuple[key: string,
         yield (key: $key, value: value)
       inc(index)
 
-proc toTitleCase(s: string): string =
-  result = ""
-  var capitalizeNext = true
-  for c in s:
-    if c.isAlphaNumeric():
-      if capitalizeNext:
-        result.add(c.toUpperAscii())
-        capitalizeNext = false
-      else:
-        result.add(c)
-    else:
-      result.add(c)
-      capitalizeNext = true
+proc handleIndividualTag(lowerKey: string, value: string,
+                          tagMap: Table[string, string],
+                          metadataTable: var Table[string, string]) =
+  # Handle individual tags based on the tagMap
+  let preferredKey = tagMap[lowerKey]
+  if preferredKey notin metadataTable:
+    var formattedValue = value
+
+    # Add units for specific keys
+    if preferredKey == "Bitrate":
+      formattedValue = formattedValue & " kbps"
+    elif preferredKey == "SampleRate":
+      formattedValue = formattedValue & " Hz"
+
+    metadataTable[preferredKey] = formattedValue
+
+proc handleIcyAudioInfo(value: string, tagMap: Table[string, string],
+                        metadataTable: var Table[string, string]) =
+  # Handle icy-audio-info parsing
+  let audioInfoParts = value.split(";")
+  for part in audioInfoParts:
+    let keyValue = part.split("=")
+    if keyValue.len == 2:
+      let audioInfoKey = keyValue[0].strip.toLowerAscii
+      var audioInfoValue = keyValue[1].strip
+
+      # Use preferred key if available, otherwise use the lowercase key
+      let keyToAdd = if audioInfoKey in tagMap: tagMap[audioInfoKey] else: audioInfoKey
+      if keyToAdd notin metadataTable:
+        # Add units for specific keys
+        if keyToAdd == "Bitrate":
+          audioInfoValue = audioInfoValue & " kbps"
+        elif keyToAdd == "SampleRate":
+          audioInfoValue = audioInfoValue & " Hz"
+
+        metadataTable[keyToAdd] = audioInfoValue
+
+proc handleID3v2PrivTag(lowerKey: string, value: string,
+                         metadataTable: var Table[string, string]) =
+  # Handle ID3v2_priv tags
+  let owner = lowerKey.split(".")[1 .. lowerKey.split(".").high].join(".") # Extract owner identifier
+  metadataTable[owner] = value # Store raw data with owner as key
 
 proc collectMetadata(iter: var NodeListIterator,
                      parseAudioInfo: bool = true): Table[string, string] =
@@ -90,52 +119,31 @@ proc collectMetadata(iter: var NodeListIterator,
     "ice-bitrate": "Bitrate"
   }.toTable
 
-  for key, value in items(iter):
-    if value.format == client.fmtString and value.u.str != nil:
-      let lowerKey = key.toLowerAscii()
+  for key, nodeValue in items(iter):
+      # Access the format field of the client.Node correctly
+      if nodeValue.format == client.fmtString and nodeValue.u.str != nil:
+          let lowerKey = key.toLowerAscii()
+          let value = $nodeValue.u.str # Now a Nim string
 
-      # Filter out icy-notice, icy-pub, icy-metadata, and icy-private
-      if lowerKey.startsWith("icy-notice") or lowerKey == "icy-pub" or lowerKey == "icy-metadata" or lowerKey == "icy-private":
-        continue
+          # Filter out icy-notice, icy-pub, icy-metadata, and icy-private
+          if lowerKey.startsWith("icy-notice") or lowerKey == "icy-pub" or lowerKey == "icy-metadata" or lowerKey == "icy-private":
+              continue
 
-      # Handle individual tags first (prioritize them)
-      if lowerKey in tagMap:
-        let preferredKey = tagMap[lowerKey]
-        if preferredKey notin metadataTable:
-          var formattedValue = $value.u.str
+          # Handle individual tags
+          if lowerKey in tagMap:
+              handleIndividualTag(lowerKey, value, tagMap, metadataTable)
 
-          # Add units for specific keys
-          if preferredKey == "Bitrate":
-            formattedValue = formattedValue & " kbps"
-          elif preferredKey == "SampleRate":
-            formattedValue = formattedValue & " Hz"
+          # Handle icy-audio-info
+          elif lowerKey == "icy-audio-info" and parseAudioInfo:
+              handleIcyAudioInfo(value, tagMap, metadataTable)
 
-          metadataTable[preferredKey] = formattedValue
+          # Handle ID3v2_priv tags
+          elif lowerKey.startsWith("id3v2_priv."):
+              handleID3v2PrivTag(lowerKey, value, metadataTable)
 
-      # Handle icy-audio-info parsing (add only if not already present)
-      elif lowerKey == "icy-audio-info" and parseAudioInfo:
-        let audioInfoStr = $value.u.str
-        let audioInfoParts = audioInfoStr.split(";")
-        for part in audioInfoParts:
-          let keyValue = part.split("=")
-          if keyValue.len == 2:
-            let audioInfoKey = keyValue[0].strip.toLowerAscii
-            var audioInfoValue = keyValue[1].strip
-
-            # Use preferred key if available, otherwise use the lowercase key
-            let keyToAdd = if audioInfoKey in tagMap: tagMap[audioInfoKey] else: audioInfoKey
-            if keyToAdd notin metadataTable:
-              # Add units for specific keys
-              if keyToAdd == "Bitrate":
-                audioInfoValue = audioInfoValue & " kbps"
-              elif keyToAdd == "SampleRate":
-                audioInfoValue = audioInfoValue & " Hz"
-
-              metadataTable[keyToAdd] = audioInfoValue
-
-      # For unknown tags, add them as they are (lowercase)
-      elif lowerKey notin metadataTable:
-        metadataTable[lowerKey] = $value.u.str
+          # Handle unknown tags
+          elif lowerKey notin metadataTable:
+              metadataTable[lowerKey] = value
 
   return metadataTable
 
