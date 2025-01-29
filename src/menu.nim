@@ -64,9 +64,9 @@ proc updateAnimationOnly(status, currentSong: string, animationCounter: int) =
 
   # Move the cursor to the start of the "Now Playing" line (line 2)
   setCursorPos(0, 2)
-
-  # Write the animation symbol and the rest of the "Now Playing" text
-  styledEcho(fgCyan, animationSymbol & " Now Playing: ", fgCyan, currentSong)
+  
+  # Write ONLY the animation symbol and 3 spaces, then erase to the end of the line
+  styledEcho(fgCyan, animationSymbol )
 
 proc cleanupPlayer(ctx: ptr Handle) =
   ## Cleans up player resources.
