@@ -361,7 +361,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   # Display "Now Playing" with truncation if necessary
   setCursorPos(0, 2)  # Line 2 (below the separator)
   eraseLine()
-  let nowPlayingText = "Now Playing: " & nowPlaying  # Removed 🎶 emoji
+  let nowPlayingText = "   Now Playing: " & nowPlaying  # Removed 🎶 emoji
   say(nowPlayingText, fgCyan)
 
   # Display status and volume on the same line
@@ -390,7 +390,7 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   # Update Now Playing line
   setCursorPos(0, 2)
   eraseLine()
-  let nowPlayingText = "Now Playing: " & nowPlaying
+  let nowPlayingText = "   Now Playing: " & nowPlaying
   say(nowPlayingText, fgCyan)
 
   # Update Status and Volume line
