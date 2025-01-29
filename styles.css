@@ -140,20 +140,30 @@ section {
     gap: 30px;
 }
 
+/* Feature Card Styles (with animation) */
 .feature-card {
     background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px); /* Minimal blur */
+    backdrop-filter: blur(10px);
     padding: 25px;
     border-radius: 20px;
     text-align: center;
     box-shadow: var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    will-change: transform; /* Optimize for GPU */
+    will-change: transform;
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Initially moved down */
+    transition: opacity 1.2s ease, transform 1.2s ease, box-shadow 0.3s ease;
 }
 
+/* Hover styles for feature cards */
 .feature-card:hover {
-    transform: translateY(-5px); /* Subtle hover effect */
+    transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Styles for when the element is within the viewport */
+.feature-card.in-viewport {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .feature-card h3 {
@@ -177,6 +187,7 @@ section {
     animation: fadeIn 1.5s ease-in-out;
 }
 
+/* Installation Box Styles (with animation) */
 .instructions pre {
     background-color: rgba(255, 229, 180, 0.3);
     padding: 20px;
@@ -184,8 +195,22 @@ section {
     overflow-x: auto;
     box-shadow: var(--shadow);
     font-size: 1.1rem;
-    margin-left: 10%; /* Relative margin */
+    margin-left: 10%;
     max-width: calc(100% - 40px);
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Initially moved down */
+    transition: opacity 1.2s ease, transform 1.2s ease, box-shadow 0.3s ease;
+}
+
+
+/* Hover styles for installation boxes */
+.instructions pre:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+/* Styles for when the element is within the viewport */
+.instructions pre.in-viewport {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Demo Section */
