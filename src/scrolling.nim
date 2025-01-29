@@ -2,12 +2,12 @@
 import terminal, times, strutils
 
 const
-  SCROLL_SPEED* = 5  # Milliseconds between updates
-  NOW_PLAYING_PREFIX* = " "
+  ScrollSpeed* = 5 # Milliseconds between updates
+  NowPlayingPrefix* = " "
 
 proc getVisibleChunk*(text: string, offset: int, width: int): string =
   ## Calculates the visible portion of the text for scrolling.
-  let visibleWidth = width - NOW_PLAYING_PREFIX.len - 4
+  let visibleWidth = width - NowPlayingPrefix.len - 4
 
   if text.len <= visibleWidth:
     return text
