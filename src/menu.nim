@@ -140,7 +140,7 @@ proc playStation(config: MenuConfig) =
           updatePlayerUI(text, status, volume)
 
         # Check if scrolling is needed (only if not already scrolling)
-        if not scrollingActive and state.currentSong.len > (terminalWidth() - scrolling.NowPlayingPrefix.len - 4):
+        if not scrollingActive and state.currentSong.len > (terminalWidth() - scrolling.NOW_PLAYING_PREFIX.len - 4):
           scrollingActive = true
           currentText = state.currentSong
           scrollOffset = 0
@@ -195,7 +195,7 @@ proc playStation(config: MenuConfig) =
             currentText, scrollOffset, currentWidth
           )
           updatePlayerUI(
-            scrolling.NowPlayingPrefix & visibleText,
+            scrolling.NOW_PLAYING_PREFIX & visibleText,
             currentStatusEmoji(currentStatus(state)),
             state.volume
           )
