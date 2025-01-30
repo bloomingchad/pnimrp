@@ -110,12 +110,6 @@ proc playStation(config: MenuConfig) =
     drawPlayerUI(config.stationName, "Loading...", currentStatusEmoji(currentStatus(state)), state.volume)
     showFooter(isPlayerUI = true)
 
-    # Scrolling variables
-    var lastScrollUpdate: int64 = 0
-    var scrollOffset: int = 0
-    var currentText: string = ""
-    var scrollingActive: bool = false
-
     while true:
       if not state.isPaused:
         event = ctx.waitEvent()
@@ -129,22 +123,19 @@ proc playStation(config: MenuConfig) =
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
 
-        # Reset scrolling when the song changes
-        scrollingActive = false
-        scrollOffset = 0
-        lastScrollUpdate = 0
-        currentText = ""
-
         # Define the callback function right here
         proc updateUI(text: string, status: string, volume: int) {.nimcall.} =
           updatePlayerUI(text, status, volume)
 
-        # Check if scrolling is needed (only if not already scrolling)
-        if not scrollingActive and state.currentSong.len > (terminalWidth() - scrolling.NOW_PLAYING_PREFIX.len - 4):
-          scrollingActive = true
-          currentText = state.currentSong
-          scrollOffset = 0
-          lastScrollUpdate = epochTime().int64 * 1000
+        # Check if scrolling is needed
+        if state.currentSong.len > (terminalWidth() - scrolling.NOW_PLAYING_PREFIX.len - 4):
+          # Pass the callback to scrollTextOnce
+          discard scrolling.scrollTextOnce(
+            state.currentSong,
+            currentStatusEmoji(currentStatus(state)),
+            state.volume,
+            updateUI
+          )
         else:
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
@@ -184,28 +175,6 @@ proc playStation(config: MenuConfig) =
             break
         counter = 0
       inc counter
-
-      # Scrolling Logic (Non-blocking)
-      let currentTime = epochTime().int64 * 1000
-      if scrollingActive:
-        # Update scrolling if active
-        if currentTime - lastScrollUpdate >= scrolling.SCROLL_SPEED:
-          let currentWidth = terminalWidth()
-          let visibleText = scrolling.getVisibleChunk(
-            currentText, scrollOffset, currentWidth
-          )
-          updatePlayerUI(
-            scrolling.NOW_PLAYING_PREFIX & visibleText,
-            currentStatusEmoji(currentStatus(state)),
-            state.volume
-          )
-
-          inc scrollOffset
-          lastScrollUpdate = currentTime
-
-          # Check if scrolling has reached the end
-          if scrollOffset > currentText.len + currentWidth:
-            scrollingActive = false  # Stop scrolling
 
       # Handle user input
       case getKeyWithTimeout(KeyTimeout):
