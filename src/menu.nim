@@ -1,8 +1,7 @@
 import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
-  utils, animation, json, tables, metadata,
-  scrolling
+  utils, animation, json, tables, metadata
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
@@ -67,7 +66,7 @@ proc updateAnimationOnly(status, currentSong: string, animationCounter: int) =
   setCursorPos(0, 2)
   
   # Write ONLY the animation symbol and 3 spaces, then erase to the end of the line
-  styledEcho(fgCyan, animationSymbol)
+  styledEcho(fgCyan, animationSymbol )
 
 proc cleanupPlayer(ctx: ptr Handle) =
   ## Cleans up player resources.
@@ -122,23 +121,7 @@ proc playStation(config: MenuConfig) =
 
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
-
-        # Define the callback function right here
-        proc updateUI(text: string, status: string, volume: int) {.nimcall.} =
-          updatePlayerUI(text, status, volume)
-
-        # Check if scrolling is needed
-        if state.currentSong.len > (terminalWidth() - scrolling.NOW_PLAYING_PREFIX.len - 4):
-          # Pass the callback to scrollTextOnce
-          discard scrolling.scrollTextOnce(
-            state.currentSong,
-            currentStatusEmoji(currentStatus(state)),
-            state.volume,
-            updateUI
-          )
-        else:
-          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-
+        updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         globalMetadata = metadata(ctx)
         var goingDown: uint8
         if globalMetadata.len > 0:
