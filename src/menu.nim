@@ -1,7 +1,8 @@
 import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
-  utils, animation, json, tables, metadata
+  utils, animation, json, tables, metadata,
+  scroll
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
@@ -66,7 +67,7 @@ proc updateAnimationOnly(status, currentSong: string, animationCounter: int) =
   setCursorPos(0, 2)
   
   # Write ONLY the animation symbol and 3 spaces, then erase to the end of the line
-  styledEcho(fgCyan, animationSymbol )
+  styledEcho(fgCyan, animationSymbol)
 
 proc cleanupPlayer(ctx: ptr Handle) =
   ## Cleans up player resources.
@@ -96,6 +97,10 @@ proc playStation(config: MenuConfig) =
     var counter: uint8
     var playlistFirstPass = false
     var animationCounter: int = 0  # Counter for animation updates
+    var scrollOffset: int = 0
+    var lastWidth: int = 0
+    var scrollCounter: int = 0
+    var fullTitle: string # Declare fullTitle here
 
     ctx.init(config.stationUrl)
     var event = ctx.waitEvent()
@@ -121,6 +126,7 @@ proc playStation(config: MenuConfig) =
 
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
+        fullTitle = state.currentSong # Assign to fullTitle
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         globalMetadata = metadata(ctx)
         var goingDown: uint8
@@ -140,6 +146,15 @@ proc playStation(config: MenuConfig) =
       if animationCounter >= 54:
         updateAnimationOnly(currentStatusEmoji(currentStatus(state)), state.currentSong, animationCounter)
         animationCounter = 0  # Reset the counter
+
+      # Scrolling Logic
+      if scrollCounter == 21:
+        scrollTextOnce(fullTitle, scrollOffset, termWidth, startingX) # Corrected call
+        if fullTitle.len > termWidth - startingX:
+          scrollOffset += 1
+        scrollCounter = 0
+      else:
+        scrollCounter += 1
 
       # Periodic checks
       if counter >= CheckIdleInterval:
