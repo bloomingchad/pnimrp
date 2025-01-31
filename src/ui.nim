@@ -2,7 +2,7 @@ import
   terminal, client, random,
   json, strutils, os, times,
   strformat, animation, utils,
-  theme
+  theme, scroll
 
 using str: string
 
@@ -390,8 +390,11 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   # Update Now Playing line
   setCursorPos(0, 2)
   eraseLine()
-  let nowPlayingText = "   Now Playing: " & nowPlaying
-  say(nowPlayingText, fgCyan)
+  styledEcho(fgCyan, "   Now Playing: ")
+  if terminalSupportsEmoji:
+    startingX = "   Now Playing: ".len + 1  # +1 for emoji space
+  else:
+    startingX = "   Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
 
   # Update Status and Volume line
   setCursorPos(0, 3)
@@ -402,6 +405,9 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
 
   # Reset cursor position after updates
   setCursorPos(0, 5)
+
+  # Reset scrollOffset when a new song starts
+  scrollOffset = 0
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.

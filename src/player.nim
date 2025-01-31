@@ -98,7 +98,7 @@ proc truncateMe*(str: string): string =
   if str.len > int(terminalWidth().toFloat() / 1.65):
     result = str.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
   else: return str
-
+      #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
 proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [PlayerError].} =
   ## Retrieves the current media title.
   ##
@@ -112,8 +112,7 @@ proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [PlayerError].} =
     cE ctx.getProperty("media-title", fmtString, addr title)
     result = if title != nil: $title else: ""
     fullMediaTitle = result
-    result = truncateMe(result)
-      #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
+
   except Exception as e:
     raise newException(PlayerError, "Failed to get media title: " & e.msg)
 
