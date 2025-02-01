@@ -5,6 +5,11 @@
 	    "nogoum Egypt":  "https://audio.nrpstream.com/listen/nogoumfm/radio.mp3",
 	    "MBC FM":        "https://mbcfm-radio.mbc.net/mbcfm-radio_1.m3u8",
 	    "fm amazigh du maroc": "https://stream.zenolive.com/bqdbb6hd0neuv",
-		"tarab lebanon": "https://stream.zeno.fm/fy8achbq97zuv"
+		"tarab lebanon": "https://stream.zeno.fm/fy8achbq97zuv",
+        "Monte Carlo Doualiya": "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3",
+        "Chada FM": "https://stream.bodkas.com/playlist?id=chadafmradio",
+        "Al Aan FM": "https://c20.radioboss.fm/stream/543",
+        "Radio Orient (France/Arabic)": "https://n06a-eu.rcs.revma.com/7hnrkawf4p8uv.mp3",
+        "Al Jazeera Radio (News/Talk)": "https://live-hls-audio-web-aje.getaj.net/VOICE-AJE/01.m3u8"
 	}
 }
