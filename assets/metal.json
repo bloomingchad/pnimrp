@@ -1,13 +1,10 @@
 {
 	"stations": {
 		"Idobi Howl": "idobihowl.idobi.com",
-		"Metal Only": "178.77.127.105:4400",
-		"STAR FM From Hell": "80.237.153.93:7000",
-		"Aardschok": "178.18.137.248:80",
-		"Big R Radio": "107.155.111.234:18310",
-		"Braingell Radio": "206.217.213.16:8010",
-		"KNAC": "s5.voscast.com:7346",
-		"Metal Express Radio": "66.90.104.41:8248",
-		"Radio Gothic": "ca.radio-streamhosting.com:8006"
+		"STAR FM From Hell": "https://starfm.streamabc.net/30-fromhell-mp3-192-7408486",
+		"Aardschok": "https://streams.pinguinradio.com/Aardschok192.mp3",
+		"Big R Radio": "https://bigrradio.cdnstream1.com/5186_128",
+		"Braingell Radio": "https://s6.reliastream.com/proxy/braingel?mp=/stream",
+		"Metal Express Radio": "http://s39.myradiostream.com:11590/listen.m4a",
 	}
 }
