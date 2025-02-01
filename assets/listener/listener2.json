@@ -1,19 +1,16 @@
 {
 	"stations": {
-		"WEVL 89.9": "peace.str3am.com:6030",
-		"WERU 89.9 FM": "stream.weru.org:80/weru-high.mp3",
+		"WEVL 89.9": "https://wevl.streamguys1.com/live",
+		"WERU 89.9 FM": "https://stream.pacificaservice.org:9000/weru_128",
 		"WFMU": "stream0.wfmu.org/freeform-128k",
-		"WNCU": "pubint.ic.llnwd.net/stream/pubint_wncu",
-		"WNRN-FM": "broadcast.wnrn.org:8000/wnrn.mp3",
+		"WNCU": "https://wncu.streamguys1.com/live",
 		"WNYC 93.9 FM": "fm939.wnyc.org/wnycfm",
 		"WQXR New York": "stream.wqxr.org/wqxr",
-		"WSGE FM": "amber.streamguys.com:4890/live",
-		"WWOZ": "50.31.135.43:80/wwoz-hi.mp3",
-		"Xenicus Radio": "192.99.35.93:6744/stream",
-		"andHow FM": "199.180.75.6:80",
-		"FIP": "audio.scdn.arkena.com/11016/fip-midfi128.mp3",
-		"PBB": "pbb.laurentgarnier.com:8000",
-		"ABN Antioch": "lin2.ash.fast-serv.com:9022",
-		"TCAN": "206.190.144.154:8060"
+		"WNRN-FM": "https://26423.live.streamtheworld.com/WNRNFM_128.mp3",
+		"WWOZ": "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3",
+		"FIP": "https://icecast.radiofrance.fr/fip-hifi.aac",
+	    "ABN Antioch": "stream.radio.macinmind.com:8000/listen",
+		"PBB": "https://pbbradio.com:8443/pbb128",
+		"TCAN": "http://sc3.mystreamserver.com:8060/;"
 	}
 }

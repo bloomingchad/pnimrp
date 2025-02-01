@@ -1,13 +1,12 @@
 {
 	"stations": {
-		"Pure Classic Ireland": "206.217.201.136:8036",
-		"Venice Classic Radio Italia": "109.123.116.202:8010/stream",
-		"WKSU 3 Classical": "66.225.205.8:8030",
-		"Ancient FM": "simplexstream.com:8058",
-		"Audiophile Baroque": "213.251.157.145:8016",
-		"Classical WETA": "38.100.128.106:8000",
-		"La Fenice Channel": "178.32.140.82:9690",
-		"M2 Classic": "sun.m2stream.fr:9000",
-		"Musik Klassic": "193.34.51.12:80"
+		"Venice Classic Radio Italia": "https://uk2.streamingpulse.com/ssl/vcr1",
+		"WKSU 3 Classical": "https://live.ideastream.org/wksu3.128.mp3",
+		"Ancient FM": "https://mediaserv73.live-streams.nl:18058/stream",
+		"The Organ Experience": "http://play2.organlive.com:7006/320",
+		"Mondello MRG Classical": "https://str3.openstream.co/1032",
+		"HearMe Classical Barouque": "http://radio.strictly.house:8010/stream",
+		"Classical WETA": "https://playerservices.streamtheworld.com/api/livestream-redirect/WETAFM.mp3",
+		"Musik Klassic": "https://klassikr.streamabc.net/klr-krdnational-aac-128-3888428"
 	}
 }
