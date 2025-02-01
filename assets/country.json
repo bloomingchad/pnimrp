@@ -1,11 +1,12 @@
 {
 	"stations": {
+		"100hitz Country Hitz": "https://pureplay.cdnstream1.com/6030_128.mp3",
 		"Absolutely Country Hits Radio": "185.33.22.15:7800",
-		"Always Country": "208.85.240.89:80",
-		"Big R Radio - Country Gold": "107.155.126.42:8230",
-		"Americana Boogie Radio": "us1.internet-radio.com:8182/live",
-		"Bluegrass Mix": "192.81.248.194:8072/stream",
 		"Country Music 24": "countrymusic24.powerstream.de:9000",
-		"Country Radio Switzerland": "212.48.126.146:8000"
+		"HPR Traditional": "https://us2.maindigitalstream.com/ssl/7713",
+		"HPR Todays Classics": "https://us2.maindigitalstream.com/ssl/7735",
+		"Big R Radio - Country Gold": "https://bigrradio.cdnstream1.com/5195_48",
+		"Americana Boogie Radio": "https://26343.live.streamtheworld.com/SAM07AAC204.mp3",
+		"Country Radio Switzerland": "https://countryradioswitzerland.ice.infomaniak.ch/crs-128.mp3"
 	}
 }
