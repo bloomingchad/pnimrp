@@ -1,0 +1,20 @@
+{
+	"stations": {
+		"Pure Classic Ireland": "206.217.201.136:8036",
+		"Venice Classic Radio Italia": "109.123.116.202:8010/stream",
+		"WKSU 3 Classical": "66.225.205.8:8030",
+		"Ancient FM": "simplexstream.com:8058",
+		"Audiophile Baroque": "213.251.157.145:8016",
+		"Classical WETA": "38.100.128.106:8000",
+		"La Fenice Channel": "178.32.140.82:9690",
+		"M2 Classic": "sun.m2stream.fr:9000",
+		"Musik Klassic": "193.34.51.12:80",
+		"Always Country": "208.85.240.89:80",
+		"Country Radio Switzerland": "212.48.126.146:8000",
+		"Big R Radio - Country Gold": "107.155.126.42:8230",
+		"Americana Boogie Radio": "us1.internet-radio.com:8182/live",
+		"Bluegrass Mix": "192.81.248.194:8072/stream",
+		"rotana tarab":  "82.212.85.196:8101/;"
+
+	}
+}
