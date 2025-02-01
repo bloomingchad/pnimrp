@@ -5,7 +5,6 @@
 	    "nogoum Egypt":  "https://audio.nrpstream.com/listen/nogoumfm/radio.mp3",
 	    "MBC FM":        "https://mbcfm-radio.mbc.net/mbcfm-radio_1.m3u8",
 	    "fm amazigh du maroc": "https://stream.zenolive.com/bqdbb6hd0neuv",
-		"tarab lebanon": "https://stream.zeno.fm/fy8achbq97zuv",
-		"rotana tarab":  "82.212.85.196:8101/;"
+		"tarab lebanon": "https://stream.zeno.fm/fy8achbq97zuv"
 	}
 }
