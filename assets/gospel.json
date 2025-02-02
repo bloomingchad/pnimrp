@@ -1,6 +1,12 @@
 {
 	"stations": {
 		"HPR4: Bluegrass Gospel": "https://us2.maindigitalstream.com/ssl/7739",
-        "BigR Gospel": "https://bigrradio.cdnstream1.com/5199_128"
-	}
+        "BigR Gospel": "https://bigrradio.cdnstream1.com/5199_128",
+		"Black Gospel Radio": "https://ice64.securenetsystems.net/BGRLIVE",
+        "Rádio Sound Black BR": "https://servidor35.brlogic.com:8572/live",
+        "Gospel 90.3": "https://live.amperwave.net/manifest/landmark-wlvffmaac-hlsc2.m3u8",
+        "Praise 107.9": "https://ice10.securenetsystems.net/WMUVHD3?playSessionID=953D7318-155D-C0F4-078A5C210FE9AB27",
+        "Rejoice 102.3": "https://ais-sa8.cdnstream1.com/pphmw4xd6g4/cq0clv82v6o",
+        "Lighthouse FM Family CA": "https://usa4.fastcast4u.com/proxy/lighthousefm?mp=/1"
+    }
 }
