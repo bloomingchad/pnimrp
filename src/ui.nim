@@ -209,9 +209,10 @@ proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns the footer options based on the context (main menu or submenu).
   #echo "DEBUG: getFooterOptions - isMainMenu = ", isMainMenu, ", isPlayerUI = ", isPlayerUI  # Debug log
   result =
-    if isMainMenu: "[Q] Quit   [N] Notes   [U] Help"
-    elif isPlayerUI: "[Q] Quit | [R] Return | [P] Pause/Play | [-/+] Vol | [L] Like"
-    else: "[Q] Quit   [R] Return   [U] Help"
+    if isMainMenu: "[Q] Quit | N] Notes | [U] Help | [S] ChooseForMe"
+    elif isPlayerUI:
+      "[Q] Quit | [R] Return | [P] Pause/Play | [-/+] Vol | [L] Like"
+    else: "[Q] Quit | [R] Return | [U] Help | [S] ChooseForMe"
 
 proc displayMenu*(
   options: MenuOptions,
