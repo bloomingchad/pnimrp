@@ -2,7 +2,7 @@ import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
   utils, animation, json, tables, metadata,
-  scroll
+  scroll, random
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
@@ -301,6 +301,21 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
     result.names.add(name)
     result.paths.add(dir)
 
+var chooseForMe = false  # Declare as mutable global variable
+
+proc chooseForMeOrChooseYourself(itemsLen: int): char =
+  if chooseForMe:
+    chooseForMe = false  # Reset the flag after use
+    randomize()
+    let rndIdx = rand(itemsLen - 1)  # Generate random index within bounds
+
+    # Convert the random index to a menu key (1-9, A-M)
+    result = 
+      if rndIdx < 9: chr(ord('1') + rndIdx)
+      else: chr(ord('A') + rndIdx - 9)
+  else:
+    return getch()
+
 proc handleMenu*(
   section: string,
   items: seq[string],
@@ -321,9 +336,9 @@ proc handleMenu*(
 
     while true:
       try:
-        let key = getch()
+        let key = chooseForMeOrChooseYourself(items.len)
         case key
-        of '1'..'9', 'A'..'L', 'a'..'l':
+        of '1'..'9', 'A'..'M', 'a'..'m':
           let idx = 
             if key in {'1'..'9'}: ord(key) - ord('1')
             else: ord(toLowerAscii(key)) - ord('a') + 9
@@ -381,6 +396,8 @@ proc handleMenu*(
             break
           else:
             showInvalidChoice()
+        of 'S', 's':
+          chooseForMe = true
 
         of 'Q', 'q':
           showExitMessage()
