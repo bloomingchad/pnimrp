@@ -7,6 +7,11 @@
 		"Mondello MRG Classical": "https://str3.openstream.co/1032",
 		"HearMe Classical Barouque": "http://radio.strictly.house:8010/stream",
 		"Classical WETA": "https://playerservices.streamtheworld.com/api/livestream-redirect/WETAFM.mp3",
-		"Musik Klassic": "https://klassikr.streamabc.net/klr-krdnational-aac-128-3888428"
+		"Musik Klassic": "https://klassikr.streamabc.net/klr-krdnational-aac-128-3888428",
+        "WQXR New York": "https://iheart.wnyc.org/wqxr-tunein",
+        "BBC Radio 3": "https://a.files.bbci.co.uk/ms6/live/3441A116-B12E-4D2F-ACA8-C1984642FA4B/audio/simulcast/dash/nonuk/pc_hd_abr_v2/aks/bbc_radio_three.mpd",
+        "KUSC (Los Angeles)": "https://playerservices.streamtheworld.com/api/livestream-redirect/KUSCAAC96.aac",
+        "KING FM (Seattle)": "https://classicalking.streamguys1.com/king-fm-aac-iheart",
+        "Radio France Musique Classique": "https://direct.francemusique.fr/live/francemusiqueeasyclassique-hifi.mp3"
 	}
 }

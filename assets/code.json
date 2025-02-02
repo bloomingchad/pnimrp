@@ -2,6 +2,14 @@
 	"stations": {
 		"freeCodeCamp codeRadio": "https://coderadio-admin-v2.freecodecamp.org//listen/coderadio/radio.mp3",
 		"freeCodeCamp codeRadio -data": "https://coderadio-admin-v2.freecodecamp.org//listen/coderadio/low.mp3",
-		"Chill Step": "chillstep.info/radio/stream.ogg"
+		"Chill Step": "chillstep.info/radio/stream.ogg",
+		"Lofi Girl 24/7": "https://stream.zeno.fm/tabzverz0fctv",
+        "Ambient Calm": "https://drive.uber.radio/uber/calm/icecast.audio",
+		"Rainy Mood Radio": "https://rainyday-mynoise.radioca.st/stream",
+        "Synthwave - LautFM": "https://stream.laut.fm/synthwave",
+		"Synthwave CityFM": "http://bbr0.radioca.st:8179/stream",
+        "Nightride FM Datawave": "https://stream.nightride.fm/datawave.mp3",
+		"Coffee Shop Radio": "https://stream.revma.ihrhls.com/zc6698",
+        "Radio Art Deep Focus": "https://air.radioart.com/fDeep_focus.mp3"
 	}
 }
