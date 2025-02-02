@@ -1,5 +1,22 @@
 {
 	"stations": {
-		"Big Blue Swing": "209.236.126.18:8002"
+		"Big Blue Swing": "209.236.126.18:8002",
+		"Blues Radio UK": "https://bluesserver.blues-radio.co.uk/stream",
+		"GotRadio Blues": "https://pureplay.cdnstream1.com/6019_128.mp3",
+		"BluesMusicFan Radio": "https://ais-sa2.cdnstream1.com/1992_128.mp3",
+		"Aardvark Blues FM": "https://streaming.live365.com/b77280_128mp3",
+		"1.FM Blues": "https://strm112.1.fm/blues_128",
+        "Radio Bluesflac (FLAC)": "https://streams.radiomast.io/radioblues-flac",
+        "Radio Caprice Blues": "http://79.120.77.11:8002/blues",
+		"Radio Caprice Blues Rock": "http://79.120.39.202:8002/bluesrock",
+		"Radio Caprice Acoustic Blues": "http://79.111.14.76:8002/acousticblues",
+		"Radio Caprice Chicago Blues": "http://79.111.14.76:9091/;",
+		"Radio Caprice Country Blues": "http://79.120.77.11:8002/countryblues",
+		"Radio Caprice Delta Blues": "http://79.120.77.11:8002/deltablues",
+		"Radio Caprice Louisiana Blue": "http://213.141.131.10:8002/louisianablues",
+		"Radio Caprice Texas Blues": "http://79.111.14.76:8002/texasblues",
+        "Radio Caprice Piano Blues": "http://79.111.14.76:8002/pianoblues",
+		"Radio Caprice Electric Blues": "http://79.111.14.76:8002/pianoblues",
+		"Radio Caprice Jump Blues": "http://213.141.131.10:8002/jumpblues"
 	}
 }
