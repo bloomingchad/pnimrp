@@ -1,0 +1,9 @@
+{
+    "stations": {
+        "181.fm Bebop": "https://listen.181fm.com/181-bebop_128k.mp3",
+        "181.fm Bebop -data": "https://listen.181fm.com/181-bebop_64k.aac",
+        "Concertzender - Hard Bop": "https://streams.greenhost.nl:8006/hardbop",
+        "Adroit Jazz Underground": "https://icecast.walmradio.com:8443/jazz_opus",
+        "KCSM 91.1 - Bebop & Beyond": "https://ice7.securenetsystems.net/KCSM2"
+    }
+}

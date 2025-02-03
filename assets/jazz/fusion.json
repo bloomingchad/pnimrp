@@ -1,0 +1,11 @@
+{
+    "stations": {
+        "181.fm Fusion Jazz": "https://listen.181fm.com/181-fusionjazz_128k.mp3",
+        "181.fm Fusion Jazz -data": "https://listen.181fm.com/181-fusionjazz_64k.aac",
+        "Dons Art DE": "https://stream.laut.fm/donsart",
+        "Jazz Radio Jazz Fusion": "https://jazz-radio-fusion.ice.infomaniak.ch/jazz-radio-fusion.mp3",
+        "Radio Art - Fusion GR": "https://live.radioart.com/fFusion.mp3",
+        "Radio Caprice Jazz Fusion": "http://79.111.119.111:8002/jazzfusion",
+        "Fusion Jazz Alpes FR": "https://jazz-radio-fusion.ice.infomaniak.ch/jazz-radio-fusion.mp3"
+    }
+}
