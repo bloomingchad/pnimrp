@@ -1,0 +1,10 @@
+{
+    "stations": {
+        "WBGO Jazz 88.3": "https://wbgo.streamguys1.com/wbgo128",
+        "Jazz24": "https://prod-54-162-2-81.amperwave.net/ppm-jazz24aac256-ibc1",
+        "WWOZ 90.7 FM": "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3",
+        "ABC Jazz (Australia)": "https://mediaserviceslive.akamaized.net/hls/live/2038319/abcjazz/masterhq.m3u8",
+        "Jazz.FM91 (Canada)": "https://jazzfm91.streamb.live/SB00009",
+        "The Jazz Groove": "aac-64.streamthejazzgroove.com/"
+        }
+}
