@@ -1,0 +1,20 @@
+{
+    "stations": {
+        "Best Smooth Jazz": "",
+        "SmoothJazz Global Radio": "https://smoothjazz.cdnstream1.com/2585_128.mp3",
+        "Cool Jazz Florida": "https://vip2.fastcast4u.com/proxy/cjfla?mp=/stream",
+        "Smooth Lounge Radio": "https://smoothjazz.cdnstream1.com/2586_128.mp3",
+        "1.fm SAX4LOVE": "https://strm112.1.fm/sax4ever_mobile_mp3",
+        "1.FM - Smooth Jazz": "https://strm112.1.fm/smoothjazz_mobile_mp3",
+        "Smooth Jazz 101.1100.1": "https://crystalout.surfernetwork.com:8001/WJZA-AM_MP3",
+        "Smooth Jazz 102.7": "http://216.245.218.194:8986/stream",
+        "Smooth Jazz Florida": "https://streaming.live365.com/a57422",
+        "Smooth Jazz Tepic, MX": "https://playerservices.streamtheworld.com/api/livestream-redirect/ACIR22_S01AAC.aac",
+        "Smooth Jazz - Tampa Bay": "http://server.webnetradio.net:5250/;",
+        "Smooth Jazz - Worldwide": "https://stream.laut.fm/smoothjazzbuzz",
+        "Smooth Jazz 247": "https://streaming.live365.com/b75154_128mp3",
+        "Smooth Jazz Deluxe CA": "https://az1.mediacp.eu/listen/asmoothjazzdeluxe/radio.mp3",
+        "SJazz Instrumental Peru": "https://stream.zeno.fm/00rt0rdm7k8uv",
+        "smoothjazz.com.pl": "https://bcast.vigormultimedia.com:48888/sjcompl64aac"
+    }
+}
