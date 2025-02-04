@@ -2,11 +2,13 @@ package main
 
 import (
 	"bufio"
+	"crypto/tls"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -52,20 +54,58 @@ func init() {
 	}
 }
 
-// checkURL performs a GET request to check the URL, handling redirects
+// isLikelyICY checks if the URL is likely to be an ICY stream based on heuristics
+func isLikelyICY(urlStr string) bool {
+	// Check if the URL path ends with /; or has no extension
+	lowerURL := strings.ToLower(urlStr)
+	return strings.HasSuffix(lowerURL, "/;") || !strings.Contains(filepath.Base(lowerURL), ".")
+}
+
+// checkURL performs a GET request to check the URL, handling redirects and ICY streams
 func checkURL(urlStr string, stationName string) *LinkCheckResult {
 	result := &LinkCheckResult{URL: urlStr, StationName: stationName}
 
-	if !strings.HasPrefix(urlStr, "http://") && !strings.HasPrefix(urlStr, "https://") {
-		result.URL = "https://" + urlStr
+	// Handle empty URL string
+	if urlStr == "" {
+		result.Error = "Empty URL"
+		logger.Printf("Empty URL provided for station: %s", stationName)
+		return result
+	}
+
+	// Force HTTP if no protocol is specified
+	if !strings.HasPrefix(strings.ToLower(urlStr), "http://") && !strings.HasPrefix(strings.ToLower(urlStr), "https://") {
+		logger.Printf("No protocol specified for %s, defaulting to http://", urlStr)
+		result.URL = "http://" + urlStr
+	} else {
+		result.URL = urlStr
+	}
+
+	// Check if the URL is likely an ICY stream
+	if isLikelyICY(result.URL) {
+		logger.Printf("Likely ICY stream detected, using specialized check: %s", result.URL)
+		icyResult := checkICYStream(result.URL, stationName)
+		if icyResult.Valid {
+			// It's a valid ICY stream
+			return icyResult
+		} else {
+			// It's not a valid ICY stream, log the error and fall back to regular HTTP check
+			logger.Printf("ICY check failed for %s: %s", result.URL, icyResult.Error)
+		}
+	}
+
+	// Create a custom transport that skips TLS verification
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 
 	client := &http.Client{
-		Timeout: 15 * time.Second, // Increased timeout
+		Transport: tr,
+		Timeout:   15 * time.Second,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			if len(via) >= 10 {
 				return fmt.Errorf("too many redirects")
 			}
+			// Update the URL in the result to the redirected URL
 			result.URL = req.URL.String()
 			return nil
 		},
@@ -85,31 +125,33 @@ func checkURL(urlStr string, stationName string) *LinkCheckResult {
 		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
 		req.Header.Set("Accept", "*/*")
 		req.Header.Set("Connection", "keep-alive")
+		req.Header.Set("Icy-MetaData", "1")
 
 		resp, err := client.Do(req)
 		if err != nil {
-			if urlErr, ok := err.(*url.Error); ok && urlErr.Timeout() {
-				result.Error = "Timeout"
+			// Handle errors, including timeouts and protocol scheme errors
+			if urlErr, ok := err.(*url.Error); ok {
+				if urlErr.Timeout() {
+					result.Error = "Timeout"
+				} else if strings.Contains(urlErr.Error(), "unsupported protocol scheme") {
+					result.Error = fmt.Sprintf("Unsupported protocol: %s", urlErr.URL)
+				} else if strings.Contains(urlErr.Error(), "tls: handshake failure") {
+					result.Error = "TLS handshake failure"
+				} else {
+					result.Error = urlErr.Error()
+				}
 			} else {
 				result.Error = err.Error()
 			}
+
 			logger.Printf("Error during GET request: %s - Error: %v", result.URL, err)
 			time.Sleep(getBackoffTime(attempt))
 			continue
 		}
 		defer resp.Body.Close()
 
+		// Check for successful HTTP status codes
 		if resp.StatusCode >= 200 && resp.StatusCode < 400 {
-			// Read more data to confirm it's a stream
-			buffer := make([]byte, 8192) // Read 8KB
-			_, err = resp.Body.Read(buffer)
-			if err != nil && err != io.EOF {
-				result.Error = "Error reading stream - " + err.Error()
-				logger.Printf("Error reading stream: %s - Error: %v", result.URL, err)
-				time.Sleep(getBackoffTime(attempt))
-				continue
-			}
-
 			result.Valid = true
 			logger.Printf("Valid stream found: %s", result.URL)
 			return result
@@ -122,6 +164,91 @@ func checkURL(urlStr string, stationName string) *LinkCheckResult {
 	}
 
 	return result
+}
+
+// checkICYStream performs a specialized check for ICY streams
+func checkICYStream(urlStr string, stationName string) *LinkCheckResult {
+	result := &LinkCheckResult{URL: urlStr, StationName: stationName}
+
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		// Use net.Dial to establish a raw TCP connection
+		conn, err := net.Dial("tcp", getHostAndPort(urlStr))
+		if err != nil {
+			result.Error = "Connection error: " + err.Error()
+			logger.Printf("Error connecting to %s: %v", urlStr, err)
+			time.Sleep(getBackoffTime(attempt))
+			continue
+		}
+		defer conn.Close()
+
+		// Send a custom GET request with Icy-MetaData
+		request := fmt.Sprintf("GET / HTTP/1.0\r\nHost: %s\r\nIcy-MetaData: 1\r\nConnection: close\r\n\r\n", getHost(urlStr))
+		if _, err = conn.Write([]byte(request)); err != nil {
+			result.Error = "Error sending request: " + err.Error()
+			logger.Printf("Error sending request to %s: %v", urlStr, err)
+			time.Sleep(getBackoffTime(attempt))
+			continue
+		}
+
+		// Read the response
+		reader := bufio.NewReader(conn)
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			result.Error = "Error reading response: " + err.Error()
+			logger.Printf("Error reading response from %s: %v", urlStr, err)
+			time.Sleep(getBackoffTime(attempt))
+			continue
+		}
+
+		// Check if it's an ICY response
+		if strings.HasPrefix(response, "ICY") {
+			logger.Printf("ICY stream detected (valid): %s", urlStr)
+			result.Valid = true
+
+			// Optionally, you could read and discard headers here if needed
+
+			return result
+		} else {
+			result.Error = "Not a valid ICY stream"
+			logger.Printf("Not a valid ICY stream: %s", urlStr)
+			time.Sleep(getBackoffTime(attempt))
+			// Don't return immediately, allow fallback to HTTP check
+			break
+		}
+	}
+
+	return result
+}
+
+// getHostAndPort extracts the host and port from a URL
+func getHostAndPort(urlStr string) string {
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		return ""
+	}
+	if u.Port() == "" {
+		if u.Scheme == "https" {
+			return u.Host + ":443"
+		}
+		return u.Host + ":80"
+	}
+	return u.Host
+}
+
+// getHost extracts the host from a URL
+func getHost(urlStr string) string {
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		return ""
+	}
+	return u.Host
+}
+
+// parseInt converts a string to an integer
+func parseInt(str string) (int, error) {
+	var result int
+	_, err := fmt.Sscan(str, &result)
+	return result, err
 }
 
 // getBackoffTime calculates the exponential backoff time
@@ -294,7 +421,7 @@ func main() {
 		}
 
 		// Skip the "deadStations" directory
-		if info.IsDir() && info.Name() == "deadStations" {
+		if info.IsDir() && info.Name() == "deadStation" {
 			return filepath.SkipDir
 		}
 
