@@ -24,6 +24,7 @@ type LinkCheckResult struct {
 	URL         string `json:"url"`
 	Valid       bool   `json:"valid"`
 	Error       string `json:"error"`
+	ContentType string `json:"contentType"` // Add Content-Type
 }
 
 const (
@@ -61,41 +62,93 @@ func isLikelyICY(urlStr string) bool {
 	return strings.HasSuffix(lowerURL, "/;") || !strings.Contains(filepath.Base(lowerURL), ".")
 }
 
-// checkURL performs a GET request to check the URL, handling redirects and ICY streams
-func checkURL(urlStr string, stationName string) *LinkCheckResult {
-	result := &LinkCheckResult{URL: urlStr, StationName: stationName}
-
-	// Handle empty URL string
-	if urlStr == "" {
-		result.Error = "Empty URL"
-		logger.Printf("Empty URL provided for station: %s", stationName)
-		return result
+// tryTLSConfigs attempts to connect with different TLS configurations
+func tryTLSConfigs(urlStr string, stationName string) *LinkCheckResult {
+	// Different TLS configurations to try, from most secure to least secure
+	tlsConfigs := []struct {
+		name   string
+		config *tls.Config
+	}{
+		{
+			name: "Modern TLS",
+			config: &tls.Config{
+				MinVersion:   tls.VersionTLS12,
+				MaxVersion:   tls.VersionTLS13,
+				CipherSuites: []uint16{
+					tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+					tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+					tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+					tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+				},
+			},
+		},
+		{
+			name: "TLS 1.2 Only",
+			config: &tls.Config{
+				MinVersion: tls.VersionTLS12,
+				MaxVersion: tls.VersionTLS12,
+			},
+		},
+		{
+			name: "Legacy TLS",
+			config: &tls.Config{
+				MinVersion: tls.VersionTLS10,
+				MaxVersion: tls.VersionTLS12,
+			},
+		},
+		{
+			name: "Insecure Legacy",
+			config: &tls.Config{
+				MinVersion:         tls.VersionTLS10,
+				MaxVersion:         tls.VersionTLS12,
+				InsecureSkipVerify: true,
+			},
+		},
 	}
 
-	// Force HTTP if no protocol is specified
-	if !strings.HasPrefix(strings.ToLower(urlStr), "http://") && !strings.HasPrefix(strings.ToLower(urlStr), "https://") {
-		logger.Printf("No protocol specified for %s, defaulting to http://", urlStr)
-		result.URL = "http://" + urlStr
-	} else {
-		result.URL = urlStr
-	}
+	var lastResult *LinkCheckResult
 
-	// Check if the URL is likely an ICY stream
-	if isLikelyICY(result.URL) {
-		logger.Printf("Likely ICY stream detected, using specialized check: %s", result.URL)
-		icyResult := checkICYStream(result.URL, stationName)
-		if icyResult.Valid {
-			// It's a valid ICY stream
-			return icyResult
-		} else {
-			// It's not a valid ICY stream, log the error and fall back to regular HTTP check
-			logger.Printf("ICY check failed for %s: %s", result.URL, icyResult.Error)
+	for _, tlsCfg := range tlsConfigs {
+		result := tryWithConfig(urlStr, stationName, tlsCfg.config, tlsCfg.name)
+		if result.Valid {
+			return result
+		}
+		lastResult = result
+		// If it's not a TLS error, no need to try other configs
+		if result.Error != "" && !strings.Contains(strings.ToLower(result.Error), "tls") {
+			return result
 		}
 	}
 
-	// Create a custom transport that skips TLS verification
+	if lastResult != nil {
+		return lastResult
+	}
+
+	return &LinkCheckResult{
+		StationName: stationName,
+		URL:         urlStr,
+		Valid:       false,
+		Error:       "Failed all TLS configurations",
+	}
+}
+
+func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, configName string) *LinkCheckResult {
+	result := &LinkCheckResult{URL: urlStr, StationName: stationName}
+	redirectCount := 0 // Keep track of redirects
+
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: tlsConfig,
+		// Add additional transport configurations
+		Proxy: http.ProxyFromEnvironment,
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
 	}
 
 	client := &http.Client{
@@ -105,19 +158,33 @@ func checkURL(urlStr string, stationName string) *LinkCheckResult {
 			if len(via) >= 10 {
 				return fmt.Errorf("too many redirects")
 			}
-			// Update the URL in the result to the redirected URL
-			result.URL = req.URL.String()
+			redirectCount++
+			result.URL = req.URL.String() // Update to the redirected URL
 			return nil
 		},
 	}
 
-	for attempt := 0; attempt < maxRetries; attempt++ {
-		logger.Printf("Checking URL (attempt %d): %s", attempt+1, result.URL)
+	currentURL := urlStr // Start with the initial URL
 
-		req, err := http.NewRequest("GET", result.URL, nil)
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		if redirectCount > 0 {
+			// Re-evaluate after redirect
+			if isLikelyICY(result.URL) {
+				logger.Printf("Likely ICY stream detected after redirect, using specialized check: %s", result.URL)
+				icyResult := checkICYStream(result.URL, stationName)
+				if icyResult.Valid {
+					return icyResult
+				}
+				logger.Printf("ICY check failed after redirect for %s: %s", result.URL, icyResult.Error)
+			}
+		}
+
+		logger.Printf("Checking URL with %s config (attempt %d): %s", configName, attempt+1, currentURL)
+
+		req, err := http.NewRequest("GET", currentURL, nil)
 		if err != nil {
 			result.Error = "Invalid URL - " + err.Error()
-			logger.Printf("Invalid URL: %s - Error: %v", result.URL, err)
+			logger.Printf("Invalid URL: %s - Error: %v", currentURL, err)
 			return result
 		}
 
@@ -129,14 +196,13 @@ func checkURL(urlStr string, stationName string) *LinkCheckResult {
 
 		resp, err := client.Do(req)
 		if err != nil {
-			// Handle errors, including timeouts and protocol scheme errors
 			if urlErr, ok := err.(*url.Error); ok {
 				if urlErr.Timeout() {
 					result.Error = "Timeout"
 				} else if strings.Contains(urlErr.Error(), "unsupported protocol scheme") {
 					result.Error = fmt.Sprintf("Unsupported protocol: %s", urlErr.URL)
-				} else if strings.Contains(urlErr.Error(), "tls: handshake failure") {
-					result.Error = "TLS handshake failure"
+				} else if strings.Contains(urlErr.Error(), "tls") {
+					result.Error = "TLS error: " + urlErr.Error()
 				} else {
 					result.Error = urlErr.Error()
 				}
@@ -144,26 +210,66 @@ func checkURL(urlStr string, stationName string) *LinkCheckResult {
 				result.Error = err.Error()
 			}
 
-			logger.Printf("Error during GET request: %s - Error: %v", result.URL, err)
+			logger.Printf("Error during GET request with %s config: %s - Error: %v", configName, currentURL, err)
 			time.Sleep(getBackoffTime(attempt))
+
+			// Update currentURL for next attempt
+			currentURL = result.URL
 			continue
 		}
 		defer resp.Body.Close()
 
-		// Check for successful HTTP status codes
 		if resp.StatusCode >= 200 && resp.StatusCode < 400 {
 			result.Valid = true
-			logger.Printf("Valid stream found: %s", result.URL)
+			result.ContentType = resp.Header.Get("Content-Type") // Get Content-Type
+			logger.Printf("Valid stream found with %s config: %s", configName, currentURL)
 			return result
 		} else {
 			result.Error = fmt.Sprintf("HTTP %d", resp.StatusCode)
-			logger.Printf("HTTP error: %s - %s", result.URL, result.Error)
+			logger.Printf("HTTP error with %s config: %s - %s", configName, currentURL, result.Error)
 			time.Sleep(getBackoffTime(attempt))
+
+			// Update currentURL for next attempt
+			currentURL = result.URL
 			continue
 		}
 	}
 
 	return result
+}
+
+// checkURL performs a GET request to check the URL, handling redirects and ICY streams
+func checkURL(urlStr string, stationName string) *LinkCheckResult {
+	result := &LinkCheckResult{URL: urlStr, StationName: stationName}
+
+	if urlStr == "" {
+		result.Error = "Empty URL"
+		logger.Printf("Empty URL provided for station: %s", stationName)
+		return result
+	}
+
+	if !strings.HasPrefix(strings.ToLower(urlStr), "http://") && !strings.HasPrefix(strings.ToLower(urlStr), "https://") {
+		logger.Printf("No protocol specified for %s, defaulting to http://", urlStr)
+		result.URL = "http://" + urlStr
+	} else {
+		result.URL = urlStr
+	}
+
+	if isLikelyICY(result.URL) {
+		logger.Printf("Likely ICY stream detected, using specialized check: %s", result.URL)
+		icyResult := checkICYStream(result.URL, stationName)
+		if icyResult.Valid {
+			return icyResult
+		}
+		logger.Printf("ICY check failed for %s: %s", result.URL, icyResult.Error)
+	}
+
+	// For HTTPS URLs, try different TLS configurations
+	if strings.HasPrefix(strings.ToLower(result.URL), "https://") {
+		return tryTLSConfigs(result.URL, stationName)
+	}
+
+	return tryWithConfig(result.URL, stationName, nil, "HTTP")
 }
 
 // checkICYStream performs a specialized check for ICY streams
@@ -205,7 +311,16 @@ func checkICYStream(urlStr string, stationName string) *LinkCheckResult {
 			logger.Printf("ICY stream detected (valid): %s", urlStr)
 			result.Valid = true
 
-			// Optionally, you could read and discard headers here if needed
+			// Attempt to read headers to find Content-Type
+			for {
+				line, err := reader.ReadString('\n')
+				if err != nil || line == "\r\n" {
+					break
+				}
+				if strings.HasPrefix(strings.ToLower(line), "content-type:") {
+					result.ContentType = strings.TrimSpace(line[len("content-type:"):])
+				}
+			}
 
 			return result
 		} else {
@@ -445,15 +560,15 @@ func main() {
 	for result := range resultsChan {
 		if result.Valid {
 			if disableEmoji {
-				fmt.Println("OK", result.StationName)
+				fmt.Println("OK", result.StationName, "-", result.ContentType)
 			} else {
-				fmt.Println("✅", "OK", result.StationName)
+				fmt.Printf("✅ OK %s - %s \n", result.StationName, result.ContentType)
 			}
 		} else {
 			if disableEmoji {
-				fmt.Println("BAD", result.StationName, "-", result.Error)
+				fmt.Println("BAD", result.StationName, "-", result.Error, "-", result.URL)
 			} else {
-				fmt.Println("❌", "BAD", result.StationName, "-", result.Error)
+				fmt.Printf("❌ BAD %s - %s - %s\n", result.StationName, result.Error, result.URL)
 			}
 		}
 	}
