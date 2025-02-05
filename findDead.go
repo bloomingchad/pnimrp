@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -28,21 +29,42 @@ type LinkCheckResult struct {
 }
 
 const (
-	maxRetries       = 3
+	maxRetries       = 1
 	initialBackoff   = 1 * time.Second
 	maxBackoff       = 10 * time.Second
-	concurrencyLimit = 20
+	concurrencyLimit = 75
 	logFileName      = "finddead.log"
 )
 
 var (
 	disableEmoji bool
 	logger       *log.Logger
+	verbose      bool // Verbose flag
 )
+
+type ErrorDetail struct {
+	FullError string
+	Count     int
+}
+
+type Summary struct {
+	TotalStations    int
+	TotalURLs        int
+	SuccessfulChecks int
+	FailedChecks     int
+	PlaylistCount    int // Count of playlist files processed
+	EmptyPlaylists   int
+	TLSErrors        int // Specific error counts
+	TimeoutErrors    int
+	HTTPErrorCounts  map[int]int            // HTTP status code -> count (e.g., 404: 2, 500: 1)
+	OtherErrors      map[string]ErrorDetail //To store count of the other errors
+	ICYStreamCount   int
+}
 
 func init() {
 	// Command-line flags
 	flag.BoolVar(&disableEmoji, "disable-emoji", false, "Disable emoji in output")
+	flag.BoolVar(&verbose, "verbose", false, "Enable verbose error output") // Add verbose flag
 	flag.Parse()
 
 	// Set up logging
@@ -63,7 +85,7 @@ func isLikelyICY(urlStr string) bool {
 }
 
 // tryTLSConfigs attempts to connect with different TLS configurations
-func tryTLSConfigs(urlStr string, stationName string) *LinkCheckResult {
+func tryTLSConfigs(urlStr string, stationName string, summary *Summary) *LinkCheckResult {
 	// Different TLS configurations to try, from most secure to least secure
 	tlsConfigs := []struct {
 		name   string
@@ -72,8 +94,8 @@ func tryTLSConfigs(urlStr string, stationName string) *LinkCheckResult {
 		{
 			name: "Modern TLS",
 			config: &tls.Config{
-				MinVersion:   tls.VersionTLS12,
-				MaxVersion:   tls.VersionTLS13,
+				MinVersion: tls.VersionTLS12,
+				MaxVersion: tls.VersionTLS13,
 				CipherSuites: []uint16{
 					tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
 					tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
@@ -109,7 +131,7 @@ func tryTLSConfigs(urlStr string, stationName string) *LinkCheckResult {
 	var lastResult *LinkCheckResult
 
 	for _, tlsCfg := range tlsConfigs {
-		result := tryWithConfig(urlStr, stationName, tlsCfg.config, tlsCfg.name)
+		result := tryWithConfig(urlStr, stationName, tlsCfg.config, tlsCfg.name, summary)
 		if result.Valid {
 			return result
 		}
@@ -132,7 +154,7 @@ func tryTLSConfigs(urlStr string, stationName string) *LinkCheckResult {
 	}
 }
 
-func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, configName string) *LinkCheckResult {
+func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, configName string, summary *Summary) *LinkCheckResult {
 	result := &LinkCheckResult{URL: urlStr, StationName: stationName}
 	redirectCount := 0 // Keep track of redirects
 
@@ -171,7 +193,7 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 			// Re-evaluate after redirect
 			if isLikelyICY(result.URL) {
 				logger.Printf("Likely ICY stream detected after redirect, using specialized check: %s", result.URL)
-				icyResult := checkICYStream(result.URL, stationName)
+				icyResult := checkICYStream(result.URL, stationName, summary)
 				if icyResult.Valid {
 					return icyResult
 				}
@@ -199,15 +221,20 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 			if urlErr, ok := err.(*url.Error); ok {
 				if urlErr.Timeout() {
 					result.Error = "Timeout"
+					summary.TimeoutErrors++
 				} else if strings.Contains(urlErr.Error(), "unsupported protocol scheme") {
 					result.Error = fmt.Sprintf("Unsupported protocol: %s", urlErr.URL)
+					updateOtherErrors(summary, "Unsupported Protocol", urlErr.Error())
 				} else if strings.Contains(urlErr.Error(), "tls") {
 					result.Error = "TLS error: " + urlErr.Error()
+					summary.TLSErrors++
 				} else {
 					result.Error = urlErr.Error()
+					updateOtherErrors(summary, summarizeError(urlErr.Error()), urlErr.Error())
 				}
 			} else {
 				result.Error = err.Error()
+				updateOtherErrors(summary, summarizeError(err.Error()), err.Error())
 			}
 
 			logger.Printf("Error during GET request with %s config: %s - Error: %v", configName, currentURL, err)
@@ -226,6 +253,7 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 			return result
 		} else {
 			result.Error = fmt.Sprintf("HTTP %d", resp.StatusCode)
+			summary.HTTPErrorCounts[resp.StatusCode]++
 			logger.Printf("HTTP error with %s config: %s - %s", configName, currentURL, result.Error)
 			time.Sleep(getBackoffTime(attempt))
 
@@ -239,11 +267,13 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 }
 
 // checkURL performs a GET request to check the URL, handling redirects and ICY streams
-func checkURL(urlStr string, stationName string) *LinkCheckResult {
+func checkURL(urlStr string, stationName string, summary *Summary) *LinkCheckResult {
+	summary.TotalURLs++
 	result := &LinkCheckResult{URL: urlStr, StationName: stationName}
 
 	if urlStr == "" {
 		result.Error = "Empty URL"
+		updateOtherErrors(summary, "Empty URL", "Empty URL")
 		logger.Printf("Empty URL provided for station: %s", stationName)
 		return result
 	}
@@ -257,7 +287,7 @@ func checkURL(urlStr string, stationName string) *LinkCheckResult {
 
 	if isLikelyICY(result.URL) {
 		logger.Printf("Likely ICY stream detected, using specialized check: %s", result.URL)
-		icyResult := checkICYStream(result.URL, stationName)
+		icyResult := checkICYStream(result.URL, stationName, summary)
 		if icyResult.Valid {
 			return icyResult
 		}
@@ -266,14 +296,14 @@ func checkURL(urlStr string, stationName string) *LinkCheckResult {
 
 	// For HTTPS URLs, try different TLS configurations
 	if strings.HasPrefix(strings.ToLower(result.URL), "https://") {
-		return tryTLSConfigs(result.URL, stationName)
+		return tryTLSConfigs(result.URL, stationName, summary)
 	}
 
-	return tryWithConfig(result.URL, stationName, nil, "HTTP")
+	return tryWithConfig(result.URL, stationName, nil, "HTTP", summary)
 }
 
 // checkICYStream performs a specialized check for ICY streams
-func checkICYStream(urlStr string, stationName string) *LinkCheckResult {
+func checkICYStream(urlStr string, stationName string, summary *Summary) *LinkCheckResult {
 	result := &LinkCheckResult{URL: urlStr, StationName: stationName}
 
 	for attempt := 0; attempt < maxRetries; attempt++ {
@@ -281,6 +311,7 @@ func checkICYStream(urlStr string, stationName string) *LinkCheckResult {
 		conn, err := net.Dial("tcp", getHostAndPort(urlStr))
 		if err != nil {
 			result.Error = "Connection error: " + err.Error()
+			updateOtherErrors(summary, summarizeError(err.Error()), err.Error())
 			logger.Printf("Error connecting to %s: %v", urlStr, err)
 			time.Sleep(getBackoffTime(attempt))
 			continue
@@ -291,6 +322,7 @@ func checkICYStream(urlStr string, stationName string) *LinkCheckResult {
 		request := fmt.Sprintf("GET / HTTP/1.0\r\nHost: %s\r\nIcy-MetaData: 1\r\nConnection: close\r\n\r\n", getHost(urlStr))
 		if _, err = conn.Write([]byte(request)); err != nil {
 			result.Error = "Error sending request: " + err.Error()
+			updateOtherErrors(summary, summarizeError(err.Error()), err.Error())
 			logger.Printf("Error sending request to %s: %v", urlStr, err)
 			time.Sleep(getBackoffTime(attempt))
 			continue
@@ -301,6 +333,7 @@ func checkICYStream(urlStr string, stationName string) *LinkCheckResult {
 		response, err := reader.ReadString('\n')
 		if err != nil {
 			result.Error = "Error reading response: " + err.Error()
+			updateOtherErrors(summary, summarizeError(err.Error()), err.Error())
 			logger.Printf("Error reading response from %s: %v", urlStr, err)
 			time.Sleep(getBackoffTime(attempt))
 			continue
@@ -310,6 +343,7 @@ func checkICYStream(urlStr string, stationName string) *LinkCheckResult {
 		if strings.HasPrefix(response, "ICY") {
 			logger.Printf("ICY stream detected (valid): %s", urlStr)
 			result.Valid = true
+			summary.ICYStreamCount++
 
 			// Attempt to read headers to find Content-Type
 			for {
@@ -325,6 +359,7 @@ func checkICYStream(urlStr string, stationName string) *LinkCheckResult {
 			return result
 		} else {
 			result.Error = "Not a valid ICY stream"
+			// critically remove from here updateOtherErrors(summary, "Not a valid ICY stream", "Not a valid ICY stream")
 			logger.Printf("Not a valid ICY stream: %s", urlStr)
 			time.Sleep(getBackoffTime(attempt))
 			// Don't return immediately, allow fallback to HTTP check
@@ -406,7 +441,7 @@ func extractURLsFromPLS(plsContent string) []string {
 	return urls
 }
 
-func processJSONFile(filePath string, wg *sync.WaitGroup, resultsChan chan<- *LinkCheckResult, limiter chan struct{}) {
+func processJSONFile(filePath string, wg *sync.WaitGroup, resultsChan chan<- *LinkCheckResult, limiter chan struct{}, summary *Summary) {
 	defer wg.Done()
 
 	logger.Printf("Processing JSON file: %s", filePath)
@@ -432,6 +467,7 @@ func processJSONFile(filePath string, wg *sync.WaitGroup, resultsChan chan<- *Li
 
 	var innerWg sync.WaitGroup
 	for name, urlInterface := range stations {
+		summary.TotalStations++
 		urlStr, ok := urlInterface.(string)
 		if !ok {
 			logger.Printf("Invalid URL format for %s", name)
@@ -446,6 +482,7 @@ func processJSONFile(filePath string, wg *sync.WaitGroup, resultsChan chan<- *Li
 
 			// Check if the URL is a playlist
 			if strings.HasSuffix(strings.ToLower(urlStr), ".m3u") || strings.HasSuffix(strings.ToLower(urlStr), ".m3u8") || strings.HasSuffix(strings.ToLower(urlStr), ".pls") {
+				summary.PlaylistCount++
 				logger.Printf("Playlist detected: %s", urlStr)
 				var urls []string
 				var err error
@@ -498,6 +535,7 @@ func processJSONFile(filePath string, wg *sync.WaitGroup, resultsChan chan<- *Li
 				}
 
 				if len(urls) == 0 {
+					summary.EmptyPlaylists++
 					logger.Printf("No URLs found in playlist: %s", urlStr)
 					resultsChan <- &LinkCheckResult{
 						StationName: name,
@@ -509,16 +547,78 @@ func processJSONFile(filePath string, wg *sync.WaitGroup, resultsChan chan<- *Li
 				}
 
 				for _, u := range urls {
-					result := checkURL(u, name)
+					result := checkURL(u, name, summary)
 					resultsChan <- result
 				}
 			} else {
-				result := checkURL(urlStr, name)
+				result := checkURL(urlStr, name, summary)
 				resultsChan <- result
 			}
 		}(name, urlStr)
 	}
 	innerWg.Wait()
+}
+
+func summarizeError(errString string) string {
+	lowerErr := strings.ToLower(errString)
+
+	// Prioritize "connection refused"
+	if strings.Contains(lowerErr, "connection refused") {
+		return "Connection Refused"
+	}
+
+	// General network errors (excluding "connection refused")
+	if strings.Contains(lowerErr, "network is unreachable") ||
+		strings.Contains(lowerErr, "no route to host") ||
+		strings.Contains(lowerErr, "i/o timeout") { // Catch general I/O timeouts
+		return "Network Error"
+	}
+
+	if strings.Contains(lowerErr, "invalid header") {
+		return "Invalid Header"
+	}
+
+	// DNS errors
+	if strings.Contains(lowerErr, "no such host") ||
+		strings.Contains(lowerErr, "server misbehaving") || //Another DNS error
+		strings.Contains(lowerErr, "lookup") {
+		return "DNS Error"
+	}
+
+	// Certificate errors
+	if strings.Contains(lowerErr, "certificate") ||
+		strings.Contains(lowerErr, "x509") {
+		return "Certificate Error"
+	}
+	//  errors
+	if strings.Contains(lowerErr, "too many open files") {
+		return "Too Many Open Files"
+	}
+	if strings.Contains(lowerErr, "unexpected EOF") {
+		return "Unexpected EOF"
+	}
+	//read tcp errors
+	if strings.HasPrefix(lowerErr, "read tcp") {
+		return "read tcp"
+	}
+
+	// Fallback: return first 3 words for other errors
+	words := strings.Fields(errString)
+	if len(words) >= 3 {
+		return strings.Join(words[:3], " ")
+	}
+	return errString // Return the original if less than 3 words
+
+}
+
+func updateOtherErrors(summary *Summary, summarizedError string, fullError string) {
+	if existingDetail, ok := summary.OtherErrors[summarizedError]; ok {
+		existingDetail.Count++
+		existingDetail.FullError = fullError //always keep most recent error.
+		summary.OtherErrors[summarizedError] = existingDetail
+	} else {
+		summary.OtherErrors[summarizedError] = ErrorDetail{Count: 1, FullError: fullError}
+	}
 }
 
 func main() {
@@ -528,6 +628,12 @@ func main() {
 	var wg sync.WaitGroup
 
 	limiter := make(chan struct{}, concurrencyLimit)
+
+	// Initialize Summary
+	summary := Summary{
+		HTTPErrorCounts: make(map[int]int),
+		OtherErrors:     make(map[string]ErrorDetail),
+	}
 
 	// Walk the directory tree, excluding the "deadStations" directory
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
@@ -542,7 +648,7 @@ func main() {
 
 		if !info.IsDir() && filepath.Ext(path) == ".json" {
 			wg.Add(1)
-			go processJSONFile(path, &wg, resultsChan, limiter)
+			go processJSONFile(path, &wg, resultsChan, limiter, &summary)
 		}
 		return nil
 	})
@@ -559,12 +665,14 @@ func main() {
 
 	for result := range resultsChan {
 		if result.Valid {
+			summary.SuccessfulChecks++
 			if disableEmoji {
 				fmt.Println("OK", result.StationName, "-", result.ContentType)
 			} else {
 				fmt.Printf("✅ OK %s - %s \n", result.StationName, result.ContentType)
 			}
 		} else {
+			summary.FailedChecks++
 			if disableEmoji {
 				fmt.Println("BAD", result.StationName, "-", result.Error, "-", result.URL)
 			} else {
@@ -572,6 +680,81 @@ func main() {
 			}
 		}
 	}
+	fmt.Println("\n--- Summary ---")
 
+	// Use a consistent way to add emoji based on disableEmoji
+	maybeEmoji := func(e string) string {
+		if disableEmoji {
+			return ""
+		}
+		return e
+	}
+
+	// Print summary in a structured format
+	fmt.Printf("%s Total Stations Processed: %d\n", maybeEmoji("📊"), summary.TotalStations)
+	fmt.Printf("%s Total URLs Checked: %d\n", maybeEmoji("🔗"), summary.TotalURLs)
+	fmt.Printf("%s Successful Checks: %d\n", maybeEmoji("✅"), summary.SuccessfulChecks)
+	fmt.Printf("%s Failed Checks: %d\n", maybeEmoji("❌"), summary.FailedChecks)
+	fmt.Printf("%s ICY Streams Detected: %d\n", maybeEmoji("📻"), summary.ICYStreamCount)
+	fmt.Printf("%s Playlists Processed: %d\n", maybeEmoji("📃"), summary.PlaylistCount)
+	fmt.Printf("%s Empty Playlists: %d\n", maybeEmoji("0️⃣ "), summary.EmptyPlaylists)
+	fmt.Printf("%s Timeout Errors: %d\n", maybeEmoji("⏱️ "), summary.TimeoutErrors)
+	fmt.Printf("%s TLS Errors: %d\n", maybeEmoji("🔒"), summary.TLSErrors)
+
+	// Print HTTP Error Counts in a table-like format
+	fmt.Println("\nHTTP Error Counts:")
+	fmt.Println("  -------------------")
+	fmt.Println("  Status Code | Count")
+	fmt.Println("  -------------------")
+	for code, count := range summary.HTTPErrorCounts {
+		fmt.Printf("  %11d | %5d\n", code, count)
+	}
+	fmt.Println("  -------------------")
+
+	// Print Other Errors in a structured format
+	fmt.Println("\nOther Errors:")
+	fmt.Println("  -----------------------------------------")
+	fmt.Println("  Error Type                 | Count")
+	fmt.Println("  -----------------------------------------")
+
+	readTCPCount := 0
+	// Use ErrorDetail to also capture full errors for verbose mode
+	nonReadTCPErrors := make(map[string]ErrorDetail)
+
+	for summarizedErr, detail := range summary.OtherErrors {
+		if summarizedErr == "read tcp" {
+			readTCPCount += detail.Count // Accumulate count
+		} else {
+			nonReadTCPErrors[summarizedErr] = detail // Keep other errors separate
+		}
+	}
+	// Print "read tcp" summary.
+	if readTCPCount > 0 {
+		fmt.Printf("  %-27s | %5d\n", "read tcp (consolidated)", readTCPCount)
+	}
+
+	//Create slice to hold keys
+	keys := make([]string, 0, len(nonReadTCPErrors))
+	for k := range nonReadTCPErrors {
+		keys = append(keys, k)
+	}
+
+	//Sort slice
+	sort.Strings(keys)
+
+	// Print other errors, consolidated, but with verbose option
+	for _, summarizedErr := range keys {
+		detail := nonReadTCPErrors[summarizedErr] // Get the ErrorDetail
+		if verbose {
+			fmt.Printf("  %-27s | %5d\n", detail.FullError, detail.Count) // Full error in verbose
+		} else {
+			fmt.Printf("  %-27s | %5d\n", summarizedErr, detail.Count) // Summarized
+		}
+	}
+
+	fmt.Println("  -----------------------------------------")
+
+	fmt.Println("\n---------------")
 	fmt.Println("✨ Done!")
+	wg.Wait()
 }
