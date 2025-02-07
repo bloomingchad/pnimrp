@@ -58,7 +58,7 @@ proc main() =
     addExitProc(cleanup)
 
     # Load theme configuration
-    let configPath = getAppDir() / "themes.json"
+    let configPath = getAppDir() / "assets" / "config" / "themes.json"
     var themeConfig = loadThemeConfig(configPath)
     currentTheme = getCurrentTheme(themeConfig)
 
