@@ -1,5 +1,5 @@
 <div style="display: flex; align-items: center;">
-  <img src="https://github.com/bloomingchad/pnimrp/raw/main/ico.ico" alt="pnimrp Icon" width="90" style="margin-right: 10px;" />
+  <img src="https://github.com/bloomingchad/pnimrp/raw/main/web/ico.ico" alt="pnimrp Icon" width="90" style="margin-right: 10px;" />
   <h1>♪♫ pnimrp - Poor Man's Radio Player in Nim ♫♪</h1>
 </div>
 
@@ -52,7 +52,7 @@ nim c -d:release pnimrp
 
 ## 🎥 Demo
 
-![pnimrp Demo](https://github.com/bloomingchad/pnimrp/raw/main/demo.gif)
+![pnimrp Demo](https://github.com/bloomingchad/pnimrp/raw/main/web/demo.gif)
 
 ## 🎮 Controls
 
