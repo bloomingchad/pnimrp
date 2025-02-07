@@ -18,6 +18,7 @@ func checkURL(urlStr string, stationName string, summary *Summary) *LinkCheckRes
 	if urlStr == "" {
 		result.Error = "Empty URL"
 		updateOtherErrors(summary, "Empty URL", "Empty URL")
+		//NO SUM: summary.FailedChecks++ // No increment here
 		Logger().Printf("Empty URL provided for station: %s", stationName)
 		return result
 	}
@@ -29,16 +30,19 @@ func checkURL(urlStr string, stationName string, summary *Summary) *LinkCheckRes
 		result.URL = urlStr
 	}
 
+	// If it's likely an ICY stream, try the specialized check *first*.
 	if isLikelyICY(result.URL) {
 		Logger().Printf("Likely ICY stream detected, using specialized check: %s", result.URL)
 		icyResult := checkICYStream(result.URL, stationName, summary)
+		// Only return if the ICY check was *successful*.
 		if icyResult.Valid {
 			return icyResult
 		}
-		Logger().Printf("ICY check failed for %s: %s", result.URL, icyResult.Error)
+		// Otherwise, fall through to the normal HTTP/HTTPS checks.
 	}
 
 	if strings.HasPrefix(strings.ToLower(result.URL), "https://") {
+		//NO SUM: result.Valid = false  // Don't assume failure yet
 		return tryTLSConfigs(result.URL, stationName, summary)
 	}
 
@@ -87,23 +91,26 @@ func tryTLSConfigs(urlStr string, stationName string, summary *Summary) *LinkChe
 		},
 	}
 
-	var lastResult *LinkCheckResult
+	var lastResult *LinkCheckResult // Keep track of the last result
 
 	for _, tlsCfg := range tlsConfigs {
 		result := tryWithConfig(urlStr, stationName, tlsCfg.config, tlsCfg.name, summary)
 		if result.Valid {
-			return result
+			return result // Return immediately on success
 		}
-		lastResult = result
+		lastResult = result // Store the result
+		// Only return if it is not TLS error, to try other configs
 		if result.Error != "" && !strings.Contains(strings.ToLower(result.Error), "tls") {
 			return result
 		}
 	}
 
+	// Instead of returning a generic failure, return the last result
+	// with the specific error information.
 	if lastResult != nil {
 		return lastResult
 	}
-
+	//This should not happen, we check for errors and return before.
 	return &LinkCheckResult{
 		StationName: stationName,
 		URL:         urlStr,
@@ -135,7 +142,7 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 				return fmt.Errorf("too many redirects")
 			}
 			redirectCount++
-			result.URL = req.URL.String()
+			result.URL = req.URL.String() // Update the URL in case of redirects
 			return nil
 		},
 	}
@@ -143,14 +150,12 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 	currentURL := urlStr
 
 	for attempt := 0; attempt < MaxRetries; attempt++ {
+		// Check for ICY stream *after* a redirect.
 		if redirectCount > 0 {
 			if isLikelyICY(result.URL) {
 				Logger().Printf("Likely ICY stream detected after redirect, using specialized check: %s", result.URL)
 				icyResult := checkICYStream(result.URL, stationName, summary)
-				if icyResult.Valid {
-					return icyResult
-				}
-				Logger().Printf("ICY check failed after redirect for %s: %s", result.URL, icyResult.Error)
+				return icyResult // Return immediately, whether successful or not, after retries
 			}
 		}
 
@@ -158,9 +163,11 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 
 		req, err := http.NewRequest("GET", currentURL, nil)
 		if err != nil {
+			// If NewRequest fails, there won't be any retries.
 			result.Error = "Invalid URL - " + err.Error()
 			Logger().Printf("Invalid URL: %s - Error: %v", currentURL, err)
-			return result
+			//summary.FailedChecks++ // Increment failed checks count here.
+			return result // Return immediately on URL error
 		}
 
 		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
@@ -170,16 +177,18 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 
 		resp, err := client.Do(req)
 		if err != nil {
-			if urlErr, ok := err.(*url.Error); ok {
+			//NO SUM: summary.FailedChecks++ // DON'T increment failed checks *inside* the retry loop
+			// Handle errors *within* the retry loop, but don't return yet.
+			if urlErr, ok := err.(*url.Error); ok { // Check if it's a *url.Error
 				if urlErr.Timeout() {
 					result.Error = "Timeout"
-					summary.TimeoutErrors++
+					summary.TimeoutErrors++ // Increment specific timeout counter
 				} else if strings.Contains(urlErr.Error(), "unsupported protocol scheme") {
 					result.Error = fmt.Sprintf("Unsupported protocol: %s", urlErr.URL)
 					updateOtherErrors(summary, "Unsupported Protocol", urlErr.Error())
 				} else if strings.Contains(urlErr.Error(), "tls") {
 					result.Error = "TLS error: " + urlErr.Error()
-					summary.TLSErrors++
+					summary.TLSErrors++ // Increment specific TLS errors counter
 				} else {
 					result.Error = urlErr.Error()
 					updateOtherErrors(summary, summarizeError(urlErr.Error()), urlErr.Error())
@@ -191,8 +200,8 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 
 			Logger().Printf("Error during GET request with %s config: %s - Error: %v", configName, currentURL, err)
 			time.Sleep(getBackoffTime(attempt))
-			currentURL = result.URL
-			continue
+			currentURL = result.URL // Prepare for next attempt with possibly redirected URL
+			continue                // Go to the next attempt
 		}
 		defer resp.Body.Close()
 
@@ -200,15 +209,18 @@ func tryWithConfig(urlStr string, stationName string, tlsConfig *tls.Config, con
 			result.Valid = true
 			result.ContentType = resp.Header.Get("Content-Type")
 			Logger().Printf("Valid stream found with %s config: %s", configName, currentURL)
-			return result
+			return result // Return immediately on success
 		} else {
+			//NO SUM: summary.FailedChecks++ // DON'T increment inside the loop
 			result.Error = fmt.Sprintf("HTTP %d", resp.StatusCode)
-			summary.HTTPErrorCounts[resp.StatusCode]++
+			summary.HTTPErrorCounts[resp.StatusCode]++ // Count specific HTTP status codes
 			Logger().Printf("HTTP error with %s config: %s - %s", configName, currentURL, result.Error)
 			time.Sleep(getBackoffTime(attempt))
 			currentURL = result.URL
 			continue
 		}
 	}
+
+	// If we get here, all attempts have failed.  Return the result with the accumulated error information.
 	return result
 }
