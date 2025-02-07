@@ -1,6 +1,6 @@
 {
 	"stations": {
-		"BBC World Service -data": "a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_vlow/ak/bbc_world_service.m3u8",
+		"BBC World Service -data": "http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_vlow/ak/bbc_world_service.m3u8",
 		"NPR": "npr-ice.streamguys1.com/live.mp3",
 		"The Source": "stream.wmnf.org:8000/wmnf_hd3",
 		"Talk 790": "208.85.240.2:8310",
