@@ -36,10 +36,10 @@ type LinkCheckResult struct {
 }
 
 const (
-	MaxRetries       = 1
+	MaxRetries       = 3
 	InitialBackoff   = 1 * time.Second
 	MaxBackoff       = 10 * time.Second
-	ConcurrencyLimit = 75
+	ConcurrencyLimit = 50
 	LogFileName      = "finddead.log"
 )
 

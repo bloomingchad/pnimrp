@@ -69,8 +69,9 @@ func checkICYStream(urlStr string, stationName string, summary *Summary) *LinkCh
 			result.Error = "Not a valid ICY stream"
 			Logger().Printf("Not a valid ICY stream: %s", urlStr)
 			time.Sleep(getBackoffTime(attempt))
-			break
+			// DON'T break here; continue to the next attempt
+			continue
 		}
 	}
-	return result
+	return result // Return the result after all retries
 }
