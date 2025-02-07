@@ -182,7 +182,7 @@ when isMainModule:
 
   # Test loadQuotes with the new quotes format
   echo "Testing loadQuotes with new quotes format:"
-  let quotes = loadQuotes("../assets/qoute.json")
+  let quotes = loadQuotes("../assets/config/qoute.json")
   echo "Parsed quotes: ", quotes.quotes
   echo "Parsed authors: ", quotes.authors
   echo ""
