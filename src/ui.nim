@@ -38,7 +38,7 @@ proc showExitMessage* =
   echo ""
   randomize()
 
-  let quotesData = loadQuotes(getAppDir() / "assets" / "qoute.json")
+  let quotesData = loadQuotes(getAppDir() / "assets" / "config" / "qoute.json")
   let rand = rand(0 .. quotesData.quotes.high)
 
   when not defined(release) or not defined(danger):
