@@ -1,5 +1,5 @@
 {
-	"stations": {
+    "stations": {
 		"AH.FM -data": "https://nl.ah.fm/mobile",
 		"AH.FM -high": "https://nl.ah.fm/live",
 		"Ambient Sleeping Pill": "radio.stereoscenic.com/asp-s",
@@ -10,6 +10,9 @@
 		"Nirvana Radio": "streaming.exclusive.radio/er/nirvana/icecast.audio",
 		"Puls Radio": "icecast.pulsradio.com/pulsHD.mp3",
 		"Puls Radio - Club": "icecast.pulsradio.com/mxHD.mp3",
-		"Puls Radio - Trance": "icecast.pulsradio.com/pulstranceHD.mp3"
-	}
+		"Puls Radio - Trance": "icecast.pulsradio.com/pulstranceHD.mp3",
+        "Fnoob Techno Radio": "https://streams.radiomast.io/8846a94e-9874-4692-a1a0-ec7aadbe2771",
+        "House Nation": "https://streaming.radio.co/s06bd9d805/listen",
+        "DnB Radio": "https://source.dnbradio.com/stream/300/;"
+    }
 }
