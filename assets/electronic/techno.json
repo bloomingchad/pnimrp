@@ -1,0 +1,14 @@
+{
+    "stations": {
+        "TechnoBase.FM": "https://listener1.aach.tb-group.fm/tb-high.aac",
+        "Fnoob Techno Radio": "https://streams.radiomast.io/8846a94e-9874-4692-a1a0-ec7aadbe2771",
+        "Techno Connection": "",
+        "Radio Techno Zagreb": "http://mercury.reliastream.com:8085/stream.mp3",
+        "Sunshine Live Techno": "https://stream.sunshine-live.de/techno/mp3-128",
+        "1.FM - Techno": "https://strm112.1.fm/deeptech_mobile_mp3",
+        "Radio Record - Technopop": "",
+        "Techno Paradize": "https://stream.laut.fm/techno-paradize",
+        "Uturn Radio Techno": "",
+        "MABU Beatz Radio Techno": "https://audio.mabu-beatz-radio.com:8003/techno"
+    }
+}
