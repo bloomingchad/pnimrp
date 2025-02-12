@@ -1,14 +1,12 @@
 {
     "stations": {
-        "RadioSEGA": "",
-        "Chiptunes = WIN": "",
-        "8-Bit FM": "",
-        "Nectarine Demoscene Radio": "",
-        "Chiptune Radio": "",
-        "Retro PC Game Music": "",
-        "Kohina Community Radio Chiptune": "",
-        "Amiga Power Radio Chiptune": "",
-        "Chiptune FM": "",
-        "The Chiptune Network": ""
+        "RadioSEGA": "http://icecast.radiosega.net:8006/rs-mpeg.mp3",
+        "Radio Caprice - Chiptune": "http://79.111.119.111:8002/chiptune",
+        "CVGM": "http://radio.cvgm.net:8000/cvgm192",
+        "SceneSat": "http://sj-1.scenesat.com/scenesat",
+        "SlayRadio": "https://www.slayradio.org/tune_in.php/56kbps/slayradio.56.m3u",
+        "KOHINA": "http://kohina.duckdns.org:8000/stream.ogg.m3u",
+        "chiptune.rainwave.cc": "http://chiptune.rainwave.cc/tune_in/5.ogg.m3u",
+        "game.rainwave.cc": "https://relay.rainwave.cc/game.ogg"
     }
 }
