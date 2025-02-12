@@ -1,14 +1,25 @@
 {
     "stations": {
-        "SomaFM - Drone Zone": "",
-        "Ambient Sleeping Pill": "",
-        "Radio Art - Ambient": "",
-        "Calm Radio Ambient": "",
+        "Radio Art - Ambient": "https://air.radioart.com/fAmbient.mp3",
+        "Calm Radio Ambient": "https://proxy.calmradio.com:6728/;",
         "1.FM - Destination SPA": "https://strm112.1.fm/spa_mobile_mp3",
-        "AmbientRadio.net": "",
-        "Positively Ambient": "",
-        "Chiltime Radio Ambient": "",
-        "Ambi Nature Radio": "",
-        "Ambient Zone Radio": ""
+        "mrg AmbientRadio.net": "https://str3.openstream.co/1808",
+        "Positively Ambient": "https://streaming.positivity.radio/pr/positranquil/icecast.audio",
+        "Ambi Nature Radio": "https://nature-rex.radioca.st/stream",
+        "Ambient Zone Radio": "https://dronezone-mynoise.radioca.st/stream",
+        "SomaFM - Deep Space One": "https://ice2.somafm.com/deepspaceone-64-aac",
+        "Ambient Radio org": "https://uk2.internet-radio.com/proxy/ambientradio/stream",
+		"Dinamo FM - Sleep": "https://channels.dinamo.fm/sleep-aac",
+		"Frisky Radio - Chill": "https://chill.friskyradio.com/frisky_aac_low",
+		"Hirschmilch - Chillout": "https://hirschmilch.de:7001/chillout.mp3",
+        "Loca FM - Ambient": "https://s02.fjperezdj.com:8036/live",
+		"myNoise Radio - Drone Zone": "https://dronezone-mynoise.radioca.st/live",
+		"myNoise Radio - Siren Songs":"https://sirensongs-mynoise.radioca.st/live",
+		"OM Radio": "http://188.138.251.192:8002/;",
+		"Psyradio - Chillout": "komplex2.psyradio.org:8020/chillout/;",
+		"Radio Caprice - Ambient": "http://79.111.119.111:8002/ambient",
+		"Radio Caprice - Drone Ambient": "http://79.111.119.111:8000/droneambient",
+		"Sleep Radio": "https://cast4.my-control-panel.com/proxy/sleeprad/stream?1721309187745",
+		"Soma FM - Space Station Soma": "https://ice2.somafm.com/spacestation-64-aac"
     }
 }
