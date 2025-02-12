@@ -1,7 +1,6 @@
 {
     "stations": {
       "Nightride.FM": "https://stream.nightride.fm/nightride.mp3",
-      "Retro Electro Radio": "",
       "Synthwave Radio": "https://stream.synthwaveradio.eu/listen/synthwaveradio.eu/radio.mp3",
       "Australian Digital Radio": "http://abm22.com.au:8000/CONTAINER17",
       "80s New Wave Radio": "https://puma.streemlion.com:2910/stream",
@@ -12,7 +11,7 @@
       "Synth Radio": "http://77.51.212.205:8005/live192",
       "DM Radio": "http://radio.rikt.ru:8000/radio-dm-3",
       "Radio Caprice - Dark Synth": "http://213.141.131.10:8002/darksynth",
-      "Radio Caprice - Spacesynth": "https://79.120.39.202:8002/spacesynth",
+      "Radio Caprice - Spacesynth": "http://79.120.39.202:8002/spacesynth",
       "Caprice Spacesynth": "http://79.120.39.202:9111/;"
     }
 }
