@@ -1,14 +1,18 @@
 {
     "stations": {
-        "NRW - The '80s Channel": "",
-        "Nightride.FM": "",
-        "Retro Electro Radio": "",
-        "Synthwave Radio": "",
-        "The '80s Guy": "",
-        "Cyberpunk Radio": "",
-        "Neon Dystopia Radio": "",
-        "Synthwave Paradise": "",
-        "Retro FM Synthwave": "",
-        "Drive Radio": ""
+      "Nightride.FM": "https://stream.nightride.fm/nightride.mp3",
+      "Retro Electro Radio": "",
+      "Synthwave Radio": "https://stream.synthwaveradio.eu/listen/synthwaveradio.eu/radio.mp3",
+      "Australian Digital Radio": "http://abm22.com.au:8000/CONTAINER17",
+      "80s New Wave Radio": "https://puma.streemlion.com:2910/stream",
+      "Hiraeth DE": "https://stream.laut.fm/hiraeth",
+      "SynthWaveCityFM.com": "https://synthwave-rex.radioca.st/stream",
+      "Paradise DE": "https://stream.laut.fm/paradise",
+      "Neo80s Pilot PL": "http://neo80s.italodance.pl:7750/;",
+      "Synth Radio": "http://77.51.212.205:8005/live192",
+      "DM Radio": "http://radio.rikt.ru:8000/radio-dm-3",
+      "Radio Caprice - Dark Synth": "http://213.141.131.10:8002/darksynth",
+      "Radio Caprice - Spacesynth": "https://79.120.39.202:8002/spacesynth",
+      "Caprice Spacesynth": "http://79.120.39.202:9111/;"
     }
 }
