@@ -9,6 +9,9 @@ using str: string
 # Global variable to hold the current theme
 var currentTheme*: Theme
 
+# Global variable to store emoji positions.  Each tuple is (x, y).
+var emojiPositions: seq[(int, int)]
+
 proc say*(
   message: string,
   color = fgYellow,
@@ -165,6 +168,7 @@ proc updateTermWidth* =
 proc renderMenuOptions(options: MenuOptions, numColumns: int,
     maxColumnLengths: seq[int], spacing: int) =
   ## Renders the menu options in a multi-column layout.
+  emojiPositions = @[]  # Clear previous positions
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
   # Wait for the terminal width to stabilize
@@ -176,6 +180,8 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
     else:
       sleep(100)  # Wait for 100ms before checking again
 
+  var currentY = 5  # Starting Y coordinate (after header and category title)
+
   for row in 0 ..< itemsPerColumn:
     var currentLine = ""
     for col in 0 ..< numColumns:
@@ -183,11 +189,23 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
       if index < options.len:
         # Calculate the prefix for the menu option
         var prefix =
-          if index < 9: $(index + 1) & "."  # Use numbers 1-9 for the first 9 options
+          if index < 9: $(index + 1) & "."  # Use numbers 1-9
           else:
-            if index < MenuChars.len: $MenuChars[index] & " " # A-Z + emoji
+            if index < MenuChars.len: $MenuChars[index] & "."  # Use A-Z
             else: "?"  # Fallback
-        prefix = prefix & "🟡" & " "
+
+        # Calculate X position for the emoji
+        var emojiX = 0
+        for i in 0..<col:
+          emojiX += maxColumnLengths[i] + spacing
+
+        emojiX += prefix.len + 1 # +1 for the space after the number/letter
+
+        # Add to emojiPositions.  currentY is calculated *before* adding the line.
+        emojiPositions.add((emojiX, currentY))
+
+        prefix = prefix & "  " & " " # Two spaces for the emoji
+
         # Truncate and format
         let truncatedName = truncateName(options[index], maxColumnLengths[col] - prefix.len)
         let formattedOption = prefix & truncatedName
@@ -195,15 +213,23 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
         currentLine.add(formattedOption & " ".repeat(padding))
 
       else:
-        # Add empty space if there are no more items in this column
+        # Add empty space
         currentLine.add(" ".repeat(maxColumnLengths[col]))
 
-      # Add spacing between columns (dynamic spacing)
+      # Add spacing between columns
       if col < numColumns - 1:
-        currentLine.add(" ".repeat(spacing))  # Dynamic Spacing
+        currentLine.add(" ".repeat(spacing))
 
     # Render the line
     say(currentLine, fgBlue)
+    currentY += 1  # Increment Y *after* drawing the line
+
+proc drawMenuEmojis() =
+  ## Draws the menu emojis at the stored positions.
+  for pos in emojiPositions:
+    setCursorPos(pos[0], pos[1])
+    styledEcho(fgYellow, "🟡")
+  hideCursor()
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
@@ -236,6 +262,8 @@ proc displayMenu*(
   # Calculate column layout and render menu options
   let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
   renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
+
+  drawMenuEmojis() # Draw emojis *after* rendering text
 
   # Draw the separator line
   say(separatorLine, fgGreen, xOffset = 0)
@@ -386,7 +414,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
 
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   ## Updates the player UI with new information without redrawing the entire screen.
-  
+
   # Update Now Playing line
   setCursorPos(0, 2)
   eraseLine()
