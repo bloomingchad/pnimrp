@@ -204,7 +204,7 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
         # Add to emojiPositions.  currentY is calculated *before* adding the line.
         emojiPositions.add((emojiX, currentY))
 
-        prefix = prefix & "  " & " " # Two spaces for the emoji
+        prefix = " " & prefix
 
         # Truncate and format
         let truncatedName = truncateName(options[index], maxColumnLengths[col] - prefix.len)
