@@ -182,12 +182,12 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
       let index = row + col * itemsPerColumn
       if index < options.len:
         # Calculate the prefix for the menu option
-        let prefix =
+        var prefix =
           if index < 9: $(index + 1) & "."  # Use numbers 1-9 for the first 9 options
           else:
-            if index < MenuChars.len: $MenuChars[index] & "." & "🔵"  # A-Z + emoji
-            else: "?🔵"  # Fallback + emoji
-
+            if index < MenuChars.len: $MenuChars[index] & " " # A-Z + emoji
+            else: "?"  # Fallback
+        prefix = prefix & "🟡" & " "
         # Truncate and format
         let truncatedName = truncateName(options[index], maxColumnLengths[col] - prefix.len)
         let formattedOption = prefix & truncatedName
