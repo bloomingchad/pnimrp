@@ -284,24 +284,28 @@ footer a {
 
 /* Media Queries (Example - Add more as needed) */
 @media (max-width: 768px) {
-    .container {
-        width: 95%;
+    .navbar {
+        flex-direction: column; /* Stack navbar items vertically */
+        align-items: center; /* Center align items */
     }
 
     .nav-links {
-        flex-direction: column;
-        align-items: center;
+        flex-direction: row; /* Keep nav links horizontal */
+        flex-wrap: wrap; /* Allow wrapping if there are many items */
+        justify-content: center; /* Center align the links */
+        gap: 1rem; /* Reduce gap for smaller screens */
+    }
+
+    .nav-links a {
+        font-size: 0.9rem; /* Adjust font size for smaller screens */
     }
 
     .hero h1 {
-        font-size: 2rem;
+        font-size: 2rem; /* Adjust hero heading size */
     }
 
     .hero p {
-        font-size: 1.2rem;
-    }
-    .instructions pre{
-      margin-left: 0;
+        font-size: 1.2rem; /* Adjust hero paragraph size */
     }
 }
 
