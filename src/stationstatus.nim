@@ -4,7 +4,7 @@ import terminal, utils
 proc initStatusIndicator*(x, y: int) =
   ## Initializes the status indicator to the "checking" state (yellow circle).
   setCursorPos(x, y)
-  styledEcho(fgYellow, "🟡")
+  stdout.write("🟡")
   hideCursor()
 
 proc drawStatusIndicator*(x, y: int, status: LinkStatus) =
@@ -12,8 +12,8 @@ proc drawStatusIndicator*(x, y: int, status: LinkStatus) =
   setCursorPos(x, y)
   case status
   of lsChecking:
-    styledEcho(fgYellow, "🟡")
+    stdout.write("🟡")
   of lsValid:
-    styledEcho(fgGreen, "🟢")
+    stdout.write("🟢")
   of lsInvalid:
-    styledEcho(fgRed, "🔴")
+    stdout.write("🔴")
