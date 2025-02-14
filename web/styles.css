@@ -7,8 +7,10 @@
     --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Reset/Normalize (Add your reset/normalize CSS here) */
+
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', sans-serif, Arial, Helvetica; /* Added fallbacks */
     margin: 0;
     padding: 0;
     font-size: 1rem;
@@ -60,7 +62,7 @@ a:hover {
 }
 
 section {
-    padding: 60px 0; /* Slightly increased for spacing */
+    padding: 60px 0;
 }
 
 .container {
@@ -76,7 +78,7 @@ section {
     text-align: center;
     background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
     border-radius: 20px;
-    backdrop-filter: blur(10px); /* Minimal blur */
+    backdrop-filter: blur(10px);
 }
 
 .hero h1 {
@@ -90,7 +92,11 @@ section {
     margin-bottom: 30px;
     animation: fadeIn 2.5s ease-in-out;
 }
-
+.icon img{
+	max-width: 100%;
+	height: auto;
+	border-radius: 12px;
+}
 .screenshot img {
     max-width: 100%;
     height: auto;
@@ -140,7 +146,6 @@ section {
     gap: 30px;
 }
 
-/* Feature Card Styles (with animation) */
 .feature-card {
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
@@ -149,18 +154,16 @@ section {
     text-align: center;
     box-shadow: var(--shadow);
     will-change: transform;
-    opacity: 0; /* Initially hidden */
-    transform: translateY(20px); /* Initially moved down */
+    opacity: 0;
+    transform: translateY(20px);
     transition: opacity 1.2s ease, transform 1.2s ease, box-shadow 0.3s ease;
 }
 
-/* Hover styles for feature cards */
 .feature-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Styles for when the element is within the viewport */
 .feature-card.in-viewport {
     opacity: 1;
     transform: translateY(0);
@@ -187,7 +190,6 @@ section {
     animation: fadeIn 1.5s ease-in-out;
 }
 
-/* Installation Box Styles (with animation) */
 .instructions pre {
     background-color: rgba(255, 229, 180, 0.3);
     padding: 20px;
@@ -197,17 +199,13 @@ section {
     font-size: 1.1rem;
     margin-left: 10%;
     max-width: calc(100% - 40px);
-    opacity: 0; /* Initially hidden */
-    transform: translateY(20px); /* Initially moved down */
+    opacity: 0;
+    transform: translateY(20px);
     transition: opacity 1.2s ease, transform 1.2s ease, box-shadow 0.3s ease;
 }
-
-
-/* Hover styles for installation boxes */
 .instructions pre:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-/* Styles for when the element is within the viewport */
 .instructions pre.in-viewport {
     opacity: 1;
     transform: translateY(0);
@@ -225,15 +223,14 @@ section {
     animation: fadeIn 1.5s ease-in-out;
 }
 
-/* Video Container */
 .video-container {
     position: relative;
     width: 100%;
-    max-width: 800px; /* Adjust based on your preferred maximum size */
-    margin: 0 auto; /* Center the container */
-    border-radius: 20px; /* Rounded corners */
-    overflow: hidden; /* Ensure the GIF stays within the rounded container */
-    aspect-ratio: 16 / 9; /* Maintain a 16:9 aspect ratio (adjust as needed) */
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
   }
 
 video {
@@ -254,7 +251,7 @@ footer a {
     color: var(--primary-color);
 }
 
-  
+
   /* Responsive GIF */
   .rounded-gif {
     width: 100%;
@@ -282,5 +279,34 @@ footer a {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Media Queries (Example - Add more as needed) */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+    }
+    .instructions pre{
+      margin-left: 0;
+    }
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1400px;
     }
 }
