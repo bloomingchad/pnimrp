@@ -10,7 +10,7 @@ using str: string
 var currentTheme*: Theme
 
 # Global variable to store emoji positions.  Each tuple is (x, y).
-var emojiPositions: seq[(int, int)]
+var emojiPositions*: seq[(int, int)]
 
 proc say*(
   message: string,

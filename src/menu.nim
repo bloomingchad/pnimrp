@@ -2,7 +2,7 @@ import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
   utils, animation, json, tables, metadata,
-  scroll, random
+  scroll, random, stationstatus
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
@@ -343,6 +343,19 @@ proc handleMenu*(
     # Display the menu
     drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling))  # Pass isPlayerUI here
     hideCursor()
+
+    if isHandlingJSON(handleMenuIsHandling):
+      var stations: seq[StationStatus] = @[]
+      for i in 0..<items.len:
+        stations.add(
+          StationStatus(
+            coord: emojiPositions[i],  # From ui.nim
+            url: paths[i],             # Station URL
+            status: lsChecking         # Initial state
+          )
+        )
+
+      resolveAndDisplay(stations)  # Defined in stationstatus.nim
 
     while true:
       try:

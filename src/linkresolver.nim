@@ -3,17 +3,18 @@
 import times, random, utils, os
 
 proc resolveLinkSync*(url: string): LinkStatus =
-  ## Simulates synchronous link resolution with a delay.
-  ## Returns either lsValid or lsInvalid.
-
+  ## Simulates link resolution with 80% valid, 20% invalid ratio
   randomize()
+  
+  # Simulate delay (unchanged)
+  #let delayMs = 1000 + rand(500) - rand(500)
+  #sleep(delayMs)
+  sleep 20
 
-  # Simulate a delay between 500ms and 1500ms (1s +/- 500ms)
-  let delayMs = 1000 + rand(500) - rand(500)
-  sleep(delayMs)
-
-  # Randomly return lsValid or lsInvalid
-  if rand(1) == 0:
+  # Return lsValid for 80% of cases (80/100 = 80%)
+  if rand(99) < 80:  # 0-79 (80 values) = valid
     result = lsValid
-  else:
+  else:               # 80-99 (20 values) = invalid
     result = lsInvalid
+
+  return result
