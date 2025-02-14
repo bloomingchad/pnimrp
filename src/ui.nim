@@ -227,8 +227,8 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
 proc drawMenuEmojis() =
   ## Draws the menu emojis at the stored positions.
   for pos in emojiPositions:
-    drawStatusIndicator(pos[0], pos[1]) # Call with just x and y
-  # hideCursor() # Now handled in drawStatusIndicator
+    drawStatusIndicator(pos[0], pos[1], lsChecking) # Use lsChecking
+  # hideCursor()
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
