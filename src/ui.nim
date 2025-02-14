@@ -228,7 +228,11 @@ proc drawMenuEmojis() =
   ## Draws the menu emojis at the stored positions.
   for pos in emojiPositions:
     drawStatusIndicator(pos[0], pos[1], lsChecking) # Use lsChecking
-  # hideCursor()
+
+proc initDrawMenuEmojis() =
+  ## Draws the yellow menu emojis at the stored positions.
+  for pos in emojiPositions:
+    initStatusIndicator(pos[0], pos[1])  # Replaced drawStatusIndicator with initStatusIndicator
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
@@ -262,7 +266,7 @@ proc displayMenu*(
   let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
   renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
 
-  drawMenuEmojis() # Draw emojis *after* rendering text
+  initDrawMenuEmojis() # Draw yellow emojis *after* rendering text
 
   # Draw the separator line
   say(separatorLine, fgGreen, xOffset = 0)
