@@ -1,9 +1,5 @@
 # stationstatus.nim
-import terminal
-
-type
-  LinkStatus* = enum
-    lsChecking, lsValid, lsInvalid # Only the link states
+import terminal, utils
 
 proc drawStatusIndicator*(x, y: int, status: LinkStatus) =
   ## Draws the status indicator emoji at the specified position.
