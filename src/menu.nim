@@ -316,12 +316,22 @@ proc chooseForMeOrChooseYourself(itemsLen: int): char =
   else:
     return getch()
 
+type
+  handleMenuIsHandling = enum
+    hmIsHandlingDirectory,
+    hmIsHandlingUrl,
+    hmIsHandlingJson
+
+proc isHandlingJSON(state: handleMenuIsHandling): bool =
+  if state == hmIsHandlingJson: true else: false
+
 proc handleMenu*(
   section: string,
   items: seq[string],
   paths: seq[string],
   isMainMenu: bool = false,
-  baseDir: string = getAppDir() / "assets"
+  baseDir: string = getAppDir() / "assets",
+  handleMenuIsHandling: handleMenuIsHandling
 ) =
   ## Handles a generic menu for station selection or main category selection.
   ## Supports both directories and JSON files.
@@ -331,7 +341,7 @@ proc handleMenu*(
     drawHeader()
     
     # Display the menu
-    drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false)  # Pass isPlayerUI here
+    drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling))  # Pass isPlayerUI here
     hideCursor()
 
     while true:
@@ -357,7 +367,7 @@ proc handleMenu*(
                 warn("No station lists available in this category.")
               else:
                 # Navigate to subcategories with isMainMenu = false
-                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir)
+                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
             elif fileExists(selectedPath) and selectedPath.endsWith(".json"):
               # Handle JSON files (station lists)
               let stations = loadStationList(selectedPath)
@@ -365,7 +375,7 @@ proc handleMenu*(
                 warn("No stations available. Please check the station list.")
               else:
                 # Navigate to station list with isMainMenu = false
-                handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir)
+                handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingJSON)
             else:
               # Treat as a station URL and play directly
               let config = MenuConfig(
@@ -415,7 +425,7 @@ proc handleMenu*(
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu.
   let categories = loadCategories(baseDir)
-  handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir)
+  handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
 
 export hideCursor, error
 
