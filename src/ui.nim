@@ -247,7 +247,8 @@ proc displayMenu*(
   showReturnOption = true,
   highlightActive = true,
   isMainMenu = false,
-  isPlayerUI = false
+  isPlayerUI = false,
+  isHandlingJSON = false
 ) =
   ## Displays menu options in a formatted multi-column layout.
   updateTermWidth()
@@ -266,7 +267,7 @@ proc displayMenu*(
   let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
   renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
 
-  initDrawMenuEmojis() # Draw yellow emojis *after* rendering text
+  if isHandlingJSON: initDrawMenuEmojis() # Draw yellow emojis *after* rendering text
 
   # Draw the separator line
   say(separatorLine, fgGreen, xOffset = 0)
@@ -284,7 +285,8 @@ proc drawMenu*(
   subsection = "",
   showNowPlaying = true,
   isMainMenu = false,
-  isPlayerUI = false
+  isPlayerUI = false,
+  isHandlingJSON = false
 ) =
   ## Draws a complete menu with header and options.
   clear()
@@ -296,7 +298,7 @@ proc drawMenu*(
     for line in splitLines(options):
       say(line, fgBlue)
   else:
-    displayMenu(options, isMainMenu = isMainMenu, isPlayerUI = isPlayerUI)
+    displayMenu(options, isMainMenu = isMainMenu, isPlayerUI = isPlayerUI, isHandlingJSON = isHandlingJSON)
 
 proc showFooter*(
   lineToDraw = 4,
