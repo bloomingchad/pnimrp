@@ -44,21 +44,26 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 5px 0; /* Reduced padding further */
 }
 
 .nav-links {
     display: flex;
-    gap: 20px;
+    gap: 10px; /* Further reduced gap */
+    transition: gap 0.3s ease, flex-wrap 0.3s ease;
 }
 
 .nav-links a {
     color: var(--text-color);
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    padding: 4px 0;  /* Reduced padding further */
+    font-size: 0.95rem; /* Slightly smaller font size */
 }
 
 .nav-links a:hover {
-    color: var(--primary-color);
+	color: var(--primary-color);
 }
 
 section {
@@ -287,17 +292,19 @@ footer a {
     .navbar {
         flex-direction: column; /* Stack navbar items vertically */
         align-items: center; /* Center align items */
+        padding: 3px 0; /* Even less padding on mobile */
     }
 
     .nav-links {
         flex-direction: row; /* Keep nav links horizontal */
         flex-wrap: wrap; /* Allow wrapping if there are many items */
         justify-content: center; /* Center align the links */
-        gap: 1rem; /* Reduce gap for smaller screens */
+        gap: 0.6rem; /* Smaller gap on smaller screens */
     }
 
     .nav-links a {
-        font-size: 0.9rem; /* Adjust font size for smaller screens */
+        font-size: 0.85rem; /* Smaller font on mobile */
+        padding: 3px 0; /* Very small padding */
     }
 
     .hero h1 {
@@ -312,5 +319,27 @@ footer a {
 @media (min-width: 1400px) {
     .container {
         max-width: 1400px;
+    }
+}
+
+/* Animated Hero Text */
+.hero h1 {
+    transition: font-size 0.4s ease, margin 0.4s ease;
+}
+
+.hero p {
+    transition: font-size 0.4s ease, margin 0.4s ease;
+}
+
+/* Smooth Container Padding Transition */
+.container {
+    transition: padding 0.4s ease;
+}
+
+
+/* Add this for better mobile experience */
+@media (hover: hover) {
+    .nav-links a:hover {
+        transform: translateY(-2px);
     }
 }
