@@ -7,13 +7,13 @@ proc initStatusIndicator*(x, y: int) =
   stdout.write("🟡")
   hideCursor()
 
+proc toStatusCodeEmoji(status: LinkStatus): string =
+  case status
+  of lsValid:    "🟢"
+  of lsInvalid:  "🔴"
+  of lsChecking: "🟡"  
+
 proc drawStatusIndicator*(x, y: int, status: LinkStatus) =
   ## Draws the status indicator emoji at the specified position.
   setCursorPos(x, y)
-  case status
-  of lsChecking:
-    stdout.write("🟡")
-  of lsValid:
-    stdout.write("🟢")
-  of lsInvalid:
-    stdout.write("🔴")
+  stdout.write(status.toStatusCodeEmoji())
