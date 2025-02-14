@@ -17,3 +17,9 @@ proc drawStatusIndicator*(x, y: int, status: LinkStatus) =
   ## Draws the status indicator emoji at the specified position.
   setCursorPos(x, y)
   stdout.write(status.toStatusCodeEmoji())
+
+type
+  StationResolverCouple* = object
+    coordOfEmoji*: tuple[x, y: int]  # Emoji's terminal coordinates
+    statusCode*: LinkStatus          # Current link status (lsChecking, lsValid, lsInvalid)
+    url*: string                     # Station URL to resolve
