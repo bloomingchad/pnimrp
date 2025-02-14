@@ -2,7 +2,7 @@ import
   terminal, client, random,
   json, strutils, os, times,
   strformat, animation, utils,
-  theme, scroll
+  theme, scroll, stationstatus # Import the new module
 
 using str: string
 
@@ -227,9 +227,8 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
 proc drawMenuEmojis() =
   ## Draws the menu emojis at the stored positions.
   for pos in emojiPositions:
-    setCursorPos(pos[0], pos[1])
-    styledEcho(fgYellow, "🟡")
-  hideCursor()
+    drawStatusIndicator(pos[0], pos[1]) # Call with just x and y
+  # hideCursor() # Now handled in drawStatusIndicator
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
