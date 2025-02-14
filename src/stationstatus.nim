@@ -5,7 +5,6 @@ proc initStatusIndicator*(x, y: int) =
   ## Initializes the status indicator to the "checking" state (yellow circle).
   setCursorPos(x, y)
   stdout.write("🟡")
-  hideCursor()
 
 proc toStatusCodeEmoji(status: LinkStatus): string =
   case status
