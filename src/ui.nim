@@ -268,7 +268,7 @@ proc displayMenu*(
   renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
 
   if isHandlingJSON: initDrawMenuEmojis() # Draw yellow emojis *after* rendering text
-
+  echo ""
   # Draw the separator line
   say(separatorLine, fgGreen, xOffset = 0)
 
