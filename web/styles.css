@@ -261,7 +261,7 @@ footer a {
 .rounded-gif {
     width: 100%;
     height: auto;
-    object-fit: cover; /* Prevent distortion */
+    object-fit: contain;
     border-radius: 20px; /* Rounded corners */
     display: block; /* Ensure it behaves as a block element */
 }
