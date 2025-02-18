@@ -22,26 +22,22 @@ type
     coord*: (int, int)            # (x, y) from emojiPositions
     url*: string
     status*: LinkStatus           # lsChecking/lsValid/lsInvalid
+    future*: Future[LinkStatus]
+
+proc checkAndDraw(station: StationStatus) {.async.} =
+  station.future = resolveLink(station.url)  # Store future
+  station.status = await station.future      # Wait only THIS station's check
+  drawStatusIndicator(station.coord[0], station.coord[1], station.status)
+  stdout.flushFile()
+    #flush to actually send the written stdout to stdout
+    #this gives us immediate status display effect
 
 proc resolveAndDisplay*(stations: seq[StationStatus]) {.async.} =
-  ## Processes stations asynchronously:
-  ## 1. Launches all link checks async
-  ## 2. Waits till all end
-  ## 3. Draws emoji for each station
-  var futures = newSeq[Future[LinkStatus]](stations.len)
-
-  # Launch all link checks async
-  for i in 0..<stations.len:
-    futures[i] = resolveLink(stations[i].url)
-
-  # Wait for all futures to complete
-  let results = await all(futures)
-
-  # Update statuses and draw emojis
-  for i in 0..<stations.len:
-    stations[i].status = results[i]  # Using results directly
-    drawStatusIndicator(
-      stations[i].coord[0],  # x
-      stations[i].coord[1],  # y
-      stations[i].status
-    )
+  ## Asynchronously resolves and displays status for each station independently.
+  ## Each station's status will update as soon as its check completes.
+  var allChecks: seq[Future[void]] = @[]
+  
+  for station in stations:
+    allChecks.add(checkAndDraw(station))
+    
+  await all(allChecks)  # Wait for all checks to complete before returning
