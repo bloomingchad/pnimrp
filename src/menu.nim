@@ -355,7 +355,7 @@ proc handleMenu*(
           )
         )
 
-      resolveAndDisplay(stations)  # Defined in stationstatus.nim
+      discard resolveAndDisplay(stations)  # Defined in stationstatus.nim
 
     while true:
       try:
