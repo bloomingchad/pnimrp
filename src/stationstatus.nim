@@ -13,11 +13,9 @@ proc toStatusCodeEmoji(status: LinkStatus): string =
 
 proc drawStatusIndicator*(x, y: int, status: LinkStatus) =
   ## Draws without moving global cursor
-  let prevPos = getCursorPos()
   setCursorPos(x, y)
   let statusEmoji = toStatusCodeEmoji(status)
   stdout.write(statusEmoji)
-  setCursorPos(prevPos.x, prevPos.y)  # Restore original position
 
 type
   StationStatus* = ref object     # Changed to ref object for safe capture
