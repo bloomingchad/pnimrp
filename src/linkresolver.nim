@@ -6,10 +6,9 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
   ## Simulates link resolution with 80% valid, 20% invalid ratio
   randomize()
   
-  # Simulate delay (unchanged)
-  #let delayMs = 1000 + rand(500) - rand(500)
-  #sleep(delayMs)
-  await sleepAsync 20
+  # Simulate delay
+  let delayMs = 1000 + rand(500) - rand(500)
+  await sleepAsync(delayMs)
 
   # Return lsValid for 80% of cases (80/100 = 80%)
   if rand(99) < 80:  # 0-79 (80 values) = valid
