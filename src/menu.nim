@@ -2,7 +2,7 @@ import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
   utils, animation, json, tables, metadata,
-  scroll, random, stationstatus
+  scroll, random, stationstatus, asyncdispatch
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
@@ -355,7 +355,7 @@ proc handleMenu*(
           )
         )
 
-      discard resolveAndDisplay(stations)  # Defined in stationstatus.nim
+      waitFor resolveAndDisplay(stations)  # Defined in stationstatus.nim
 
     while true:
       try:
