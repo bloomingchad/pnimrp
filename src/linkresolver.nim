@@ -2,7 +2,7 @@
 
 import times, random, utils, os, asyncdispatch
 
-proc resolveLinkSync*(url: string): Future[LinkStatus] {.async.} =
+proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
   ## Simulates link resolution with 80% valid, 20% invalid ratio
   randomize()
   
@@ -16,5 +16,3 @@ proc resolveLinkSync*(url: string): Future[LinkStatus] {.async.} =
     result = lsValid
   else:               # 80-99 (20 values) = invalid
     result = lsInvalid
-
-  return result
