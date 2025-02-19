@@ -2,12 +2,15 @@ import
   terminal, client, random,
   json, strutils, os, times,
   strformat, animation, utils,
-  theme, scroll
+  theme, scroll, stationstatus # Import the new module
 
 using str: string
 
 # Global variable to hold the current theme
 var currentTheme*: Theme
+
+# Global variable to store emoji positions.  Each tuple is (x, y).
+var emojiPositions*: seq[(int, int)]
 
 proc say*(
   message: string,
@@ -119,11 +122,9 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   for i in 0 ..< options.len:
     let columnIndex = i div itemsPerColumn
     let prefix =
-      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
-      else:
-        if i < MenuChars.len: $MenuChars[i] & "."  # Use A-Z for the next options
-        else: "?"  # Fallback
-    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
+      if i < 9: $(i + 1) & "."
+      else: $MenuChars[i] & "."
+    let itemLength = prefix.len + 1 + options[i].len # +1 for emoji/space
     if itemLength > maxColumnLengths[columnIndex]:
       maxColumnLengths[columnIndex] = itemLength
 
@@ -146,18 +147,19 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
 
   # Check if we have enough space even with the minimum spacing
   if spacing < minSpacing:
-    # Aggressively truncate station names to fit within the terminal width
+    # Calculate maxAllowedLength *outside* the loop.  This gives it a type.
+    var maxAllowedLength: int
     for i in 0 ..< maxColumnLengths.len:
-      let maxAllowedLength = (termWidth div numColumns - spacing) - 2  # Additional bias
+      # *Assign* to maxAllowedLength inside the loop.
+      maxAllowedLength = (termWidth div numColumns - spacing) - 3  # Bias
       if maxColumnLengths[i] > maxAllowedLength:
         maxColumnLengths[i] = maxAllowedLength
 
   return (numColumns, maxColumnLengths, spacing)
-
 var lastTermWidth = termWidth  # Track the last terminal width
 
 proc updateTermWidth* =
-  ## Updates the terminal width only if it has changed significantly.
+  ## Updates the terminal width if it has changed significantly.
   let newWidth = terminalWidth()
   if abs(newWidth - lastTermWidth) >= 5:  # Only update if the change is significant
     termWidth = newWidth
@@ -166,6 +168,7 @@ proc updateTermWidth* =
 proc renderMenuOptions(options: MenuOptions, numColumns: int,
     maxColumnLengths: seq[int], spacing: int) =
   ## Renders the menu options in a multi-column layout.
+  emojiPositions = @[]  # Clear previous positions
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
   # Wait for the terminal width to stabilize
@@ -177,39 +180,64 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
     else:
       sleep(100)  # Wait for 100ms before checking again
 
+  var currentY = 5  # Starting Y coordinate (after header and category title)
+
   for row in 0 ..< itemsPerColumn:
     var currentLine = ""
     for col in 0 ..< numColumns:
       let index = row + col * itemsPerColumn
       if index < options.len:
         # Calculate the prefix for the menu option
-        let prefix =
-          if index < 9: $(index + 1) & "."  # Use numbers 1-9 for the first 9 options
+        var prefix =
+          if index < 9: $(index + 1) & "."  # Use numbers 1-9
           else:
-            if index < MenuChars.len: $MenuChars[index] & "."  # Use A-Z for the next options
+            if index < MenuChars.len: $MenuChars[index] & "."  # Use A-Z
             else: "?"  # Fallback
 
-        # Truncate the station name if necessary
-        let truncatedName = truncateName(options[index], maxColumnLengths[col] - prefix.len - 1)
-        let formattedOption = prefix & " " & truncatedName
+        # Calculate X position for the emoji
+        var emojiX = 0
+        for i in 0..<col:
+          emojiX += maxColumnLengths[i] + spacing
+
+        emojiX += prefix.len + 1 # +1 for the space after the number/letter
+
+        # Add to emojiPositions.  currentY is calculated *before* adding the line.
+        emojiPositions.add((emojiX, currentY))
+
+        prefix = " " & prefix
+
+        # Truncate and format
+        let truncatedName = truncateName(options[index], maxColumnLengths[col] - prefix.len)
+        let formattedOption = prefix & truncatedName
         let padding = maxColumnLengths[col] - formattedOption.len
         currentLine.add(formattedOption & " ".repeat(padding))
+
       else:
-        # Add empty space if there are no more items in this column
+        # Add empty space
         currentLine.add(" ".repeat(maxColumnLengths[col]))
 
-      # Add spacing between columns (dynamic spacing)
+      # Add spacing between columns
       if col < numColumns - 1:
         currentLine.add(" ".repeat(spacing))
 
     # Render the line
     say(currentLine, fgBlue)
+    currentY += 1  # Increment Y *after* drawing the line
+
+proc drawMenuEmojis() =
+  ## Draws the menu emojis at the stored positions.
+  for pos in emojiPositions:
+    drawStatusIndicator(pos[0], pos[1], lsChecking) # Use lsChecking
+
+proc initDrawMenuEmojis() =
+  ## Draws the yellow menu emojis at the stored positions.
+  for pos in emojiPositions:
+    drawStatusIndicator(pos[0], pos[1], isInitial = true)
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
-  ## Returns the footer options based on the context (main menu or submenu).
-  #echo "DEBUG: getFooterOptions - isMainMenu = ", isMainMenu, ", isPlayerUI = ", isPlayerUI  # Debug log
+  ## Returns footer options string based on context (main menu/submenu/player).
   result =
-    if isMainMenu: "[Q] Quit | N] Notes | [U] Help | [S] ChooseForMe"
+    if isMainMenu: "[Q] Quit | [N] Notes | [U] Help | [S] ChooseForMe"
     elif isPlayerUI:
       "[Q] Quit | [R] Return | [P] Pause/Play | [-/+] Vol | [L] Like"
     else: "[Q] Quit | [R] Return | [U] Help | [S] ChooseForMe"
@@ -219,42 +247,62 @@ proc displayMenu*(
   showReturnOption = true,
   highlightActive = true,
   isMainMenu = false,
-  isPlayerUI = false  # Add this parameter
+  isPlayerUI = false,
+  isHandlingJSON = false
 ) =
   ## Displays menu options in a formatted multi-column layout.
   updateTermWidth()
 
   var options = options
 
+  # 1. Initialization
+  var currentY = 1  # Start at the top
+
   # Draw the "Station Categories" section header
   let categoriesHeader = "         📻 Station Categories 📻"
   say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
+  currentY += 1  # Increment after header
 
   # Draw the separator line
   let separatorLine = "-".repeat(termWidth)
   say(separatorLine, fgGreen, xOffset = 0)
+  currentY += 1  # Increment after separator
 
   # Calculate column layout and render menu options
   let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
   renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
 
+  # 3. Counting Rows (after rendering)
+  let itemsPerColumn = (options.len + numColumns - 1) div numColumns
+  currentY += itemsPerColumn
+
+  if isHandlingJSON: initDrawMenuEmojis() # Draw yellow emojis *after* rendering text
+  echo ""
+  currentY += 1 # Increment after the empty line
+  # 4. Tracking the Separator's Y
+  # footerSeparatorLineY = currentY  # Store the Y position *before* drawing
+  lastMenuSeparatorY = currentY # Store the Y position *before* drawing, renamed variable
   # Draw the separator line
   say(separatorLine, fgGreen, xOffset = 0)
+  currentY += 1 #increment after second separator
 
   # Display the footer options
   let footerOptions = getFooterOptions(isMainMenu, isPlayerUI)  # Pass isPlayerUI here
   say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+  currentY += 1
 
   # Draw the bottom border
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
-
+  currentY += 1 #we are not tracking this, but it's good practice
+ 
 proc drawMenu*(
   section: string,
   options: string | MenuOptions,
   subsection = "",
   showNowPlaying = true,
   isMainMenu = false,
-  isPlayerUI = false  # Add this parameter
+  isPlayerUI = false,
+  isHandlingJSON = false
 ) =
   ## Draws a complete menu with header and options.
   clear()
@@ -266,7 +314,7 @@ proc drawMenu*(
     for line in splitLines(options):
       say(line, fgBlue)
   else:
-    displayMenu(options, isMainMenu = isMainMenu, isPlayerUI = isPlayerUI)
+    displayMenu(options, isMainMenu = isMainMenu, isPlayerUI = isPlayerUI, isHandlingJSON = isHandlingJSON)
 
 proc showFooter*(
   lineToDraw = 4,
@@ -378,7 +426,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
 
   # Display footer options
   setCursorPos(0, 5)  # Line 5
-  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"  # Matched old format
+  let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"
   say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
 
   # Draw the bottom border
@@ -387,7 +435,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
 
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   ## Updates the player UI with new information without redrawing the entire screen.
-  
+
   # Update Now Playing line
   setCursorPos(0, 2)
   eraseLine()
