@@ -6,6 +6,9 @@ import
 
 from net import TimeoutError
 
+const
+  ResolveTimeout = 5000  # Timeout in milliseconds (5 seconds)
+
 proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
   var finalUrl = url
   if not finalUrl.startsWith("http://") and not finalUrl.startsWith("https://"):
@@ -25,9 +28,16 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
     if domain == "":
       raise newException(LinkCheckError, "Invalid domain")
 
-    # Attempt asynchronous connection
+    # Attempt asynchronous connection with timeout
     var socket = newAsyncSocket()
-    await socket.connect(domain, port)
+    let connectFuture = socket.connect(domain, port)
+    let completed = await connectFuture.withTimeout(ResolveTimeout)
+
+    if not completed:
+      result = lsInvalid
+      #error("TimeoutError: Connection timed out for URL: " & url)
+      return
+
     socket.close()
 
     # Return validation result
@@ -35,10 +45,7 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
 
   except IOError as e:
     result = lsInvalid
-    error("IOError: " & e.msg)
-  except TimeoutError as e:
-    result = lsInvalid
-    error("TimeoutError: " & e.msg)
+    #error("IOError: " & e.msg)
   except:
     result = lsInvalid
-    error("Unexpected error: " & getCurrentExceptionMsg())
+    #error("Unexpected error: " & getCurrentExceptionMsg())
