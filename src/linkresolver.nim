@@ -9,6 +9,13 @@ from net import TimeoutError
 const
   ResolveTimeout = 5000  # Timeout in milliseconds (5 seconds)
 
+proc connectSocket(domain: string, port: Port): Future[bool] {.async.} =
+  var socket = newAsyncSocket()
+  let connectFuture = socket.connect(domain, port)
+  let completed = await connectFuture.withTimeout(ResolveTimeout)
+  socket.close()
+  return completed
+
 proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
   var finalUrl = url
   if not finalUrl.startsWith("http://") and not finalUrl.startsWith("https://"):
@@ -29,16 +36,11 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
       raise newException(LinkCheckError, "Invalid domain")
 
     # Attempt asynchronous connection with timeout
-    var socket = newAsyncSocket()
-    let connectFuture = socket.connect(domain, port)
-    let completed = await connectFuture.withTimeout(ResolveTimeout)
-
-    if not completed:
+    let connected = await connectSocket(domain, port)
+    if not connected:
       result = lsInvalid
       #error("TimeoutError: Connection timed out for URL: " & url)
       return
-
-    socket.close()
 
     # Return validation result
     result = lsValid
