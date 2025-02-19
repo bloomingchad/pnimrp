@@ -1,10 +1,5 @@
 import terminal, utils, linkresolver, asyncdispatch, os
 
-proc initStatusIndicator*(x, y: int) =
-  ## Initializes the status indicator to the "checking" state (yellow circle).
-  setCursorPos(x, y)
-  stdout.write("🟡")
-
 proc initCheckingStationNotice* =
   setCursorPos(2, lastMenuSeparatorY + 4)
   stdout.write "Checking stations... Please Wait"
@@ -19,12 +14,12 @@ proc toStatusCodeEmoji(status: LinkStatus): string =
   case status
   of lsValid:    "🟢"
   of lsInvalid:  "🔴"
-  of lsChecking: "🟡"  
+  of lsChecking: "🟡"
 
-proc drawStatusIndicator*(x, y: int, status: LinkStatus) =
-  ## Draws without moving global cursor
+# Combine similar status indicator functions
+proc drawStatusIndicator*(x, y: int, status = lsChecking, isInitial = false) =
   setCursorPos(x, y)
-  let statusEmoji = toStatusCodeEmoji(status)
+  let statusEmoji = if isInitial: "🟡" else: toStatusCodeEmoji(status)
   stdout.write(statusEmoji)
 
 type
