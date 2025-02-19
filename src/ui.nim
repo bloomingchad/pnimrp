@@ -232,7 +232,7 @@ proc drawMenuEmojis() =
 proc initDrawMenuEmojis() =
   ## Draws the yellow menu emojis at the stored positions.
   for pos in emojiPositions:
-    initStatusIndicator(pos[0], pos[1])  # Replaced drawStatusIndicator with initStatusIndicator
+    drawStatusIndicator(pos[0], pos[1], isInitial = true)
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
