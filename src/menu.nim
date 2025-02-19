@@ -2,7 +2,7 @@ import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
   utils, animation, json, tables, metadata,
-  scroll, random
+  scroll, random, stationstatus, asyncdispatch
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues
@@ -316,12 +316,22 @@ proc chooseForMeOrChooseYourself(itemsLen: int): char =
   else:
     return getch()
 
+type
+  handleMenuIsHandling = enum
+    hmIsHandlingDirectory,
+    hmIsHandlingUrl,
+    hmIsHandlingJson
+
+proc isHandlingJSON(state: handleMenuIsHandling): bool =
+  if state == hmIsHandlingJson: true else: false
+
 proc handleMenu*(
   section: string,
   items: seq[string],
   paths: seq[string],
   isMainMenu: bool = false,
-  baseDir: string = getAppDir() / "assets"
+  baseDir: string = getAppDir() / "assets",
+  handleMenuIsHandling: handleMenuIsHandling
 ) =
   ## Handles a generic menu for station selection or main category selection.
   ## Supports both directories and JSON files.
@@ -331,8 +341,24 @@ proc handleMenu*(
     drawHeader()
     
     # Display the menu
-    drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false)  # Pass isPlayerUI here
+    drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling))  # Pass isPlayerUI here
     hideCursor()
+
+    if isHandlingJSON(handleMenuIsHandling):
+      initCheckingStationNotice()
+      var stations: seq[StationStatus] = @[]
+      for i in 0..<items.len:
+        stations.add(
+          StationStatus(
+            coord: emojiPositions[i],  # From ui.nim
+            url: paths[i],             # Station URL
+            status: lsChecking         # Initial state
+          )
+        )
+
+      waitFor resolveAndDisplay(stations)  # Defined in stationstatus.nim
+
+      finishCheckingStationNotice()
 
     while true:
       try:
@@ -357,7 +383,7 @@ proc handleMenu*(
                 warn("No station lists available in this category.")
               else:
                 # Navigate to subcategories with isMainMenu = false
-                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir)
+                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
             elif fileExists(selectedPath) and selectedPath.endsWith(".json"):
               # Handle JSON files (station lists)
               let stations = loadStationList(selectedPath)
@@ -365,7 +391,7 @@ proc handleMenu*(
                 warn("No stations available. Please check the station list.")
               else:
                 # Navigate to station list with isMainMenu = false
-                handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir)
+                handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingJSON)
             else:
               # Treat as a station URL and play directly
               let config = MenuConfig(
@@ -415,7 +441,7 @@ proc handleMenu*(
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu.
   let categories = loadCategories(baseDir)
-  handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir)
+  handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
 
 export hideCursor, error
 
