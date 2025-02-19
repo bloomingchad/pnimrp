@@ -1,17 +1,34 @@
 # linkresolver.nim
 
-import times, random, utils, os, asyncdispatch
+import
+  times, utils, os, asyncdispatch,
+  asyncnet, strutils, uri, utils, link
 
 proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
-  ## Simulates link resolution with 80% valid, 20% invalid ratio
-  randomize()
-  
-  # Simulate delay
-  let delayMs = 1000 + rand(500) - rand(500)
-  await sleepAsync(delayMs)
+  var finalUrl = url
+  if not finalUrl.startsWith("http://") and not finalUrl.startsWith("https://"):
+    finalUrl = "http://" & finalUrl  # Default to HTTP if no protocol is specified
 
-  # Return lsValid for 80% of cases (80/100 = 80%)
-  if rand(99) < 80:  # 0-79 (80 values) = valid
+  try:
+    # Parse the URL
+    let uri = parseUri(finalUrl)
+    let protocol = if uri.scheme == "": "http" else: uri.scheme
+    let domain = uri.hostname
+    let port = Port(
+      if uri.port == "":
+        if protocol == "https": 443 else: 80
+        else: parseInt(uri.port)
+    )
+
+    if domain == "":
+      raise newException(LinkCheckError, "Invalid domain")
+
+    # Attempt asynchronous connection
+    var socket = newAsyncSocket()
+    await socket.connect(domain, port)
+    socket.close()
+
+    # Return validation result
     result = lsValid
-  else:               # 80-99 (20 values) = invalid
+  except:
     result = lsInvalid
