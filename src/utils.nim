@@ -15,6 +15,10 @@ type
 
   MenuOptions* = seq[string]
 
+type
+  LinkStatus* = enum
+    lsChecking, lsValid, lsInvalid
+
 const
   MenuChars* = @[
     '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -29,6 +33,7 @@ const
   MaxStationNameLength* = 22
 
 var termWidth* = terminalWidth()  ## Tracks the current terminal width.
+var lastMenuSeparatorY* {.global.}: int
 
 proc error*(message: string) =
   ## Displays an error message and exits the program.
