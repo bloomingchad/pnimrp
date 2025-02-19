@@ -4,6 +4,8 @@ import
   times, utils, os, asyncdispatch,
   asyncnet, strutils, uri, utils, link
 
+from net import TimeoutError
+
 proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
   var finalUrl = url
   if not finalUrl.startsWith("http://") and not finalUrl.startsWith("https://"):
@@ -30,5 +32,13 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
 
     # Return validation result
     result = lsValid
+
+  except IOError as e:
+    result = lsInvalid
+    error("IOError: " & e.msg)
+  except TimeoutError as e:
+    result = lsInvalid
+    error("TimeoutError: " & e.msg)
   except:
     result = lsInvalid
+    error("Unexpected error: " & getCurrentExceptionMsg())
