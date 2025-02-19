@@ -255,30 +255,46 @@ proc displayMenu*(
 
   var options = options
 
+  # 1. Initialization
+  var currentY = 1  # Start at the top
+
   # Draw the "Station Categories" section header
   let categoriesHeader = "         📻 Station Categories 📻"
   say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
+  currentY += 1  # Increment after header
 
   # Draw the separator line
   let separatorLine = "-".repeat(termWidth)
   say(separatorLine, fgGreen, xOffset = 0)
+  currentY += 1  # Increment after separator
 
   # Calculate column layout and render menu options
   let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
   renderMenuOptions(options, numColumns, maxColumnLengths, spacing)
 
+  # 3. Counting Rows (after rendering)
+  let itemsPerColumn = (options.len + numColumns - 1) div numColumns
+  currentY += itemsPerColumn
+
   if isHandlingJSON: initDrawMenuEmojis() # Draw yellow emojis *after* rendering text
   echo ""
+  currentY += 1 # Increment after the empty line
+  # 4. Tracking the Separator's Y
+  # footerSeparatorLineY = currentY  # Store the Y position *before* drawing
+  lastMenuSeparatorY = currentY # Store the Y position *before* drawing, renamed variable
   # Draw the separator line
   say(separatorLine, fgGreen, xOffset = 0)
+  currentY += 1 #increment after second separator
 
   # Display the footer options
   let footerOptions = getFooterOptions(isMainMenu, isPlayerUI)  # Pass isPlayerUI here
   say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
+  currentY += 1
 
   # Draw the bottom border
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
-
+  currentY += 1 #we are not tracking this, but it's good practice
+ 
 proc drawMenu*(
   section: string,
   options: string | MenuOptions,

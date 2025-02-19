@@ -5,6 +5,16 @@ proc initStatusIndicator*(x, y: int) =
   setCursorPos(x, y)
   stdout.write("🟡")
 
+proc initCheckingStationNotice* =
+  setCursorPos(2, lastMenuSeparatorY + 4)
+  stdout.write "Checking stations... Please Wait"
+  flushFile stdout
+
+proc finishCheckingStationNotice* = 
+  setCursorPos 2, lastMenuSeparatorY + 4
+  eraseLine()
+  lastMenuSeparatorY = 0
+
 proc toStatusCodeEmoji(status: LinkStatus): string =
   case status
   of lsValid:    "🟢"

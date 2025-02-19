@@ -38,6 +38,7 @@ const
   MaxStationNameLength* = 22
 
 var termWidth* = terminalWidth()  ## Tracks the current terminal width.
+var lastMenuSeparatorY* {.global.}: int
 
 proc error*(message: string) =
   ## Displays an error message and exits the program.
