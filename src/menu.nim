@@ -345,6 +345,7 @@ proc handleMenu*(
     hideCursor()
 
     if isHandlingJSON(handleMenuIsHandling):
+      initCheckingStationNotice()
       var stations: seq[StationStatus] = @[]
       for i in 0..<items.len:
         stations.add(
@@ -356,6 +357,8 @@ proc handleMenu*(
         )
 
       waitFor resolveAndDisplay(stations)  # Defined in stationstatus.nim
+
+      finishCheckingStationNotice()
 
     while true:
       try:
