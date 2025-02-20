@@ -1,3 +1,5 @@
+# metadata.nim
+
 import os, client, tables, strutils
 
 type

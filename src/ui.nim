@@ -1,3 +1,5 @@
+# ui.nim
+
 import
   terminal, client, random,
   json, strutils, os, times,

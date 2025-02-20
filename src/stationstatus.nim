@@ -1,3 +1,5 @@
+# stationstatus.nim
+
 import terminal, utils, linkresolver, asyncdispatch, os
 
 proc initCheckingStationNotice* =

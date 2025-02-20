@@ -1,3 +1,5 @@
+# scroll.nim
+
 import illwill, times, os, strutils, terminal
 
 var

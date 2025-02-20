@@ -1,3 +1,5 @@
+# theme.nim
+
 import
   json, strutils, os,
   terminal, tables

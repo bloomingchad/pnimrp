@@ -1,3 +1,5 @@
+# client.nim
+
 ##[
 This module binds libmpv's client.h which is used to play streams.
 

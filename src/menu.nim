@@ -1,3 +1,5 @@
+# menu.nim
+
 import
   terminal, os, ui, strutils, times,
   client, net, player, link, illwill,
