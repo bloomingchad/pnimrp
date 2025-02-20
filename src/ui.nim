@@ -11,20 +11,6 @@ using str: string
 # Global variable to hold the current theme
 var currentTheme*: Theme
 
-when defined(simple):
-  currentTheme = Theme(
-    header: fgYellow,
-    separator: fgGreen,
-    menu: fgBlue,
-    footer: fgYellow,
-    error: fgRed,
-    warning: fgYellow,
-    success: fgGreen,
-    nowPlaying: fgCyan,
-    volumeLow: fgBlue,
-    volumeMedium: fgGreen,
-    volumeHigh: fgRed
-  )
 # Global variable to store emoji positions.  Each tuple is (x, y).
 var emojiPositions*: seq[(int, int)]
 

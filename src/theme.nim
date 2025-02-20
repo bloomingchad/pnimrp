@@ -1,26 +1,7 @@
 # theme.nim
 
 import
-  json, strutils, os,
-  terminal, tables
-
-type
-  Theme* = object
-    header*: ForegroundColor
-    separator*: ForegroundColor
-    menu*: ForegroundColor
-    footer*: ForegroundColor
-    error*: ForegroundColor
-    warning*: ForegroundColor
-    success*: ForegroundColor
-    nowPlaying*: ForegroundColor
-    volumeLow*: ForegroundColor
-    volumeMedium*: ForegroundColor
-    volumeHigh*: ForegroundColor
-
-  ThemeConfig* = object
-    themes*: Table[string, Theme]
-    currentTheme*: string
+  json, strutils, os, terminal, utils, tables
 
 proc loadThemeConfig*(configPath: string): ThemeConfig =
   ## Loads the theme configuration from the specified JSON file.

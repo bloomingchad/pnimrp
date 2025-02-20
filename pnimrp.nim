@@ -1,9 +1,12 @@
 # pnimrp.nim
 
 import
-  os, src/[menu, ui, illwill,
-  theme], terminal, strformat,
+  os, src/[menu, ui, illwill, utils],
+  terminal, strformat,
   std/exitprocs
+
+when not defined(simple):
+  import src/theme
 
 type
   AppConfig = object
@@ -60,9 +63,25 @@ proc main() =
     addExitProc(cleanup)
 
     # Load theme configuration
-    let configPath = getAppDir() / "assets" / "config" / "themes.json"
-    var themeConfig = loadThemeConfig(configPath)
-    currentTheme = getCurrentTheme(themeConfig)
+    when not defined(simple):
+      let configPath = getAppDir() / "assets" / "config" / "themes.json"
+      var themeConfig = loadThemeConfig(configPath)
+      currentTheme = getCurrentTheme(themeConfig)
+
+    else:
+      currentTheme = Theme(
+        header: fgYellow,
+        separator: fgGreen,
+        menu: fgBlue,
+        footer: fgYellow,
+        error: fgRed,
+        warning: fgYellow,
+        success: fgGreen,
+        nowPlaying: fgCyan,
+        volumeLow: fgBlue,
+        volumeMedium: fgGreen,
+        volumeHigh: fgRed
+      )
 
     # Validate the environment and initialize configuration
     validateEnvironment()
