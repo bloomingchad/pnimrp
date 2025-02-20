@@ -1,3 +1,5 @@
+# pnimrp.nim
+
 import
   os, src/[menu, ui, illwill,
   theme], terminal, strformat,

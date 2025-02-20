@@ -1,3 +1,5 @@
+# animation.nim
+
 import times
 
 type
