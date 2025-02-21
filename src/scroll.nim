@@ -1,6 +1,6 @@
 # scroll.nim
 
-import illwill, times, os, strutils, terminal
+import illwill, strutils, terminal
 
 var
   scrollOffset* = 0

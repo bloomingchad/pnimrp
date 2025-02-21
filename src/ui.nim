@@ -1,10 +1,9 @@
 # ui.nim
 
 import
-  terminal, client, random,
-  json, strutils, os, times,
-  strformat, animation, utils,
-  theme, scroll, stationstatus # Import the new module
+  terminal, client, random, os,
+  strutils, times, animation,
+  utils, theme, scroll, stationstatus
 
 using str: string
 

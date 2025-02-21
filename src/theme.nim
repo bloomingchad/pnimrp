@@ -1,7 +1,7 @@
 # theme.nim
 
 import
-  json, strutils, os,
+  json, strutils,
   terminal, tables
 
 type
@@ -91,7 +91,7 @@ proc setCurrentTheme*(config: var ThemeConfig, themeName: string) =
 
 # Unit tests for theme.nim
 when isMainModule:
-  import unittest
+  import unittest, os
 
   suite "Theme Tests":
     test "loadThemeConfig":

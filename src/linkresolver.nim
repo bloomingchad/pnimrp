@@ -1,8 +1,8 @@
 # linkresolver.nim
 
 import
-  times, utils, os, asyncdispatch,
-  asyncnet, strutils, uri, utils, link
+  times, utils, asyncdispatch,
+  asyncnet, strutils, uri, link
 
 from net import TimeoutError
 
@@ -45,7 +45,7 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
     # Return validation result
     result = lsValid
 
-  except IOError as e:
+  except IOError: #as e:
     result = lsInvalid
     #error("IOError: " & e.msg)
   except:
