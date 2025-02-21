@@ -1,10 +1,11 @@
 # menu.nim
 
 import
-  terminal, os, ui, strutils, times,
-  client, net, player, link, illwill,
-  utils, animation, json, tables, metadata,
-  scroll, random, stationstatus, asyncdispatch
+  terminal, os, ui, strutils, client,
+  net, player, link, illwill, utils,
+  animation, json, tables, metadata,
+  scroll, random, stationstatus,
+  asyncdispatch
 
 type
   MenuError* = object of CatchableError  # Custom error type for menu-related issues

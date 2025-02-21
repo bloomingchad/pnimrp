@@ -1,6 +1,6 @@
 # player.nim
 
-import client, utils, terminal, os
+import client, terminal
 export cE  # Export the error-checking macro for external use
 
 type

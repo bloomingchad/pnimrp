@@ -1,6 +1,6 @@
 # metadata.nim
 
-import os, client, tables, strutils
+import client, tables, strutils
 
 type
   MpvError* = object of CatchableError
@@ -150,15 +150,14 @@ proc collectMetadata(iter: var NodeListIterator,
   return metadataTable
 
 proc metadata*(ctx: ptr client.Handle): Table[string, string] =
-  var result: client.Node
-  ce(client.getProperty(ctx, "metadata", client.fmtNode, addr result))
+  var dataNode: client.Node
+  ce(client.getProperty(ctx, "metadata", client.fmtNode, addr dataNode))
 
   var metadataTable = initTable[string, string]()
-  if validateNodeList(result.u.list):
-    var iter = initNodeListIterator(result.u.list)
+  if validateNodeList(dataNode.u.list):
+    var iter = initNodeListIterator(dataNode.u.list)
     metadataTable = collectMetadata(iter)
   else:
     echo "Warning: Invalid metadata list received"
 
-  client.freeNodeContents(addr result)
-  return metadataTable
+  return metadataTable  client.freeNodeContents(addr dataNode)

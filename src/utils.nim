@@ -2,7 +2,7 @@
 
 import
   json, strutils, os, terminal,
-  sequtils, strformat, times, player
+  strformat, player
 
 type
   QuoteData* = object
