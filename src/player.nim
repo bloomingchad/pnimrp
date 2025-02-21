@@ -39,6 +39,8 @@ proc init*(ctx: ptr Handle, source: string) {.raises: [PlayerError].} =
 
     var oscEnabled = cint(1)
     cE ctx.setOption("osc", fmtFlag, addr oscEnabled)
+    cE(ctx.setOptionString("input-default-bindings", "no"))
+    cE(ctx.setOptionString("input-vo-keyboard", "no"))
     cE ctx.setPropertyString("vid", "no")
     cE initialize(ctx)
     cE ctx.cmd(fileArgs)
