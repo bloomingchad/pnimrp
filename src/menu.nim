@@ -77,6 +77,19 @@ proc cleanupPlayer(ctx: ptr Handle) =
   ctx.terminateDestroy()
   illwillDeinit()
 
+proc updateMetadataUI(config: MenuConfig, ctx: ptr Handle, state: PlayerState): Table[string, string] =
+  ## Updates and returns the metadata for the current station.
+  result = metadata(ctx)
+  var goingDown: uint8
+  if result.len > 0:
+    cursorDown 6
+    for key, value in result:
+      if (value == "") or (key.contains("title")) : continue
+      styledEcho fgCyan, "  " & key & ": '" & value.truncateMe() & "'"
+      goingDown += 1
+    cursorUp int(goingDown)
+    cursorUp 6
+
 proc playStation(config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
   var ctx: ptr Handle = nil
@@ -104,6 +117,7 @@ proc playStation(config: MenuConfig) =
     var lastWidth: int = 0
     var scrollCounter: int = 0
     var fullTitle: string # Declare fullTitle here
+    var metadata: Table[string, string] # Declare metadata here
 
     ctx.init(config.stationUrl)
     var event = ctx.waitEvent()
@@ -124,23 +138,14 @@ proc playStation(config: MenuConfig) =
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
         ctx.observeMediaTitle()
-        ce(client.observeProperty(ctx, 0, "metadata", client.fmtNone))
+        cE(client.observeProperty(ctx, 0, "metadata", client.fmtNone))
         isObserving = true
 
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = ctx.getCurrentMediaTitle()
         fullTitle = state.currentSong # Assign to fullTitle
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-        globalMetadata = metadata(ctx)
-        var goingDown: uint8
-        if globalMetadata.len > 0:
-          cursorDown 6
-          for key, value in globalMetadata:
-            if (value == "") or (key.contains("title")) : continue
-            styledEcho fgCyan, "  " & key & ": '" & value.truncateMe() & "'"
-            goingDown += 1
-          cursorUp int(goingDown)
-          cursorUp 6
+        globalMetadata = updateMetadataUI(config, ctx, state)
 
       # Increment the animation counter every 25ms (getKeyWithTimeout interval)
       animationCounter += 1
@@ -226,6 +231,7 @@ proc playStation(config: MenuConfig) =
     warn("An error occurred during playback. Edit the station list in: " & fileHint & ".json")
     cleanupPlayer(ctx)
     return
+
 
 proc showHelp*() =
   ## Displays instructions on how to use the app.
