@@ -1,6 +1,6 @@
 # metadata.nim
 
-import client, tables, strutils
+import client, tables, strutils, terminal, utils
 
 type
   MpvError* = object of CatchableError
@@ -162,3 +162,16 @@ proc metadata*(ctx: ptr client.Handle): Table[string, string] =
 
   client.freeNodeContents(addr dataNode)
   return metadataTable
+
+proc updateMetadataUI*(config: MenuConfig, ctx: ptr Handle, state: PlayerState): Table[string, string] =
+  ## Updates and returns the metadata for the current station.
+  result = metadata(ctx)
+  var goingDown: uint8
+  if result.len > 0:
+    cursorDown 6
+    for key, value in result:
+      if (value == "") or (key.contains("title")) : continue
+      styledEcho fgCyan, "  " & key & ": '" & value.truncateMe() & "'"
+      goingDown += 1
+    cursorUp int(goingDown)
+    cursorUp 6

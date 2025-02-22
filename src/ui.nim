@@ -3,7 +3,10 @@
 import
   terminal, client, random, os,
   strutils, times, animation,
-  utils, theme, scroll, stationstatus
+  utils, scroll, stationstatus
+
+when not defined(simple):
+  import theme
 
 using str: string
 

@@ -99,11 +99,6 @@ proc isIdle*(ctx: ptr Handle): bool {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to check idle state: " & e.msg)
 
-proc truncateMe*(str: string): string =
-  if str.len > int(terminalWidth().toFloat() / 1.65):
-    result = str.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
-  else: return str
-      #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
 proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [PlayerError].} =
   ## Retrieves the current media title.
   ##

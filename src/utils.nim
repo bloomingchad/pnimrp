@@ -2,7 +2,7 @@
 
 import
   json, strutils, os, terminal,
-  strformat, player, tables
+  strformat, player, tables, client
 
 type
   QuoteData* = object
@@ -22,6 +22,25 @@ type
     lsChecking, lsValid, lsInvalid
 
 type
+  MenuError* = object of CatchableError  # Custom error type for menu-related issues
+  PlayerState* = object                   # Structure to hold the player's current state
+    isPaused*: bool                       # Whether the player is paused
+    isMuted*: bool                        # Whether the player is muted
+    currentSong*: string                  # Currently playing song
+    volume*: int                          # Current volume level
+
+  MenuConfig* = object                    # Configuration for the menu and player
+    ctx*: ptr Handle                      # Player handle
+    currentSection*: string               # Current menu section
+    currentSubsection*: string            # Current menu subsection
+    stationName*: string                  # Name of the selected station
+    stationUrl*: string                   # URL of the selected station
+
+const
+  CheckIdleInterval* = 25  # Interval to check if the player is idle
+  KeyTimeout* = 25         # Timeout for key input in milliseconds
+
+type
   Theme* = object
     header*: ForegroundColor
     separator*: ForegroundColor
@@ -35,9 +54,14 @@ type
     volumeMedium*: ForegroundColor
     volumeHigh*: ForegroundColor
 
-  ThemeConfig* = object
-    themes*: Table[string, Theme]
-    currentTheme*: string
+when not defined(simple):
+  type
+    ThemeConfig* = object
+      themes*: Table[string, Theme]
+      currentTheme*: string
+
+
+  var globalMetadata* {.global.}: Table[string, string]
 
 # Global variable to hold the current theme
 var currentTheme*: Theme
@@ -200,6 +224,12 @@ proc appendToLikedSongs* =
     cursorUp 5
   except IOError as e:
     warn("Failed to save song to likedSongs.txt: " & e.msg)
+
+proc truncateMe*(str: string): string =
+  if str.len > int(terminalWidth().toFloat() / 1.65):
+    result = str.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
+  else: return str
+      #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
 
 # Unit tests for utils.nim
 when isMainModule:
