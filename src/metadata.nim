@@ -160,4 +160,5 @@ proc metadata*(ctx: ptr client.Handle): Table[string, string] =
   else:
     echo "Warning: Invalid metadata list received"
 
-  return metadataTable  client.freeNodeContents(addr dataNode)
+  client.freeNodeContents(addr dataNode)
+  return metadataTable
