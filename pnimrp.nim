@@ -1,7 +1,7 @@
 # pnimrp.nim
 
 import
-  os, src/[menu, utils, illwill],
+  os, src/[menu, utils, illwill, player, client],
   terminal, strformat,
   std/exitprocs
 
@@ -47,6 +47,7 @@ Copyright (c) 2021-2024
 proc cleanup() =
   ## Performs cleanup tasks on application exit, such as restoring the cursor.
   showCursor()
+  mpvCtx.destroy()
   echo ""
   echo "Thank you for using " & AppName
 
@@ -91,12 +92,15 @@ proc main() =
     showBanner()
     hideCursor()
 
+    #init global mpv context for reuse
+    initGlobalMpv()
+    
     # Start the main menu with the configured assets directory
     drawMainMenu(config.assetsDir)
 
-  except Exception as e:
+  #except Exception as e:
     # Handle any fatal errors that occur during execution
-    error "Fatal error: " & e.msg
+  #  error "Fatal error: " & e.msg
   finally:
     # Ensure cleanup is always performed
     cleanup()
