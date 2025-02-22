@@ -3,30 +3,11 @@
 import
   terminal, os, ui, strutils, client,
   net, player, link, illwill, utils,
-  animation, json, tables, metadata,
-  scroll, random, stationstatus,
-  asyncdispatch
+  animation, json, tables, scroll,
+  random, stationstatus, asyncdispatch
 
-type
-  MenuError* = object of CatchableError  # Custom error type for menu-related issues
-  PlayerState = object                   # Structure to hold the player's current state
-    isPaused: bool                       # Whether the player is paused
-    isMuted: bool                        # Whether the player is muted
-    currentSong: string                  # Currently playing song
-    volume: int                          # Current volume level
-
-  MenuConfig = object                    # Configuration for the menu and player
-    ctx: ptr Handle                      # Player handle
-    currentSection: string               # Current menu section
-    currentSubsection: string            # Current menu subsection
-    stationName: string                  # Name of the selected station
-    stationUrl: string                   # URL of the selected station
-
-const
-  CheckIdleInterval = 25  # Interval to check if the player is idle
-  KeyTimeout = 25         # Timeout for key input in milliseconds
-
-var globalMetadata {.global.}: Table[string, string]
+when not defined(simple):
+  import metadata
 
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
@@ -77,18 +58,6 @@ proc cleanupPlayer(ctx: ptr Handle) =
   ctx.terminateDestroy()
   illwillDeinit()
 
-proc updateMetadataUI(config: MenuConfig, ctx: ptr Handle, state: PlayerState): Table[string, string] =
-  ## Updates and returns the metadata for the current station.
-  result = metadata(ctx)
-  var goingDown: uint8
-  if result.len > 0:
-    cursorDown 6
-    for key, value in result:
-      if (value == "") or (key.contains("title")) : continue
-      styledEcho fgCyan, "  " & key & ": '" & value.truncateMe() & "'"
-      goingDown += 1
-    cursorUp int(goingDown)
-    cursorUp 6
 
 proc playStation(config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
@@ -145,7 +114,8 @@ proc playStation(config: MenuConfig) =
         state.currentSong = ctx.getCurrentMediaTitle()
         fullTitle = state.currentSong # Assign to fullTitle
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-        globalMetadata = updateMetadataUI(config, ctx, state)
+        when not defined(simple):
+          globalMetadata = updateMetadataUI(config, ctx, state)
 
       # Increment the animation counter every 25ms (getKeyWithTimeout interval)
       animationCounter += 1
