@@ -79,6 +79,7 @@ proc warn*(message: string, xOffset = 4, color = fgYellow, delayMs = 750) =
   if xOffset >= 0:
     setCursorXPos(xOffset)
   styledEcho(color, message)
+  warnBell()
   sleep(delayMs)
 
 proc showInvalidChoice*(message = DefaultErrorMsg) =

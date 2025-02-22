@@ -1,6 +1,6 @@
 # player.nim
 
-import client, terminal
+import client, terminal, os
 export cE  # Export the error-checking macro for external use
 
 type
@@ -148,6 +148,15 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
     )
   except Exception as e:
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
+
+proc warnBell* =
+  var ctx = create()
+  let assetsDir = getAppDir() / "assets"
+  ctx.init(assetsDir / "config" / "sounds" / "bell.ogg")
+  while true:
+    if ctx.waitEvent().eventID in {IDEndFile}:
+      break
+  ctx.destroy()
 
 # Unit tests for player.nim
 when isMainModule:
