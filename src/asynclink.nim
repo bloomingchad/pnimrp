@@ -1,4 +1,4 @@
-# linkresolver.nim
+# asynclink.nim
 
 import
   times, utils, asyncdispatch,
