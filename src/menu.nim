@@ -20,11 +20,9 @@ proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   )
   cursorUp 5
 
-proc handlePlayerError(msg: string; ctx: ptr Handle; config: MenuConfig; shouldReturn = false) =
+proc handlePlayerError(msg: string; config: MenuConfig; shouldReturn = false) =
   ## Handles player errors consistently and optionally destroys the player context.
   editBadFileHint(config, msg)
-  if ctx != nil:
-    ctx.terminateDestroy()
   if shouldReturn:
     return
 
@@ -55,14 +53,13 @@ proc updateAnimationOnly(status, currentSong: string, animationCounter: int) =
 
 proc cleanupPlayer(ctx: ptr Handle) =
   ## Cleans up player resources.
-  ctx.terminateDestroy()
+  #ctx.terminateDestroy()
   illwillDeinit()
-
+  stopCurrentJob()
 
 proc playStation(config: MenuConfig) =
-  ## Plays a radio station and handles user input for playback control.
-  var ctx: ptr Handle = nil
-  try:
+    ## Plays a radio station and handles user input for playback control.
+    #try:
     if config.stationUrl == "":
       editBadFileHint(config)
       return
@@ -76,7 +73,6 @@ proc playStation(config: MenuConfig) =
       editBadFileHint(config)
       return
 
-    ctx = create()
     var state = PlayerState(isPaused: false, isMuted: false, volume: lastVolume)  # Use lastVolume
     var isObserving = false
     var counter: uint8
@@ -88,8 +84,8 @@ proc playStation(config: MenuConfig) =
     var fullTitle: string # Declare fullTitle here
     var metadata: Table[string, string] # Declare metadata here
 
-    ctx.init(config.stationUrl)
-    var event = ctx.waitEvent()
+    allocateJobMpv(config.stationUrl)
+    var event = mpvCtx.waitEvent()
 
     try:
       illwillInit(false)
@@ -102,20 +98,20 @@ proc playStation(config: MenuConfig) =
 
     while true:
       if not state.isPaused:
-        event = ctx.waitEvent()
+        event = mpvCtx.waitEvent()
 
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
-        ctx.observeMediaTitle()
-        cE(client.observeProperty(ctx, 0, "metadata", client.fmtNone))
+        mpvCtx.observeMediaTitle()
+        cE(client.observeProperty(mpvCtx, 0, "metadata", client.fmtNone))
         isObserving = true
 
       if event.eventID in {IDEventPropertyChange}:
-        state.currentSong = ctx.getCurrentMediaTitle()
+        state.currentSong = mpvCtx.getCurrentMediaTitle()
         fullTitle = state.currentSong # Assign to fullTitle
         updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
         when not defined(simple):
-          globalMetadata = updateMetadataUI(config, ctx, state)
+          globalMetadata = updateMetadataUI(config, mpvCtx, state)
 
       # Increment the animation counter every 25ms (getKeyWithTimeout interval)
       animationCounter += 1
@@ -136,18 +132,18 @@ proc playStation(config: MenuConfig) =
 
       # Periodic checks
       if counter >= CheckIdleInterval:
-        if ctx.isIdle():
-          handlePlayerError("Player core idle", ctx, config)
+        if mpvCtx.isIdle():
+          handlePlayerError("Player core idle", config)
           break
 
         if event.eventID in {IDEndFile, IDShutdown}:
           if config.stationUrl.isValidPlaylistUrl():
             if playlistFirstPass:
-              handlePlayerError("End of playlist reached", ctx, config)
+              handlePlayerError("End of playlist reached", config)
               break
             playlistFirstPass = true
           else:
-            handlePlayerError("Stream ended", ctx, config)
+            handlePlayerError("Stream ended", config)
             break
         counter = 0
       inc counter
@@ -156,32 +152,33 @@ proc playStation(config: MenuConfig) =
       case getKeyWithTimeout(KeyTimeout):
         of Key.P:
           state.isPaused = not state.isPaused
-          ctx.pause(state.isPaused)
+          mpvCtx.pause(state.isPaused)
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
         of Key.M:
           state.isMuted = not state.isMuted
-          ctx.mute(state.isMuted)
+          mpvCtx.mute(state.isMuted)
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
         of Key.Slash, Key.Plus:
           state.volume = min(state.volume + VolumeStep, MaxVolume)
-          cE ctx.setProperty("volume", fmtInt64, addr state.volume)
+          cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)
-          cE ctx.setProperty("volume", fmtInt64, addr state.volume)
+          cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
 
         of Key.R:
           if not state.isPaused:
-            cleanupPlayer(ctx)
+            cleanupPlayer(mpvCtx)
+          stopCurrentJob()
           break
 
         of Key.Q:
-          cleanupPlayer(ctx)
-          exit(ctx, state.isPaused)
+          cleanupPlayer(mpvCtx)
+          exit(mpvCtx, state.isPaused)
 
         of Key.L:  # New key binding for "Like" action
           if state.currentSong != "":
@@ -196,11 +193,11 @@ proc playStation(config: MenuConfig) =
           showInvalidChoice()
     lastVolume = state.volume #update last state volume to be persistent
 
-  except Exception:
-    let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
-    warn("An error occurred during playback. Edit the station list in: " & fileHint & ".json")
-    cleanupPlayer(ctx)
-    return
+  #except Exception:
+  #  let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
+  #  warn("An error occurred during playback. Edit the station list in: " & fileHint & ".json")
+  #  cleanupPlayer(mpvCtx)
+  #  return
 
 
 proc showHelp*() =

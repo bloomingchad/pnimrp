@@ -150,18 +150,21 @@ proc collectMetadata(iter: var NodeListIterator,
   return metadataTable
 
 proc metadata*(ctx: ptr client.Handle): Table[string, string] =
-  var dataNode: client.Node
-  ce(client.getProperty(ctx, "metadata", client.fmtNode, addr dataNode))
+  try:
+    var dataNode: client.Node
+    cE getProperty(ctx, "metadata", client.fmtNode, addr dataNode)
 
-  var metadataTable = initTable[string, string]()
-  if validateNodeList(dataNode.u.list):
-    var iter = initNodeListIterator(dataNode.u.list)
-    metadataTable = collectMetadata(iter)
-  else:
-    echo "Warning: Invalid metadata list received"
+    var metadataTable = initTable[string, string]()
+    if validateNodeList(dataNode.u.list):
+      var iter = initNodeListIterator(dataNode.u.list)
+      metadataTable = collectMetadata(iter)
+    else:
+      echo "Warning: Invalid metadata list received"
 
-  client.freeNodeContents(addr dataNode)
-  return metadataTable
+    freeNodeContents(addr dataNode)
+    return metadataTable
+  except CatchableError:
+    discard
 
 proc updateMetadataUI*(config: MenuConfig, ctx: ptr Handle, state: PlayerState): Table[string, string] =
   ## Updates and returns the metadata for the current station.

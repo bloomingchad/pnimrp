@@ -19,36 +19,37 @@ const
 
 var lastVolume* {.global.} = 100  # Default volume is 100
 var fullMediaTitle* {.global.} = ""
+var mpvCtx* {.global.}: ptr Handle
 
 proc validateVolume(volume: int): int =
   ## Ensures the volume stays within valid bounds (0-150).
   result = max(MinVolume, min(MaxVolume, volume))
 
-proc init*(ctx: ptr Handle, source: string) {.raises: [PlayerError].} =
-  ## Initializes the media player with the given source.
-  ##
-  ## Args:
-  ##   ctx: Player handle
-  ##   source: Path to media file or URL
-  ##
-  ## Raises:
-  ##   PlayerError: If initialization fails
+proc initGlobalMpv* {.raises: [PlayerError].} =
   try:
-    let fileArgs = allocCStringArray(["loadfile", source])
-    defer: deallocCStringArray(fileArgs)
+    mpvCtx = create()
+    #defer: deallocCStringArray(fileArgs)
 
     var oscEnabled = cint(1)
-    cE ctx.setOption("osc", fmtFlag, addr oscEnabled)
-    cE(ctx.setOptionString("input-default-bindings", "no"))
-    cE(ctx.setOptionString("input-vo-keyboard", "no"))
-    cE ctx.setPropertyString("vid", "no")
-    cE initialize(ctx)
-    cE ctx.cmd(fileArgs)
+    cE mpvCtx.setOption("osc", fmtFlag, addr oscEnabled)
+    cE mpvCtx.setOptionString("input-default-bindings", "no")
+    cE mpvCtx.setOptionString("input-vo-keyboard", "no")
+    cE mpvCtx.setPropertyString("vid", "no")
+    cE mpvCtx.initialize()
 
     # Set the volume to the last volume
-    cE ctx.setProperty("volume", fmtInt64, addr lastVolume)
+    #cE ctx.setProperty("volume", fmtInt64, addr lastVolume)
   except Exception as e:
     raise newException(PlayerError, "Failed to initialize player: " & e.msg)
+
+proc allocateJobMpv*(source: string) =
+  let fileArgs = allocCStringArray(["loadfile", source])
+  cE mpvCtx.cmd(fileArgs)
+
+proc stopCurrentJob* =
+  let cmdArgs = allocCStringArray(["stop"])
+  cE mpvCtx.cmd(cmdArgs)
+  #discard mpvCtx.waitEvent(1)
 
 proc pause*(ctx: ptr Handle, shouldPause: bool) {.raises: [PlayerError].} =
   ## Toggles the pause state of the player.
@@ -114,8 +115,8 @@ proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [PlayerError].} =
     fullMediaTitle = result
 
   except Exception as e:
-    raise newException(PlayerError, "Failed to get media title: " & e.msg)
-
+    #raise newException(PlayerError, "Failed to get media title: " & e.msg)
+    discard
 proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
   ## Retrieves comprehensive information about the media player's current state.
   ##
@@ -145,15 +146,13 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
 
 proc warnBell* =
-  var ctx = create()
   let assetsDir = getAppDir() / "assets"
-  ctx.init(assetsDir / "config" / "sounds" / "bell.ogg")
+  allocateJobMpv(assetsDir / "config" / "sounds" / "bell.ogg")
   var newVolume: clonglong = 150
-  cE ctx.setProperty("volume", fmtInt64, addr newVolume)
+  cE mpvCtx.setProperty("volume", fmtInt64, addr newVolume)
   while true:
-    if ctx.waitEvent().eventID in {IDEndFile}:
+    if mpvCtx.waitEvent().eventID in {IDEndFile}:
       break
-  ctx.destroy()
 
 # Unit tests for player.nim
 when isMainModule:
