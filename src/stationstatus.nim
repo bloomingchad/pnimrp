@@ -48,3 +48,13 @@ proc resolveAndDisplay*(stations: seq[StationStatus]) {.async.} =
     allChecks.add(checkAndDraw(station))
     
   await all(allChecks)  # Wait for all checks to complete before returning
+
+proc drawMenuEmojis* =
+  ## Draws the menu emojis at the stored positions.
+  for pos in emojiPositions:
+    drawStatusIndicator(pos[0], pos[1], lsChecking) # Use lsChecking
+
+proc initDrawMenuEmojis* =
+  ## Draws the yellow menu emojis at the stored positions.
+  for pos in emojiPositions:
+    drawStatusIndicator(pos[0], pos[1], isInitial = true)

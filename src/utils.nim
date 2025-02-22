@@ -63,6 +63,9 @@ when not defined(simple):
 
   var globalMetadata* {.global.}: Table[string, string]
 
+  # Global variable to store emoji positions.  Each tuple is (x, y).
+  var emojiPositions*: seq[(int, int)]
+
 # Global variable to hold the current theme
 var currentTheme*: Theme
 

@@ -3,15 +3,12 @@
 import
   terminal, client, random, os,
   strutils, times, animation,
-  utils, scroll, stationstatus
+  utils, scroll
 
 when not defined(simple):
-  import theme
+  import theme, stationstatus
 
 using str: string
-
-# Global variable to store emoji positions.  Each tuple is (x, y).
-var emojiPositions*: seq[(int, int)]
 
 proc say*(
   message: string,
@@ -176,7 +173,8 @@ proc updateTermWidth* =
 proc renderMenuOptions(options: MenuOptions, numColumns: int,
     maxColumnLengths: seq[int], spacing: int) =
   ## Renders the menu options in a multi-column layout.
-  emojiPositions = @[]  # Clear previous positions
+  when not defined(simple):
+    emojiPositions = @[]  # Clear previous positions
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
   # Wait for the terminal width to stabilize
@@ -202,15 +200,16 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
             if index < MenuChars.len: $MenuChars[index] & "."  # Use A-Z
             else: "?"  # Fallback
 
-        # Calculate X position for the emoji
-        var emojiX = 0
-        for i in 0..<col:
-          emojiX += maxColumnLengths[i] + spacing
+        when not defined(simple):
+          # Calculate X position for the emoji
+          var emojiX = 0
+          for i in 0..<col:
+            emojiX += maxColumnLengths[i] + spacing
 
-        emojiX += prefix.len + 1 # +1 for the space after the number/letter
+          emojiX += prefix.len + 1 # +1 for the space after the number/letter
 
-        # Add to emojiPositions.  currentY is calculated *before* adding the line.
-        emojiPositions.add((emojiX, currentY))
+          # Add to emojiPositions.  currentY is calculated *before* adding the line.
+          emojiPositions.add((emojiX, currentY))
 
         prefix = " " & prefix
 
@@ -231,16 +230,6 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
     # Render the line
     say(currentLine, fgBlue)
     currentY += 1  # Increment Y *after* drawing the line
-
-proc drawMenuEmojis() =
-  ## Draws the menu emojis at the stored positions.
-  for pos in emojiPositions:
-    drawStatusIndicator(pos[0], pos[1], lsChecking) # Use lsChecking
-
-proc initDrawMenuEmojis() =
-  ## Draws the yellow menu emojis at the stored positions.
-  for pos in emojiPositions:
-    drawStatusIndicator(pos[0], pos[1], isInitial = true)
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
@@ -284,7 +273,9 @@ proc displayMenu*(
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
   currentY += itemsPerColumn
 
-  if isHandlingJSON: initDrawMenuEmojis() # Draw yellow emojis *after* rendering text
+  when not defined(simple):
+    if isHandlingJSON:
+      initDrawMenuEmojis() # Draw yellow emojis *after* rendering text
   echo ""
   currentY += 1 # Increment after the empty line
   # 4. Tracking the Separator's Y

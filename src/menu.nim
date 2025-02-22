@@ -4,10 +4,10 @@ import
   terminal, os, ui, strutils, client,
   net, player, link, illwill, utils,
   animation, json, tables, scroll,
-  random, stationstatus, asyncdispatch
+  random
 
 when not defined(simple):
-  import metadata
+  import metadata, stationstatus, asyncdispatch
 
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
@@ -323,21 +323,23 @@ proc handleMenu*(
     drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling))  # Pass isPlayerUI here
     hideCursor()
 
-    if isHandlingJSON(handleMenuIsHandling):
-      initCheckingStationNotice()
-      var stations: seq[StationStatus] = @[]
-      for i in 0..<items.len:
-        stations.add(
-          StationStatus(
-            coord: emojiPositions[i],  # From ui.nim
-            url: paths[i],             # Station URL
-            status: lsChecking         # Initial state
+    when not defined(simple):
+      if isHandlingJSON(handleMenuIsHandling):
+        initCheckingStationNotice()
+
+        var stations: seq[StationStatus] = @[]
+        for i in 0..<items.len:
+          stations.add(
+            StationStatus(
+              coord: emojiPositions[i],  # From ui.nim
+              url: paths[i],             # Station URL
+              status: lsChecking         # Initial state
+            )
           )
-        )
 
-      waitFor resolveAndDisplay(stations)  # Defined in stationstatus.nim
+        waitFor resolveAndDisplay(stations)  # Defined in stationstatus.nim
 
-      finishCheckingStationNotice()
+        finishCheckingStationNotice()
 
     while true:
       try:
