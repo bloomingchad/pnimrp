@@ -148,6 +148,8 @@ proc warnBell* =
   var ctx = create()
   let assetsDir = getAppDir() / "assets"
   ctx.init(assetsDir / "config" / "sounds" / "bell.ogg")
+  var newVolume: cint = 150
+  cE ctx.setProperty("volume", fmtInt64, addr newVolume)
   while true:
     if ctx.waitEvent().eventID in {IDEndFile}:
       break
