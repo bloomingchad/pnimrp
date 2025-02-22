@@ -137,6 +137,12 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
   var spacing = maxSpacing
 
   # Adjust spacing if the terminal width is too small
+
+  # make more resillient to unstable middle.
+  # we this will make the menu items begin truncating
+  # when nearing end
+  spacing = spacing - 3
+
   while spacing >= minSpacing:
     let totalWidthWithSpacing = totalWidth + spacing * (numColumns - 1)
     if totalWidthWithSpacing <= termWidth:
@@ -154,6 +160,7 @@ proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
         maxColumnLengths[i] = maxAllowedLength
 
   return (numColumns, maxColumnLengths, spacing)
+
 var lastTermWidth = termWidth  # Track the last terminal width
 
 proc updateTermWidth* =
