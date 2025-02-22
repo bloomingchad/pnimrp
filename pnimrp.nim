@@ -15,7 +15,7 @@ type
 
 const
   AppName = "Poor Man's Radio Player" # Name of the application
-  Version = "1.0.0"                   # Current version of the application
+  Version = "0.1"                   # Current version of the application
   RequiredAssets = [
     "quote.json" # List of required asset files (can be expanded as needed)
   ]
