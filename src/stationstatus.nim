@@ -1,6 +1,6 @@
 # stationstatus.nim
 
-import terminal, utils, linkresolver, asyncdispatch
+import terminal, utils, asynclink, asyncdispatch
 
 proc initCheckingStationNotice* =
   setCursorPos(2, lastMenuSeparatorY + 4)
