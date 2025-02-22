@@ -2,7 +2,7 @@
 
 import
   json, strutils, os, terminal,
-  strformat, player
+  strformat, player, tables
 
 type
   QuoteData* = object
@@ -20,6 +20,27 @@ type
 type
   LinkStatus* = enum
     lsChecking, lsValid, lsInvalid
+
+type
+  Theme* = object
+    header*: ForegroundColor
+    separator*: ForegroundColor
+    menu*: ForegroundColor
+    footer*: ForegroundColor
+    error*: ForegroundColor
+    warning*: ForegroundColor
+    success*: ForegroundColor
+    nowPlaying*: ForegroundColor
+    volumeLow*: ForegroundColor
+    volumeMedium*: ForegroundColor
+    volumeHigh*: ForegroundColor
+
+  ThemeConfig* = object
+    themes*: Table[string, Theme]
+    currentTheme*: string
+
+# Global variable to hold the current theme
+var currentTheme*: Theme
 
 const
   MenuChars* = @[

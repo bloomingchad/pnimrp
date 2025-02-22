@@ -7,9 +7,6 @@ import
 
 using str: string
 
-# Global variable to hold the current theme
-var currentTheme*: Theme
-
 # Global variable to store emoji positions.  Each tuple is (x, y).
 var emojiPositions*: seq[(int, int)]
 
