@@ -25,22 +25,48 @@ proc validateVolume(volume: int): int =
   ## Ensures the volume stays within valid bounds (0-150).
   result = max(MinVolume, min(MaxVolume, volume))
 
-proc initGlobalMpv* {.raises: [PlayerError].} =
+proc initGlobalMpv* =
   try:
     mpvCtx = create()
-    #defer: deallocCStringArray(fileArgs)
 
-    var oscEnabled = cint(1)
-    cE mpvCtx.setOption("osc", fmtFlag, addr oscEnabled)
+    # Core audio settings
+    cE mpvCtx.setOptionString("audio-display", "no")
+    cE mpvCtx.setOptionString("vid", "no")
+    cE mpvCtx.setOptionString("vo", "null")
+    cE mpvCtx.setOptionString("audio-stream-silence", "yes")
+    cE mpvCtx.setOptionString("gapless-audio", "weak")
+    cE mpvCtx.setOptionString("audio-fallback-to-null", "no")
+
+    # Network configuration
+    var netTimeout = 5.0
+    cE mpvCtx.setOption("network-timeout", fmtFloat64, netTimeout.addr)
+    cE mpvCtx.setOptionString("demuxer-lavf-o", "reconnect=1,reconnect_streamed=1,reconnect_delay_max=5")
+
+    # Performance settings
+    cE mpvCtx.setOptionString("ytdl", "no")
+    cE mpvCtx.setOptionString("demuxer-thread", "yes")
+
+    # Audio processing
+    cE mpvCtx.setOptionString("audio-normalize-downmix", "yes")
+    cE mpvCtx.setOptionString("volume-max", "150")
+    var replayGain = 6.0
+    cE mpvCtx.setOption("replaygain-preamp", fmtFloat64, replayGain.addr)
+
+    # Terminal/interface settings
+    cE mpvCtx.setOptionString("terminal", "yes")
+    cE mpvCtx.setOptionString("really-quiet", "yes")
+    cE mpvCtx.setOptionString("osd-level", "0")  # Disable OSD completely
+
+    # Input controls
     cE mpvCtx.setOptionString("input-default-bindings", "no")
     cE mpvCtx.setOptionString("input-vo-keyboard", "no")
-    cE mpvCtx.setPropertyString("vid", "no")
+    cE mpvCtx.setOptionString("input-media-keys", "no")
+
+    # Initialize MPV context
     cE mpvCtx.initialize()
 
-    # Set the volume to the last volume
-    #cE ctx.setProperty("volume", fmtInt64, addr lastVolume)
   except Exception as e:
-    raise newException(PlayerError, "Failed to initialize player: " & e.msg)
+    raise newException(PlayerError, "MPV initialization failed: " & e.msg)
 
 proc allocateJobMpv*(source: string) =
   let fileArgs = allocCStringArray(["loadfile", source])
