@@ -25,10 +25,7 @@ proc validateVolume(volume: int): int =
   ## Ensures the volume stays within valid bounds (0-150).
   result = max(MinVolume, min(MaxVolume, volume))
 
-proc initGlobalMpv* =
-  try:
-    mpvCtx = create()
-
+proc setAllyOptionsToMpv(ctx: ptr Handle) =
     # Core audio settings
     cE mpvCtx.setOptionString("audio-display", "no")
     cE mpvCtx.setOptionString("vid", "no")
@@ -62,13 +59,19 @@ proc initGlobalMpv* =
     cE mpvCtx.setOptionString("input-vo-keyboard", "no")
     cE mpvCtx.setOptionString("input-media-keys", "no")
 
+proc initGlobalMpv* =
+  try:
+    mpvCtx = create()
+
+    mpvCtx.setAllyOptionsToMpv()
+
     # Initialize MPV context
     cE mpvCtx.initialize()
 
   except Exception as e:
     raise newException(PlayerError, "MPV initialization failed: " & e.msg)
 
-proc allocateJobMpv*(source: string) =
+proc allocateJobMpv*(source: string; mpvCtx = mpvCtx) =
   let fileArgs = allocCStringArray(["loadfile", source])
   cE mpvCtx.cmd(fileArgs)
 
@@ -172,15 +175,36 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
 
 proc warnBell* =
-  let assetsDir = getAppDir() / "assets"
-  allocateJobMpv(assetsDir / "config" / "sounds" / "bell.ogg")
-  var newVolume: clonglong = 150
-  cE mpvCtx.setProperty("volume", fmtInt64, addr newVolume)
-  while true:
-    if mpvCtx.waitEvent().eventID in {IDEndFile}:
-      break
-  #reset back to old volume
-  cE mpvCtx.setProperty("volume", fmtInt64, addr lastVolume)
+  ## Plays a warning sound using a temporary MPV instance without interrupting main playback
+  var tmpMpv: ptr Handle
+  try:
+    # Create temporary MPV instance
+    tmpMpv = create()
+
+    # Global Config for bell playback
+    tmpMpv.setAllyOptionsToMpv()
+
+    # Set volume directly on temporary instance
+    cE tmpMpv.setOptionString("volume", "150")
+    cE tmpMpv.initialize()
+
+    let assetsDir = getAppDir() / "assets"
+    let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
+    
+    # Play sound in temporary instance
+    allocateJobMpv(bellPath, tmpMpv)
+
+    # Wait for completion
+    var event: ptr Event
+    while true:
+      event = tmpMpv.waitEvent()
+      if event.eventID in {IDEndFile}:
+        break
+
+  except Exception as e:
+    stderr.writeLine "Warning bell error: ", e.msg
+  finally:
+    tmpMpv.destroy()
 
 # Unit tests for player.nim
 when isMainModule:
