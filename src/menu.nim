@@ -1,7 +1,7 @@
 # menu.nim
 
 import
-  terminal, os, ui, strutils, client,
+  terminal, os, ui, strutils, libmpv,
   net, player, link, illwill, utils,
   animation, json, tables, scroll,
   random
@@ -103,7 +103,7 @@ proc playStation(config: MenuConfig) =
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
         mpvCtx.observeMediaTitle()
-        cE(client.observeProperty(mpvCtx, 0, "metadata", client.fmtNone))
+        cE(observeProperty(mpvCtx, 0, "metadata", fmtNone))
         isObserving = true
 
       if event.eventID in {IDEventPropertyChange}:

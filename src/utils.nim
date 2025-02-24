@@ -2,7 +2,7 @@
 
 import
   json, strutils, os, terminal,
-  strformat, player, tables, client
+  strformat, player, tables, libmpv
 
 type
   QuoteData* = object
