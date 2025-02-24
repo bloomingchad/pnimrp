@@ -53,7 +53,9 @@ proc getSymbol*(status: PlayerStatus, useEmoji: bool): string =
     of StatusPaused: return "||"
     of StatusPausedMuted: return "||[X]"
 
-var terminalSupportsEmoji* = checkEmojiSupport()
+var terminalSupportsEmoji* =
+  when not defined(noEmoji): checkEmojiSupport()
+  else: false
 
 proc currentStatusEmoji*(status: PlayerStatus): string =
   ## Returns the appropriate symbol for the player status based on terminal emoji support.
