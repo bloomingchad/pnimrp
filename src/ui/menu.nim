@@ -1,13 +1,24 @@
 # menu.nim
 
 import
-  terminal, os, ui, strutils, libmpv,
-  net, player, link, illwill, utils,
-  animation, json, tables, scroll,
-  random
+  terminal, os, strutils, net,
+  json, tables, random,
+
+  ui, illwill,  animation,  scroll,
+
+  ../audio/[
+      player,
+      libmpv,
+    ],
+
+  ../link/link,
+  ../utils/utils
 
 when not defined(simple):
-  import metadata, stationstatus, asyncdispatch
+  import asyncdispatch,
+
+    ../audio/metadata,
+    ../ui/stationstatus
 
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
@@ -35,27 +46,6 @@ proc currentStatus(state: PlayerState): PlayerStatus =
 proc isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
-
-proc updateAnimationOnly(status, currentSong: string, animationCounter: int) =
-  ## Updates only the animation symbol in the "Now Playing" section.
-  ##
-  ## Args:
-  ##   status: The player status (e.g., "🔊" for playing).
-  ##   currentSong: The currently playing song.
-  ##   animationCounter: The current counter value (incremented every 25ms).
-  let animationSymbol = updateJinglingAnimation(status, animationCounter)  # Get the animation symbol
-
-  # Move the cursor to the start of the "Now Playing" line (line 2)
-  setCursorPos(0, 2)
-  
-  # Write ONLY the animation symbol and 3 spaces, then erase to the end of the line
-  stdout.styledWrite(fgCyan, animationSymbol)
-
-proc cleanupPlayer(ctx: ptr Handle) =
-  ## Cleans up player resources.
-  #ctx.terminateDestroy()
-  illwillDeinit()
-  stopCurrentJob()
 
 proc playStation(config: MenuConfig) =
     ## Plays a radio station and handles user input for playback control.
