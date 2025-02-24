@@ -1,6 +1,6 @@
 # stationstatus.nim
 
-import terminal,  asyncdispatch,
+import terminal, asyncdispatch,
   ../utils/utils,
   ../link/asynclink
 
@@ -14,28 +14,43 @@ proc finishCheckingStationNotice* =
   eraseLine()
   lastMenuSeparatorY = 0
 
-proc toStatusCodeEmoji(status: LinkStatus): string =
-  case status
-  of lsValid:    "🟢"
-  of lsInvalid:  "🔴"
-  of lsChecking: "🟡"
+proc toStatusCodeEmoji(status: LinkStatus): (ForegroundColor, string) =
+  when not defined(noEmoji):
+    case status
+    of lsValid:    (fgDefault, "🟢")
+    of lsInvalid:  (fgDefault, "🔴")
+    of lsChecking: (fgDefault, "🟡")
+  else:
+    case status
+    of lsValid:    (fgGreen,  "✓")  # Green checkmark
+    of lsInvalid:  (fgRed,    "✗")  # Red cross
+    of lsChecking: (fgYellow, "o")  # Yellow circle (Unicode U+25CC)
 
 # Combine similar status indicator functions
 proc drawStatusIndicator*(x, y: int, status = lsChecking, isInitial = false) =
   setCursorPos(x, y)
-  let statusEmoji = if isInitial: "🟡" else: toStatusCodeEmoji(status)
-  stdout.write(statusEmoji)
+  let (color, symbol) = 
+    if isInitial:
+        when not defined(noEmoji): (fgDefault, "🟡")
+        else: (fgYellow, "o")  # Yellow circle for initial state
+    else:
+      toStatusCodeEmoji(status)
+  # Apply color and write symbol
+  stdout.setForegroundColor(color)
+  stdout.write(symbol)
+  stdout.resetAttributes()
+  stdout.flushFile()
 
 type
-  StationStatus* = ref object     # Changed to ref object for safe capture
+  StationStatus* = ref object
     coord*: (int, int)            # (x, y) from emojiPositions
     url*: string
-    status*: LinkStatus           # lsChecking/lsValid/lsInvalid
+    status*: LinkStatus
     future*: Future[LinkStatus]
 
 proc checkAndDraw(station: StationStatus) {.async.} =
   station.future = resolveLink(station.url)  # Store future
-  station.status = await station.future      # Wait only THIS station's check
+  station.status = await station.future
   drawStatusIndicator(station.coord[0], station.coord[1], station.status)
   stdout.flushFile()
     #flush to actually send the written stdout to stdout
@@ -54,7 +69,7 @@ proc resolveAndDisplay*(stations: seq[StationStatus]) {.async.} =
 proc drawMenuEmojis* =
   ## Draws the menu emojis at the stored positions.
   for pos in emojiPositions:
-    drawStatusIndicator(pos[0], pos[1], lsChecking) # Use lsChecking
+    drawStatusIndicator(pos[0], pos[1], lsChecking)
 
 proc initDrawMenuEmojis* =
   ## Draws the yellow menu emojis at the stored positions.
