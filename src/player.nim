@@ -1,6 +1,6 @@
 # player.nim
 
-import client, terminal, os
+import libmpv, terminal, os
 export cE  # Export the error-checking macro for external use
 
 type

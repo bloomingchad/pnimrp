@@ -1,40 +1,43 @@
 # metadata.nim
 
-import client, tables, strutils, terminal, utils
+import libmpv, tables, strutils, terminal, utils
 
 type
   MpvError* = object of CatchableError
   ## Custom error type for MPV-related errors
 
   NodeListIterator* = object
-    list: ptr client.NodeList
+    list: ptr NodeList
     index: int
 
-proc initNodeListIterator(list: ptr client.NodeList): NodeListIterator =
+proc initNodeListIterator(list: ptr NodeList): NodeListIterator =
   result = NodeListIterator(list: list, index: 0)
 
 # Enhanced validation for small arrays
-proc validateNodeList(list: ptr client.NodeList): bool =
+proc validateNodeList(list: ptr NodeList): bool =
   result = (list != nil) and (list.values != nil) and (list.keys != nil) and
            (list.num >= 0) and (list.num < 100) # Smaller upper bound for small arrays
 
-iterator items(iter: var NodeListIterator): tuple[key: string,
-    value: client.Node] =
+iterator items(iter: var NodeListIterator):
+  tuple[
+    key: string,
+    value: Node
+  ] =
   if not validateNodeList(iter.list):
     echo "Error: Invalid NodeList encountered in items iterator"
     iter.index = -1
   else:
     # Use seq instead of array
-    var values = newSeq[client.Node](iter.list.num) # Pre-allocate for efficiency
+    var values = newSeq[Node](iter.list.num) # Pre-allocate for efficiency
     var keys = newSeq[cstring](iter.list.num) # Pre-allocate
 
     # Copy data into seqs
     for i in 0 ..< iter.list.num:
       let valuePtr =
-        cast[ptr client.Node](
+        cast[ptr Node](
           cast[uint](iter.list.values) +
           (
-            cast[uint](i) * cast[uint](sizeof(client.Node))
+            cast[uint](i) * cast[uint](sizeof(Node))
           )
         )
       values[i] = valuePtr[]
@@ -65,8 +68,11 @@ proc handleIndividualTag(lowerKey: string, value: string,
 
     metadataTable[preferredKey] = formattedValue
 
-proc handleIcyAudioInfo(value: string, tagMap: Table[string, string],
-                        metadataTable: var Table[string, string]) =
+proc handleIcyAudioInfo(
+    value: string,
+    tagMap: Table[string, string],
+    metadataTable: var Table[string, string]
+  ) =
   # Handle icy-audio-info parsing
   let audioInfoParts = value.split(";")
   for part in audioInfoParts:
@@ -123,7 +129,7 @@ proc collectMetadata(iter: var NodeListIterator,
 
   for key, nodeValue in items(iter):
       # Access the format field of the client.Node correctly
-      if nodeValue.format == client.fmtString and nodeValue.u.str != nil:
+      if nodeValue.format == fmtString and nodeValue.u.str != nil:
           let lowerKey = key.toLowerAscii()
           let value = $nodeValue.u.str # Now a Nim string
 
@@ -149,10 +155,10 @@ proc collectMetadata(iter: var NodeListIterator,
 
   return metadataTable
 
-proc metadata*(ctx: ptr client.Handle): Table[string, string] =
+proc metadata*(ctx: ptr Handle): Table[string, string] =
   try:
-    var dataNode: client.Node
-    cE getProperty(ctx, "metadata", client.fmtNode, addr dataNode)
+    var dataNode: Node
+    cE getProperty(ctx, "metadata", fmtNode, addr dataNode)
 
     var metadataTable = initTable[string, string]()
     if validateNodeList(dataNode.u.list):

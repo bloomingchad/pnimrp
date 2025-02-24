@@ -1,9 +1,8 @@
 # pnimrp.nim
 
 import
-  os, src/[menu, utils, illwill, player, client],
-  terminal, strformat,
-  std/exitprocs
+  os,  terminal, strformat, std/exitprocs,
+  src/[menu, utils, illwill, player, libmpv]
 
 when not defined(simple):
   import src/theme

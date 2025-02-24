@@ -1,7 +1,7 @@
 # ui.nim
 
 import
-  terminal, client, random, os,
+  terminal, libmpv, random, os,
   strutils, times, animation,
   utils, scroll
 
