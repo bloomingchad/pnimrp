@@ -78,7 +78,9 @@ proc drawHeader*() =
   say("=".repeat(termWidth), currentTheme.separator, xOffset = 0)
 
   # Draw the application title with emojis using the theme's header color
-  let title = "       🎧 " & AppName & " 🎧"
+  let title =
+    when not defined(noEmoji): "       🎧 " & AppName & " 🎧"
+    else: "          " & AppName
   say(title, currentTheme.header, xOffset = (termWidth - title.len) div 2)
 
   # Draw the bottom border of the header using the theme's separator color
@@ -263,7 +265,9 @@ proc displayMenu*(
   var currentY = 1  # Start at the top
 
   # Draw the "Station Categories" section header
-  let categoriesHeader = "         📻 Station Categories 📻"
+  let categoriesHeader =
+    when not defined(noEmoji): "         📻 Station Categories 📻"
+    else: "         \\[o=] Station Categories [o=]/"
   say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
   currentY += 1  # Increment after header
 
