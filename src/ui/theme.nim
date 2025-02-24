@@ -1,8 +1,10 @@
 # theme.nim
 
 import
-  json,strutils, utils,
-  terminal, tables
+  json, strutils,
+  terminal, tables,
+
+  ../utils/utils
 
 proc loadThemeConfig*(configPath: string): ThemeConfig =
   ## Loads the theme configuration from the specified JSON file.
