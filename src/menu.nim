@@ -49,7 +49,7 @@ proc updateAnimationOnly(status, currentSong: string, animationCounter: int) =
   setCursorPos(0, 2)
   
   # Write ONLY the animation symbol and 3 spaces, then erase to the end of the line
-  styledEcho(fgCyan, animationSymbol)
+  stdout.styledWrite(fgCyan, animationSymbol)
 
 proc cleanupPlayer(ctx: ptr Handle) =
   ## Cleans up player resources.
