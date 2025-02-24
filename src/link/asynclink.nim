@@ -1,7 +1,7 @@
 # asynclink.nim
 
 import
-  times, utils, asyncdispatch,
+  times, ../utils/utils, asyncdispatch,
   asyncnet, strutils, uri, link
 
 from net import TimeoutError

@@ -1,10 +1,17 @@
 # ui.nim
 
 import
-  terminal, libmpv, random, os,
-  strutils, times, animation,
-  utils, scroll
+  terminal,  random, os,
+  strutils, times, 
 
+  ../audio/libmpv,
+  ../utils/utils,
+  ../ui/
+    [
+      scroll,
+      animation,
+    ]
+  
 when not defined(simple):
   import theme, stationstatus
 

@@ -2,10 +2,17 @@
 
 import
   os,  terminal, strformat, std/exitprocs,
-  src/[menu, utils, illwill, player, libmpv]
+
+  src/[
+    ui/menu, ui/illwill,
+    utils/utils,
+    audio/player, audio/libmpv
+  ]
 
 when not defined(simple):
-  import src/theme
+  import
+    src/
+      ui/theme
 
 type
   AppConfig = object

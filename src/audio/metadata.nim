@@ -1,6 +1,6 @@
 # metadata.nim
 
-import libmpv, tables, strutils, terminal, utils
+import libmpv, tables, strutils, terminal, ../utils/utils
 
 type
   MpvError* = object of CatchableError

@@ -2,7 +2,15 @@
 
 import
   json, strutils, os, terminal,
-  strformat, player, tables, libmpv
+  strformat, tables,
+
+  ../audio/
+    [
+      player,
+      libmpv,
+    ],
+
+  ../ui/illwill
 
 type
   QuoteData* = object
@@ -233,6 +241,12 @@ proc truncateMe*(str: string): string =
     result = str.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
   else: return str
       #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
+
+proc cleanupPlayer*(ctx: ptr Handle) =
+  ## Cleans up player resources.
+  #ctx.terminateDestroy()
+  illwillDeinit()
+  stopCurrentJob()
 
 # Unit tests for utils.nim
 when isMainModule:
