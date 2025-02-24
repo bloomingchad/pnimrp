@@ -179,6 +179,8 @@ proc warnBell* =
   while true:
     if mpvCtx.waitEvent().eventID in {IDEndFile}:
       break
+  #reset back to old volume
+  cE mpvCtx.setProperty("volume", fmtInt64, addr lastVolume)
 
 # Unit tests for player.nim
 when isMainModule:
