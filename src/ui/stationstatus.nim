@@ -22,8 +22,8 @@ proc toStatusCodeEmoji(status: LinkStatus): (ForegroundColor, string) =
     of lsChecking: (fgDefault, "🟡")
   else:
     case status
-    of lsValid:    (fgGreen,  "✓")  # Green checkmark
-    of lsInvalid:  (fgRed,    "✗")  # Red cross
+    of lsValid:    (fgGreen,  "√")  # Green checkmark
+    of lsInvalid:  (fgRed,    "x")  # Red cross
     of lsChecking: (fgYellow, "o")  # Yellow circle (Unicode U+25CC)
 
 # Combine similar status indicator functions
