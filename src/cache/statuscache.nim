@@ -20,6 +20,19 @@ proc getCacheFilePath*(submenuName: string): string =
   ## Constructs the full path to the cache file for a given submenu.
   result = CacheDir / ("cache_" & submenuName.toLowerAscii & ".json")
 
+proc isFresh*(cache: Cache): bool =
+  ## Checks if the cache is still fresh (within the TTL).
+  try:
+    if cache.lastCheck == "expired":
+      return false
+    let lastCheckTime = parse(cache.lastCheck, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    let currentTime = now()
+    let diffSeconds = (currentTime - lastCheckTime).inSeconds
+    return diffSeconds <= CacheTTL
+  except ValueError: # Catch date parsing errors
+    stderr.writeLine "Error: Invalid date format in cache. Treating as expired."
+    return false
+
 proc loadCache*(submenuName: string): Cache =
   ## Loads the cache from the JSON file.  Handles file not found and parsing errors.
   let filePath = getCacheFilePath(submenuName)
