@@ -11,5 +11,9 @@ const
 
 type
   Cache* = object
-   lastCheck*: string # Using string for ISO 8601 representation
-   stations*: Table[string, string]  # URL -> "valid" / "invalid"
+    lastCheck*: string # Using string for ISO 8601 representation
+    stations*: Table[string, string]  # URL -> "valid" / "invalid"
+
+proc getCacheFilePath*(submenuName: string): string =
+  ## Constructs the full path to the cache file for a given submenu.
+  result = CacheDir / ("cache_" & submenuName.toLowerAscii & ".json")
