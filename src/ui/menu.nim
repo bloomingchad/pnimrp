@@ -325,6 +325,15 @@ proc handleMenu*(
               status: lsChecking         # Initial state
             )
           )
+        
+        if cache.isFresh():
+          # Populate cached statuses directly
+          for i in 0..<paths.len:
+            let url = paths[i]
+            let statusStr = cache.stations.getOrDefault(url, "invalid")
+            stations[i].status = if statusStr == "valid": lsValid else: lsInvalid
+        else:
+          waitFor resolveAndDisplay(stations)  # Keep existing async validation
 
         waitFor resolveAndDisplay(stations)  # Defined in stationstatus.nim
 
