@@ -114,3 +114,14 @@ proc loadCache*(submenuName: string): Cache =
   else:
      #Initialize file to not repeat checks
      checkError saveCache(submenuName, result)
+
+proc updateCachePlayback*(submenuName: string, url: string, status: LinkStatus) =
+  ## Updates the status of a single station in the cache (during playback).
+  var cache = loadCache(submenuName)  # Load existing cache
+
+  # Update only the specific station's status
+  let statusStr = if status == lsValid: "valid" else: "invalid"
+  cache.stations[url] = statusStr
+
+  # No need to modify 'lastCheck' for individual station updates during playback
+  checkError saveCache(submenuName, cache)  # Save updated cache
