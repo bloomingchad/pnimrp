@@ -117,11 +117,17 @@ proc loadCache*(submenuName: string): Cache =
 
 proc updateCachePlayback*(submenuName: string, url: string, status: LinkStatus) =
   ## Updates the status of a single station in the cache (during playback).
-  var cache = loadCache(submenuName)  # Load existing cache
+  ## This function is called when a station's playback status changes (valid/invalid).
+  ## It updates the cache with the new status without modifying the `lastCheck` timestamp.
+  
+  var cache = loadCache(submenuName)  # Load the existing cache for the submenu
 
-  # Update only the specific station's status
+  # Convert the LinkStatus to a string representation
   let statusStr = if status == lsValid: "valid" else: "invalid"
+  
+  # Update the status of the specified station
   cache.stations[url] = statusStr
-
-  # No need to modify 'lastCheck' for individual station updates during playback
-  checkError saveCache(submenuName, cache)  # Save updated cache
+  
+  # Save the updated cache back to the file
+  if not saveCache(submenuName, cache):
+    stderr.writeLine fmt"Error: Failed to update cache for submenu '{submenuName}' during playback."
