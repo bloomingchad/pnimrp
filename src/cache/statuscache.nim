@@ -33,6 +33,53 @@ proc isFresh*(cache: Cache): bool =
     stderr.writeLine "Error: Invalid date format in cache. Treating as expired."
     return false
 
+proc checkError(status: bool) =
+  if not status:
+    echo("cache error")
+    quit(QuitFailure)
+
+proc saveCache*(submenuName: string, cache: Cache): bool =
+  ## Saves the cache data to a JSON file.
+  ## Creates the cache directory if it doesn't exist.
+  ## Uses robust JSON construction to avoid partial writes.
+  
+  let filePath = getCacheFilePath(submenuName)
+  
+  # Ensure the cache directory exists
+  try:
+    createDir(CacheDir)
+  except OSError:
+    stderr.writeLine fmt"Error: Failed to create cache directory '{CacheDir}'."
+    return false
+  
+  # Prepare the JSON object
+  var jsonObject = newJObject()
+  jsonObject["last_check"] = %cache.lastCheck
+  
+  # Convert stations table to JSON
+  var stationsObject = newJObject()
+  for url, status in cache.stations.pairs:
+    stationsObject[url] = %status
+  jsonObject["stations"] = stationsObject
+  
+  # Write JSON to a temporary file first to avoid partial writes
+  let tempFilePath = filePath & ".tmp"
+  try:
+    writeFile(tempFilePath, $jsonObject)
+  except IOError:
+    stderr.writeLine fmt"Error: Failed to write temporary cache file '{tempFilePath}'."
+    return false
+  
+  # Move the temporary file to the actual cache file
+  try:
+    moveFile(tempFilePath, filePath)
+  except OSError:
+    stderr.writeLine fmt"Error: Failed to move temporary file to cache file '{filePath}'."
+    return false
+  
+  return true
+
+
 proc loadCache*(submenuName: string): Cache =
   ## Loads the cache from the JSON file.  Handles file not found and parsing errors.
   let filePath = getCacheFilePath(submenuName)
@@ -66,4 +113,4 @@ proc loadCache*(submenuName: string): Cache =
       stderr.writeLine fmt"Error: Failed to read cache file: " & filePath
   else:
      #Initialize file to not repeat checks
-     saveCache(submenuName, result)
+     checkError saveCache(submenuName, result)
