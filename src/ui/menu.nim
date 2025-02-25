@@ -12,7 +12,8 @@ import
     ],
 
   ../link/link,
-  ../utils/utils
+  ../utils/utils,
+  ../cache/statuscache
 
 when not defined(simple):
   import asyncdispatch,
@@ -313,6 +314,7 @@ proc handleMenu*(
     when not defined(simple):
       if isHandlingJSON(handleMenuIsHandling):
         initCheckingStationNotice()
+        let cache = loadCache(section)  # Load cache for current submenu
 
         var stations: seq[StationStatus] = @[]
         for i in 0..<items.len:
