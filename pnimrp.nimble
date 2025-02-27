@@ -6,7 +6,6 @@ description   = "simple terminal radio station player in nim making life easier"
 license       = "MPL-2.0"
 bin           = @["pnimrp"]
 installDirs   = @["assets"]
-installFiles  = @["themes.json"]
 
 # Dependencies
 
