@@ -2,8 +2,14 @@ name: nim CI
 
 on:
   push:
+    paths:
+      - 'pnimrp.nim'
+      - 'src/**'
   pull_request:
 
+    paths:
+      - 'pnimrp.nim'
+      - 'src/**'
 jobs:
   build:
     runs-on: ubuntu-latest
