@@ -267,13 +267,17 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
     result.names.add(name)
     result.paths.add(dir)
 
-var chooseForMe = false  # Declare as mutable global variable
+var chooseForMe* = false  # Declare as mutable global variable
+var lastStationIdx*: int = -1  # Declare a global variable to track the last station index
 
 proc chooseForMeOrChooseYourself(itemsLen: int): char =
   if chooseForMe:
     chooseForMe = false  # Reset the flag after use
     randomize()
-    let rndIdx = rand(itemsLen - 1)  # Generate random index within bounds
+    var rndIdx = rand(itemsLen - 1)  # Generate random index within bounds
+    while rndIdx == lastStationIdx and itemsLen > 1:  # Ensure it doesn't pick the last station again
+      rndIdx = rand(itemsLen - 1)
+    lastStationIdx = rndIdx  # Update the last station index
 
     # Convert the random index to a menu key (1-9, A-M)
     result = 
