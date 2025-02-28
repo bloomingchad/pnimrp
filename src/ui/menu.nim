@@ -229,7 +229,7 @@ proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
       raise newException(MenuError, "Missing 'stations' key in JSON file.")
     
     let stations = jsonData["stations"]
-    result = (names: @[], urls: @[])
+    result = (names: newSeqOfCap[string](32), urls: newSeqOfCap[string](32))
     
     # Iterate over the stations and add names and URLs
     for stationName, stationUrl in stations.pairs:
@@ -257,7 +257,8 @@ proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
 
 proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[string]] =
   ## Loads available station categories from the assets directory.
-  result = (names: @[], paths: @[])
+  result = (names: newSeqOfCap[string](32), paths: newSeqOfCap[string](32))
+
   let nativePath = baseDir / "*".unixToNativePath
 
   for file in walkFiles(nativePath):
