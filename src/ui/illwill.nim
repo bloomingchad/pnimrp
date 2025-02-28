@@ -203,7 +203,15 @@ type
     result = Key.None
   ]#
 
-proc toKey(c: int): Key = cast[Key](c)
+{.push warning[HoleEnumConv]:off.}
+
+func toKey(c: int): Key =
+  try:
+    result = Key(c)
+  except RangeDefect:  # ignore unknown keycodes
+    result = Key.None
+
+{.pop.}
 
 var gIllwillInitialised = false
 var gFullScreen = false
