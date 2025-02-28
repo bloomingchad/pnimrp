@@ -73,12 +73,18 @@ proc initGlobalMpv* =
 
 proc allocateJobMpv*(source: string; mpvCtx = mpvCtx) =
   let fileArgs = allocCStringArray(["loadfile", source])
-  cE mpvCtx.cmd(fileArgs)
+  try:
+    cE mpvCtx.cmd(fileArgs)
+  finally:
+    deallocCStringArray(fileArgs)
 
 proc stopCurrentJob* =
   let cmdArgs = allocCStringArray(["stop"])
-  cE mpvCtx.cmd(cmdArgs)
   #discard mpvCtx.waitEvent(1)
+  try:
+    cE mpvCtx.cmd(cmdArgs)
+  finally:
+    deallocCStringArray(cmdArgs)
 
 proc pause*(ctx: ptr Handle, shouldPause: bool) {.raises: [PlayerError].} =
   ## Toggles the pause state of the player.
@@ -135,7 +141,7 @@ proc isIdle*(ctx: ptr Handle): bool {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to check idle state: " & e.msg)
 
-proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [PlayerError].} =
+proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [].} =
   ## Retrieves the current media title.
   ##
   ## Args:
@@ -146,12 +152,19 @@ proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [PlayerError].} =
   try:
     var title: cstring
     cE ctx.getProperty("media-title", fmtString, addr title)
+    
+    # Convert the cstring to a Nim string immediately to ensure GC safety
     result = if title != nil: $title else: ""
     fullMediaTitle = result
+
+    # Free the cstring allocated by libmpv
+    if title != nil:
+      libmpv.free(title)
 
   except Exception as e:
     #raise newException(PlayerError, "Failed to get media title: " & e.msg)
     discard
+
 proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
   ## Retrieves comprehensive information about the media player's current state.
   ##
@@ -177,6 +190,7 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
       isMuted: bool(muteState),
       isPaused: bool(pauseState)
     )
+    
   except Exception as e:
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
 
