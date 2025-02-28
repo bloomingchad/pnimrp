@@ -72,12 +72,15 @@ proc playStation(config: MenuConfig) =
     var isObserving = false
     var counter: uint8
     var playlistFirstPass = false
-    var animationCounter: int = 0  # Counter for animation updates
     var scrollOffset: int = 0
     var lastWidth: int = 0
-    var scrollCounter: int = 0
     var fullTitle: string # Declare fullTitle here
-    var metadata: Table[string, string] # Declare metadata here
+
+    when not defined(simple):
+      var metadata: Table[string, string] # Declare metadata here
+      var scrollCounter: int = 0
+      var animationCounter: int = 0  # Counter for animation updates
+    
 
     allocateJobMpv(config.stationUrl)
     var event = mpvCtx.waitEvent()
