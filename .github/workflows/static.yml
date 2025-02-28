@@ -59,13 +59,13 @@ jobs:
           # Switch to or create the orphan 'pages' branch
           git switch --orphan pages || git checkout --orphan pages
           
-          # Remove all tracked files (if any exist)
-          if [ -n "$(git ls-tree -r HEAD --name-only)" ]; then
-            git rm -rf .
-          fi
+          # Ensure the branch is clean
+          git rm -rf . || echo "No files to remove" # Silently handle if no files exist
           
           # Add and commit the static content
-          git add index.html web/
+          echo "Adding static content to the 'pages' branch"
+          cp -r index.html web/ . # Copy content to the root of the repository
+          git add .
           git commit -m "Deploy static content to Codeberg Pages [skip ci]"
           
           # Push to the 'pages' branch on Codeberg
