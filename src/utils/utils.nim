@@ -204,7 +204,7 @@ proc parseJArray*(filePath: string): seq[string] =
       raise newException(JSONParseError, "Missing 'stations' key in JSON file.")
     
     let stations = jsonData["stations"]
-    result = @[]  # Initialize an empty sequence
+    result = newSeqOfCap[string](32)  # Initialize an empty sequence
     
     # Iterate over the stations and add names and URLs to the result
     for stationName, stationUrl in stations.pairs:
@@ -230,7 +230,7 @@ proc loadQuotes*(filePath: string): QuoteData =
     if jsonData.kind != JObject:
       raise newException(InvalidDataError, "Invalid JSON format: expected an object.")
     
-    result = QuoteData(quotes: @[], authors: @[])  # Initialize empty sequences
+    result = QuoteData(quotes: newSeqOfCap[string](32), authors: newSeqOfCap[string](32))  # Initialize empty sequences
     
     # Iterate over the key-value pairs in the JSON object
     for quote, author in jsonData.pairs:
