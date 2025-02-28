@@ -56,16 +56,14 @@ jobs:
         
       - name: Prepare and deploy to Codeberg Pages
         run: |
-          # Create a clean directory for Codeberg Pages content
-          mkdir -p /tmp/codeberg-pages
+          # Switch to or create the orphan 'pages' branch
+          git switch --orphan pages
+          git rm -rf . # Clear the branch (if it existed)
           
-          # Copy only relevant web files
-          cp -r index.html web/ /tmp/codeberg-pages/
-          
-          # Push directly to Codeberg pages branch without history
-          cd /tmp/codeberg-pages
-          git init
-          git add .
+          # Add and commit the static content
+          git add index.html web/
           git commit -m "Update Codeberg Pages"
+          
+          # Push to the 'pages' branch on Codeberg
           git remote add codeberg https://oauth2:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/bloomingchad/pnimrp.git
-          echo "${{ secrets.CODEBERG_TOKEN }}" | git push -f codeberg master:pages
+          echo "${{ secrets.CODEBERG_TOKEN }}" | git push -f codeberg pages
