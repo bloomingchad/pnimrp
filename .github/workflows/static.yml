@@ -58,7 +58,7 @@ jobs:
         run: |
           # Create a temporary directory and copy static content
           mkdir -p /tmp/codeberg-pages
-          cp index.html web/ /tmp/codeberg-pages/
+          cp -r index.html web/ /tmp/codeberg-pages/
           
           # Switch to or create the orphan 'pages' branch
           git switch --orphan pages || git checkout --orphan pages
