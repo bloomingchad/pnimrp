@@ -56,15 +56,20 @@ jobs:
         
       - name: Prepare and deploy to Codeberg Pages
         run: |
+          # Create a temporary directory and copy static content
+          mkdir -p /tmp/codeberg-pages
+          cp index.html web/ /tmp/codeberg-pages/
+          
           # Switch to or create the orphan 'pages' branch
           git switch --orphan pages || git checkout --orphan pages
           
           # Ensure the branch is clean
           git rm -rf . || echo "No files to remove" # Silently handle if no files exist
           
+          # Copy static content back to the repository root
+          cp -r /tmp/codeberg-pages/* .
+          
           # Add and commit the static content
-          echo "Adding static content to the 'pages' branch"
-          cp -r index.html web/ . # Copy content to the root of the repository
           git add .
           git commit -m "Deploy static content to Codeberg Pages [skip ci]"
           
