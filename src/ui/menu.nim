@@ -273,10 +273,12 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
 var chooseForMe* = false  # Declare as mutable global variable
 var lastStationIdx*: int = -1  # Declare a global variable to track the last station index
 
+randomize()
+
 proc chooseForMeOrChooseYourself(itemsLen: int): char =
   if chooseForMe:
     chooseForMe = false  # Reset the flag after use
-    randomize()
+
     var rndIdx = rand(itemsLen - 1)  # Generate random index within bounds
     while rndIdx == lastStationIdx and itemsLen > 1:  # Ensure it doesn't pick the last station again
       rndIdx = rand(itemsLen - 1)
