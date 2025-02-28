@@ -95,8 +95,9 @@ proc playStation(config: MenuConfig) =
 
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
-        mpvCtx.observeMediaTitle()
-        cE(observeProperty(mpvCtx, 0, "metadata", fmtNone))
+        when not defined(simple): mpvCtx.observeMetadata()
+        else: mpvCtx.observeMediaTitle()
+
         isObserving = true
 
       if event.eventID in {IDEventPropertyChange}:
