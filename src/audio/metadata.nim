@@ -18,39 +18,33 @@ proc validateNodeList(list: ptr NodeList): bool =
   result = (list != nil) and (list.values != nil) and (list.keys != nil) and
            (list.num >= 0) and (list.num < 100) # Smaller upper bound for small arrays
 
-iterator items(iter: var NodeListIterator):
-  tuple[
-    key: string,
-    value: Node
-  ] =
+iterator items(iter: var NodeListIterator): tuple[key: string, value: Node] =
+  ## Iterates over the key-value pairs in a NodeList.
+
+  # Validate the NodeList structure to ensure it's safe to iterate over.
   if not validateNodeList(iter.list):
-    echo "Error: Invalid NodeList encountered in items iterator"
-    iter.index = -1
-  else:
-    # Use seq instead of array
-    var values = newSeq[Node](iter.list.num) # Pre-allocate for efficiency
-    var keys = newSeq[cstring](iter.list.num) # Pre-allocate
+    raise newException(MpvError, "Invalid NodeList encountered in items iterator")
 
-    # Copy data into seqs
-    for i in 0 ..< iter.list.num:
-      let valuePtr =
-        cast[ptr Node](
-          cast[uint](iter.list.values) +
-          (
-            cast[uint](i) * cast[uint](sizeof(Node))
-          )
-        )
-      values[i] = valuePtr[]
-      keys[i] = iter.list.keys[i]
+  # ensure the values and keys pointers in the NodeList are not nil
+  # these pointers are required to access elements of NodeList
+  if iter.list.values == nil or iter.list.keys == nil:
+    raise newException(MpvError, "Invalid NodeList: nil pointer encountered")
 
-    # Iterate and yield
-    var index = iter.index
-    while index < iter.list.num:
-      let key = keys[index]
-      if key != nil:
-        let value = values[index]
-        yield (key: $key, value: value)
-      inc(index)
+  # check that number of elements is within bound
+  # this prevents out-of-bounds memory access
+  if iter.list.num < 0 or iter.list.num > 100:  # Adjust the upper bound as needed
+    raise newException(MpvError, "Invalid NodeList: num out of bounds (got: " & $iter.list.num & ")")
+
+  # Cast the values pointer to an UncheckedArray[Node] for direct indexing.
+  let valuePtr = cast[ptr UncheckedArray[Node]](iter.list.values)
+
+  # Iterate over the NodeList and yield key-value pairs.
+  var index = iter.index
+  while index < iter.list.num:
+    let key = iter.list.keys[index]
+    if key != nil:  # Skip nil keys
+      yield (key: $key, value: valuePtr[index])
+    inc(index)  # Move to the next element.
 
 proc handleIndividualTag(lowerKey: string, value: string,
                           tagMap: Table[string, string],
