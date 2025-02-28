@@ -89,6 +89,8 @@ proc playStation(config: MenuConfig) =
     # Draw the initial player UI
     drawPlayerUI(config.stationName, "Loading...", currentStatusEmoji(currentStatus(state)), state.volume)
     showFooter(isPlayerUI = true)
+    when defined(simple):
+      fullTitle = fullTitle.truncateMe()
 
     while true:
       if not state.isPaused:
@@ -125,8 +127,12 @@ proc playStation(config: MenuConfig) =
         else:
           scrollCounter += 1
       else:
-        setCursorPos(16, 2)
-        say(fullTitle.truncateMe(), fgCyan)
+        if scrollCounter == 21:
+          setCursorPos(16, 2)
+          say(fullTitle.truncateMe(), fgCyan)
+          scrollCounter = 0
+        else:
+          scrollCounter += 1
 
       # Periodic checks
       if counter >= CheckIdleInterval:
