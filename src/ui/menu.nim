@@ -4,7 +4,7 @@ import
   terminal, os, strutils, net,
   json, tables, random,
 
-  ui, illwill,  animation,
+  ui, illwill,
 
   ../audio/[
       player,
@@ -21,6 +21,7 @@ when not defined(simple):
     ../ui/[
       stationstatus,
       scroll,
+      animation,
      ]
 
 
@@ -105,16 +106,18 @@ proc playStation(config: MenuConfig) =
         when not defined(simple):
           globalMetadata = updateMetadataUI(config, mpvCtx, state)
 
-      # Increment the animation counter every 25ms (getKeyWithTimeout interval)
-      animationCounter += 1
 
-      # Check if it's time to update the animation (1350ms / 25ms = 54 iterations)
-      if animationCounter >= 54:
-        updateAnimationOnly(currentStatusEmoji(currentStatus(state)), state.currentSong, animationCounter)
-        animationCounter = 0  # Reset the counter
-
-      # Scrolling Logic
       when not defined(simple):
+        # Increment the animation counter every 25ms (getKeyWithTimeout interval)
+        animationCounter += 1
+
+        # Check if it's time to update the animation (1350ms / 25ms = 54 iterations)
+        if animationCounter >= 54:
+          updateAnimationOnly(currentStatusEmoji(currentStatus(state)), state.currentSong, animationCounter)
+          animationCounter = 0  # Reset the counter
+
+
+        # Scrolling Logic
         if scrollCounter == 21:
           scrollTextOnce(fullTitle, scrollOffset, termWidth, startingX) # Corrected call
           if fullTitle.len > termWidth - startingX:
