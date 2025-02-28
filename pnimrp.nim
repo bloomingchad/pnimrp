@@ -93,7 +93,12 @@ proc main() =
     # Validate the environment and initialize configuration
     validateEnvironment()
     let config = getAppConfig()
+    try:
+      illwillInit(false)
+    except:
+      discard  # Non-critical failure
 
+    defer: illwillDeinit()
     # Display the application banner and hide the cursor
     showBanner()
     hideCursor()

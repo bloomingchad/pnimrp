@@ -253,7 +253,6 @@ proc truncateMe*(str: string): string =
 proc cleanupPlayer*(ctx: ptr Handle) =
   ## Cleans up player resources.
   #ctx.terminateDestroy()
-  illwillDeinit()
   stopCurrentJob()
 
 # Unit tests for utils.nim

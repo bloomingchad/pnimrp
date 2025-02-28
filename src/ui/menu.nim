@@ -81,10 +81,6 @@ proc playStation(config: MenuConfig) =
     allocateJobMpv(config.stationUrl)
     var event = mpvCtx.waitEvent()
 
-    try:
-      illwillInit(false)
-    except:
-      discard  # Non-critical failure
 
     # Draw the initial player UI
     drawPlayerUI(config.stationName, "Loading...", currentStatusEmoji(currentStatus(state)), state.volume)
