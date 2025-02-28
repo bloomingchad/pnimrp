@@ -8,12 +8,12 @@ import
   ../utils/utils,
   ../ui/
     [
-      scroll,
       animation,
     ]
-  
+
+
 when not defined(simple):
-  import theme, stationstatus
+  import theme, stationstatus, scroll
 
 using str: string
 
@@ -89,7 +89,7 @@ proc drawHeader*() =
 proc truncateName(name: string, maxLength: int): string =
   ## Truncates a station name to the specified maximum length and adds ellipsis.
   if termWidth <= MinTerminalWidth or name.len > maxLength:
-    name[0 ..< maxLength - 3] & "..."  # Always truncate at minimum width
+    name[0 ..< maxLength - 3] #& "..."  # Always truncate at minimum width
   else: name
 
 proc calculateColumnLayout(options: MenuOptions): (int, seq[int], int) =
