@@ -114,6 +114,12 @@ proc observeMediaTitle*(ctx: ptr Handle) {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to observe media title: " & e.msg)
 
+proc observeMetadata*(ctx: ptr Handle) {.raises: [PlayerError].} =
+  try:
+    cE ctx.observeProperty(0, "metadata", fmtNone)
+  except Exception as e:
+    raise newException(PlayerError, "Failed to observe metadata: " & e.msg)
+
 proc isIdle*(ctx: ptr Handle): bool {.raises: [PlayerError].} =
   ## Checks if the player is currently idle.
   ##
