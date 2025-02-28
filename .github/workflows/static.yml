@@ -67,5 +67,5 @@ jobs:
           git init
           git add .
           git commit -m "Update Codeberg Pages"
-          git remote add codeberg https://codeberg.org/bloomingchad/pnimrp.git
+          git remote add codeberg https://oauth2:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/bloomingchad/pnimrp.git
           echo "${{ secrets.CODEBERG_TOKEN }}" | git push -f codeberg master:pages
