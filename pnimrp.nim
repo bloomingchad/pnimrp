@@ -46,7 +46,7 @@ proc getAppConfig(): AppConfig =
 proc showBanner() =
   ## Displays the application banner with version and copyright information.
   styledEcho(fgCyan,  AppName & " v" & Version)
-  styledEcho(fgCyan, "Copyright (c) 2021-2024")
+  styledEcho(fgCyan, "Copyright (c) 2021-2025")
 
 proc cleanup() =
   ## Performs cleanup tasks on application exit, such as restoring the cursor.

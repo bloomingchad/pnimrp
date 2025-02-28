@@ -353,7 +353,7 @@ proc showNotes* =
     var shouldReturn = false
     drawMenu(
       "Notes",
-      """PNimRP Copyright (C) 2021-2024 antonl05/bloomingchad
+      """PNimRP Copyright (C) 2021-2025 antonl05/bloomingchad
 This program comes with ABSOLUTELY NO WARRANTY
 This is free software, and you are welcome to redistribute
 under certain conditions.""",
