@@ -449,11 +449,17 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   # Update Now Playing line
   setCursorPos(0, 2)
   eraseLine()
-  styledEcho(fgCyan, "   Now Playing: ")
-  if terminalSupportsEmoji:
-    startingX = "   Now Playing: ".len + 1  # +1 for emoji space
+  
+  when defined(simple):
+    # In simple mode, use a single say() call with the full text
+    say("   Now Playing: " & nowPlaying.truncateMe(), fgCyan)
   else:
-    startingX = "   Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
+    # In normal mode, use the existing approach
+    styledEcho(fgCyan, "   Now Playing: ")
+    if terminalSupportsEmoji:
+      startingX = "   Now Playing: ".len + 1  # +1 for emoji space
+    else:
+      startingX = "   Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
 
   # Update Status and Volume line
   setCursorPos(0, 3)
@@ -466,7 +472,8 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   setCursorPos(0, 5)
 
   # Reset scrollOffset when a new song starts
-  scrollOffset = 0
+  when not defined(simple):
+    scrollOffset = 0
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.

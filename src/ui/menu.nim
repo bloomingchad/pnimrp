@@ -126,13 +126,6 @@ proc playStation(config: MenuConfig) =
           scrollCounter = 0
         else:
           scrollCounter += 1
-      else:
-        if scrollCounter == 21:
-          setCursorPos(16, 2)
-          say(fullTitle.truncateMe(), fgCyan)
-          scrollCounter = 0
-        else:
-          scrollCounter += 1
 
       # Periodic checks
       if counter >= CheckIdleInterval:
