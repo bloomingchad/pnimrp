@@ -5,15 +5,10 @@ import
   strutils, times, 
 
   ../audio/libmpv,
-  ../utils/utils,
-  ../ui/
-    [
-      animation,
-    ]
-
+  ../utils/utils
 
 when not defined(simple):
-  import theme, stationstatus, scroll
+  import theme, stationstatus, scroll, animation
 
 using str: string
 
@@ -452,14 +447,15 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   
   when defined(simple):
     # In simple mode, use a single say() call with the full text
-    say("   Now Playing: " & nowPlaying.truncateMe(), fgCyan)
+    say("Now Playing:   " & nowPlaying.truncateMe(), fgCyan, xOffset = 3)
   else:
     # In normal mode, use the existing approach
-    styledEcho(fgCyan, "   Now Playing: ")
+    setCursorXPos 3
+    styledEcho(fgCyan, "Now Playing:  ")
     if terminalSupportsEmoji:
-      startingX = "   Now Playing: ".len + 1  # +1 for emoji space
+      startingX = "  Now Playing: ".len + 1  # +1 for emoji space
     else:
-      startingX = "   Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
+      startingX = "  Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
 
   # Update Status and Volume line
   setCursorPos(0, 3)
