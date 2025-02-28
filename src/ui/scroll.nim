@@ -4,11 +4,6 @@ import strutils, terminal,
 
   illwill
 
-var
-  scrollOffset* = 0
-  lastWidth* = 0
-  startingX* = 0
-  scrollCounter* = 0
 
 proc clearLineForScroll(start: int, len: int, indentLevel: int = 0) =
   ## Clears a specific portion of the line for scrolling.

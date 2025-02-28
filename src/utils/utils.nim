@@ -77,6 +77,14 @@ when not defined(simple):
 # Global variable to hold the current theme
 var currentTheme*: Theme
 
+var
+  scrollOffset* = 0
+  lastWidth* = 0
+  startingX* = 0
+  scrollCounter* = 0
+
+
+
 const
   MenuChars* = @[
     '1', '2', '3', '4', '5', '6', '7', '8', '9',

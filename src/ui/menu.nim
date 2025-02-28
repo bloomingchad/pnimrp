@@ -4,7 +4,7 @@ import
   terminal, os, strutils, net,
   json, tables, random,
 
-  ui, illwill,  animation,  scroll,
+  ui, illwill,  animation,
 
   ../audio/[
       player,
@@ -18,7 +18,11 @@ when not defined(simple):
   import asyncdispatch,
 
     ../audio/metadata,
-    ../ui/stationstatus
+    ../ui/[
+      stationstatus,
+      scroll,
+     ]
+
 
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
@@ -112,13 +116,17 @@ proc playStation(config: MenuConfig) =
         animationCounter = 0  # Reset the counter
 
       # Scrolling Logic
-      if scrollCounter == 21:
-        scrollTextOnce(fullTitle, scrollOffset, termWidth, startingX) # Corrected call
-        if fullTitle.len > termWidth - startingX:
-          scrollOffset += 1
-        scrollCounter = 0
+      when not defined(simple):
+        if scrollCounter == 21:
+          scrollTextOnce(fullTitle, scrollOffset, termWidth, startingX) # Corrected call
+          if fullTitle.len > termWidth - startingX:
+            scrollOffset += 1
+          scrollCounter = 0
+        else:
+          scrollCounter += 1
       else:
-        scrollCounter += 1
+        setCursorPos(16, 2)
+        say(fullTitle.truncateMe(), fgCyan)
 
       # Periodic checks
       if counter >= CheckIdleInterval:
