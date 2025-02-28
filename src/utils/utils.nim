@@ -2,7 +2,7 @@
 
 import
   json, strutils, os, terminal,
-  strformat, tables,
+  strformat, tables, times,
 
   ../audio/
     [
@@ -62,6 +62,46 @@ type
     volumeMedium*: ForegroundColor
     volumeHigh*: ForegroundColor
 
+type
+  AnimationFrame* = object
+    frame: int
+    lastUpdate: DateTime
+
+  PlayerStatus* = enum # Enumeration for player states
+    StatusPlaying
+    StatusMuted
+    StatusPaused
+    StatusPausedMuted
+
+const
+  AsciiFrames* = ["♪♫", "♫♪"] # ASCII fallback animation frames
+  EmojiFrames* = ["🎵", "🎶"]     # Emoji animation frames
+
+var
+  animationFrame*: int = 0 # Tracks the current frame of the animation
+  lastAnimationUpdate*: DateTime = now() # Tracks the last time the animation was updated
+
+proc getSymbol*(status: PlayerStatus, useEmoji: bool): string =
+  if useEmoji:
+    case status
+    of StatusPlaying: return "🔊"
+    of StatusMuted: return "🔇"
+    of StatusPaused: return "⏸"
+    of StatusPausedMuted: return "⏸ 🔇"
+  else:
+    case status
+    of StatusPlaying: return "[>]"
+    of StatusMuted: return "[X]"
+    of StatusPaused: return "||"
+    of StatusPausedMuted: return "||[X]"
+
+var terminalSupportsEmoji* =
+  when defined(noEmoji): false
+  else: true
+
+proc currentStatusEmoji*(status: PlayerStatus): string =
+  return getSymbol(status, terminalSupportsEmoji)
+
 when not defined(simple):
   type
     ThemeConfig* = object
@@ -82,8 +122,6 @@ var
   lastWidth* = 0
   startingX* = 0
   scrollCounter* = 0
-
-
 
 const
   MenuChars* = @[
