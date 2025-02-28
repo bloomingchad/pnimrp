@@ -1,8 +1,8 @@
 # utils.nim
 
 import
-  json, strutils, os, terminal,
-  strformat, tables, times,
+  json, strutils, os,
+  terminal, tables, times,
 
   ../audio/
     [
@@ -180,12 +180,12 @@ proc validateLengthStationName(result: seq[string], filePath: string, maxLength:
     if i mod 2 == 0:  # Only validate odd indices (0, 2, 4, ...)
       if result[i].len > maxLength:
         warn(
-          fmt"Station name at index {i} ('{result[i]}') in file {filePath} is too long.",
+          "Station name at index " & $i & " ('" & result[i] & "') in file " & filePath & " is too long.",
           xOffset = 4,
           color = fgYellow
         )
         warn(
-          fmt"Maximum allowed length is {maxLength} characters.",
+          "Maximum allowed length is " & $maxLength & " characters.",
           xOffset = 4,
           color = fgYellow
         )
@@ -216,9 +216,9 @@ proc parseJArray*(filePath: string): seq[string] =
       validateLengthStationName(result, filePath)
 
   except IOError:
-    raise newException(FileNotFoundError, fmt"Failed to load JSON file: {filePath}")
+    raise newException(FileNotFoundError, "Failed to load JSON file: " & filePath)
   except JsonParsingError:
-    raise newException(JSONParseError, fmt"Failed to parse JSON file: {filePath}")
+    raise newException(JSONParseError, "Failed to parse JSON file: " & filePath)
 
 proc loadQuotes*(filePath: string): QuoteData =
   ## Loads and validates quotes from a JSON file.
@@ -240,14 +240,14 @@ proc loadQuotes*(filePath: string): QuoteData =
     # Validate quotes and authors
     for i in 0 ..< result.quotes.len:
       if result.quotes[i].len == 0:
-        raise newException(InvalidDataError, fmt"Empty quote found at index {i}")
+        raise newException(InvalidDataError, "Empty quote found at index " & $i)
       if result.authors[i].len == 0:
-        raise newException(InvalidDataError, fmt"Empty author found for quote at index {i}")
+        raise newException(InvalidDataError, "Empty author found for quote at index " & $i)
         
   except IOError:
-    raise newException(FileNotFoundError, fmt"Failed to load quotes: {filePath}")
+    raise newException(FileNotFoundError, "Failed to load quotes: " & filePath)
   except JsonParsingError:
-    raise newException(JSONParseError, fmt"Failed to parse quotes: {filePath}")
+    raise newException(JSONParseError, "Failed to parse quotes: " & filePath)
 
 proc centerText*(text: string, width: int = termWidth): string =
   ## Centers the given text within the specified width.
