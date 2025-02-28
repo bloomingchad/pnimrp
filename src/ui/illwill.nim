@@ -196,13 +196,6 @@ type
 
   IllwillError* = object of CatchableError
 
-#[func toKey(c: int): Key =
-  try:
-    result = Key(c)
-  except RangeDefect:  # ignore unknown keycodes
-    result = Key.None
-  ]#
-
 {.push warning[HoleEnumConv]:off.}
 
 func toKey(c: int): Key =
