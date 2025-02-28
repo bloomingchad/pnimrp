@@ -1,7 +1,7 @@
 # pnimrp.nim
 
 import
-  os,  terminal, strformat, std/exitprocs,
+  os,  terminal, std/exitprocs,
 
   src/[
     ui/menu, ui/illwill,
@@ -45,10 +45,8 @@ proc getAppConfig(): AppConfig =
 
 proc showBanner() =
   ## Displays the application banner with version and copyright information.
-  styledEcho(fgCyan, fmt"""
-{AppName} v{Version}
-Copyright (c) 2021-2024
-""")
+  styledEcho(fgCyan,  AppName & " v" & Version)
+  styledEcho(fgCyan, "Copyright (c) 2021-2024")
 
 proc cleanup() =
   ## Performs cleanup tasks on application exit, such as restoring the cursor.
