@@ -24,8 +24,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
+  deploy-github:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -43,3 +42,30 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-codeberg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Git for Codeberg
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+        
+      - name: Prepare and deploy to Codeberg Pages
+        run: |
+          # Create a clean directory for Codeberg Pages content
+          mkdir -p /tmp/codeberg-pages
+          
+          # Copy only relevant web files
+          cp -r index.html web/ /tmp/codeberg-pages/
+          
+          # Push directly to Codeberg pages branch without history
+          cd /tmp/codeberg-pages
+          git init
+          git add .
+          git commit -m "Update Codeberg Pages"
+          git remote add codeberg https://codeberg.org/YOUR_USERNAME/YOUR_REPO.git
+          echo "${{ secrets.CODEBERG_TOKEN }}" | git push -f codeberg master:pages
