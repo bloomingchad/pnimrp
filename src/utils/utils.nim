@@ -124,7 +124,7 @@ var
   scrollCounter* = 0
 
 const
-  MenuChars* = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  MenuChars* = "123456789ABCDEFGHIJKLMOPTVWXYZ"
   AppName* = "Poor Mans Radio Player"
   AppNameShort* = "PNimRP"
   DefaultErrorMsg* = "INVALID CHOICE"
