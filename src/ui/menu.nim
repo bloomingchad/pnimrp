@@ -356,8 +356,8 @@ proc handleMenu*(
             let selectedPath = paths[idx]
             if dirExists(selectedPath):
               # Handle directories (subcategories or station lists)
-              var subItems: seq[string] = @[]
-              var subPaths: seq[string] = @[]
+              var subItems, subPaths = newSeqOfCap[string](32)
+
               for file in walkFiles(selectedPath / "*.json"):
                 let name = file.extractFilename.changeFileExt("").capitalizeAscii
                 subItems.add(name)

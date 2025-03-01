@@ -59,7 +59,7 @@ proc checkAndDraw(station: StationStatus) {.async.} =
 proc resolveAndDisplay*(stations: seq[StationStatus]) {.async.} =
   ## Asynchronously resolves and displays status for each station independently.
   ## Each station's status will update as soon as its check completes.
-  var allChecks: seq[Future[void]] = @[]
+  var allChecks = newSeqOfCap[Future[void]](32)
   
   for station in stations:
     allChecks.add(checkAndDraw(station))
