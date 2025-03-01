@@ -1,15 +1,6 @@
 # link.nim
 
-import std/[strutils, net, uri]
-
-type
-  LinkCheckError* = object of CatchableError
-  LinkValidationResult* = object
-    isValid*: bool
-    error*: string
-    protocol*: string
-    domain*: string
-    port*: Port
+import std/[strutils, net, uri], linkbase
 
 proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   ## Validates if a link is reachable and parses its components.
