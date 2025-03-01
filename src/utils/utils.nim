@@ -84,16 +84,16 @@ var
 proc getSymbol*(status: PlayerStatus, useEmoji: bool): string =
   if useEmoji:
     case status
-    of StatusPlaying: return "🔊"
-    of StatusMuted: return "🔇"
-    of StatusPaused: return "⏸"
-    of StatusPausedMuted: return "⏸ 🔇"
+    of StatusPlaying:     "🔊"
+    of StatusMuted:       "🔇"
+    of StatusPaused:      "⏸"
+    of StatusPausedMuted: "⏸ 🔇"
   else:
     case status
-    of StatusPlaying: return "[>]"
-    of StatusMuted: return "[X]"
-    of StatusPaused: return "||"
-    of StatusPausedMuted: return "||[X]"
+    of StatusPlaying:      "[>]"
+    of StatusMuted:        "[X]"
+    of StatusPaused:       "||"
+    of StatusPausedMuted:  "||[X]"
 
 var terminalSupportsEmoji* =
   when defined(noEmoji): false
