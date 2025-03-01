@@ -16,38 +16,44 @@ proc connectSocket(domain: string, port: Port): Future[bool] {.async.} =
   socket.close()
   return completed
 
-proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
-  var finalUrl = url
-  if not finalUrl.startsWith("http://") and not finalUrl.startsWith("https://"):
-    finalUrl = "http://" & finalUrl  # Default to HTTP if no protocol is specified
+proc normalizeUrl(url: string): string =
+  result = url
+  if not result.startsWith("http://") and not result.startsWith("https://"):
+    result = "http://" & result  # Default to HTTP if no protocol is specified
 
+proc parseUrlComponents(url: string): tuple[protocol: string, domain: string, port: Port] =
+  let uri = parseUri(url)
+  let protocol = if uri.scheme == "": "http" else: uri.scheme
+  let domain = uri.hostname
+  
+  let portNum = if uri.port == "":
+    if protocol == "https": 443 else: 80
+  else: 
+    parseInt(uri.port)
+  
+  let port = Port(portNum)
+  
+  if domain == "":
+    raise newException(LinkCheckError, "Invalid domain")
+    
+  return (protocol, domain, port)
+
+proc tryConnect(domain: string, port: Port): Future[LinkStatus] {.async.} =
   try:
-    # Parse the URL
-    let uri = parseUri(finalUrl)
-    let protocol = if uri.scheme == "": "http" else: uri.scheme
-    let domain = uri.hostname
-    let port = Port(
-      if uri.port == "":
-        if protocol == "https": 443 else: 80
-        else: parseInt(uri.port)
-    )
-
-    if domain == "":
-      raise newException(LinkCheckError, "Invalid domain")
-
-    # Attempt asynchronous connection with timeout
     let connected = await connectSocket(domain, port)
     if not connected:
-      result = lsInvalid
-      #error("TimeoutError: Connection timed out for URL: " & url)
-      return
+      return lsInvalid
+    return lsValid
+  except IOError:
+    return lsInvalid
+  except:
+    return lsInvalid
 
-    # Return validation result
-    result = lsValid
-
-  except IOError: #as e:
-    result = lsInvalid
-    #error("IOError: " & e.msg)
+proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
+  try:
+    let normalizedUrl = normalizeUrl(url)
+    let (protocol, domain, port) = parseUrlComponents(normalizedUrl)
+    result = await tryConnect(domain, port)
   except:
     result = lsInvalid
     #error("Unexpected error: " & getCurrentExceptionMsg())
