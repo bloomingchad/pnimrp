@@ -1,0 +1,27 @@
+NOTICE
+
+**pnimrp**
+   - Description: A terminal-based radio player written in Nim.
+   - License: Mozilla Public License 2.0 (MPL-2.0)
+   - Copyright: Copyright (c) 2021-2025 bloomingchad antonl05
+   - Source: https://github.com/bloomingchad/pnimrp
+
+   The full text of the MPL-2.0 license can be found in the `LICENSE` file.
+
+This project includes code from the following third-party libraries:
+
+1. **illwill**
+   - Description: A Nim library for non-blocking input handling.
+   - License: DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE (WTFPL)
+   - Copyright: Copyright (c) [Year] John Novak (original author)
+   - Source: https://github.com/johnnovak/illwill
+   - Modifications: Adapted for use in pnimrp.
+
+   The original WTFPL license text is included in the `illwill.nim` file.
+
+---
+
+Additional Notes:
+- This project is inspired by [Poor Man's Radio Player](https://github.com/hakerdefo/pmrp).
+- The `illwill.nim` file is licensed under the WTFPL, while the rest of the project is licensed under the MPL-2.0.
+- For more information about the WTFPL, visit: http://www.wtfpl.net/
