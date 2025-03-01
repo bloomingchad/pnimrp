@@ -13,38 +13,44 @@ type
 proc initNodeListIterator(list: ptr NodeList): NodeListIterator =
   result = NodeListIterator(list: list, index: 0)
 
-# Enhanced validation for small arrays
-proc validateNodeList(list: ptr NodeList): bool =
+proc validateNodeListStructure(list: ptr NodeList): bool =
+  ## Validates the basic structure of the NodeList.
   result = (list != nil) and (list.values != nil) and (list.keys != nil) and
-           (list.num >= 0) and (list.num < 100) # Smaller upper bound for small arrays
+           (list.num >= 0) and (list.num < 100)
+
+proc validateNodeListPointers(list: ptr NodeList): bool =
+  ## Ensures that the keys and values pointers are not nil.
+  result = (list.keys != nil) and (list.values != nil)
+
+proc validateNodeListBounds(list: ptr NodeList): bool =
+  ## Checks that the num field is within the expected bounds.
+  result = (list.num >= 0) and (list.num < 100)
+
+proc validateNodeList(list: ptr NodeList): bool =
+  ## Validates the entire NodeList by combining the above validation functions.
+  result = validateNodeListStructure(list) and
+           validateNodeListPointers(list) and
+           validateNodeListBounds(list)
 
 iterator items(iter: var NodeListIterator): tuple[key: string, value: Node] =
   ## Iterates over the key-value pairs in a NodeList.
-
-  # Validate the NodeList structure to ensure it's safe to iterate over.
   if not validateNodeList(iter.list):
     raise newException(MpvError, "Invalid NodeList encountered in items iterator")
 
-  # ensure the values and keys pointers in the NodeList are not nil
-  # these pointers are required to access elements of NodeList
   if iter.list.values == nil or iter.list.keys == nil:
     raise newException(MpvError, "Invalid NodeList: nil pointer encountered")
 
-  # check that number of elements is within bound
-  # this prevents out-of-bounds memory access
-  if iter.list.num < 0 or iter.list.num > 100:  # Adjust the upper bound as needed
+  if iter.list.num < 0 or iter.list.num > 100:
     raise newException(MpvError, "Invalid NodeList: num out of bounds (got: " & $iter.list.num & ")")
 
-  # Cast the values pointer to an UncheckedArray[Node] for direct indexing.
   let valuePtr = cast[ptr UncheckedArray[Node]](iter.list.values)
 
-  # Iterate over the NodeList and yield key-value pairs.
   var index = iter.index
   while index < iter.list.num:
     let key = iter.list.keys[index]
     if key != nil:  # Skip nil keys
       yield (key: $key, value: valuePtr[index])
-    inc(index)  # Move to the next element.
+    inc(index)
 
 proc handleIndividualTag(lowerKey: string, value: string,
                           tagMap: Table[string, string],
