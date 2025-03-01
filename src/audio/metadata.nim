@@ -160,7 +160,7 @@ proc metadata*(ctx: ptr Handle): Table[string, string] =
     var dataNode: Node
     cE getProperty(ctx, "metadata", fmtNode, addr dataNode)
 
-    var metadataTable = initTable[string, string]()
+    var metadataTable = initTable[string, string](16)
     if validateNodeList(dataNode.u.list):
       var iter = initNodeListIterator(dataNode.u.list)
       metadataTable = collectMetadata(iter)
