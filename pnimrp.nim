@@ -14,6 +14,9 @@ when not defined(simple):
     src/
       ui/theme
 
+when compileOption("profiler"):
+  import std/nimprof
+
 type
   AppConfig = object
     assetsDir: string # Directory where application assets are stored
