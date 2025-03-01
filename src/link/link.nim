@@ -1,6 +1,6 @@
 # link.nim
 
-import std/[strutils, net, uri], linkbase
+import std/net, linkbase
 
 proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   ## Validates if a link is reachable and parses its components.
@@ -12,22 +12,11 @@ proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   ##
   ## Returns:
   ##   LinkValidationResult object containing validation details.
-  var finalLink = link
-  if not finalLink.startsWith("http://") and not finalLink.startsWith("https://"):
-    finalLink = "http://" & finalLink  # Default to HTTP if no protocol is specified
-
+  var finalLink = normalizeUrl(link)
+  
   try:
-    # Parse the URL
-    let uri = parseUri(finalLink)
-    let protocol = if uri.scheme == "": "http" else: uri.scheme
-    let domain = uri.hostname
-    let port = if uri.port == "":
-                 if protocol == "https": Port(443) else: Port(80)
-               else:
-                 Port(parseInt(uri.port))
-
-    if domain == "":
-      raise newException(LinkCheckError, "Invalid domain")
+    # Parse the URL components using linkbase.nim
+    let (protocol, domain, port) = parseUrlComponents(finalLink)
 
     # Attempt connection
     var socket = newSocket()
