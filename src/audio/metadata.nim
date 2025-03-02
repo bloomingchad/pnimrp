@@ -15,34 +15,29 @@ proc initNodeListIterator(list: ptr NodeList): NodeListIterator =
 
 proc validateNodeListStructure(list: ptr NodeList): bool =
   ## Validates the basic structure of the NodeList.
-  result = (list != nil) and (list.values != nil) and (list.keys != nil) and
-           (list.num >= 0) and (list.num < 100)
+  result = (list != nil)
+  if not result:
+    raise newException(MpvError, "Invalid NodeList encountered in items iterator")
 
 proc validateNodeListPointers(list: ptr NodeList): bool =
   ## Ensures that the keys and values pointers are not nil.
   result = (list.keys != nil) and (list.values != nil)
+  if not result:
+    raise newException(MpvError, "Invalid NodeList: nil pointer encountered")
 
 proc validateNodeListBounds(list: ptr NodeList): bool =
   ## Checks that the num field is within the expected bounds.
   result = (list.num >= 0) and (list.num < 100)
+  if not result:
+    raise newException(MpvError, "Invalid NodeList: num out of bounds (got: " & $list.num & ")")
 
 proc validateNodeList(list: ptr NodeList): bool =
   ## Validates the entire NodeList by combining the above validation functions.
-  result = validateNodeListStructure(list) and
-           validateNodeListPointers(list) and
-           validateNodeListBounds(list)
+  result = list.validateNodeListStructure() and
+           list.validateNodeListPointers()  and
+           list.validateNodeListBounds()
 
 iterator items(iter: var NodeListIterator): tuple[key: string, value: Node] =
-  ## Iterates over the key-value pairs in a NodeList.
-  if not validateNodeList(iter.list):
-    raise newException(MpvError, "Invalid NodeList encountered in items iterator")
-
-  if iter.list.values == nil or iter.list.keys == nil:
-    raise newException(MpvError, "Invalid NodeList: nil pointer encountered")
-
-  if iter.list.num < 0 or iter.list.num > 100:
-    raise newException(MpvError, "Invalid NodeList: num out of bounds (got: " & $iter.list.num & ")")
-
   let valuePtr = cast[ptr UncheckedArray[Node]](iter.list.values)
 
   var index = iter.index
