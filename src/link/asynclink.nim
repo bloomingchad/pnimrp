@@ -22,16 +22,21 @@ proc tryConnect(domain: string, port: Port): Future[LinkStatus] {.async.} =
     if not connected:
       return lsInvalid
     return lsValid
-  except IOError:
-    return lsInvalid
-  except:
-    return lsInvalid
+  except Exception as e:
+    let result = handleLinkCheckError(e, ResolveTimeout)
+    if result.isValid:
+      return lsValid
+    else:
+      return lsInvalid
 
 proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
   try:
     let normalizedUrl = normalizeUrl(url)
     let (protocol, domain, port) = parseUrlComponents(normalizedUrl)
     result = await tryConnect(domain, port)
-  except:
-    result = lsInvalid
-    #error("Unexpected error: " & getCurrentExceptionMsg())
+  except Exception as e:
+    let result = handleLinkCheckError(e, ResolveTimeout)
+    if result.isValid:
+      return lsValid
+    else:
+      return lsInvalid
