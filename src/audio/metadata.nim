@@ -2,6 +2,31 @@
 
 import libmpv, tables, strutils, terminal, ../utils/utils
 
+# Mapping of common tag names (case-insensitive) to preferred names
+const tagMap* = {
+  "artist": "Artist",
+  "icy-artist": "Artist",
+  "title": "Title",
+  "icy-name": "Title",
+  "icy-title": "Title",
+  "genre": "Genre",
+  "icy-genre": "Genre",
+  "album": "Album",
+  "icy-url": "URL",
+  "url": "URL",
+  "icy-br": "Bitrate",
+  "icy-description": "Description",
+  "icy-sr": "SampleRate",
+  "description": "Description",
+  "samplerate": "SampleRate",
+  "bitrate": "Bitrate",
+  "channels": "Channels",
+  "variant_bitrate": "Variant Bitrate",
+  "ice-samplerate": "SampleRate",
+  "ice-channels": "Channels",
+  "ice-bitrate": "Bitrate"
+}.toTable
+
 type
   MpvError* = object of CatchableError
   ## Custom error type for MPV-related errors
@@ -96,31 +121,6 @@ proc handleID3v2PrivTag(lowerKey: string, value: string,
 proc collectMetadata(iter: var NodeListIterator,
                      parseAudioInfo: bool = true): Table[string, string] =
   var metadataTable = initTable[string, string]()
-
-  # Mapping of common tag names (case-insensitive) to preferred names
-  const tagMap: Table[string, string] = {
-    "artist": "Artist",
-    "icy-artist": "Artist",
-    "title": "Title",
-    "icy-name": "Title",
-    "icy-title": "Title",
-    "genre": "Genre",
-    "icy-genre": "Genre",
-    "album": "Album",
-    "icy-url": "URL",
-    "url": "URL",
-    "icy-br": "Bitrate",
-    "icy-description": "Description",
-    "icy-sr": "SampleRate",
-    "description": "Description",
-    "samplerate": "SampleRate",
-    "bitrate": "Bitrate",
-    "channels": "Channels",
-    "variant_bitrate": "Variant Bitrate",
-    "ice-samplerate": "SampleRate",
-    "ice-channels": "Channels",
-    "ice-bitrate": "Bitrate"
-  }.toTable
 
   for key, nodeValue in items(iter):
       # Access the format field of the client.Node correctly
