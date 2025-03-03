@@ -165,12 +165,14 @@ proc playStation(config: MenuConfig) =
           state.volume = min(state.volume + VolumeStep, MaxVolume)
           cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
+          lastVolume = state.volume
 
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)
           cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
           updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
-
+          lastVolume = state.volume
+          
         of Key.R:
           if not state.isPaused:
             cleanupPlayer(mpvCtx)
@@ -192,7 +194,6 @@ proc playStation(config: MenuConfig) =
 
         else:
           showInvalidChoice()
-    lastVolume = state.volume #update last state volume to be persistent
 
   #except Exception:
   #  let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
