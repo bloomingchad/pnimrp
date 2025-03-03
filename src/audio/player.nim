@@ -204,8 +204,9 @@ proc warnBell* =
     # Global Config for bell playback
     tmpMpv.setAllyOptionsToMpv()
 
-    # Set volume directly on temporary instance
-    cE tmpMpv.setOptionString("volume", "150")
+    # Set volume relative to currentVol directly on temporary instance
+    let newVolume = cstring $(float(lastVolume) * 1.5)
+    cE tmpMpv.setOptionString("volume", newVolume)
     cE tmpMpv.initialize()
 
     let assetsDir = getAppDir() / "assets"
