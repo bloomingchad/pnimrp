@@ -216,43 +216,6 @@ proc showHelp*() =
   say("Press any key to return to the main menu.", fgYellow)
   discard getch()  # Wait for any key press
 
-proc loadStationList(jsonPath: string): tuple[names, urls: seq[string]] =
-  ## Loads station names and URLs from a JSON file.
-  ## If a URL does not have a protocol prefix (e.g., "http://"), it defaults to "http://".
-  try:
-    let jsonData = parseJson(readFile(jsonPath))
-    
-    # Check if the "stations" key exists
-    if not jsonData.hasKey("stations"):
-      raise newException(MenuError, "Missing 'stations' key in JSON file.")
-    
-    let stations = jsonData["stations"]
-    result = (names: newSeqOfCap[string](32), urls: newSeqOfCap[string](32))
-    
-    # Iterate over the stations and add names and URLs
-    for stationName, stationUrl in stations.pairs:
-      result.names.add(stationName)  # Add station name (key)
-      
-      # Ensure the URL has a protocol prefix
-      let url = 
-        if stationUrl.getStr.startsWith("http://") or stationUrl.getStr.startsWith("https://"):
-          stationUrl.getStr  # Use the URL as-is
-        else:
-          "http://" & stationUrl.getStr  # Prepend "http://" if no protocol is specified
-      
-      result.urls.add(url)  # Add the processed URL
-    
-    # Validate that we have at least one station
-    if result.names.len == 0 or result.urls.len == 0:
-      raise newException(MenuError, "No stations found in the JSON file.")
-    
-  except IOError:
-    raise newException(MenuError, "Failed to read JSON file: " & jsonPath)
-  except JsonParsingError:
-    raise newException(MenuError, "Failed to parse JSON file: " & jsonPath)
-  except Exception as e:
-    raise newException(MenuError, "An error occurred while loading the station list: " & e.msg)
-
 proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[string]] =
   ## Loads available station categories from the assets directory.
   result = (names: newSeqOfCap[string](32), paths: newSeqOfCap[string](32))
@@ -369,7 +332,7 @@ proc handleMenu*(
                 handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
             elif fileExists(selectedPath) and selectedPath.endsWith(".json"):
               # Handle JSON files (station lists)
-              let stations = loadStationList(selectedPath)
+              let stations = loadStations(selectedPath)
               if stations.names.len == 0 or stations.urls.len == 0:
                 warn("No stations available. Please check the station list.")
               else:
