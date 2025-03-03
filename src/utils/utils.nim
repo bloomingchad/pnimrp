@@ -12,6 +12,8 @@ import
 
   ../ui/illwill
 
+from ../link/linkbase import normalizeUrl
+
 type
   QuoteData* = object
     quotes*: seq[string]
@@ -187,28 +189,33 @@ proc validateLengthStationName(result: seq[string], filePath: string, maxLength:
         sleep(400)  # Pause for 400ms after displaying the warning
         warnCount += 1
 
-proc parseJArray*(filePath: string): seq[string] =
-  ## Parses a JSON object from a file and returns a sequence of station names and URLs.
-  ## Raises `FileNotFoundError` if the file is not found or inaccessible.
-  ## Raises `JSONParseError` if the JSON format is invalid.
+proc loadStations*(filePath: string): tuple[names, urls: seq[string]] =
+  ## Parses a JSON file and returns station names and URLs.
+  ##  - Normalizes URLs using linkbase.normalizeUrl.
+  ##  - Raises `FileNotFoundError` if the file is not found.
+  ##  - Raises `JSONParseError` if the JSON is invalid.
   try:
     let jsonData = parseJson(readFile(filePath))
-    
-    # Check if the "stations" key exists
+
     if not jsonData.hasKey("stations"):
       raise newException(JSONParseError, "Missing 'stations' key in JSON file.")
-    
+
     let stations = jsonData["stations"]
-    result = newSeqOfCap[string](32)  # Initialize an empty sequence
-    
-    # Iterate over the stations and add names and URLs to the result
-    for stationName, stationUrl in stations.pairs:
-      result.add(stationName)        # stationName is already a string
-      result.add(stationUrl.getStr)  # Convert stationUrl (JsonNode) to string
-    
-    # Validate station names if the file is not a quotes file
-    if not filePath.endsWith("qoute.json"):
-      validateLengthStationName(result, filePath)
+    result = (names: newSeq[string](), urls: newSeq[string]())
+
+    for stationName, stationUrlNode in stations.pairs:
+      let stationNameStr = stationName
+      let stationUrlStr = stationUrlNode.getStr
+
+      # Normalize the URL using linkbase.normalizeUrl
+      let normalizedUrl = normalizeUrl(stationUrlStr)
+
+      result.names.add(stationNameStr)
+      result.urls.add(normalizedUrl)  # Add the *normalized* URL
+
+    # Validate station names (only if it's not the quotes file)
+    #if not filePath.endsWith("qoute.json"):
+      #validateLengthStationName(result.names, filePath)
 
   except IOError:
     raise newException(FileNotFoundError, "Failed to load JSON file: " & filePath)
