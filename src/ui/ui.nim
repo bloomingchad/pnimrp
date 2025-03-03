@@ -5,7 +5,10 @@ import
   strutils, times, 
 
   ../audio/libmpv,
-  ../utils/utils
+  ../utils/[
+    utils,
+    jsonutils
+  ]
 
 when not defined(simple):
   import theme, stationstatus, scroll, animation
