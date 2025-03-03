@@ -18,6 +18,8 @@
 ##
 ## It also supports ``PARENT LINKS`` and ``STRICT MODE``, you can enable them via command line switch
 
+when defined(useJsmn):
+  {.define: JSMN_STRICT.}
   
 type
   JsmnKind* = enum ## JSON type identifier
