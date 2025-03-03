@@ -194,6 +194,10 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
 
+proc setVolumeOfBellRelativeToMainCtx(): cstring =
+  #ret 1.5 times the last vol 
+  cstring $(float(lastVolume) * 1.5)
+
 proc warnBell* =
   ## Plays a warning sound using a temporary MPV instance without interrupting main playback
   var tmpMpv: ptr Handle
@@ -205,7 +209,7 @@ proc warnBell* =
     tmpMpv.setAllyOptionsToMpv()
 
     # Set volume relative to currentVol directly on temporary instance
-    let newVolume = cstring $(float(lastVolume) * 1.5)
+    let newVolume = setVolumeOfBellRelativeToMainCtx()
     cE tmpMpv.setOptionString("volume", newVolume)
     cE tmpMpv.initialize()
 
