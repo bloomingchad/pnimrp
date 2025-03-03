@@ -66,6 +66,10 @@ proc showExitMessage* =
 
   quit(QuitSuccess)
 
+proc drawSeperatorUI*(xpos = -1; sep = '='; offset = 5; color = fgGreen) =
+  if not xpos == -1: setCursorXPos xpos
+  say(sep.repeat(termWidth), color, offset)
+
 proc drawHeader*() =
   ## Draws the application header with decorative lines and emojis.
   updateTermWidth()
@@ -73,7 +77,7 @@ proc drawHeader*() =
     raise newException(UIError, "Terminal width too small.")
 
   # Draw the top border using the theme's separator color
-  say("=".repeat(termWidth), currentTheme.separator, xOffset = 0)
+  drawSeperatorUI(xpos = -1, offset = 0, color = currentTheme.separator)
 
   # Draw the application title with emojis using the theme's header color
   let title =
@@ -82,7 +86,7 @@ proc drawHeader*() =
   say(title, currentTheme.header, xOffset = (termWidth - title.len) div 2)
 
   # Draw the bottom border of the header using the theme's separator color
-  say("=".repeat(termWidth), currentTheme.separator, xOffset = 0)
+  drawSeperatorUI(xpos = -1, offset = 0, color = currentTheme.separator)
 
 var lastTermWidth = termWidth  # Track the last terminal width
 
@@ -186,8 +190,7 @@ proc displayMenu*(
   currentY += 1  # Increment after header
 
   # Draw the separator line
-  let separatorLine = "-".repeat(termWidth)
-  say(separatorLine, fgGreen, xOffset = 0)
+  drawSeperatorUI(xpos = -1, sep = '-', offset = 0)
   currentY += 1  # Increment after separator
 
   # Calculate column layout and render menu options
@@ -207,7 +210,8 @@ proc displayMenu*(
   # footerSeparatorLineY = currentY  # Store the Y position *before* drawing
   lastMenuSeparatorY = currentY # Store the Y position *before* drawing, renamed variable
   # Draw the separator line
-  say(separatorLine, fgGreen, xOffset = 0)
+  #say(separatorLine, fgGreen, xOffset = 0)
+  drawSeperatorUI(xpos = -1, sep = '-', offset = 0)
   currentY += 1 #increment after second separator
 
   # Display the footer options
@@ -216,8 +220,9 @@ proc displayMenu*(
   currentY += 1
 
   # Draw the bottom border
-  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  drawSeperatorUI(xpos = -1, offset = 0)
   currentY += 1 #we are not tracking this, but it's good practice
+
  
 proc drawMenu*(
   section: string,
@@ -250,7 +255,7 @@ proc showFooter*(
   ## Displays the footer with dynamic options based on the context.
   updateTermWidth()
   setCursorPos(0, lineToDraw)
-  say("-".repeat(termWidth), separatorColor, xOffset = 0)
+  drawSeperatorUI(xpos = -1, '-', offset = 0, separatorColor)
 
   # Add footer with controls at the bottom
   setCursorPos(0, lineToDraw + 1)
@@ -259,7 +264,7 @@ proc showFooter*(
 
   # Draw bottom border
   setCursorPos(0, lineToDraw + 2)
-  say("=".repeat(termWidth), separatorColor, xOffset = 0)
+  drawSeperatorUI(xpos = -1, '=', offset = 0, separatorColor)
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
   ## Cleanly exits the application.
@@ -302,8 +307,7 @@ proc drawHeader*(section: string) =
 
   # Draw header
   say(AppNameShort & " > " & section, fgGreen)
-  say("-".repeat(termWidth), fgGreen)
-
+  drawSeperatorUI(xpos = -1, '-')
 
 proc volumeColor(volume: int): ForegroundColor =
   if volume > 110: fgRed
@@ -328,8 +332,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
     say(AppNameShort & " > " & section, fgYellow)
 
   # Draw top separator
-  setCursorPos(0, 1)  # Line 1
-  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  drawSeperatorUI(xpos = 1, '-', offset = 0) # Line 1
 
   # Display "Now Playing" with truncation if necessary
   setCursorPos(0, 2)  # Line 2 (below the separator)
@@ -345,8 +348,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   styledEcho(volumeColor, $volume & "%")
 
   # Draw separator after status/volume
-  setCursorPos(0, 4)  # Line 4
-  say("-".repeat(termWidth), fgGreen, xOffset = 0)
+  drawSeperatorUI(xpos = 4, '-', offset = 0) # Line 4
 
   # Display footer options
   setCursorPos(0, 5)  # Line 5
@@ -354,8 +356,8 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
 
   # Draw the bottom border
-  setCursorPos(0, 6)  # Line 6
-  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  drawSeperatorUI(xpos = 6, offset = 0)
+
 
 proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   ## Updates the player UI with new information without redrawing the entire screen.
