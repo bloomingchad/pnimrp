@@ -1,4 +1,7 @@
-import os, strutils, json, utils
+import
+  os, strutils, json,
+
+  utilstypes
 
 from ../link/linkbase import normalizeUrl
 
