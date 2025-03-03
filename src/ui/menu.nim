@@ -12,7 +12,10 @@ import
     ],
 
   ../link/link,
-  ../utils/utils
+  ../utils/[
+    utils,
+    jsonutils
+  ]
 
 when not defined(simple):
   import asyncdispatch,
@@ -216,28 +219,6 @@ proc showHelp*() =
   say("Press any key to return to the main menu.", fgYellow)
   discard getch()  # Wait for any key press
 
-proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[string]] =
-  ## Loads available station categories from the assets directory.
-  result = (names: newSeqOfCap[string](32), paths: newSeqOfCap[string](32))
-
-  let nativePath = baseDir / "*".unixToNativePath
-
-  for file in walkFiles(nativePath):
-    let filename = file.extractFilename
-
-    # Skip qoute.json (exact match, case-sensitive)
-    if filename == "qoute.json":
-      continue
-
-    # Add the file to names and paths
-    let name = filename.changeFileExt("").capitalizeAscii
-    result.names.add(name)
-    result.paths.add(file)
-
-  for dir in walkDirs(nativePath):
-    let name = dir.extractFilename & DirSep
-    result.names.add(name)
-    result.paths.add(dir)
 
 var chooseForMe* = false  # Declare as mutable global variable
 var lastStationIdx*: int = -1  # Declare a global variable to track the last station index
