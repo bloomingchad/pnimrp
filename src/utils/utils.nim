@@ -73,7 +73,7 @@ export #jsonutils
 export #uiutils
   getSymbol, terminalSupportsEmoji, currentStatusEmoji,
   error, updateTermWidth, clear, warn, showInvalidChoice,
-  centerText, showSpinner
+  centerText, showSpinner, truncateName, calculateColumnLayout
 
 #export all internal within utils namespace 
 export #utilstypes
@@ -118,7 +118,6 @@ export #utilstypes
   DefaultErrorMsg,
   MinTerminalWidth,
   MaxStationNameLength
-
 
 when not defined(simple):
   export #utilstypes
