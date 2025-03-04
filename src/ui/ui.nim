@@ -42,7 +42,6 @@ proc showExitMessage* =
   setCursorPos(0, 15)
   showCursor()
   echo ""
-  randomize()
 
   let quotesData = loadQuotes(getAppDir() / "assets" / "config" / "qoute.json")
   let rand = rand(0 .. quotesData.quotes.high)
