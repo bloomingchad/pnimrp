@@ -336,6 +336,18 @@ proc drawStatusAndVolumePlayerUI*(status: string, volume: int) =
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
 
+proc drawNowPlayingPlayerUI*(nowPlaying: string) =
+  when defined(simple):
+    stdout.styledWrite(fgCyan, "Now Playing:   ", nowPlaying.truncateMe())
+
+  else:
+    # In normal mode, use the existing approach
+    stdout.styledWrite(fgCyan, "   Now Playing:  ")
+    if terminalSupportsEmoji:
+      startingX = "  Now Playing: ".len + 1  # +1 for emoji space
+    else:
+      startingX = "  Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
+
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
   updateTermWidth()  # Ensure the terminal width is up-to-date
@@ -352,8 +364,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   # Display "Now Playing" with truncation if necessary
   setCursorPos(0, 2)  # Line 2 (below the separator)
   eraseLine()
-  let nowPlayingText = "   Now Playing: " & nowPlaying  # Removed 🎶 emoji
-  say(nowPlayingText, fgCyan)
+  drawNowPlayingPlayerUI(nowPlaying)
 
   # Display status and volume on the same line
   drawStatusAndVolumePlayerUI(status, volume)
@@ -377,17 +388,7 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
   setCursorPos(0, 2)
   eraseLine()
   
-  when defined(simple):
-    # In simple mode, use a single say() call with the full text
-    say("Now Playing:   " & nowPlaying.truncateMe(), fgCyan, xOffset = 3)
-  else:
-    # In normal mode, use the existing approach
-    setCursorXPos 3
-    styledEcho(fgCyan, "Now Playing:  ")
-    if terminalSupportsEmoji:
-      startingX = "  Now Playing: ".len + 1  # +1 for emoji space
-    else:
-      startingX = "  Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
+  drawNowPlayingPlayerUI(nowPlaying)
 
   # Update Status and Volume line
   drawStatusAndVolumePlayerUI(status, volume)
