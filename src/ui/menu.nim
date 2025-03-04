@@ -78,7 +78,7 @@ proc playStation(config: MenuConfig) =
     var fullTitle: string # Declare fullTitle here
 
     when not defined(simple):
-      var metadata: Table[string, string] # Declare metadata here
+      var metadata = initTable[string, string](8) # Declare metadata here
       var scrollCounter: int = 0
       var animationCounter: int = 0  # Counter for animation updates
     
