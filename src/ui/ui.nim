@@ -327,6 +327,15 @@ proc drawHeaderPlayerUI*(section: string) =
     setCursorPos(0, 0)  # Line 0
     say(AppNameShort & " > " & section, fgYellow)
 
+proc drawStatusAndVolumePlayerUI*(status: string, volume: int) =
+  ## Draws the status and volume section of the player UI.
+  
+  setCursorPos(0, 3)
+  eraseLine()
+  let volumeColor = volumeColor(volume)
+  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+  styledEcho(volumeColor, $volume & "%")
+
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
   updateTermWidth()  # Ensure the terminal width is up-to-date
@@ -347,11 +356,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   say(nowPlayingText, fgCyan)
 
   # Display status and volume on the same line
-  setCursorPos(0, 3)  # Line 3
-  eraseLine()
-  let volumeColor = volumeColor(volume)
-  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
-  styledEcho(volumeColor, $volume & "%")
+  drawStatusAndVolumePlayerUI(status, volume)
 
   # Draw separator after status/volume
   drawSeperatorUI(xpos = 4, '-', offset = 0) # Line 4
@@ -385,11 +390,7 @@ proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
       startingX = "  Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
 
   # Update Status and Volume line
-  setCursorPos(0, 3)
-  eraseLine()
-  let volumeColor = volumeColor(volume)
-  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
-  styledEcho(volumeColor, $volume & "%")
+  drawStatusAndVolumePlayerUI(status, volume)
 
   # Reset cursor position after updates
   setCursorPos(0, 5)
