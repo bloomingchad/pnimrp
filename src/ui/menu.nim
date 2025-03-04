@@ -97,7 +97,8 @@ proc playStation(config: MenuConfig) =
 
     while true:
       if not state.isPaused:
-        event = mpvCtx.waitEvent(KeyTimeout.milSecToSec)
+        const mpvEventLoopTimeout = KeyTimeout.milSecToSec
+        event = mpvCtx.waitEvent(mpvEventLoopTimeout)
 
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
