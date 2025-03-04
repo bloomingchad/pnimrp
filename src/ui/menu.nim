@@ -164,8 +164,8 @@ proc playStation(config: MenuConfig) =
         of Key.Slash, Key.Plus:
           state.volume = min(state.volume + VolumeStep, MaxVolume)
           cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
-          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
           lastVolume = state.volume
+          updateVolumePlayerUI(state.volume)
 
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)

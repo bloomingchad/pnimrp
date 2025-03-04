@@ -348,6 +348,12 @@ proc drawNowPlayingPlayerUI*(nowPlaying: string) =
     else:
       startingX = "  Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
 
+proc updateVolumePlayerUI*(newVolume: int) =
+  setCursorPos(21, 3)
+  let volumeColor = volumeColor(newVolume)
+  stdout.styledWrite(volumeColor, $newVolume & "%")
+  stdout.flushFile()
+
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
   updateTermWidth()  # Ensure the terminal width is up-to-date
