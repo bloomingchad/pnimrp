@@ -224,8 +224,6 @@ proc showHelp*() =
 var chooseForMe* = false  # Declare as mutable global variable
 var lastStationIdx*: int = -1  # Declare a global variable to track the last station index
 
-randomize()
-
 proc chooseForMeOrChooseYourself(itemsLen: int): char =
   if chooseForMe:
     chooseForMe = false  # Reset the flag after use

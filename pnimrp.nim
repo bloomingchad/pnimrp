@@ -1,7 +1,7 @@
 # pnimrp.nim
 
 import
-  os,  terminal, std/exitprocs,
+  os,  terminal, std/exitprocs, random,
 
   src/[
     ui/menu, ui/illwill,
@@ -103,6 +103,7 @@ proc main() =
     # Display the application banner and hide the cursor
     showBanner()
     hideCursor()
+    randomize()
 
     #init global mpv context for reuse
     initGlobalMpv()
