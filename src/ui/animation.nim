@@ -16,8 +16,8 @@ proc updateJinglingAnimation*(status: string, animationCounter: int): string =
   ## Returns:
   ##   The current animation frame (emoji or ASCII).
 
-  # Check if it's time to update the animation frame (1350ms / 25ms = 54 iterations)
-  if animationCounter >= 54:
+  # Check if it's time to update the animation frame (1350ms / 50ms = 27 iterations)
+  if animationCounter == 27:
     animationFrame = (animationFrame + 1) mod 2  # Alternate between 0 and 1
 
   # Determine the animation symbol based on terminal support and player status

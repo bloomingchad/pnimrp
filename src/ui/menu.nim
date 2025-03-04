@@ -119,14 +119,14 @@ proc playStation(config: MenuConfig) =
         # Increment the animation counter every 25ms (getKeyWithTimeout interval)
         animationCounter += 1
 
-        # Check if it's time to update the animation (1350ms / 25ms = 54 iterations)
-        if animationCounter >= 54:
+        # Check if it's time to update the animation (1350ms / 50ms = 54 iterations)
+        if animationCounter == 27:
           updateAnimationOnly(currentStatusEmoji(currentStatus(state)), state.currentSong, animationCounter)
           animationCounter = 0  # Reset the counter
 
 
         # Scrolling Logic
-        if scrollCounter == 21:
+        if scrollCounter == 11:
           scrollTextOnce(fullTitle, scrollOffset, termWidth, startingX) # Corrected call
           if fullTitle.len > termWidth - startingX:
             scrollOffset += 1
