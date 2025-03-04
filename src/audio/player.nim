@@ -196,7 +196,7 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
 
 proc setVolumeOfBellRelativeToMainCtx(tmpMpv: ptr Handle) =
   #set 1.5 times the last vol 
-  let newVolume = float(lastVolume) * 1.5
+  var newVolume: clonglong = clonglong(float(lastVolume) * 1.5 )
   cE tmpMpv.setOption("volume", fmtInt64, addr newVolume)
 
 proc warnBell* =
