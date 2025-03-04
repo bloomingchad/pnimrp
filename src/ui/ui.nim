@@ -319,6 +319,14 @@ var
   animationFrame: int = 0 # Tracks the current frame of the animation
   lastAnimationUpdate: DateTime = now() # Tracks the last time the animation was updated
 
+proc drawHeaderPlayerUI*(section: string) =
+  ## Draws the header section of the player UI.
+  
+  # Draw header if section is provided
+  if section.len > 0:
+    setCursorPos(0, 0)  # Line 0
+    say(AppNameShort & " > " & section, fgYellow)
+
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
   updateTermWidth()  # Ensure the terminal width is up-to-date
@@ -327,9 +335,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   clear()
 
   # Draw header if section is provided
-  if section.len > 0:
-    setCursorPos(0, 0)  # Line 0
-    say(AppNameShort & " > " & section, fgYellow)
+  drawHeaderPlayerUI(section)
 
   # Draw top separator
   drawSeperatorUI(xpos = 1, '-', offset = 0) # Line 1
