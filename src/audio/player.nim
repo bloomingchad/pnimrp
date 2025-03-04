@@ -196,8 +196,11 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
 
 proc setVolumeOfBellRelativeToMainCtx(tmpMpv: ptr Handle) =
   #set 1.5 times the last vol 
-  var newVolume: clonglong = clonglong(float(lastVolume) * 1.5 )
-  cE tmpMpv.setOption("volume", fmtInt64, addr newVolume)
+  var newVolume = cstring $(float(lastVolume) * 1.5)
+  cE tmpMpv.setOptionString("volume", newVolume)
+    #some platforms will might cmplain about type error and cause `mpv API error:`
+    #by having the cost of string conversions, we are offloading the dirty work
+    #to libmpv, which is very robust
 
 proc warnBell* =
   ## Plays a warning sound using a temporary MPV instance without interrupting main playback
