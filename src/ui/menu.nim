@@ -53,6 +53,8 @@ proc isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
+proc milSecToSec(ms: int): float = ms / 1000
+
 proc playStation(config: MenuConfig) =
     ## Plays a radio station and handles user input for playback control.
     #try:
@@ -95,7 +97,7 @@ proc playStation(config: MenuConfig) =
 
     while true:
       if not state.isPaused:
-        event = mpvCtx.waitEvent()
+        event = mpvCtx.waitEvent(KeyTimeout.milSecToSec)
 
       # Handle playback events
       if event.eventID in {IDPlaybackRestart} and not isObserving:
