@@ -111,7 +111,7 @@ proc playStation(config: MenuConfig) =
         state.currentSong = mpvCtx.getCurrentMediaTitle()
         fullTitle = state.currentSong # Assign to fullTitle
         updateCurrentSongPlayerUI(state.currentSong)
-        
+        setCursorXPos 0
         when not defined(simple):
           globalMetadata = updateMetadataUI(config, mpvCtx, state)
 
