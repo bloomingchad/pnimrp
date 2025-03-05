@@ -110,7 +110,8 @@ proc playStation(config: MenuConfig) =
       if event.eventID in {IDEventPropertyChange}:
         state.currentSong = mpvCtx.getCurrentMediaTitle()
         fullTitle = state.currentSong # Assign to fullTitle
-        updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
+        updateCurrentSongPlayerUI(state.currentSong)
+        
         when not defined(simple):
           globalMetadata = updateMetadataUI(config, mpvCtx, state)
 
