@@ -228,7 +228,7 @@ proc showHelp*() =
 var chooseForMe* = false  # Declare as mutable global variable
 var lastStationIdx*: int = -1  # Declare a global variable to track the last station index
 
-proc chooseForMeOrChooseYourself(itemsLen: int): char =
+proc chooseForMeOrChooseYourself(itemsLen: int): Key =
   if chooseForMe:
     chooseForMe = false  # Reset the flag after use
 
@@ -238,11 +238,12 @@ proc chooseForMeOrChooseYourself(itemsLen: int): char =
     lastStationIdx = rndIdx  # Update the last station index
 
     # Convert the random index to a menu key (1-9, A-M)
-    result = 
-      if rndIdx < 9: chr(ord('1') + rndIdx)
-      else: chr(ord('A') + rndIdx - 9)
+    if rndIdx < 9:
+      result = Key(ord(Key.One) + rndIdx)
+    else:
+      result = Key(ord(Key.A) + rndIdx - 9)
   else:
-    return getch()
+    return getKeyWithTimeout(int32.high)
 
 type
   handleMenuIsHandling = enum
@@ -294,10 +295,12 @@ proc handleMenu*(
       try:
         let key = chooseForMeOrChooseYourself(items.len)
         case key
-        of '1'..'9', 'A'..'M', 'a'..'m':
+        of Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine,
+         Key.A , Key.B , Key.C , Key.D , Key.E , Key.F , Key.G , Key.H , Key.I ,Key.J , Key.K , Key.L ,Key.M:
           let idx = 
-            if key in {'1'..'9'}: ord(key) - ord('1')
-            else: ord(toLowerAscii(key)) - ord('a') + 9
+            if char(int(key)) in {'1'..'9'}:
+              ord(char(int(key))) - ord('1')
+            else: ord(toLowerAscii(chr(int(key)))) - ord('a') + 9
           
           if idx >= 0 and idx < items.len:
             let selectedPath = paths[idx]
@@ -346,16 +349,16 @@ proc handleMenu*(
           showHelp()
           break
 
-        of 'R', 'r':
+        of Key.R:
           if not isMainMenu or baseDir != getAppDir() / "assets":
             returnToParent = true
             break
           else:
             showInvalidChoice()
-        of 'S', 's':
+        of Key.S:
           chooseForMe = true
 
-        of 'Q', 'q':
+        of Key.Q:
           showExitMessage()
           break
 
