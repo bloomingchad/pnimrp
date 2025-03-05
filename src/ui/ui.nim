@@ -402,25 +402,10 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   # Draw the bottom border
   drawSeperatorUI(xpos = 6, offset = 0)
 
-
-proc updatePlayerUI*(nowPlaying, status: string, volume: int) =
-  ## Updates the player UI with new information without redrawing the entire screen.
-
-  # Update Now Playing line
-  setCursorPos(0, 2)
-  eraseLine()
-  
-  drawNowPlayingPlayerUI(nowPlaying)
-
-  # Update Status and Volume line
-  drawStatusAndVolumePlayerUI(status, volume)
-
-  # Reset cursor position after updates
-  setCursorPos(0, 5)
-
+#leftover from updatePlayerUI
   # Reset scrollOffset when a new song starts
-  when not defined(simple):
-    scrollOffset = 0
+  #when not defined(simple):
+  #  scrollOffset = 0
 
 proc drawPlayerUI*(section, nowPlaying, status: string, volume: int) =
   ## Draws the modern music player UI with dynamic layout and visual enhancements.
