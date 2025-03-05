@@ -277,7 +277,7 @@ proc handleMenu*(
       if isHandlingJSON(handleMenuIsHandling):
         initCheckingStationNotice()
 
-        var stations: seq[StationStatus] = @[]
+        var stations = newSeqOfCap[StationStatus](32)
         for i in 0..<items.len:
           stations.add(
             StationStatus(
