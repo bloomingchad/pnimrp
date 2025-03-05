@@ -354,6 +354,13 @@ proc updateVolumePlayerUI*(newVolume: int) =
   stdout.styledWrite(volumeColor, $newVolume & "%")
   stdout.flushFile()
 
+proc updateCurrentSongPlayerUI*(songName: string) =
+  setCursorPos(0, 2)  # Line 2 (below the separator)
+  eraseLine()
+  setCursorPos(0, 2)  #explicit duplicate setting just to be consistent across OSes
+  drawNowPlayingPlayerUI(songName)
+  stdout.flushFile()
+
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
   updateTermWidth()  # Ensure the terminal width is up-to-date
