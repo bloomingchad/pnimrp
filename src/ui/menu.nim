@@ -158,12 +158,12 @@ proc playStation(config: MenuConfig) =
         of Key.P:
           state.isPaused = not state.isPaused
           mpvCtx.pause(state.isPaused)
-          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
+          updatePlayMutedStatePlayerUI(currentStatusEmoji(currentStatus(state)))
 
         of Key.M:
           state.isMuted = not state.isMuted
           mpvCtx.mute(state.isMuted)
-          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
+          updatePlayMutedStatePlayerUI(currentStatusEmoji(currentStatus(state)))
 
         of Key.Slash, Key.Plus:
           state.volume = min(state.volume + VolumeStep, MaxVolume)
