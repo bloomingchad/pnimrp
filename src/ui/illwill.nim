@@ -509,7 +509,8 @@ proc checkInit =
     raise newException(IllwillError, "Illwill not initialised")
 
 proc illwillDeinit* =
-  checkInit()
+  when defined(debug):
+    checkInit()
   if gFullScreen: exitFullScreen()
   consoleDeinit()
   gIllwillInitialised = false
@@ -520,7 +521,8 @@ proc getKey*: Key =
   ## Reads the next keystroke in a non-blocking manner. If there are no
   ## keypress events in the buffer, `Key.None` is returned.
   ## If the module is not intialised, `IllwillError` is raised.
-  checkInit()
+  when defined(debug):
+    checkInit()
   result = getKeyAsync(0)
   when defined(windows):
     if result == Key.None: discard
@@ -530,7 +532,8 @@ proc getKeyWithTimeout*(ms = 1000): Key =
   ## in the specified `ms` period, `Key.None` is returned.
   ##
   ## If the module is not intialised, `IllwillError` is raised.
-  checkInit()
+  when defined(debug):
+    checkInit()
   result = getKeyAsync(int32 ms)
   when defined(windows):
     if result == Key.None: discard
