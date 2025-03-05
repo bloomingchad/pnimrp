@@ -333,8 +333,8 @@ proc drawStatusAndVolumePlayerUI(status: string, volume: int) =
   eraseLine()
   setCursorPos(0, 3)
   let volumeColor = volumeColor(volume)
-  say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
-  styledEcho(volumeColor, $volume & "%")
+  say("Status: " & status & "    | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
+  styledEcho(" ", volumeColor, $volume & "%")
 
 proc drawNowPlayingPlayerUI(nowPlaying: string) =
   when defined(simple):
@@ -349,10 +349,11 @@ proc drawNowPlayingPlayerUI(nowPlaying: string) =
       startingX = "  Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
 
 proc updateVolumePlayerUI*(newVolume: int) =
-  setCursorPos(21, 3)
+  setCursorPos(24, 3)
   let volumeColor = volumeColor(newVolume)
   when defined(noEmoji):
     stdout.write "  "
+  stdout.write " "
   stdout.styledWrite(volumeColor, $newVolume & "% ") #when go from 100 to less
   stdout.flushFile()
 
@@ -368,6 +369,7 @@ proc updatePlayMutedStatePlayerUI*(status: string) =
   stdout.styledWrite(fgGreen, status)
   when defined(noEmoji):
     stdout.write " "
+  stdout.write " "
   stdout.flushFile()
 
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
