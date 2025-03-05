@@ -364,11 +364,7 @@ proc updateCurrentSongPlayerUI*(songName: string) =
   stdout.flushFile()
 
 proc updatePlayMutedStatePlayerUI*(status: string) =
-  #setCursorPos(0, 3)
-  #eraseLine()
-  #setCursorPos(0, 3)
   setCursorPos(8, 3)
-  #say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   stdout.styledWrite(fgGreen, status)
   when defined(noEmoji):
     stdout.write " "
