@@ -331,6 +331,7 @@ proc drawStatusAndVolumePlayerUI(status: string, volume: int) =
   
   setCursorPos(0, 3)
   eraseLine()
+  setCursorPos(0, 3)
   let volumeColor = volumeColor(volume)
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
