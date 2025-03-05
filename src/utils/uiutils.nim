@@ -52,6 +52,7 @@ proc showInvalidChoice*(message = DefaultErrorMsg) =
   cursorUp()
   eraseLine()
   cursorUp(5)
+  stdout.flushFile()
 
 proc centerText*(text: string, width: int = termWidth): string =
   ## Centers the given text within the specified width.
