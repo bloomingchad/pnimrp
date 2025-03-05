@@ -318,7 +318,7 @@ var
   animationFrame: int = 0 # Tracks the current frame of the animation
   lastAnimationUpdate: DateTime = now() # Tracks the last time the animation was updated
 
-proc drawHeaderPlayerUI*(section: string) =
+proc drawHeaderPlayerUI(section: string) =
   ## Draws the header section of the player UI.
   
   # Draw header if section is provided
@@ -326,7 +326,7 @@ proc drawHeaderPlayerUI*(section: string) =
     setCursorPos(0, 0)  # Line 0
     say(AppNameShort & " > " & section, fgYellow)
 
-proc drawStatusAndVolumePlayerUI*(status: string, volume: int) =
+proc drawStatusAndVolumePlayerUI(status: string, volume: int) =
   ## Draws the status and volume section of the player UI.
   
   setCursorPos(0, 3)
@@ -335,7 +335,7 @@ proc drawStatusAndVolumePlayerUI*(status: string, volume: int) =
   say("Status: " & status & " | Volume: ", fgGreen, xOffset = 0, shouldEcho = false)
   styledEcho(volumeColor, $volume & "%")
 
-proc drawNowPlayingPlayerUI*(nowPlaying: string) =
+proc drawNowPlayingPlayerUI(nowPlaying: string) =
   when defined(simple):
     stdout.styledWrite(fgCyan, "Now Playing:   ", nowPlaying.truncateMe())
 
