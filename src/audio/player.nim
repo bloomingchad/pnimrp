@@ -59,6 +59,9 @@ proc setAllyOptionsToMpv(ctx: ptr Handle) =
     cE mpvCtx.setOptionString("input-vo-keyboard", "no")
     cE mpvCtx.setOptionString("input-media-keys", "no")
 
+    cE mpvCtx.setOptionString("demuxer-max-bytes", "2097152")  #2MB #thanks to github.com/florianjacob
+    cE mpvCtx.setOptionString("demuxer-max-back-bytes", "2097152")  #see https://github.com/mpv-player/mpv/issues/5359
+
 proc initGlobalMpv* =
   try:
     mpvCtx = create()
