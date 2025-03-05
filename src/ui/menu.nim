@@ -177,13 +177,13 @@ proc playStation(config: MenuConfig) =
           lastVolume = state.volume
           updateVolumePlayerUI(state.volume)
 
-        of Key.R:
+        of Key.R, Key.BackSpace:
           if not state.isPaused:
             cleanupPlayer(mpvCtx)
           stopCurrentJob()
           break
 
-        of Key.Q:
+        of Key.Q, Key.Escape:
           cleanupPlayer(mpvCtx)
           exit(mpvCtx, state.isPaused)
 
