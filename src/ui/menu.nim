@@ -173,9 +173,9 @@ proc playStation(config: MenuConfig) =
         of Key.Asterisk, Key.Minus:
           state.volume = max(state.volume - VolumeStep, MinVolume)
           cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
-          updatePlayerUI(state.currentSong, currentStatusEmoji(currentStatus(state)), state.volume)
           lastVolume = state.volume
-          
+          updateVolumePlayerUI(state.volume)
+
         of Key.R:
           if not state.isPaused:
             cleanupPlayer(mpvCtx)
