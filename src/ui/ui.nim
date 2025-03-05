@@ -351,6 +351,8 @@ proc drawNowPlayingPlayerUI(nowPlaying: string) =
 proc updateVolumePlayerUI*(newVolume: int) =
   setCursorPos(21, 3)
   let volumeColor = volumeColor(newVolume)
+  when defined(noEmoji):
+    stdout.write "  "
   stdout.styledWrite(volumeColor, $newVolume & "% ") #when go from 100 to less
   stdout.flushFile()
 
