@@ -335,14 +335,14 @@ proc handleMenu*(
           else:
             showInvalidChoice()
 
-        of 'N', 'n':
+        of Key.N:
           if isMainMenu:  # Only allow Notes in the main menu
             showNotes()
             break
           else:
             showInvalidChoice()
 
-        of 'U', 'u':
+        of Key.U:
           showHelp()
           break
 

@@ -198,7 +198,7 @@ type
 
 {.push warning[HoleEnumConv]:off.}
 
-func toKey(c: int): Key =
+func toKey*(c: int): Key =
   try:
     result = Key(c)
   except RangeDefect:  # ignore unknown keycodes
