@@ -57,6 +57,7 @@ proc cleanup() =
   mpvCtx.destroy()
   echo ""
   echo "Thank you for using " & AppName
+  resetAttributes()
 
 proc handleInterrupt() {.noconv.} =
   ## Handles SIGINT (Ctrl+C) signal gracefully.
