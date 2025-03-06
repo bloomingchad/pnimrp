@@ -58,6 +58,13 @@ proc cleanup() =
   echo ""
   echo "Thank you for using " & AppName
 
+proc handleInterrupt() {.noconv.} =
+  ## Handles SIGINT (Ctrl+C) signal gracefully.
+  cursorDown 1
+  echo "Received interrupt signal (Ctrl+C). Exiting gracefully..."
+  cleanup()
+  quit(0)
+
 when defined(dragonfly):
   {.error: """
     PNimRP is not supported under DragonFlyBSD
@@ -69,6 +76,7 @@ proc main() =
   try:
     # Register cleanup procedure to run on exit
     addExitProc(cleanup)
+    setControlCHook(handleInterrupt)
 
     when not defined(simple):
       # Load theme configuration
