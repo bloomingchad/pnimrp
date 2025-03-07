@@ -70,9 +70,11 @@ proc playStation*(config: MenuConfig) =
 
     # Validate the link
     try:
+      initCheckingStationNotice()
       if not validateLink(config.stationUrl).isValid:
         editBadFileHint(config)
         return
+      finishCheckingStationNotice()
     except Exception:
       editBadFileHint(config)
       return
