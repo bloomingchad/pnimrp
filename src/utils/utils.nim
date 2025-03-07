@@ -56,6 +56,9 @@ proc appendToLikedSongs* =
   except IOError as e:
     warn("Failed to save song to likedSongs.txt: " & e.msg)
 
+  finally:
+    stdout.flushFile()
+
 proc truncateMe*(str: string): string =
   if str.len > int(terminalWidth().toFloat() / 1.65):
     result = str.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
