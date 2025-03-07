@@ -53,6 +53,7 @@ proc appendToLikedSongs* =
     cursorUp()
     eraseLine()
     cursorUp 5
+
   except IOError as e:
     warn("Failed to save song to likedSongs.txt: " & e.msg)
 
@@ -64,6 +65,17 @@ proc truncateMe*(str: string): string =
     result = str.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
   else: return str
       #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
+
+proc initCheckingStationNotice* =
+  setCursorPos(2, lastMenuSeparatorY + 6)
+  stdout.write "Checking stations... Please Wait"
+  stdout.flushFile()
+
+proc finishCheckingStationNotice* = 
+  setCursorPos 2, lastMenuSeparatorY + 6
+  eraseLine()
+  lastMenuSeparatorY = 0
+  stdout.flushFile()
 
 proc cleanupPlayer*(ctx: ptr Handle) =
   ## Cleans up player resources.

@@ -4,16 +4,6 @@ import terminal, asyncdispatch,
   ../utils/utils,
   ../link/asynclink
 
-proc initCheckingStationNotice* =
-  setCursorPos(2, lastMenuSeparatorY + 4)
-  stdout.write "Checking stations... Please Wait"
-  flushFile stdout
-
-proc finishCheckingStationNotice* = 
-  setCursorPos 2, lastMenuSeparatorY + 4
-  eraseLine()
-  lastMenuSeparatorY = 0
-
 proc toStatusCodeEmoji(status: LinkStatus): (ForegroundColor, string) =
   when not defined(noEmoji):
     case status
