@@ -5,8 +5,7 @@ import
 
   ../ui/stationstatus
 
-
-#[
+#[spec
     {
         "lastChecked": "<stdanrd-datetime-format>",
         "stationlist": {
@@ -15,6 +14,7 @@ import
         }
     }
 ]#
+
 using
   stations: seq[StationStatus]
 
