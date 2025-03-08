@@ -40,7 +40,6 @@ proc say*(
 proc showExitMessage* =
   ## Displays an exit message with a random quote from the quotes file.
   setCursorPos(0, 15)
-  showCursor()
   echo ""
 
   let quotesData = loadQuotes(getAppDir() / "assets" / "config" / "qoute.json")
