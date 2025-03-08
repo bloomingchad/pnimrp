@@ -28,6 +28,36 @@ improvements.
 
 ### Step 1: Install **mpv** with development files for your distribution.
 
+### Step 1: Install **mpv** (including development files)
+
+**pnimrp** uses `mpv` for audio playback.  Install both the `mpv` player *and*
+  its development files
+
+**Linux:**
+
+*   **Debian/Ubuntu:**      `sudo apt install mpv libmpv-dev`
+*   **Fedora/CentOS/RHEL:** `sudo dnf install mpv mpv-devel` (may need [RPM Fusion](https://rpmfusion.org/))
+*   **Arch Linux:**         `sudo pacman -S mpv` (includes development headers)
+*   **openSUSE:**           `sudo zypper install mpv libmpv-devel`
+*   **Other Distros:** Use your package manager; search for "mpv" and a related "dev/devel/headers" package.
+
+**Windows:**
+
+1.  Download `mpv` *and* the matching `dev.7z` from [mpv.io](https://mpv.io/installation/) or [SourceForge](https://sourceforge.net/projects/mpv-player-windows/files/) (x86_64 usually).
+2.  Extract both. The `dev` archive has `libmpv-2.dll` (name may vary).
+3.  **Important:** After compiling `pnimrp`, copy `libmpv-2.dll` to the *same directory* as `pnimrp.exe`.
+
+**macOS:**
+*   **Homebrew (Recommended):** `brew install mpv`
+*    **MacPorts:** `sudo port install mpv`
+Okay, here's *just* the FreeBSD and Termux sections, as requested:
+
+**FreeBSD:**
+`sudo pkg install mpv`
+
+**Termux (Android):**
+```pkg install mpv```
+
 ### Step 2: Install the Nim compiler:
 
 - **Unix**:
@@ -49,6 +79,10 @@ Or compile it manually:
 nim c -d:release pnimrp
 ./pnimrp
 ```
+want a simple build? (very minimal):
+```bash
+nim c -d:release -d:simple pnimrp
+```
 
 ## 🎥 Demo
 
@@ -68,10 +102,12 @@ nim c -d:release pnimrp
 
 ## 🎨 Customizing Themes
 
-You can easily switch between themes by editing the `config.json` file located in the root directory of the project. Here's how:
+You can easily switch between themes by editing the `config.json` file
+located in the root directory of the project. Here's how:
 
 1. Open `config.json` in a text editor.
-2. Change the `currentTheme` field to the desired theme (e.g., `default`, `dark`, `vibrant`).
+2. Change the `currentTheme` field to the desired theme
+   (e.g., `default`, `dark`, `vibrant`).
 3. Save the file and restart the application.
 
 ## 📖 Documentation
@@ -99,10 +135,17 @@ Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
 
 ## 📜 License
 
-**pnimrp** is primarily licensed under the **Mozilla Public License 2.0 (MPL-2.0)**. See the [LICENSE](LICENSE) file for details.
-However, the following component is licensed under the **DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE (WTFPL)**:
-- **illwill.nim**: Adapted from [illwill](https://github.com/johnnovak/illwill), this file is used for non-blocking input handling and is licensed under the WTFPL. The original license text is included in the file.
+**pnimrp** is primarily licensed under the **Mozilla Public License 2.0 (MPL-2.0)**.
+See the [LICENSE](LICENSE) file for details.
+
+However, the following component is licensed with their respective original licences:
+- **illwill.nim**: Adapted from [illwill](https://github.com/johnnovak/illwill),
+  this file is used for non-blocking input handling and is licensed under the WTFPL.
+
+- **jsmn.nim**: See More [jsmn.nim](https://github.com/OpenSystemsLab/jsmn.nim)
+
 For more information about the WTFPL, see: [WTFPL License](http://www.wtfpl.net/).
+  The original license text is included in the file.
 
 ## 🙏 Credits
 
@@ -110,10 +153,11 @@ For more information about the WTFPL, see: [WTFPL License](http://www.wtfpl.net/
 - **libmpv**: Playback functionality.📻
 - **c2nim**: Wrapping objects.
 - **illwill**: Async input handling.
-- **ChatGPT 3.5**: Documentation and code improvements.🤖
-- **Claude 3.5 Sonnet**: Documentation and brainstorming.
+- **jsmn.nim**: minimal json parser impl.
+- **GPT-3.5 Claude-3.5-Sonnet**: Documentation and code improvements.🤖
 - **DeepSeek-V3**: Documentation and Code improvements 🥰
 - **You**: For using and supporting this project! ❤️
+- **fmsteream.org and others**: for providing links
 
 ## 🎉 Happy Listening!
 
