@@ -18,8 +18,9 @@ import
 let appDir = getAppDir()
 
 proc checkIfCacheDirExistElseCreate* =
-  if not appDir.dirExists:
-    createDir appDir / ".statuscache"
+  let statusCache = appDir / ".statuscache"
+  if not dirExists statusCache:
+    createDir statusCache
 
 proc validateLengthStationName*(result: seq[string], filePath: string, maxLength: int = MaxStationNameLength) =
   ## Validates the length of station names (odd indices).
