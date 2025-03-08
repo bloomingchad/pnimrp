@@ -98,7 +98,6 @@ proc handleMenu*(
     
     # Display the menu
     drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling))  # Pass isPlayerUI here
-    hideCursor()
 
     when not defined(simple):
       if isHandlingJSON(handleMenuIsHandling):
