@@ -1,7 +1,7 @@
 # statuscache.nim
 
 import
-  json, os, asyncdispatch, ../utils/utils,
+  json, os, asyncdispatch, ../utils/utils, terminal,
 
   ../ui/stationstatus
 
@@ -10,26 +10,38 @@ import
     {
         "lastChecked": "<stdanrd-datetime-format>",
         "stationlist": {
-            "<name>": "ls<Status>",
+            "<name>": 0|1,
             ...
         }
     }
 ]#
+using
+  stations: seq[StationStatus]
 
+proc checkIfCacheAlreadyExistAndIsValid*(stations): bool = false #dummy
 
-proc checkIfCacheAlreadyExistAndIsValid*(station: seq[StationStatus]): bool = false #dummy
+proc initBaseJsonCache() = discard
 
-proc saveStatusCacheToJson(JsonFileReprSubMenu: string) =
-  checkIfCacheDirExistElseCreate()
-
+proc saveStatusCacheToJson(stations) =
   var fileInConsideration: File
 
-  discard open(fileInConsideration, JsonFileReprSubMenu, fmWrite)
+  discard open(fileInConsideration, stations[0].fileName, fmWrite)
 
-proc readFromExistingStatusCache*(stations: seq[StationStatus]) = discard
+  initBaseJsonCache()
 
-proc hookCacheResolveAndDisplay*(stations: seq[StationStatus]) =
-  if not checkIfCacheAlreadyExistAndIsValid(stations):
-    waitFor resolveAndDisplay(stations)
+  #[
+    for station in stations:
+      json.add("station" : "bool(status")
+  ]#
+
+proc readFromExistingStatusCache*(stations) = discard
+
+proc hookCacheResolveAndDisplay*(stations) =
+  when defined(expstatuscache):
+    if not checkIfCacheAlreadyExistAndIsValid(stations):
+      waitFor resolveAndDisplay(stations)
+      saveStatusCacheToJson(stations)
+    else:
+      readFromExistingStatusCache(stations)
   else:
-    readFromExistingStatusCache(stations)
+    waitFor resolveAndDisplay(stations)
