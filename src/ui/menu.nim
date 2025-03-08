@@ -82,7 +82,7 @@ proc isHandlingJSON(state: handleMenuIsHandling): bool =
   if state == hmIsHandlingJson: true else: false
 
 proc handleMenu*(
-  sectionName: string,
+  section: string,
   items: seq[string],
   paths: seq[string],
   isMainMenu: bool = false,
@@ -107,8 +107,8 @@ proc handleMenu*(
         for i in 0..<items.len:
           stations.add(
             StationStatus(
-              section: section,
-              name:     items[1],
+              sectionName: section,
+              name:     items[i],
               coord:    emojiPositions[i],  # From ui.nim
               url:      paths[i],             # Station URL
               status:   lsChecking         # Initial state
