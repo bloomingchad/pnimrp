@@ -27,7 +27,10 @@ when not defined(simple):
       stationstatus,
       scroll,
       animation,
-     ]
+     ],
+    ../json/[
+        statuscache
+    ]
 
 
 proc showHelp*() =
@@ -111,8 +114,8 @@ proc handleMenu*(
             )
           )
 
-        waitFor resolveAndDisplay(stations)  # Defined in stationstatus.nim
-
+        hookCacheResolveAndDisplay(stations)
+          
         finishCheckingStationNotice()
 
     while true:
