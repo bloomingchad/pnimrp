@@ -1,11 +1,10 @@
 # statuscache.nim
 
 import
-  json, os, asyncdispatch,
+  json, os, asyncdispatch, ../utils/utils,
 
   ../ui/stationstatus
 
-let appDir = getAppDir()
 
 #[
     {
@@ -17,9 +16,6 @@ let appDir = getAppDir()
     }
 ]#
 
-proc checkIfCacheDirExistElseCreate =
-  if not appDir.dirExists:
-    createDir appDir / ".statuscache"
 
 proc checkIfCacheAlreadyExistAndIsValid*(station: seq[StationStatus]): bool = false #dummy
 

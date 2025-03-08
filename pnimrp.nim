@@ -37,6 +37,8 @@ proc validateEnvironment() =
   if not dirExists(assetsDir):
     error "Assets directory not found: " & assetsDir
 
+  when not defined(simple):
+    checkIfCacheDirExistElseCreate()
   # Future: Add checks for required assets and write permissions if needed
 
 proc getAppConfig(): AppConfig =
