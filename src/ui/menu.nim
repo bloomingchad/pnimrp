@@ -107,9 +107,11 @@ proc handleMenu*(
         for i in 0..<items.len:
           stations.add(
             StationStatus(
-              coord: emojiPositions[i],  # From ui.nim
-              url: paths[i],             # Station URL
-              status: lsChecking         # Initial state
+              fileName: section,
+              name:     items[1],
+              coord:    emojiPositions[i],  # From ui.nim
+              url:      paths[i],             # Station URL
+              status:   lsChecking         # Initial state
             )
           )
 
