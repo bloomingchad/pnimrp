@@ -33,10 +33,12 @@ proc drawStatusIndicator*(x, y: int, status = lsChecking, isInitial = false) =
 
 type
   StationStatus* = ref object
-    coord*: (int, int)            # (x, y) from emojiPositions
-    url*: string
-    status*: LinkStatus
-    future*: Future[LinkStatus]
+    fileName*: string
+    name*:     string
+    coord*:    (int, int)            # (x, y) from emojiPositions
+    url*:      string
+    status*:   LinkStatus
+    future*:   Future[LinkStatus]
 
 proc checkAndDraw(station: StationStatus) {.async.} =
   station.future = resolveLink(station.url)  # Store future
