@@ -15,7 +15,7 @@ import
   uiutils,
   jsonutils
 
-let appDir = getAppDir()
+let appDir* = getAppDir()
 
 proc checkIfCacheDirExistElseCreate* =
   let statusCache = appDir / ".statuscache"
