@@ -15,6 +15,11 @@ import
   uiutils,
   jsonutils
 
+let appDir = getAppDir()
+
+proc checkIfCacheDirExistElseCreate* =
+  if not appDir.dirExists:
+    createDir appDir / ".statuscache"
 
 proc validateLengthStationName*(result: seq[string], filePath: string, maxLength: int = MaxStationNameLength) =
   ## Validates the length of station names (odd indices).
