@@ -1,7 +1,7 @@
 # statuscache.nim
 
 import
-  json, os, asyncdispatch, ../utils/utils, terminal,
+  json, os, asyncdispatch, ../utils/utils, strutils, times, sequtils,
 
   ../ui/stationstatus
 
@@ -18,23 +18,70 @@ import
 using
   stations: seq[StationStatus]
 
-proc checkIfCacheAlreadyExistAndIsValid*(stations): bool = false #dummy
+proc checkIfCacheAlreadyExistAndIsValid*(stations): bool = true #false #dummy
 
-proc initBaseJsonCache() = discard
+
+#proc addToJsonAndReturn()
+
+proc getCacheJsonFileNameWithPath(sectionName: var string) =
+  sectionName[0] = sectionName[0].toLowerAscii()
+  sectionName = sectionName & ".cache.json"
+  sectionName = appDir / ".statuscache" / sectionName
+    #Arab -> arab -> arab.cache.json -> path/to/<>
+
+template cE(status: bool) =
+  if not status:
+    raise newException(OSError, "An OS error occurred")
+
+proc linkStatustoBool(status: LinkStatus): uint8 =
+  case status
+  of lsInvalid: 0 #false
+  of lsValid:   1 #true
+  of lsChecking:
+    raise newException(OSError, "are you writing CheckingStatus to cache?")
 
 proc saveStatusCacheToJson(stations) =
   var fileInConsideration: File
+  var jsonObjectCache = %*{}
+  var filePathNameExt = stations[0].sectionName
+  getCacheJsonFileNameWithPath(filePathNameExt)
+  
+  cE open(fileInConsideration, filePathNameExt, fmWrite)
 
-  discard open(fileInConsideration, stations[0].fileName, fmWrite)
+  jsonObjectCache["lastCheckedDate"] = %* $getDateStr()
+  jsonObjectCache["lastCheckedTime"] = %* $getClockStr()
 
-  initBaseJsonCache()
+  var stationList = newJObject()
+  # Populate the stationlist
 
-  #[
-    for station in stations:
-      json.add("station" : "bool(status")
-  ]#
+  for station in stations:
+    # The key is the station name, the value is a 0 or 1 boolean
+    stationList[station.name] = % linkStatustoBool(station.status)
 
-proc readFromExistingStatusCache*(stations) = discard
+  # Add the stationlist to the main object
+  jsonObjectCache["stationlist"] = stationList
+
+  var uglyResultJson: string
+  uglyResultJson.toUgly(jsonObjectCache)
+
+  fileInConsideration.write(uglyResultJson)
+  fileInConsideration.close()
+
+proc readFromExistingStatusCache*(stations) =
+  var fileInConsideration: File
+  var filePathNameExt = stations[0].sectionName
+  getCacheJsonFileNameWithPath(filePathNameExt)
+
+  var parsedCachedJson = parseFile(filePathNameExt)
+  var cachedJsonList = parsedCachedJson["stationlist"]
+
+  #for station in stations:
+    # The key is the station name, the value is a 0 or 1 boolean
+  #  cachedJsonList[station.name]
+
+    # % linkStatustoBool(station.status)
+
+
 
 proc hookCacheResolveAndDisplay*(stations) =
   when defined(expstatuscache):
