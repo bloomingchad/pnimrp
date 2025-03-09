@@ -1,13 +1,9 @@
 {
     "stations": {
         "Public Domain Classical Jazz": "relay.publicdomainradio.org/jazz_swing.mp3",
-        "Early Jazz Radio": "",
-        "New Orleans Jazz Radio": "",
-        "Jazz from the Attic": "",
-        "WWOZ - New Orleans Jazz": "",
-        "KPLU - Jazz24 - Traditional Jazz": "",
-        "Riverwalk Jazz": "",
-        "Traditional Jazz Yea!": "",
-        "Radio Swiss Jazz - Traditional": ""
+        "WSKG Classic Jazz": "https://wskg.streamguys1.com/wskg-classic-jazz",
+        "WKWF": "https://sh.fl-us.audio-stream.com/proxy/rconne02?mp=/stream",
+        "ClassicJazzCA": "https://c25.radioboss.fm:8176/stream",
+        "TraxxFM": "https://traxx014.ice.infomaniak.ch/traxx014-low.mp3 "
     }
 }
