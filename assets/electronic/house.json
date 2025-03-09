@@ -1,14 +1,23 @@
 {
     "stations": {
         "House Nation": "https://streaming.radio.co/s06bd9d805/listen",
-        "Deep House Lounge": "",
-        "Chicago House FM": "",
-        "Radio House": "",
-        "HouseTime.FM": "",
-        "Radio Danz": "",
-        "MoveDaHouse": "",
-        "SomaFM - Groove Salad": "",
-        "Ibiza Sonica": "",
-        "Strictly House": ""
+        "Chicago House AutoDJ": "http://dione.shoutca.st:8379/autodj",
+        "0N": "https://0n-house.radionetz.de/0n-house.aac",
+        "HouseTime.FM": "https://aach.stream.tb-group.fm/ht-high.aac",
+        "Radio Danz": "https://streamssl.radiodanz.com",
+        "MoveDaHouse": "https://uk7.internet-radio.com/proxy/movedahouse?mp=/;",
+        "Ibiza Sonica": "https://streams.radio.co/sddfa96b70/listen",
+        "Strictly House": "https://radio.hearme.fm:8020/stream",
+        "DI Funky": "http://prem4.di.fm/funkyhouse_hi?6a40af94924ae467",
+        "DI Tribal": "http://prem3.di.fm/tribalhouse_hi?20a1d1bf879e76",
+        "globalhardhouse": "https://globalhardhouse.radioca.st/;",
+        "StyleCore Hard": "https://sonic.sistemahost.es:7011/;",
+        "AU DigitalNet AcidHouse": "http://abm22.com.au:8000/CONTAINER1",
+        "AUDigitalNet AfroHouse": "http://abm22.com.au:8000/CONTAINER53",
+        "GubiFM": "https://stream.laut.fm/gubifm",
+        "AU DigitalNet BassHouse": "http://abm22.com.au:8000/CONTAINER5",
+        "Der Ansorge DE": "https://stream.laut.fm/deransorge",
+        "RadioDayNigth Chill": "https://radiodaynigth.radioca.st/;",
+        "Alfa Deep RU": "https://mp4.apachan.ru:8000/royal_deep",
     }
 }
