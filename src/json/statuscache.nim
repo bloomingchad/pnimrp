@@ -18,9 +18,6 @@ import
 using
   stations: seq[StationStatus]
 
-proc checkIfCacheAlreadyExistAndIsValid*(stations): bool = true #false #dummy
-
-
 #proc addToJsonAndReturn()
 
 proc getCacheJsonFileNameWithPath(sectionName: var string) =
@@ -28,6 +25,12 @@ proc getCacheJsonFileNameWithPath(sectionName: var string) =
   sectionName = sectionName & ".cache.json"
   sectionName = appDir / ".statuscache" / sectionName
     #Arab -> arab -> arab.cache.json -> path/to/<>
+
+proc checkIfCacheAlreadyExistAndIsValid*(stations): bool =
+  var filePathNameExt = stations[0].sectionName
+  getCacheJsonFileNameWithPath(filePathNameExt)
+
+  return fileExists filePathNameExt
 
 template cE(status: bool) =
   if not status:
