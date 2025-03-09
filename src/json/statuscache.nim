@@ -18,8 +18,6 @@ import
 using
   stations: seq[StationStatus]
 
-#proc addToJsonAndReturn()
-
 proc getCacheJsonFileNameWithPath(sectionName: var string) =
   sectionName[0] = sectionName[0].toLowerAscii()
   sectionName = sectionName & ".cache.json"
@@ -30,7 +28,10 @@ proc checkIfCacheAlreadyExistAndIsValid*(stations): bool =
   var filePathNameExt = stations[0].sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
 
-  if not fileExists filePathNameExt: return
+  #echo "un video mas mi gente encanta esta vaina no directory"
+  #echo filePathNameExt
+  #sleep 2000
+  if not absolutePath(filePathNameExt).fileExists(): return
 
   let jsonParsedCacheObj = parseFile(filePathNameExt)
 
@@ -51,6 +52,13 @@ proc linkStatustoBool(status: LinkStatus): uint8 =
   of lsInvalid: 0 #false
   of lsValid:   1 #true
   of lsChecking:
+    raise newException(OSError, "are you writing CheckingStatus to cache?")
+
+proc boolToLinkStatus(status: int): LinkStatus =
+  case status
+  of 0: lsInvalid  #false
+  of 1: lsValid    #true
+  else:
     raise newException(OSError, "are you writing CheckingStatus to cache?")
 
 proc saveStatusCacheToJson(stations) =
@@ -80,20 +88,29 @@ proc saveStatusCacheToJson(stations) =
   fileInConsideration.write(uglyResultJson)
   fileInConsideration.close()
 
-proc readFromExistingStatusCache*(stations) =
+proc readFromExistingStatusCache*(stations): JsonNode =
   var fileInConsideration: File
   var filePathNameExt = stations[0].sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
 
   var parsedCachedJson = parseFile(filePathNameExt)
-  var cachedJsonList = parsedCachedJson["stationlist"]
+  return parsedCachedJson["stationlist"]
+
+
+proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode) =
+  var i: uint8
+  for key, value in  stationsList.pairs:
+    stations[i].status = boolToLinkStatus value.getInt
+    i += 1
 
 proc hookCacheResolveAndDisplay*(stations) =
   when defined(expstatuscache):
     if not checkIfCacheAlreadyExistAndIsValid(stations):
       waitFor resolveAndDisplay(stations)
       saveStatusCacheToJson(stations)
+      echo "un video mas mi gente encanta esta vaina"
     else:
-      readFromExistingStatusCache(stations)
+      let cacheStatusStationList = readFromExistingStatusCache(stations)
+      stations.applyLinkStatusFromCacheToState(cacheStatusStationList)
   else:
     waitFor resolveAndDisplay(stations)
