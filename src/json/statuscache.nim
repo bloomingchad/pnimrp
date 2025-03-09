@@ -30,7 +30,17 @@ proc checkIfCacheAlreadyExistAndIsValid*(stations): bool =
   var filePathNameExt = stations[0].sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
 
-  return fileExists filePathNameExt
+  if not fileExists filePathNameExt: return
+
+  let jsonParsedCacheObj = parseFile(filePathNameExt)
+
+  let cacheLastTime = $jsonParsedCacheObj["lastCheckedDateTime"]
+  let nowTime = $(now() - initDuration(hours = 24))
+
+  if cacheLastTime > nowTime:
+    return true
+
+  return
 
 template cE(status: bool) =
   if not status:
@@ -51,8 +61,8 @@ proc saveStatusCacheToJson(stations) =
   
   cE open(fileInConsideration, filePathNameExt, fmWrite)
 
-  jsonObjectCache["lastCheckedDate"] = %* $getDateStr()
-  jsonObjectCache["lastCheckedTime"] = %* $getClockStr()
+  jsonObjectCache["lastCheckedDateTime"] = %* $now()
+
 
   var stationList = newJObject()
   # Populate the stationlist
@@ -77,14 +87,6 @@ proc readFromExistingStatusCache*(stations) =
 
   var parsedCachedJson = parseFile(filePathNameExt)
   var cachedJsonList = parsedCachedJson["stationlist"]
-
-  #for station in stations:
-    # The key is the station name, the value is a 0 or 1 boolean
-  #  cachedJsonList[station.name]
-
-    # % linkStatustoBool(station.status)
-
-
 
 proc hookCacheResolveAndDisplay*(stations) =
   when defined(expstatuscache):
