@@ -28,20 +28,23 @@ proc checkIfCacheAlreadyExistAndIsValid*(stations): bool =
   var filePathNameExt = stations[0].sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
 
-  #echo "un video mas mi gente encanta esta vaina no directory"
-  #echo filePathNameExt
-  #sleep 2000
-  if not absolutePath(filePathNameExt).fileExists(): return
+  let exists = fileExists(filePathNameExt)
+  let absPath = absolutePath(filePathNameExt)
+  let absExists = fileExists(absPath)
 
-  let jsonParsedCacheObj = parseFile(filePathNameExt)
+  if not (exists and absExists):
+    return false
 
-  let cacheLastTime = $jsonParsedCacheObj["lastCheckedDateTime"]
-  let nowTime = $(now() - initDuration(hours = 24))
-
-  if cacheLastTime > nowTime:
-    return true
-
-  return
+  try:
+    let jsonParsedCacheObj = parseFile(filePathNameExt)
+    let cacheLastTimeStr = jsonParsedCacheObj["lastCheckedDateTime"].getStr()
+    let cacheTime = parse(cacheLastTimeStr, "yyyy-MM-dd'T'HH:mm:sszzz")
+    let currentTime = now()
+    let timeDiff = currentTime - cacheTime
+    return timeDiff.inSeconds <= 24 * 3600  # 24 hours in seconds
+  except:
+    # Handle any parsing errors (invalid JSON, missing key, etc.)
+    return false
 
 template cE(status: bool) =
   if not status:
@@ -96,19 +99,20 @@ proc readFromExistingStatusCache*(stations): JsonNode =
   var parsedCachedJson = parseFile(filePathNameExt)
   return parsedCachedJson["stationlist"]
 
-
 proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode) =
   var i: uint8
   for key, value in  stationsList.pairs:
     stations[i].status = boolToLinkStatus value.getInt
+    drawStatusIndicator(stations[i].coord[0], stations[i].coord[1], stations[i].status)
     i += 1
 
 proc hookCacheResolveAndDisplay*(stations) =
   when defined(expstatuscache):
     if not checkIfCacheAlreadyExistAndIsValid(stations):
+      initCheckingStationNotice()
       waitFor resolveAndDisplay(stations)
       saveStatusCacheToJson(stations)
-      echo "un video mas mi gente encanta esta vaina"
+      finishCheckingStationNotice()
     else:
       let cacheStatusStationList = readFromExistingStatusCache(stations)
       stations.applyLinkStatusFromCacheToState(cacheStatusStationList)
