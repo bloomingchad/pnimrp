@@ -101,8 +101,6 @@ proc handleMenu*(
 
     when not defined(simple):
       if isHandlingJSON(handleMenuIsHandling):
-        initCheckingStationNotice()
-
         var stations = newSeqOfCap[StationStatus](32)
         for i in 0..<items.len:
           stations.add(
@@ -116,8 +114,6 @@ proc handleMenu*(
           )
 
         hookCacheResolveAndDisplay(stations)
-          
-        finishCheckingStationNotice()
 
     while true:
       try:
