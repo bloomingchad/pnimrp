@@ -1,0 +1,15 @@
+{
+    "stations": {
+        "101.ru": "https://srv01.gpmradio.ru/stream/pro/aac/64/1",
+        "Sunshine Radio": "http://stream.sunshinefm.hu:8100/sunshine",
+        "0N": "https://0n-disco.radionetz.de/0n-disco.aac",
+        "Blast FM Radio": "https://45.33.5.23:8000/;",
+        "Circus Radio": "http://radio.rpointernet.com.br:5788/;",
+        "DiscoRhythmn AUTODJ": "http://kiyi.radioca.st:8108/autodj",
+        "FlashDiscoDance": "http://stm1.ifantasy.com.br:21764/;",
+        "Italo Radio": "http://danceradio1.shoutcaststream.com:8102/;",
+        "RadioCaprice Disco": "http://79.120.77.11:8002/disco",
+        "RadioCaprice NuDisco": "http://79.111.119.111:8004/nudisco",
+        "1.fm Disco": "https://strm112.1.fm/disco_128"
+    }
+}
