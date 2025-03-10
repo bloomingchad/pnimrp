@@ -1,5 +1,6 @@
 {
     "stations": {
+        "RadioCaprice": "http://79.111.119.111:8002/ambient",
         "Radio Art - Ambient": "https://air.radioart.com/fAmbient.mp3",
         "Calm Radio Ambient": "https://proxy.calmradio.com:6728/;",
         "1.FM - Destination SPA": "https://strm112.1.fm/spa_mobile_mp3",
