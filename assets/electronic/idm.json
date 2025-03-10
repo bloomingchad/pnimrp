@@ -8,6 +8,7 @@
         "Soma GrooveSalad": "https://ice2.somafm.com/groovesalad-128-aac",
         "Soma GrooveSaladClassic": "https://ice5.somafm.com/gsclassic-128-mp3",
         "RadioCaprice IDM Ambient": "http://213.141.131.10:8002/idmambient",
-        "RadioCaprice IDM": "http://79.111.14.76:8004/idm"
+        "RadioCaprice IDM": "http://79.111.14.76:8004/idm",
+        "RadioCaprice": "http://79.111.14.76:8002/idm"
     }
 }

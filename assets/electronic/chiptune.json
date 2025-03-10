@@ -8,5 +8,6 @@
         "KOHINA": "http://kohina.duckdns.org:8000/stream.ogg.m3u",
         "chiptune.rainwave.cc": "http://chiptune.rainwave.cc/tune_in/5.ogg.m3u",
         "game.rainwave.cc": "https://relay.rainwave.cc/game.ogg"
+        "RadioCaprice": "http://79.111.119.111:8002/chiptune",
     }
 }
