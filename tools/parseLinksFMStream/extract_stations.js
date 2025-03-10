@@ -1,6 +1,12 @@
 //useful dated: Mar 10 2025
 //for use with fmstream.org only
 
+//see https://fmstream.org/rsd.js
+//thanks to Peer-Axel Kroeske <peeraxel@aol.com>
+
+//thanks to gemini-2.0 for helping with converting
+//from bitwise voodoo magic to http/https
+
 function extractStationData() {
     // Get station names from HTML <div> elements inside <div id="tab">.
     const stationNameElements = document.querySelectorAll("#tab > div");
