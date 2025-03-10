@@ -4,7 +4,7 @@
         "PlaybackUK": "https://chilledstreaming.com:8650/pb.mp3",
         "WWW-UK": "http://cp.eu6.fastcast4u.com:5308/;",
         "Mai Irie NZ": "https://playerservices.streamtheworld.com/api/livestream-redirect/IRIEANTHEMS_S01AAC.aac",
-        "RadioCaprice Future": "https://79.120.39.202:8002/futuregarage",
+        "RadioCaprice Future": "http://79.120.39.202:8000/futuregarage",
         "RadioCaprice Garage": "http://79.120.12.130:8002/garagehouse"
     }
 }
