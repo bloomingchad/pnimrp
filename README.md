@@ -50,7 +50,6 @@ improvements.
 **macOS:**
 *   **Homebrew (Recommended):** `brew install mpv`
 *    **MacPorts:** `sudo port install mpv`
-Okay, here's *just* the FreeBSD and Termux sections, as requested:
 
 **FreeBSD:**
 `sudo pkg install mpv`
@@ -64,6 +63,10 @@ Okay, here's *just* the FreeBSD and Termux sections, as requested:
   ```bash
   curl https://nim-lang.org/choosenim/init.sh -sSf | sh
   ```
+note this wouldnt work on termux instead do
+**Termux (Android):**
+```pkg install nim```
+
 - **Windows**:
   Download the latest release from [choosenim](https://github.com/dom96/choosenim/releases).
 - **Other Distros**:
@@ -143,7 +146,7 @@ However, the following component is licensed with their respective original lice
   this file is used for non-blocking input handling and is licensed under the WTFPL.
 
 - **jsmn.nim**: See More [jsmn.nim](https://github.com/OpenSystemsLab/jsmn.nim)
-
+  this file is under original licence which is MIT
 For more information about the WTFPL, see: [WTFPL License](http://www.wtfpl.net/).
   The original license text is included in the file.
 
