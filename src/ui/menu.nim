@@ -132,15 +132,17 @@ proc handleMenu*(
               # Handle directories (subcategories or station lists)
               var subItems, subPaths = newSeqOfCap[string](32)
 
-              for file in walkFiles(selectedPath / "*.json"):
-                let name = file.extractFilename.changeFileExt("").capitalizeAscii
-                subItems.add(name)
-                subPaths.add(file)
+              let result = loadCategories(selectedPath)
+              for nameOffolder in result[0]:
+                subItems.add(nameOffolder)
+              for folderPath in result[1]:
+                subPaths.add(folderPath)
               if subItems.len == 0:
                 warn("No station lists available in this category.")
               else:
                 # Navigate to subcategories with isMainMenu = false
                 handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
+                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = selectedPath, handleMenuIsHandling = hmIsHandlingDirectory)
             elif fileExists(selectedPath) and selectedPath.endsWith(".json"):
               # Handle JSON files (station lists)
               let stations = loadStations(selectedPath)
