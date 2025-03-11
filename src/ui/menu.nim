@@ -192,7 +192,8 @@ proc handleMenu*(
           showInvalidChoice()
 
       except IndexDefect:
-        showInvalidChoice()
+        warn "IndexDefect, did you fill too much stations?"
+        break
 
     if returnToParent:
       break
