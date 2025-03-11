@@ -1,14 +1,24 @@
 {
-	"stations": {
-		"mix FM arab":   "https://s1.voscast.com:11377/live.mp3",
-		"rotana jordan": "45.63.116.205:8000/stream",
-	    "nogoum Egypt":  "https://audio.nrpstream.com/listen/nogoumfm/radio.mp3",
-	    "MBC FM":        "https://mbcfm-radio.mbc.net/mbcfm-radio_1.m3u8",
-	    "fm amazigh du maroc": "https://stream.zenolive.com/bqdbb6hd0neuv",
-		"tarab lebanon": "https://stream.zeno.fm/fy8achbq97zuv",
-        "Monte Carlo Doualiya": "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3",
-        "Chada FM": "https://stream.bodkas.com/playlist?id=chadafmradio",
-        "Al Aan FM": "https://c20.radioboss.fm/stream/543",
-        "Radio Orient (France/Arabic)": "https://n06a-eu.rcs.revma.com/7hnrkawf4p8uv.mp3"
-	}
+  "stations": {
+    "Monte Carlo Doualiya": "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3",
+    "Nogoum Egypt": "https://audio.nrpstream.com/listen/nogoumfm/radio.mp3",
+    "MBC FM": "https://mbcfm-radio.mbc.net/mbcfm-radio_1.m3u8",
+    "Chada FM": "https://stream.bodkas.com/playlist?id=chadafmradio",
+    "Al Aan FM": "https://c20.radioboss.fm/stream/543",
+    "Sham FM": "https://radioshamfm.grtvstream.com:8400/;",
+    "Abu Dhabi FM": "https://vo-live.cdb.cdn.orange.com/Content/Channel/abu_dhabi_fm/HLS/stream_02/index.m3u8",
+    "Sout al Khaleej": "https://edge-audio-04-thn.sharp-stream.com/spectrum4.mp3",
+    "Quran R": "http://quran-radio.org:8080/;",
+    "R Dzair": "https://radiodzair.net:8000/dzair",
+    "Fun X - Arab": "https://icecast.omroep.nl/funx-arab-sb-mp3",
+    "R Asharq with Bloomberg": "https://l3.itworkscdn.net/asharqradioalive/asharqradioa/icecast.audio",
+    "Muscat FM": "https://stream.aiir.com/r9fyk1khuywtv",
+    "Radio Orient (France/Arabic)": "https://n06a-eu.rcs.revma.com/7hnrkawf4p8uv.mp3",
+    "fm amazigh du maroc": "https://stream.zenolive.com/bqdbb6hd0neuv",
+    "Hawa Dijlah FM": "https://listen.radioking.com/radio/96766/stream/136027",
+    "R Liban Culture": "https://media2.streambrothers.com:2020/stream/8194",
+    "SumerFm Iraq": "https://l3.itworkscdn.net/itwaudio/9012/stream",
+    "CINA FM 3": "https://ice9.securenetsystems.net/CINAFM3",
+    "LBI R": "http://andromeda.shoutca.st:8192/mobile"
+  }
 }
