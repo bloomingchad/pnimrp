@@ -16,7 +16,7 @@ proc loadStationStdLib*(filePath: string): tuple[names, urls: seq[string]] =
 
         var countCap: uint8 
         for stationName, stationUrlNode in stations.pairs:
-              if countCap == 20: break #exceed too much
+          if countCap == 20: break #exceed too much
           
           let stationNameStr = stationName
           let stationUrlStr = stationUrlNode.getStr
