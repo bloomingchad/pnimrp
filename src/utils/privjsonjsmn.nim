@@ -29,7 +29,11 @@ when defined(useJsmn):
     result = (names: newSeq[string](), urls: newSeq[string]())
 
     var pairsCount = 0
+    var countCap: uint8
+    
     while pairsCount < stationsToken.size:
+      if countCap == 20: break #exceed too much
+
       # Expecting a string (key)
       if tokens[childIndex].kind != JSMN_STRING:
         raise newException(JSONParseError, "Expected station name (string).")
@@ -47,8 +51,8 @@ when defined(useJsmn):
       result.names.add(stationName)
       result.urls.add(normalizedUrl)
       inc pairsCount
-
-
+      inc countCap
+      
   proc loadQuotesJSMN*(filePath: string): QuoteData =
       ## Loads and validates quotes from a JSON file.
       ## Raises `UIError` if the quote data is invalid.
@@ -66,7 +70,6 @@ when defined(useJsmn):
       var pairCount = 0
 
       while pairCount < tokens[0].size: # tokens[0] is the root object
-
           # Expecting quote (string key)
           if tokens[childIndex].kind != JSMN_STRING:
               raise newException(InvalidDataError, "Expected quote (string key).")
