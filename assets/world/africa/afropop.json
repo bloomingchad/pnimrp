@@ -1,0 +1,18 @@
+{
+  "stations": {
+    "X-K FM": "https://playerservices.streamtheworld.com/api/livestream-redirect/XKFMAAC.aac",
+    "Ghana Music R": "https://streaming.radio.co/s92f890821/listen",
+    "Ghana Urban R": "https://stream.zeno.fm/aw18rx2nz9duv",
+    "Awoko R": "https://stream.zeno.fm/tqq99en94v8uv",
+    "Extra": "https://c32.radioboss.fm:8320/autodj",
+    "Ejazz Xtra": "https://c32.radioboss.fm:18320/autodj",
+    "O R": "https://stream.zeno.fm/15u3hdz0qf9uv",
+    "Dschungelhit R": "https://stream.laut.fm/dschungelhitradio",
+    "Sikaena R": "https://stream.zeno.fm/wk6bxscqrv8uv",
+    "Afrobeats Nation": "https://streamingv2.shoutcast.com/AfrobeatsNation",
+    "Afrobeats Rising R": "https://stream.zeno.fm/xluuqkhku02tv",
+    "Aloe FM": "https://stream.zeno.fm/yzwv42ywx2quv",
+    "Beacon Online R": "https://stream.zeno.fm/n5c8anyn7k8uv",
+    "Blue R": "https://a3.asurahosting.com:7960/radio.mp3"
+  }
+}
