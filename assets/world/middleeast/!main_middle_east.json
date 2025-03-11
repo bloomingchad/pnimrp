@@ -1,0 +1,24 @@
+{
+  "stations": {
+    "Ninar FM": "https://ninarfm.grtvstream.com:8896/;",
+    "Dubai Eye": "https://gbradio.cdn.tibus.net/U105?aw_0_1st.playerId=wireless-website&_=477645",
+    "Jabal Lebnan": "http://185.52.127.168/lb/2/aac_64.mp3",
+    "Libyana Hits FM": "https://libyanahitsfm.radioca.st/;",
+    "Version FM": "https://versionfm.com:8100/;",
+    "Alzytona FM": "http://streamer.mada.ps:8048/alzaytonafm",
+    "R Mosaïque Tounsi": "https://radio.mosaiquefm.net/mosatounsi",
+    "R Hits": "https://radiohits882.radioca.st/;",
+    "2ME R": "https://streaming.2me.com.au/2me",
+    "Sultan Radyo": "https://yayin.turkhosted.com:4949/;",
+    "Kurd1 Radyo": "https://listen.radioking.com/radio/119251/stream/158701",
+    "DFW Quran R": "https://listen.radioking.com/radio/685002/stream/749598",
+    "Galaxy FM KSA 99.9": "https://eu10.fastcast4u.com:6300/;",
+    "R Delta FM": "http://s45.myradiostream.com:18408/;",
+    "Nagh FM": "https://ahmsamir.radioca.st/stream",
+    "R Arabic Music": "http://s10.voscast.com:9974/;",
+    "Heart FM": "https://funasia.streamguys1.com/live2",
+    "Big FM - Orient": "https://streams.bigfm.de/orient-64-aac",
+    "R Caprice - Middle Eastern Music": "http://79.111.119.111:8002/middleeast",
+    "R Navahang": "https://navairan.com/;"
+  }
+}
