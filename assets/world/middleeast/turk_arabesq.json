@@ -1,0 +1,24 @@
+{
+  "stations": {
+    "Damar Türk FM": "https://live.radyositesihazir.com:10997/;",
+    "Radyo 2000 FM": "https://sslyayin.netyayin.net:10915/;",
+    "Aşk Fm": "http://yayin.asymedya.com:8020/radio.mp3",
+    "Radyo Efkar": "https://anadolu.liderhost.com.tr:10895/;",
+    "Tarsus FM": "https://tarsusfm.80.yayin.com.tr/;",
+    "Arabesk Vadisi": "https://arabeskv.80.yayin.com.tr/;",
+    "Arabesk Turk": "http://yayin.arabeskturk.com:8000/stream",
+    "Merkezi FM": "https://canli.arabeskinmerkezi.com:9180/;",
+    "R Net Arabesk": "https://anadolu.liderhost.com.tr:10981/;",
+    "Radyo Hayat": "https://sslyayin.radyoyayini.com:7059/i",
+    "Radyo Mastika": "https://radyo.yayin.com.tr:5950/;",
+    "Arabesk Keyif Radyo": "https://radyo.yayin.com.tr:4122/;",
+    "Arabesk-Fm www. ArabeskFm. Net": "https://anadolu.liderhost.com.tr:10949/;",
+    "Radyo Kent": "https://sslyayin.radyoyayini.com:7072/;",
+    "Hemdem Radyo": "https://yayin.hemdemradyo.com",
+    "Metropol": "http://s1.voscast.com:9636/;",
+    "Sans Melodi": "https://stream.laut.fm/sans-melodi",
+    "Radyo": "https://radyoserver1.okeylisans.com:8082/;",
+    "Lider FM": "http://liderfm.radyotvonline.net/;",
+    "Radyo Deva": "https://radyo.yayindakiler.com:3040/;"
+  }
+}
