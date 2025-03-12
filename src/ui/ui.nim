@@ -339,6 +339,7 @@ proc drawNowPlayingPlayerUI(nowPlaying: string) =
   when defined(simple):
     stdout.styledWrite(fgCyan, "Now Playing:   ", nowPlaying.truncateMe())
 
+
   else:
     # In normal mode, use the existing approach
     stdout.styledWrite(fgCyan, "   Now Playing:  ")
@@ -346,6 +347,9 @@ proc drawNowPlayingPlayerUI(nowPlaying: string) =
       startingX = "  Now Playing: ".len + 1  # +1 for emoji space
     else:
       startingX = "  Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
+
+    if not nowPlaying.checkIfTooLongForUI():
+      stdout.styledWrite(fgCyan, nowPlaying)
 
 proc updateVolumePlayerUI*(newVolume: int) =
   setCursorPos(24, 3)
