@@ -146,7 +146,8 @@ However, the following component is licensed with their respective original lice
   this file is used for non-blocking input handling and is licensed under the WTFPL.
 
 - **jsmn.nim**: See More [jsmn.nim](https://github.com/OpenSystemsLab/jsmn.nim)
-  this file is under original licence which is MIT
+  this file is under original licence which is MIT.
+
 For more information about the WTFPL, see: [WTFPL License](http://www.wtfpl.net/).
   The original license text is included in the file.
 
@@ -160,7 +161,7 @@ For more information about the WTFPL, see: [WTFPL License](http://www.wtfpl.net/
 - **GPT-3.5 Claude-3.5-Sonnet**: Documentation and code improvements.🤖
 - **DeepSeek-V3**: Documentation and Code improvements 🥰
 - **You**: For using and supporting this project! ❤️
-- **fmsteream.org and others**: for providing links
+- **fmstream.org and others**: for providing links
 
 ## 🎉 Happy Listening!
 
