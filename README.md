@@ -87,6 +87,10 @@ want a simple build? (very minimal):
 nim c -d:release -d:simple pnimrp
 ```
 
+cant/dont want emojis?: add `-d:noEmoji`
+
+want to use smaller bin size?: add `-d:useJsmn`
+
 ## 🎥 Demo
 
 ![pnimrp Demo](https://github.com/bloomingchad/pnimrp/raw/main/web/demo.gif)
