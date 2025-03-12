@@ -136,6 +136,7 @@ proc playStation*(config: MenuConfig) =
 
         # Scrolling Logic
         if scrollCounter == 11:
+         if state.currentSong.checkIfTooLongForUI():
           scrollTextOnce(fullTitle, scrollOffset, termWidth, startingX) # Corrected call
           if fullTitle.len > termWidth - startingX:
             scrollOffset += 1
