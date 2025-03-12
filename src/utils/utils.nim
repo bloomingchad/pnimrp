@@ -76,12 +76,12 @@ proc truncateMe*(str: string): string =
       #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
 
 proc initCheckingStationNotice* =
-  setCursorPos(2, lastMenuSeparatorY + 6)
+  setCursorPos(0, terminalHeight() - 5)
   stdout.write "Checking stations... Please Wait"
   stdout.flushFile()
 
 proc finishCheckingStationNotice* = 
-  setCursorPos 2, lastMenuSeparatorY + 6
+  setCursorPos(0, terminalHeight() - 5)
   eraseLine()
   lastMenuSeparatorY = 0
   stdout.flushFile()

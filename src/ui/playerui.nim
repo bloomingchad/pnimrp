@@ -26,11 +26,11 @@ when not defined(simple):
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
   let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
-  cursorDown 3
+  setCursorPos(0, terminalHeight() - 4)
+
   warn("Failed to access station: " & config.stationName, delayMs = 0)
   warn("URL: " & config.stationUrl, delayMs = 0)
   warn("Edit station list in: " & fileHint & ".json", delayMs = 1350)
-  cursorUp 5
 
 proc handlePlayerError(msg: string; config: MenuConfig; shouldReturn = false) =
   ## Handles player errors consistently and optionally destroys the player context.
