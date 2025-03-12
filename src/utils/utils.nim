@@ -147,4 +147,5 @@ when not defined(simple):
   export #utilstypes
     ThemeConfig,
     globalMetadata,
-    emojiPositions
+    emojiPositions,
+    StatusCache

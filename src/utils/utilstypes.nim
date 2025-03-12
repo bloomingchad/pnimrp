@@ -79,6 +79,10 @@ var
 
 when not defined(simple):
   type
+    StatusCache* = object
+      sectionName*: string
+
+  type
     ThemeConfig* = object
       themes*: Table[string, Theme]
       currentTheme*: string

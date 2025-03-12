@@ -101,11 +101,14 @@ proc handleMenu*(
 
     when not defined(simple):
       if isHandlingJSON(handleMenuIsHandling):
+        var statuscontext = StatusCache(
+            sectionName: section
+          )
+
         var stations = newSeqOfCap[StationStatus](32)
         for i in 0..<items.len:
           stations.add(
             StationStatus(
-              sectionName: section,
               name:     items[i],
               coord:    emojiPositions[i],  # From ui.nim
               url:      paths[i],             # Station URL
@@ -113,7 +116,7 @@ proc handleMenu*(
             )
           )
 
-        hookCacheResolveAndDisplay(stations)
+        hookCacheResolveAndDisplay(stations, statuscontext)
 
     while true:
       try:
