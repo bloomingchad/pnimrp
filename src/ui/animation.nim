@@ -43,3 +43,4 @@ proc updateAnimationOnly*(status, currentSong: string, animationCounter: int) =
   
   # Write ONLY the animation symbol and 3 spaces, then erase to the end of the line
   stdout.styledWrite(fgCyan, animationSymbol)
+  stdout.flushFile()
