@@ -1,7 +1,7 @@
 # statuscache.nim
 
 import
-  json, os, asyncdispatch, ../utils/utils, strutils, times, sequtils,
+  json, os, asyncdispatch, ../utils/utils, strutils, times, sequtils, terminal,
 
   ../ui/stationstatus
 
@@ -24,6 +24,15 @@ proc getCacheJsonFileNameWithPath(sectionName: var string) =
   sectionName = sectionName & ".cache.json"
   sectionName = appDir / ".statuscache" / sectionName
     #Arab -> arab -> arab.cache.json -> path/to/<>
+
+proc removeOldCacheForJson(statuscontext) =
+  var filePathNameExt = statuscontext.sectionName
+  getCacheJsonFileNameWithPath(filePathNameExt)
+
+  try:
+    removeFile(filePathNameExt)
+  except:
+    warn "cant remove cacheFile"
 
 proc checkIfCacheAlreadyExistAndIsValid*(stations; statuscontext): bool =
   var filePathNameExt = statuscontext.sectionName
@@ -100,22 +109,43 @@ proc readFromExistingStatusCache*(stations; statuscontext): JsonNode =
   var parsedCachedJson = parseFile(filePathNameExt)
   return parsedCachedJson["stationlist"]
 
-proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode) =
+type CacheDoesntMatchParentJsonError = object of CatchableError
+
+template waitForResolveNewStatusAndSave =
+  initCheckingStationNotice()
+  waitFor resolveAndDisplay(stations)
+  finishCheckingStationNotice()
+  saveStatusCacheToJson(stations, statuscontext)
+
+proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode; statuscontext) =
   var i: uint8
-  for key, value in  stationsList.pairs:
-    stations[i].status = boolToLinkStatus value.getInt
-    drawStatusIndicator(stations[i].coord[0], stations[i].coord[1], stations[i].status)
-    i += 1
+  try:
+    for key, value in  stationsList.pairs:
+      if key != stations[i].name:
+        raise newException(CacheDoesntMatchParentJsonError, "")
+      stations[i].status = boolToLinkStatus value.getInt
+      drawStatusIndicator(stations[i].coord[0], stations[i].coord[1], stations[i].status)
+      i += 1
+  except IndexDefect:
+    warn "the cache list is larger than json file; please restart if crash"
+    cursorUp()
+    eraseLine()
+
+  except CacheDoesntMatchParentJsonError:
+    warn "the cache json is not matching; please restart if crash"
+    cursorUp()
+    eraseLine()
+
+  finally:
+    removeOldCacheForJson(statuscontext)
+    waitForResolveNewStatusAndSave()
 
 proc hookCacheResolveAndDisplay*(stations; statuscontext) =
   when defined(expstatuscache):
     if not checkIfCacheAlreadyExistAndIsValid(stations, statuscontext):
-      initCheckingStationNotice()
-      waitFor resolveAndDisplay(stations)
-      saveStatusCacheToJson(stations, statuscontext)
-      finishCheckingStationNotice()
+      waitForResolveNewStatusAndSave()
     else:
       let cacheStatusStationList = readFromExistingStatusCache(stations, statuscontext)
-      stations.applyLinkStatusFromCacheToState(cacheStatusStationList)
+      stations.applyLinkStatusFromCacheToState(cacheStatusStationList, statuscontext)
   else:
     waitFor resolveAndDisplay(stations)
