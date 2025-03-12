@@ -31,7 +31,6 @@ proc drawStatusIndicator*(x, y: int, status = lsChecking, isInitial = false) =
 
 type
   StationStatus* = ref object
-    sectionName*: string
     name*:     string
     coord*:    (int, int)            # (x, y) from emojiPositions
     url*:      string

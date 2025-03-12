@@ -17,6 +17,7 @@ import
 
 using
   stations: seq[StationStatus]
+  statuscontext: StatusCache
 
 proc getCacheJsonFileNameWithPath(sectionName: var string) =
   sectionName[0] = sectionName[0].toLowerAscii()
@@ -24,8 +25,8 @@ proc getCacheJsonFileNameWithPath(sectionName: var string) =
   sectionName = appDir / ".statuscache" / sectionName
     #Arab -> arab -> arab.cache.json -> path/to/<>
 
-proc checkIfCacheAlreadyExistAndIsValid*(stations): bool =
-  var filePathNameExt = stations[0].sectionName
+proc checkIfCacheAlreadyExistAndIsValid*(stations; statuscontext): bool =
+  var filePathNameExt = statuscontext.sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
 
   let exists = fileExists(filePathNameExt)
@@ -64,10 +65,10 @@ proc boolToLinkStatus(status: int): LinkStatus =
   else:
     raise newException(OSError, "are you writing CheckingStatus to cache?")
 
-proc saveStatusCacheToJson(stations) =
+proc saveStatusCacheToJson(stations; statuscontext) =
   var fileInConsideration: File
   var jsonObjectCache = %*{}
-  var filePathNameExt = stations[0].sectionName
+  var filePathNameExt = statuscontext.sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
   
   cE open(fileInConsideration, filePathNameExt, fmWrite)
@@ -91,9 +92,9 @@ proc saveStatusCacheToJson(stations) =
   fileInConsideration.write(uglyResultJson)
   fileInConsideration.close()
 
-proc readFromExistingStatusCache*(stations): JsonNode =
+proc readFromExistingStatusCache*(stations; statuscontext): JsonNode =
   var fileInConsideration: File
-  var filePathNameExt = stations[0].sectionName
+  var filePathNameExt = statuscontext.sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
 
   var parsedCachedJson = parseFile(filePathNameExt)
@@ -106,15 +107,15 @@ proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode) =
     drawStatusIndicator(stations[i].coord[0], stations[i].coord[1], stations[i].status)
     i += 1
 
-proc hookCacheResolveAndDisplay*(stations) =
+proc hookCacheResolveAndDisplay*(stations; statuscontext) =
   when defined(expstatuscache):
-    if not checkIfCacheAlreadyExistAndIsValid(stations):
+    if not checkIfCacheAlreadyExistAndIsValid(stations, statuscontext):
       initCheckingStationNotice()
       waitFor resolveAndDisplay(stations)
-      saveStatusCacheToJson(stations)
+      saveStatusCacheToJson(stations, statuscontext)
       finishCheckingStationNotice()
     else:
-      let cacheStatusStationList = readFromExistingStatusCache(stations)
+      let cacheStatusStationList = readFromExistingStatusCache(stations, statuscontext)
       stations.applyLinkStatusFromCacheToState(cacheStatusStationList)
   else:
     waitFor resolveAndDisplay(stations)
