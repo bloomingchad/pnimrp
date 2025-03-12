@@ -30,6 +30,11 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
 
   for dir in walkDirs(nativePath):
     let name = dir.extractFilename & DirSep
+    if name == "config/": continue
+
+    when defined(release) or defined(danger):
+      if name == "deadStation/": continue
+
     result.names.add(name)
     result.paths.add(dir)
 
