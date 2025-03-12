@@ -26,9 +26,7 @@ proc drawStatusIndicator*(x, y: int, status = lsChecking, isInitial = false) =
     else:
       toStatusCodeEmoji(status)
   # Apply color and write symbol
-  stdout.setForegroundColor(color)
-  stdout.write(symbol)
-  stdout.resetAttributes()
+  stdout.styledWrite(color, symbol)
   stdout.flushFile()
 
 type
