@@ -1,9 +1,6 @@
 import json
 from ../link/linkbase import normalizeUrl
-import
-  os, strutils,
-
-  utilstypes
+import utilstypes
 
 proc loadStationStdLib*(filePath: string): tuple[names, urls: seq[string]] =
         let jsonData = parseJson(readFile(filePath))
