@@ -141,7 +141,7 @@ proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode; statuscon
     waitForResolveNewStatusAndSave()
 
 proc hookCacheResolveAndDisplay*(stations; statuscontext) =
-  when defined(expstatuscache):
+  when defined(statuscache):
     if not checkIfCacheAlreadyExistAndIsValid(stations, statuscontext):
       waitForResolveNewStatusAndSave()
     else:

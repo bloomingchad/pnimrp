@@ -4,4 +4,4 @@ when defined(simple):
   switch("define", "useJsmn")
 
 else:
-  switch("define", "expstatuscache")
+  switch("define", "statuscache") #if statuscache is buggy for you remove it
