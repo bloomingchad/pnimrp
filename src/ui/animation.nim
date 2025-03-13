@@ -1,6 +1,6 @@
 # animation.nim
 
-import times, terminal, ../utils/utils
+import terminal, ../utils/utils
 
 
 

@@ -1,5 +1,5 @@
 import
-  terminal, os, strutils, net,
+  terminal, strutils, net,
   tables,
 
   ui, illwill,
@@ -15,8 +15,7 @@ import
   ]
 
 when not defined(simple):
-  import asyncdispatch,
-
+  import
     ../audio/metadata,
     ../ui/[
       scroll,

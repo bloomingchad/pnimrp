@@ -3,8 +3,6 @@ import
 
   utilstypes
 
-from ../link/linkbase import normalizeUrl
-
 when defined(useJsmn):
   import ../json/jsmn
 else:

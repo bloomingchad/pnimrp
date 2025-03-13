@@ -1,7 +1,9 @@
 # statuscache.nim
 
 import
-  json, os, asyncdispatch, ../utils/utils, strutils, times, sequtils, terminal,
+  json, os, asyncdispatch,
+  ../utils/utils, strutils,
+  times, terminal,
 
   ../ui/stationstatus
 
@@ -102,7 +104,6 @@ proc saveStatusCacheToJson(stations; statuscontext) =
   fileInConsideration.close()
 
 proc readFromExistingStatusCache*(stations; statuscontext): JsonNode =
-  var fileInConsideration: File
   var filePathNameExt = statuscontext.sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
 

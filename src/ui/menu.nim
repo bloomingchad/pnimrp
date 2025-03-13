@@ -2,16 +2,10 @@
 
 import
   terminal, os, strutils, net,
-  json, tables, random,
+  random,
 
   ui, illwill,
 
-  ../audio/[
-      player,
-      libmpv,
-    ],
-
-  ../link/link,
   ../utils/[
     utils,
     jsonutils
@@ -20,13 +14,9 @@ import
   playerui
 
 when not defined(simple):
-  import asyncdispatch,
-
-    ../audio/metadata,
+  import
     ../ui/[
       stationstatus,
-      scroll,
-      animation,
      ],
     ../json/[
         statuscache

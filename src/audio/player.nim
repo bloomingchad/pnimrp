@@ -1,6 +1,6 @@
 # player.nim
 
-import libmpv, terminal, os
+import libmpv, os
 export cE  # Export the error-checking macro for external use
 
 type
@@ -164,7 +164,7 @@ proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [].} =
     if title != nil:
       libmpv.free(title)
 
-  except Exception as e:
+  except Exception: #as e:
     #raise newException(PlayerError, "Failed to get media title: " & e.msg)
     discard
 

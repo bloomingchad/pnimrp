@@ -11,7 +11,7 @@ import
   ]
 
 when not defined(simple):
-  import theme, stationstatus, scroll, animation
+  import stationstatus
 
 using str: string
 
