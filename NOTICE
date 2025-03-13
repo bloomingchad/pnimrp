@@ -19,9 +19,17 @@ This project includes code from the following third-party libraries:
 
    The original WTFPL license text is included in the `illwill.nim` file.
 
+2. **jsmn.nim**
+   - Description: A minimal JSON parser in Nim.
+   - License: MIT License
+   - Copyright: Copyright (c) 2016 Huy Doan (from jsmn.nim)
+   - Source: https://github.com/OpenSystemsLab/jsmn.nim
+   - Modifications: None
+
+   The full text of the MIT license can be found in the source itself.
 ---
 
 Additional Notes:
-- This project is inspired by [Poor Man's Radio Player](https://github.com/hakerdefo/pmrp).
+- This project is inspired by [Poor Man's Radio Player](https://github.com/hakerdefo/pmrp) which is Public Domain.
 - The `illwill.nim` file is licensed under the WTFPL, while the rest of the project is licensed under the MPL-2.0.
 - For more information about the WTFPL, visit: http://www.wtfpl.net/
