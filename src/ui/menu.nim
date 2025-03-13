@@ -167,16 +167,17 @@ proc handleMenu*(
           showHelp()
           break
 
-        of Key.R:
+        of Key.R, Key.BackSpace:
           if not isMainMenu or baseDir != getAppDir() / "assets":
             returnToParent = true
             break
           else:
             showInvalidChoice()
+
         of Key.S:
           chooseForMe = true
 
-        of Key.Q:
+        of Key.Q, Key.Escape:
           showExitMessage()
           break
 
