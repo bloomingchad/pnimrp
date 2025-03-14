@@ -140,6 +140,7 @@ proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode; statuscon
       stations[i].status = boolToLinkStatus value.getInt
       drawStatusIndicator(stations[i].coord[0], stations[i].coord[1], stations[i].status)
       i += 1
+    return true
   except Exception as e:
     return e.handleApplytoCacheError(stations, statuscontext)
 
