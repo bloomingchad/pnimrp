@@ -1,0 +1,27 @@
+{
+  "stations": {
+    "G93": "https://live.amperwave.net/direct/brewerchattanooga-wmpzfmaac-ibc4",
+    "105.5 The Beat (Ft. Myers)": "https://stream.revma.ihrhls.com/zc6854/hls.m3u8",
+    "WJIZ (Albany)": "https://stream.revma.ihrhls.com/zc3229/hls.m3u8",
+    "Q 93.3 (New Orleans)": "https://stream.revma.ihrhls.com/zc1037/hls.m3u8",
+    "106.5 The Beat (Richmond)": "https://live.amperwave.net/direct/audacy-wbtjfmaac-imc",
+    "95.7 The Beat (Tampa)": "https://stream.revma.ihrhls.com/zc669/hls.m3u8",
+    "103 Jamz (Norfolk)": "https://stream.revma.ihrhls.com/zc2453/hls.m3u8",
+    "97.9 Jamz (Tyler)": "https://ice42.securenetsystems.net/KJMZ",
+    "98.3 The Vibe (Kansas)": "https://playerservices.streamtheworld.com/api/livestream-redirect/KWQWFMAAC.aac",
+    "Big FM - Hip Hop": "https://stream.bigfm.de/hiphop/aac-128",
+    "Delta R - Hip Hop": "https://streams.deltaradio.de/hiphop/aac-64",
+    "egoRap": "https://streams.egofm.de/egoRAP-lq",
+    "FIP Hip Hop": "https://stream.radiofrance.fr/fiphiphop/fiphiphop.m3u8",
+    "Générations - Rap FR": "https://generationfm-rap.ice.infomaniak.ch/generationfm-rap-high.aac",
+    "RPR1 - Old School Hip Hop": "https://audiotainment-sw.streamabc.net/atsw-hiphop-mp3-128-8743299",
+    "90s90s - Hip Hop": "https://streams.90s90s.de/hiphop/mp3-192",
+    "80s80s - Hip Hop": "https://regiocast.streamabc.net/regc-80s80shiphop3449572-mp3-192-3635250",
+    "www.studio21.ru": "https://radiopotok1.ru/studio-21",
+    "Rádio Movimento Hip-Hop": "https://hts05.brascast.com:9520/autodj",
+    "Cidade FM": "https://stream-hls.bauermedia.pt/cidhiphop.aac/playlist.m3u8",
+    "Rádio Tonelada Beats": "https://stream.zeno.fm/q5f3zvmm3p8uv",
+    "KDKS Hot 102 Jams": "https://live.amperwave.net/direct/alphacorporate-kdksfmmp3-ibc4",
+    "Hotmix - Hiphop International": "https://streaming.hotmixradio.fr/hotmix-hiphop-en-mp3"
+  }
+}
