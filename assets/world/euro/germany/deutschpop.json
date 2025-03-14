@@ -1,0 +1,24 @@
+{
+  "stations": {
+    "0N - Deutsch Pop": "https://0n-deutschpop.radionetz.de/0n-deutschpop.aac",
+    "1a R - Deutsch Pop": "https://1a-deutschpop.radionetz.de/1a-deutschpop.aac",
+    "barba R - Deutschpop": "https://streams.barbaradio.de/deutschpop/mp3-128",
+    "Dein Deutsch-Pop R": "https://rnrw.cast.addradio.de/rnrw-0185/deindeutschpop/low/stream.mp3",
+    "Delta R - Deutsch": "https://streams.deltaradio.de/delta-deutsch/aac-64",
+    "Hit R FFH - Deutsch Pur": "https://mp3.ffh.de/ffhchannels/hqdeutsch.mp3",
+    "RSH - Deutsch": "https://streams.rsh.de/deutsch/aac-64",
+    "100 DeutschPop": "https://stream.laut.fm/100deutschpop",
+    "R Regenbogen": "https://audiotainment-sw.streamabc.net/atsw-regenbogen1028-mp3-128-4823027",
+    "Neckaralb Live - Deutsch Pop Rock": "https://edge14.streamonkey.net/neckaralblive-deutschpop",
+    "Deutsches Rock Pop R": "https://stream.laut.fm/deutsches-rock-pop-radio",
+    "Hundertprozent Deutsch": "https://stream.laut.fm/hundertprozentdeutsch",
+    "Ich will Spaß de": "https://stream.laut.fm/ichwillspass-de",
+    "Gute Laune Welle": "https://stream.laut.fm/gute-laune-welle",
+    "Charts Deutschland": "https://stream.laut.fm/chartsdeutschland",
+    "Musikwelten": "https://stream.laut.fm/musikwelten",
+    "Schlagermood": "https://stream.laut.fm/schlagermood",
+    "Antidudel R": "https://stream.laut.fm/antidudelradio",
+    "Schlagerkiste Witten": "https://stream.laut.fm/schlagerkiste_witten",
+    "Schlagermusikanten": "https://stream.laut.fm/schlagermusikanten"
+  }
+}
