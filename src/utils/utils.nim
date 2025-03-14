@@ -66,12 +66,15 @@ proc appendToLikedSongs* =
   finally:
     stdout.flushFile()
 
+proc checkIfTooLongMagic*: int = terminalWidth() - "  Now Playing: ".len - 6
+
 proc checkIfTooLongForUI*(str: string): bool = 
-  str.len > int(terminalWidth().toFloat() / 1.65)
+  #str.len > int(terminalWidth().toFloat() / 1.65)
+  str.len > checkIfTooLongMagic()
 
 proc truncateMe*(str: string): string =
   if str.checkIfTooLongForUI():
-    result = str.substr(0, int(terminalWidth().toFloat() / 1.65)) & "..."
+    result = str.substr(0, checkIfTooLongMagic()) & "..."
   else: return str
       #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
 
