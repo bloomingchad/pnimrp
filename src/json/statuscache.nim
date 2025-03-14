@@ -118,7 +118,20 @@ template waitForResolveNewStatusAndSave =
   finishCheckingStationNotice()
   saveStatusCacheToJson(stations, statuscontext)
 
-proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode; statuscontext) =
+proc handleApplytoCacheError(e: ref Exception; stations; statuscontext): bool =
+  if e of IndexDefect:
+    warn "the cache list is larger than json file; please restart if crash"
+  elif e of CacheDoesntMatchParentJsonError:
+    warn "the cache json is not matching; please restart if crash"
+
+  sleep 750
+  cursorUp()
+  eraseLine()
+
+  removeOldCacheForJson(statuscontext)
+  return false
+
+proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode; statuscontext): bool =
   var i: uint8
   try:
     for key, value in  stationsList.pairs:
@@ -127,19 +140,8 @@ proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode; statuscon
       stations[i].status = boolToLinkStatus value.getInt
       drawStatusIndicator(stations[i].coord[0], stations[i].coord[1], stations[i].status)
       i += 1
-  except IndexDefect:
-    warn "the cache list is larger than json file; please restart if crash"
-    cursorUp()
-    eraseLine()
-
-  except CacheDoesntMatchParentJsonError:
-    warn "the cache json is not matching; please restart if crash"
-    cursorUp()
-    eraseLine()
-
-  finally:
-    removeOldCacheForJson(statuscontext)
-    waitForResolveNewStatusAndSave()
+  except Exception as e:
+    return e.handleApplytoCacheError(stations, statuscontext)
 
 proc hookCacheResolveAndDisplay*(stations; statuscontext) =
   when defined(statuscache):
@@ -147,6 +149,7 @@ proc hookCacheResolveAndDisplay*(stations; statuscontext) =
       waitForResolveNewStatusAndSave()
     else:
       let cacheStatusStationList = readFromExistingStatusCache(stations, statuscontext)
-      stations.applyLinkStatusFromCacheToState(cacheStatusStationList, statuscontext)
+      if not stations.applyLinkStatusFromCacheToState(cacheStatusStationList, statuscontext):
+        waitForResolveNewStatusAndSave()
   else:
     waitFor resolveAndDisplay(stations)
