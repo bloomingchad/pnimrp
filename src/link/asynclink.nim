@@ -11,9 +11,13 @@ const
 
 proc connectSocket(domain: string, port: Port): Future[bool] {.async.} =
   var socket = newAsyncSocket()
+  await sleepAsync(5)
   let connectFuture = socket.connect(domain, port)
+  await sleepAsync(5)
   let completed = await connectFuture.withTimeout(ResolveTimeout)
+  await sleepAsync(5)
   socket.close()
+  await sleepAsync(5)
   return completed
 
 proc tryConnect(domain: string, port: Port): Future[LinkStatus] {.async.} =
@@ -23,6 +27,7 @@ proc tryConnect(domain: string, port: Port): Future[LinkStatus] {.async.} =
       return lsInvalid
     return lsValid
   except Exception as e:
+    await sleepAsync(5)
     let result = handleLinkCheckError(e, ResolveTimeout)
     if result.isValid:
       return lsValid
@@ -35,6 +40,7 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
     let (protocol, domain, port) = parseUrlComponents(normalizedUrl)
     result = await tryConnect(domain, port)
   except Exception as e:
+    await sleepAsync(5)
     let result = handleLinkCheckError(e, ResolveTimeout)
     if result.isValid:
       return lsValid
