@@ -1,10 +1,11 @@
 {
-	"stations": {
-		"Beatles": "relay.181.fm:8062",
-		"Classic Hits": "relay.181.fm:8132",
-		"Good Time Oldies": "relay.181.fm:8046",
-		"Mellow Gold": "relay.181.fm:8060",
-		"Soul": "relay.181.fm:8058",
-		"Super 70s": "relay.181.fm:8066"
-	}
+  "stations": {
+    "Beatles": "https://listen.181fm.com/181-beatles_128k.mp3",
+    "Classic Hits 181": "https://listen.181fm.com/181-greatoldies_128k.mp3",
+    "Good Time Oldies": "https://listen.181fm.com/181-goodtime_128k.mp3",
+    "Mellow Gold": "https://listen.181fm.com/181-mellow_128k.mp3",
+    "Soul": "https://listen.181fm.com/181-soul_128k.mp3",
+    "Super 70s": "https://listen.181fm.com/181-70s_128k.mp3",
+    "Classic Hits": "relay.181.fm:8132"
+  }
 }
