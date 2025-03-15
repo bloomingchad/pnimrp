@@ -1,9 +1,9 @@
 {
-	"stations": {
-		"Front Porch": "relay.181.fm:8016",
-		"Highway 181": "relay.181.fm:8018",
-		"Kickin' Country": "relay.181.fm:8130",
-		"Real Country": "relay.181.fm:8034",
-		"US 181": "relay.181.fm:8056"
-	}
+  "stations": {
+    "Front Porch": "https://listen.181fm.com/181-frontporch_128k.mp3",
+    "Highway 181": "https://listen.181fm.com/181-highway_128k.mp3",
+    "Kickin' Country": "https://listen.181fm.com/181-kickincountry_128k.mp3",
+    "Real Country": "https://listen.181fm.com/181-realcountry_128k.mp3",
+    "US 181": "relay.181.fm:8056"
+  }
 }

@@ -1,7 +1,7 @@
 {
-	"stations": {
-		"80's Country": "relay.181.fm:8134",
-		"Awesome 80's": "relay.181.fm:8000",
-		"Lite 80's": "relay.181.fm:8040"
-	}
+  "stations": {
+    "80's Country": "https://listen.181fm.com/181-80scountry_128k.mp3",
+    "Awesome 80's": "https://listen.181fm.com/181-awesome80s_128k.mp3",
+    "Lite 80's": "https://listen.181fm.com/181-lite80s_128k.mp3"
+  }
 }
