@@ -199,7 +199,7 @@ proc playStation*(config: MenuConfig) =
           if state.currentSong != "":
             appendToLikedSongs()
           else:
-            warn("No song is currently playing.")
+            warn("song field is currently empty")
 
         of Key.None:
           continue
