@@ -85,6 +85,9 @@ template accumulateStationStatusStateFromItemsPaths(
       )
     )
 
+template KeysOneToNine: set[Key] = { Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine }
+template KeysAtoM: set[Key] = { Key.A , Key.B , Key.C , Key.D , Key.E , Key.F , Key.G , Key.H , Key.I ,Key.J , Key.K , Key.L ,Key.M }
+
 proc handleMenu*(
   section: string,
   items: seq[string],
@@ -118,8 +121,7 @@ proc handleMenu*(
       try:
         let key = chooseForMeOrChooseYourself(items.len)
         case key
-        of Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine,
-         Key.A , Key.B , Key.C , Key.D , Key.E , Key.F , Key.G , Key.H , Key.I ,Key.J , Key.K , Key.L ,Key.M:
+        of KeysOneToNine, KeysAtoM:
           let idx = 
             if char(int(key)) in {'1'..'9'}:
               ord(char(int(key))) - ord('1')
