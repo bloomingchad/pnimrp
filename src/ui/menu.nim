@@ -89,6 +89,15 @@ template accumulateStationStatusStateFromItemsPaths(
 template KeysOneToNine: set[Key] = { Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine }
 template KeysAtoM: set[Key] = { Key.A , Key.B , Key.C , Key.D , Key.E , Key.F , Key.G , Key.H , Key.I ,Key.J , Key.K , Key.L ,Key.M }
 
+template accumulateToSubItemsAndPathsFromLoadCat(
+    result: tuple[names: seq[string], paths: seq[string]],
+    subItems, subPaths: seq[string]
+) =
+  for nameOffolder in result[0]:
+    subItems.add(nameOffolder)
+  for folderPath in result[1]:
+    subPaths.add(folderPath)
+
 proc handleMenu*(
   section: string,
   items: seq[string],
@@ -135,13 +144,8 @@ proc handleMenu*(
               var subItems, subPaths = newSeqOfCap[string](32)
 
               let result = loadCategories(selectedPath)
-              for nameOffolder in result[0]:
-                subItems.add(nameOffolder)
-              for folderPath in result[1]:
-                subPaths.add(folderPath)
-              if subItems.len == 0:
-                warn("No station lists available in this category.")
-              else:
+              result.accumulateToSubItemsAndPathsFromLoadCat(subItems, subPaths)
+
                 # Navigate to subcategories with isMainMenu = false
                 handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = selectedPath, handleMenuIsHandling = hmIsHandlingDirectory)
             elif fileExists(selectedPath) and selectedPath.endsWith(".json"):
