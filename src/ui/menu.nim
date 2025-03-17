@@ -71,6 +71,20 @@ type
 proc isHandlingJSON(state: handleMenuIsHandling): bool =
   if state == hmIsHandlingJson: true else: false
 
+template accumulateStationStatusStateFromItemsPaths(
+  items: seq[string],
+  paths: seq[string]
+) =
+  for i in 0..<items.len:
+    stations.add(
+      StationStatus(
+        name:     items[i],
+        coord:    emojiPositions[i],  # From ui.nim
+        url:      paths[i],             # Station URL
+        status:   lsChecking         # Initial state
+      )
+    )
+
 proc handleMenu*(
   section: string,
   items: seq[string],
@@ -96,16 +110,8 @@ proc handleMenu*(
           )
 
         var stations = newSeqOfCap[StationStatus](32)
-        for i in 0..<items.len:
-          stations.add(
-            StationStatus(
-              name:     items[i],
-              coord:    emojiPositions[i],  # From ui.nim
-              url:      paths[i],             # Station URL
-              status:   lsChecking         # Initial state
-            )
-          )
 
+        accumulateStationStatusStateFromItemsPaths(items, paths)
         hookCacheResolveAndDisplay(stations, statuscontext)
 
     while true:
