@@ -80,7 +80,7 @@ proc playStation*(config: MenuConfig) =
 
     var state = PlayerState(isPaused: false, isMuted: false, volume: lastVolume)  # Use lastVolume
     var isObserving = false
-    var counter: uint8
+    var coreIdleCounter: uint8
     var playlistFirstPass = false
     var scrollOffset: int = 0
     var lastWidth: int = 0
@@ -144,7 +144,7 @@ proc playStation*(config: MenuConfig) =
           scrollCounter += 1
 
       # Periodic checks
-      if counter >= CheckIdleInterval:
+      if coreIdleCounter >= CheckIdleInterval:
         if mpvCtx.isIdle():
           handlePlayerError("Player core idle", config)
           break
@@ -158,8 +158,8 @@ proc playStation*(config: MenuConfig) =
           else:
             handlePlayerError("Stream ended", config)
             break
-        counter = 0
-      inc counter
+        coreIdleCounter = 0
+      inc coreIdleCounter
 
       # Handle user input
       case getKeyWithTimeout(KeyTimeout):
