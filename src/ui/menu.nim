@@ -205,9 +205,3 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
 
 export hideCursor, error
-
-when isMainModule:
-  try:
-    drawMainMenu()
-  except MenuError as e:
-    error("Menu error: " & e.msg)
