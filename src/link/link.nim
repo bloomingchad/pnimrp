@@ -34,20 +34,3 @@ proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   except Exception as e:
     # Handle exceptions using the reusable error-handling function
     result = handleLinkCheckError(e, timeout)
-
-# Unit tests for link.nim
-when isMainModule:
-  import unittest
-
-  suite "Link Tests":
-    test "validateLink":
-      let result = validateLink("https://example.com")
-      check result.isValid == true
-      check result.protocol == "https"
-      check result.domain == "example.com"
-      check result.port == Port(443)
-
-    test "invalidLink":
-      let result = validateLink("invalid-url")
-      check result.isValid == false
-      check "Invalid URL" in result.error

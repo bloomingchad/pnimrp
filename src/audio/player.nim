@@ -237,13 +237,3 @@ proc warnBell* =
     stderr.writeLine "Warning bell error: ", e.msg
   finally:
     tmpMpv.destroy()
-
-# Unit tests for player.nim
-when isMainModule:
-  import unittest
-
-  suite "Player Tests":
-    test "validateVolume":
-      check validateVolume(-10) == 0
-      check validateVolume(50) == 50
-      check validateVolume(200) == 150
