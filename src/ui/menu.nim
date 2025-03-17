@@ -56,9 +56,9 @@ proc chooseForMeOrChooseYourself(itemsLen: int): Key =
 
     # Convert the random index to a menu key (1-9, A-M)
     if rndIdx < 9:
-      result = Key(ord(Key.One) + rndIdx)
+      result = toKey(ord(Key.One) + rndIdx)
     else:
-      result = Key(ord(Key.A) + rndIdx - 9)
+      result = toKey(ord(Key.A) + rndIdx - 9)
   else:
     return getKeyWithTimeout(int32.high)
 
