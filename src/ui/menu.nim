@@ -72,6 +72,7 @@ proc isHandlingJSON(state: handleMenuIsHandling): bool =
   if state == hmIsHandlingJson: true else: false
 
 template accumulateStationStatusStateFromItemsPaths(
+  stations: seq[StationStatus],
   items: seq[string],
   paths: seq[string]
 ) =
@@ -114,7 +115,7 @@ proc handleMenu*(
 
         var stations = newSeqOfCap[StationStatus](32)
 
-        accumulateStationStatusStateFromItemsPaths(items, paths)
+        stations.accumulateStationStatusStateFromItemsPaths(items, paths)
         hookCacheResolveAndDisplay(stations, statuscontext)
 
     while true:
