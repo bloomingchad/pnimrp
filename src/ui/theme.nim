@@ -23,17 +23,17 @@ proc loadThemeConfig*(configPath: string): ThemeConfig =
 
     for themeName, themeData in jsonData["themes"]:
       var theme: Theme
-      theme.header = parseEnum[ForegroundColor](themeData["header"].getStr())
-      theme.separator = parseEnum[ForegroundColor](themeData["separator"].getStr())
-      theme.menu = parseEnum[ForegroundColor](themeData["menu"].getStr())
-      theme.footer = parseEnum[ForegroundColor](themeData["footer"].getStr())
-      theme.error = parseEnum[ForegroundColor](themeData["error"].getStr())
-      theme.warning = parseEnum[ForegroundColor](themeData["warning"].getStr())
-      theme.success = parseEnum[ForegroundColor](themeData["success"].getStr())
-      theme.nowPlaying = parseEnum[ForegroundColor](themeData["nowPlaying"].getStr())
-      theme.volumeLow = parseEnum[ForegroundColor](themeData["volumeLow"].getStr())
-      theme.volumeMedium = parseEnum[ForegroundColor](themeData["volumeMedium"].getStr())
-      theme.volumeHigh = parseEnum[ForegroundColor](themeData["volumeHigh"].getStr())
+      theme.header       =  parseEnum[ForegroundColor](themeData["header"]      .getStr())
+      theme.separator    =  parseEnum[ForegroundColor](themeData["separator"]   .getStr())
+      theme.menu         =  parseEnum[ForegroundColor](themeData["menu"]        .getStr())
+      theme.footer       =  parseEnum[ForegroundColor](themeData["footer"]      .getStr())
+      theme.error        =  parseEnum[ForegroundColor](themeData["error"]       .getStr())
+      theme.warning      =  parseEnum[ForegroundColor](themeData["warning"]     .getStr())
+      theme.success      =  parseEnum[ForegroundColor](themeData["success"]     .getStr())
+      theme.nowPlaying   =  parseEnum[ForegroundColor](themeData["nowPlaying"]  .getStr())
+      theme.volumeLow    =  parseEnum[ForegroundColor](themeData["volumeLow"]   .getStr())
+      theme.volumeMedium =  parseEnum[ForegroundColor](themeData["volumeMedium"].getStr())
+      theme.volumeHigh   =  parseEnum[ForegroundColor](themeData["volumeHigh"]  .getStr())
 
       result.themes[themeName] = theme
 
