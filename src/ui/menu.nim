@@ -146,8 +146,12 @@ proc handleMenu*(
               let result = loadCategories(selectedPath)
               result.accumulateToSubItemsAndPathsFromLoadCat(subItems, subPaths)
 
+              if subItems.len != 0:
                 # Navigate to subcategories with isMainMenu = false
                 handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = selectedPath, handleMenuIsHandling = hmIsHandlingDirectory)
+              else:
+                warn("No station lists available in this category.")
+
             elif fileExists(selectedPath) and selectedPath.endsWith(".json"):
               # Handle JSON files (station lists)
               let stations = loadStations(selectedPath)
@@ -156,6 +160,7 @@ proc handleMenu*(
               else:
                 # Navigate to station list with isMainMenu = false
                 handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingJSON)
+
             else:
               # Treat as a station URL and play directly
               let config = MenuConfig(
