@@ -27,7 +27,7 @@ proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidat
   try:
     var client = newHttpClient(
       timeout = timeout,
-      sslContext=sslCtxWithNoVerify
+      sslContext = sslCtxWithNoVerify
      )
     var clientResponse = client.head(url)
 
