@@ -2,9 +2,6 @@
 
 import terminal, ../utils/utils
 
-
-
-
 proc updateJinglingAnimation*(status: string, animationCounter: int): string =
   ## Updates the jingling animation and returns the current frame.
   ## Returns an empty string if the player is not in the StatusPlaying state.

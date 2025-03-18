@@ -15,7 +15,7 @@ proc validateLinkSimpleSocket(link: string, timeout: int = 2000): LinkValidation
   ##
   ## Returns:
   ##   LinkValidationResult object containing validation details.
-  var finalLink = normalizeUrl(link)
+  let finalLink = normalizeUrl(link)
 
   try:
     # Parse the URL components using linkbase.nim
