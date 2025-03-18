@@ -2,7 +2,10 @@
 
 import std/net, linkbase
 
-proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
+when not defined(simple):
+  import linkadvanced
+
+proc validateLinkSimpleSocket(link: string, timeout: int = 2000): LinkValidationResult =
   ## Validates if a link is reachable and parses its components.
   ## If the link does not have a protocol prefix (e.g., "http://"), it defaults to "http://".
   ##
@@ -34,3 +37,9 @@ proc validateLink*(link: string, timeout: int = 2000): LinkValidationResult =
   except Exception as e:
     # Handle exceptions using the reusable error-handling function
     result = handleLinkCheckError(e, timeout)
+
+template validateLink*(url: string; timeout = 2000): LinkValidationResult =
+  when defined(simple):
+    validateLinkSimpleSocket(url, timeout)
+  else:
+    validateLinkWithContentTypeCheck(url, timeout)
