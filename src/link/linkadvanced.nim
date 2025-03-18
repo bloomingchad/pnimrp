@@ -15,24 +15,24 @@ const validPlaylistTypesList = [
 ]
 
 proc isValidAudioOrPlaylistStreamContentType(contentType: string): bool =
-  var normalizedContentType = contentType.toLowerAscii()
+  let normalizedContentType = contentType.toLowerAscii()
   if normalizedContentType.startsWith("audio/"): return true
   elif normalizedContentType in validPlaylistTypesList: return true
   return
 
 proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidationResult =
-  var url = normalizeUrl(url)
-  var sslCtxWithNoVerify = newContext(verifyMode=CVerifyNone)
+  let url = normalizeUrl(url)
+  let sslCtxWithNoVerify = newContext(verifyMode=CVerifyNone)
 
   try:
     var client = newHttpClient(
       timeout = timeout,
       sslContext = sslCtxWithNoVerify
      )
-    var clientResponse = client.head(url)
+    let clientResponse = client.head(url)
 
-    var clientResponseContentType = clientResponse.contentType()
-    var clientResponseStatusCodeString = $clientResponse.code()
+    let clientResponseContentType = clientResponse.contentType()
+    let clientResponseStatusCodeString = $clientResponse.code()
     client.close()
 
     var status: bool

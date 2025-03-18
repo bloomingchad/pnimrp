@@ -50,15 +50,14 @@ proc isValidPlaylistUrl(url: string): bool =
 proc milSecToSec(ms: int): float = ms / 1000
 
 proc getFileFormat(ctx: ptr Handle): string =
-    # Query the `file-format` property
-    var format: cstring = getPropertyString(ctx, "file-format")
+  # Query the `file-format` property
+  var format: cstring = getPropertyString(ctx, "file-format")
     
-    if format != nil:
-        result = $format  # Convert cstring to Nim string
-        free(format)  # Free the allocated cstring
-    else:
-        result = "unknown"  # Fallback if the property is not available
-
+  if format != nil:
+    result = $format  # Convert cstring to Nim string
+    free(format)  # Free the allocated cstring
+  else:
+    result = "unknown"  # Fallback if the property is not available
 
 proc playStation*(config: MenuConfig) =
     ## Plays a radio station and handles user input for playback control.
