@@ -18,7 +18,7 @@ be extended in the future.
 Supported platforms include but not limited to:
  - Working
   * Windows 7+
-  * MacOS
+  * MacOSX
   * Linux 3.2+
   * BSDs
   * OpenSolaris-based
@@ -26,6 +26,9 @@ Supported platforms include but not limited to:
 DragonFlyBSD is not currently supported as the tty implementation
 is not fully POSIX compiliant (some escape codes dont return the
 desired result).
+
+MacOS has problems loading libmpv, because of secure loading,
+the fix remains to be seen.
 
 Editing Links
 -------------
