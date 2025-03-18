@@ -71,20 +71,21 @@ type
 proc isHandlingJSON(state: handleMenuIsHandling): bool =
   if state == hmIsHandlingJson: true else: false
 
-template accumulateStationStatusStateFromItemsPaths(
-  stations: seq[StationStatus],
-  items: seq[string],
-  paths: seq[string]
-) =
-  for i in 0..<items.len:
-    stations.add(
-      StationStatus(
-        name:     items[i],
-        coord:    emojiPositions[i],  # From ui.nim
-        url:      paths[i],             # Station URL
-        status:   lsChecking         # Initial state
+when not defined(simple):
+  template accumulateStationStatusStateFromItemsPaths(
+    stations: seq[StationStatus],
+    items: seq[string],
+    paths: seq[string]
+  ) =
+    for i in 0..<items.len:
+      stations.add(
+        StationStatus(
+          name:     items[i],
+          coord:    emojiPositions[i],  # From ui.nim
+          url:      paths[i],             # Station URL
+          status:   lsChecking         # Initial state
+        )
       )
-    )
 
 template KeysOneToNine: set[Key] = { Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine }
 template KeysAtoM: set[Key] = { Key.A , Key.B , Key.C , Key.D , Key.E , Key.F , Key.G , Key.H , Key.I ,Key.J , Key.K , Key.L ,Key.M }
