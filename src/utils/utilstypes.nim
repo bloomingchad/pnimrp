@@ -41,17 +41,17 @@ const
 
 type
   Theme* = object
-    header*: ForegroundColor
-    separator*: ForegroundColor
-    menu*: ForegroundColor
-    footer*: ForegroundColor
-    error*: ForegroundColor
-    warning*: ForegroundColor
-    success*: ForegroundColor
-    nowPlaying*: ForegroundColor
-    volumeLow*: ForegroundColor
+    header*:       ForegroundColor
+    separator*:    ForegroundColor
+    menu*:         ForegroundColor
+    footer*:       ForegroundColor
+    error*:        ForegroundColor
+    warning*:      ForegroundColor
+    success*:      ForegroundColor
+    nowPlaying*:   ForegroundColor
+    volumeLow*:    ForegroundColor
     volumeMedium*: ForegroundColor
-    volumeHigh*: ForegroundColor
+    volumeHigh*:   ForegroundColor
 
 type
   AnimationFrame* = object
