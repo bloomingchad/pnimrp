@@ -141,8 +141,8 @@ proc handleMenu*(
               ord(key.toChar()) - ord('1')
             else: ord(toLowerAscii(key.toChar())) - ord('a') + 9
           
-          if idx >= 0 and idx < items.len:
-            let selectedPath = paths[idx]
+          if choosenItem >= 0 and choosenItem < items.len:
+            let selectedPath = paths[choosenItem]
             if dirExists(selectedPath):
               # Handle directories (subcategories or station lists)
               var subItems, subPaths = newSeqOfCap[string](32)
@@ -152,7 +152,7 @@ proc handleMenu*(
 
               if subItems.len != 0:
                 # Navigate to subcategories with isMainMenu = false
-                handleMenu(items[idx], subItems, subPaths, isMainMenu = false, baseDir = selectedPath, handleMenuIsHandling = hmIsHandlingDirectory)
+                handleMenu(items[choosenItem], subItems, subPaths, isMainMenu = false, baseDir = selectedPath, handleMenuIsHandling = hmIsHandlingDirectory)
               else:
                 warn("No station lists available in this category.")
 
@@ -163,14 +163,14 @@ proc handleMenu*(
                 warn("No stations available. Please check the station list.")
               else:
                 # Navigate to station list with isMainMenu = false
-                handleMenu(items[idx], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingJSON)
+                handleMenu(items[choosenItem], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingJSON)
 
             else:
               # Treat as a station URL and play directly
               let config = MenuConfig(
                 currentSection: section,
                 currentSubsection: "",
-                stationName: items[idx],
+                stationName: items[choosenItem],
                 stationUrl: selectedPath
               )
               playStation(config)
