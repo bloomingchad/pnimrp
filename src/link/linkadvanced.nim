@@ -1,7 +1,24 @@
-import std/net, httpclient, linkbase
+import std/net, httpclient, linkbase, strutils
 
 template tryGetWhenMediaServerDoesNotSupportHead(url: string) = #TODO
   discard
+
+const validPlaylistTypesList = [
+  "audio/x-scpls",
+  "audio/x-mpegurl",
+  "application/vnd.apple.mpegurl",
+  "application/x-mpegurl",
+  "application/pls+xml",
+  "application/xspf+xml",
+  "audio/x-ms-asx",
+  "application/octet-stream"
+]
+
+proc isValidAudioOrPlaylistStreamContentType(contentType: string): bool =
+  var normalizedContentType = contentType.toLowerAscii()
+  if normalizedContentType.startsWith("audio/"): return true
+  elif normalizedContentType in validPlaylistTypesList: return true
+  return
 
 proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidationResult =
   var url = normalizeUrl(url)
@@ -21,7 +38,7 @@ proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidat
     var status: bool
 
     if clientResponseContentType != "":
-      status =  true#.startsWith("audio/")
+      status = clientResponseContentType.isValidAudioOrPlaylistStreamContentType()
 
     if $clientResponseStatusCode == $405:
       #tryGetWhenMediaServerDoesNotSupportHead(url)
