@@ -98,6 +98,10 @@ template accumulateToSubItemsAndPathsFromLoadCat(
   for folderPath in result[1]:
     subPaths.add(folderPath)
 
+template KeyToChar(key: Key): char  = char(int(key))
+
+template toChar(key: Key): char = KeyToChar(key)
+
 proc handleMenu*(
   section: string,
   items: seq[string],
@@ -132,10 +136,10 @@ proc handleMenu*(
         let key = chooseForMeOrChooseYourself(items.len)
         case key
         of KeysOneToNine, KeysAtoM:
-          let idx = 
-            if char(int(key)) in {'1'..'9'}:
-              ord(char(int(key))) - ord('1')
-            else: ord(toLowerAscii(chr(int(key)))) - ord('a') + 9
+          let choosenItem =
+            if key.toChar() in {'1'..'9'}:
+              ord(key.toChar()) - ord('1')
+            else: ord(toLowerAscii(key.toChar())) - ord('a') + 9
           
           if idx >= 0 and idx < items.len:
             let selectedPath = paths[idx]
