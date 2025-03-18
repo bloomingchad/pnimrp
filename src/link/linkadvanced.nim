@@ -1,6 +1,6 @@
 import std/net, httpclient, linkbase, strutils
 
-template tryGetWhenMediaServerDoesNotSupportHead(url: string) = #TODO
+template tryHttpGetWhenMediaServerDoesNotSupportHead(url: string) = #TODO
   discard
 
 const validPlaylistTypesList = [
@@ -41,7 +41,7 @@ proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidat
       status = clientResponseContentType.isValidAudioOrPlaylistStreamContentType()
 
     if $clientResponseStatusCode == $405:
-      #tryGetWhenMediaServerDoesNotSupportHead(url)
+      tryHttpGetWhenMediaServerDoesNotSupportHead(url)
       result = LinkValidationResult(isValid: status)
 
     result = LinkValidationResult(
