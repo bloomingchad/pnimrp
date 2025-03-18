@@ -39,7 +39,9 @@ type
 
 proc checkAndDraw(station: StationStatus) {.async.} =
   station.future = resolveLink(station.url)  # Store future
+  await sleepAsync(5)
   station.status = await station.future
+  await sleepAsync(5)
   drawStatusIndicator(station.coord[0], station.coord[1], station.status)
   stdout.flushFile()
     #flush to actually send the written stdout to stdout

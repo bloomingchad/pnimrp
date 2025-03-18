@@ -11,7 +11,9 @@ const
 
 proc connectSocket(domain: string, port: Port): Future[bool] {.async.} =
   var socket = newAsyncSocket()
+  await sleepAsync(5)
   let connectFuture = socket.connect(domain, port)
+  await sleepAsync(5)
   let completed = await connectFuture.withTimeout(ResolveTimeout)
   await sleepAsync(5)
   socket.close()
