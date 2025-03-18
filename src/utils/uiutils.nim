@@ -37,12 +37,12 @@ proc clear* =
   eraseScreen()
   setCursorPos(0, 0)
 
-proc warn*(message: string, xOffset = 4, color = fgYellow, delayMs = 750) =
+proc warn*(message: string, xOffset = 4, color = fgYellow, delayMs = 750; dontRing = false) =
   ## Displays a warning message with a delay.
   if xOffset >= 0:
     setCursorXPos(xOffset)
   styledEcho(color, message)
-  warnBell()
+  if not dontRing: warnBell()
   sleep(delayMs)
 
 proc showInvalidChoice*(message = DefaultErrorMsg) =

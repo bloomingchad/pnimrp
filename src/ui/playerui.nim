@@ -27,8 +27,8 @@ proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
   setCursorPos(0, terminalHeight() - 4)
 
-  warn("Failed to access station: " & config.stationName, delayMs = 0)
-  warn("URL: " & config.stationUrl, delayMs = 0)
+  warn("Failed to access station: " & config.stationName, delayMs = 0, dontRing = true)
+  warn("URL: " & config.stationUrl, delayMs = 0, dontRing = true)
   warn("Edit station list in: " & fileHint & ".json", delayMs = 1350)
 
 proc handlePlayerError(msg: string; config: MenuConfig; shouldReturn = false) =
