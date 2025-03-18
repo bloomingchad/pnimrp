@@ -32,7 +32,7 @@ proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidat
     var clientResponse = client.head(url)
 
     var clientResponseContentType = clientResponse.contentType()
-    var clientResponseStatusCode = clientResponse.code()
+    var clientResponseStatusCodeString = $clientResponse.code()
     client.close()
 
     var status: bool
@@ -40,9 +40,12 @@ proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidat
     if clientResponseContentType != "":
       status = clientResponseContentType.isValidAudioOrPlaylistStreamContentType()
 
-    if $clientResponseStatusCode == $405:
+    if clientResponseStatusCodeString == $405:
       tryHttpGetWhenMediaServerDoesNotSupportHead(url)
       result = LinkValidationResult(isValid: status)
+
+    elif clientResponseStatusCodeString[0] in ['4', '5']:
+      result = LinkValidationResult(isValid: false)
 
     result = LinkValidationResult(
       isValid: status
