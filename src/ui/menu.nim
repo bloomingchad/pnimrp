@@ -103,6 +103,43 @@ template KeyToChar(key: Key): char  = char(int(key))
 
 template toChar(key: Key): char = KeyToChar(key)
 
+template ordinalizeKeyForIndx: int =
+  if key.toChar() in {'1'..'9'}:
+    ord(key.toChar()) - ord('1')
+  else: ord(toLowerAscii(key.toChar())) - ord('a') + 9
+
+template directoryHandlerHM(items: seq[string]) =
+  var subItems, subPaths = newSeqOfCap[string](32)
+
+  let result = loadCategories(selectedPath)
+  result.accumulateToSubItemsAndPathsFromLoadCat(subItems, subPaths)
+
+  if subItems.len != 0:
+    # Navigate to subcategories with isMainMenu = false
+    handleMenu(items[choosenItem], subItems, subPaths, isMainMenu = false, baseDir = selectedPath, handleMenuIsHandling = hmIsHandlingDirectory)
+  else: warn("No station lists available in this category.")
+
+
+template jsonFileHandlerHM(items: seq[string]) =
+  # Handle JSON files (station lists)
+  let stations = loadStations(selectedPath)
+  if stations.names.len == 0 or stations.urls.len == 0:
+    warn("No stations available. Please check the station list.")
+  else:
+    # Navigate to station list with isMainMenu = false
+    handleMenu(items[choosenItem], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingJSON)
+
+template statusCacheHandlerHM(items: seq[string], handleMenuIsHandling: handleMenuIsHandling) =
+  if isHandlingJSON(handleMenuIsHandling):
+    var statuscontext = StatusCache(
+      sectionName: section
+    )
+
+    var stations = newSeqOfCap[StationStatus](32)
+
+    stations.accumulateStationStatusStateFromItemsPaths(items, paths)
+    hookCacheResolveAndDisplay(stations, statuscontext)
+
 proc handleMenu*(
   section: string,
   items: seq[string],
@@ -122,49 +159,22 @@ proc handleMenu*(
     drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling))  # Pass isPlayerUI here
 
     when not defined(simple):
-      if isHandlingJSON(handleMenuIsHandling):
-        var statuscontext = StatusCache(
-            sectionName: section
-          )
-
-        var stations = newSeqOfCap[StationStatus](32)
-
-        stations.accumulateStationStatusStateFromItemsPaths(items, paths)
-        hookCacheResolveAndDisplay(stations, statuscontext)
+      items.statusCacheHandlerHM(handleMenuIsHandling)
 
     while true:
       try:
         let key = chooseForMeOrChooseYourself(items.len)
         case key
         of KeysOneToNine, KeysAtoM:
-          let choosenItem =
-            if key.toChar() in {'1'..'9'}:
-              ord(key.toChar()) - ord('1')
-            else: ord(toLowerAscii(key.toChar())) - ord('a') + 9
+          let choosenItem = ordinalizeKeyForIndx()
           
           if choosenItem >= 0 and choosenItem < items.len:
             let selectedPath = paths[choosenItem]
             if dirExists(selectedPath):
-              # Handle directories (subcategories or station lists)
-              var subItems, subPaths = newSeqOfCap[string](32)
-
-              let result = loadCategories(selectedPath)
-              result.accumulateToSubItemsAndPathsFromLoadCat(subItems, subPaths)
-
-              if subItems.len != 0:
-                # Navigate to subcategories with isMainMenu = false
-                handleMenu(items[choosenItem], subItems, subPaths, isMainMenu = false, baseDir = selectedPath, handleMenuIsHandling = hmIsHandlingDirectory)
-              else:
-                warn("No station lists available in this category.")
+              directoryHandlerHM(items)
 
             elif fileExists(selectedPath) and selectedPath.endsWith(".json"):
-              # Handle JSON files (station lists)
-              let stations = loadStations(selectedPath)
-              if stations.names.len == 0 or stations.urls.len == 0:
-                warn("No stations available. Please check the station list.")
-              else:
-                # Navigate to station list with isMainMenu = false
-                handleMenu(items[choosenItem], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingJSON)
+              jsonFileHandlerHM(items)
 
             else:
               # Treat as a station URL and play directly
