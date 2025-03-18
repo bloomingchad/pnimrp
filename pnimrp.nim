@@ -68,9 +68,9 @@ proc handleInterrupt() {.noconv.} =
   cleanup()
   quit(0)
 
-when defined(dragonfly):
+when defined(dragonfly) or defined(macos):
   {.error: """
-    PNimRP is not supported under DragonFlyBSD
+    PNimRP is not supported under your OS
     Please see user.rst for more information.
   """.}
 
