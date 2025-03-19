@@ -20,6 +20,7 @@ when compileOption("profiler"):
 type
   AppConfig = object
     assetsDir: string # Directory where application assets are stored
+    stationsDir: string
     version: string   # Application version
 
 const
@@ -32,6 +33,7 @@ const
 proc validateEnvironment() =
   ## Validates the application environment, ensuring necessary assets and permissions are in place.
   let assetsDir = getAppDir() / "assets"
+  let stationsDir = assetsDir / "stations"
 
   # Ensure the assets directory exists
   if not dirExists(assetsDir):
@@ -45,6 +47,7 @@ proc getAppConfig(): AppConfig =
   ## Initializes and returns the application configuration.
   result = AppConfig(
     assetsDir: getAppDir() / "assets", # Set the assets directory path
+    stationsDir: getAppDir() / "assets" / "stations",
     version: Version # Set the application version
   )
 
@@ -120,7 +123,7 @@ proc main() =
     initGlobalMpv()
     
     # Start the main menu with the configured assets directory
-    drawMainMenu(config.assetsDir)
+    drawMainMenu(config.stationsDir)
 
   #except Exception as e:
     # Handle any fatal errors that occur during execution
