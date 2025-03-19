@@ -164,10 +164,12 @@ For more information about the WTFPL, see: [WTFPL License](http://www.wtfpl.net/
 - **jsmn.nim**: minimal json parser impl.
 - **GPT-3.5 Claude-3.5-Sonnet**: Documentation and code improvements.🤖
 - **DeepSeek-V3**: Documentation and Code improvements 🥰
-- **You**: For using and supporting this project! ❤️
 - **fmstream.org and others**: for providing links
+- **asciinema**: for being able to show HD demo 🎥
+- **You**: For using and supporting this project! ❤️
 
 ## 🎉 Happy Listening!
 
-Thank you for using **pnimrp**! If you enjoy the project, consider giving it a ⭐
-on GitHub or sharing it with your friends. Let’s make terminal radio awesome! 🎶
+Thank you for using **pnimrp**! If you enjoy the project, consider giving
+it a ⭐ on GitHub or sharing it with your friends.
+Let’s make terminal radio awesome! 🎶
