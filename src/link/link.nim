@@ -39,7 +39,7 @@ proc validateLinkSimpleSocket(link: string, timeout: int = 2000): LinkValidation
     result = handleLinkCheckError(e, timeout)
 
 template validateLink*(url: string; timeout = 2000): LinkValidationResult =
-  when defined(simple):
+  #when defined(simple):
     validateLinkSimpleSocket(url, timeout)
-  else:
-    validateLinkWithContentTypeCheck(url, timeout)
+  #else:
+  #  validateLinkWithContentTypeCheck(url, timeout)
