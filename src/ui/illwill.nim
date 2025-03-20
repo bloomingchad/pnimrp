@@ -527,7 +527,7 @@ proc getKey*: Key =
   when defined(windows):
     if result == Key.None: discard
 
-proc getKeyWithTimeout*(ms = 1000): Key =
+proc getKeyWithTimeoutInt(ms = 1000): Key =
   ## Reads the next keystroke with a timeout. If there were no keypress events
   ## in the specified `ms` period, `Key.None` is returned.
   ##
@@ -537,6 +537,12 @@ proc getKeyWithTimeout*(ms = 1000): Key =
   result = getKeyAsync(int32 ms)
   when defined(windows):
     if result == Key.None: discard
+
+proc getKeyWithTimeout*(ms = 1000): Key =
+  illwillInit(false)
+  let res = getKeyWithTimeoutInt(ms)
+  illwillDeinit()
+  result = res
 
 export
   terminalWidth, terminalHeight,
