@@ -2,8 +2,8 @@
 
 import std/net, linkbase
 
-when not defined(simple):
-  import linkadvanced
+#when not defined(simple):
+#  import linkadvanced
 
 proc validateLinkSimpleSocket(link: string, timeout: int = 2000): LinkValidationResult =
   ## Validates if a link is reachable and parses its components.
