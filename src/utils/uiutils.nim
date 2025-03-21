@@ -1,6 +1,6 @@
 import utilstypes, terminal, ../audio/player, os, strutils
 
-proc getSymbol*(status: PlayerStatus, useEmoji: bool): string =
+func getSymbol*(status: PlayerStatus, useEmoji: bool): string =
   if useEmoji:
     case status
     of StatusPlaying:     "🔊"

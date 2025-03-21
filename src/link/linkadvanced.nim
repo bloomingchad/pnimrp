@@ -14,7 +14,7 @@ const validPlaylistTypesList = [
   "application/octet-stream"
 ]
 
-proc isValidAudioOrPlaylistStreamContentType(contentType: string): bool =
+func isValidAudioOrPlaylistStreamContentType(contentType: string): bool =
   let normalizedContentType = contentType.toLowerAscii()
   if normalizedContentType.startsWith("audio/"): return true
   elif normalizedContentType in validPlaylistTypesList: return true

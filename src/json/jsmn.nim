@@ -59,7 +59,7 @@ const JSMN_TOKENS = 256
 when defined(verbose):
   var JSON_STRING: string
 
-proc `$`(p: JsmnParser): string =
+func `$`(p: JsmnParser): string =
   "JsmnParser[Position: " & $p.pos & ", NextTokenIndex: " & $p.toknext & ", SuperTokenIndex: " & $p.toksuper & "]"
 
 {.push boundChecks: off, overflowChecks: off.}
@@ -86,7 +86,7 @@ when defined(JSMN_STRICT):
 else:
   const afterPrimitiveSet = {'\t', '\r', '\n', ' ', ',', ']', '}'}
 
-proc incSize(tokens: var openarray[JsmnToken], pos: int) {.inline.} =
+func incSize(tokens: var openarray[JsmnToken], pos: int) {.inline.} =
   var token = addr tokens[pos]
   when defined(verbose):
     var parent = tokens[token.parent]
@@ -95,7 +95,7 @@ proc incSize(tokens: var openarray[JsmnToken], pos: int) {.inline.} =
       echo "    incSize: ", JSON_STRING[token.start..<token.stop], " ", token[]
   inc(token.size)
 
-proc parsePrimitive(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int) =
+func parsePrimitive(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int) =
   ## Fills next available token with JSON primitive.
   var start = parser.pos
   while parser.pos < length:
@@ -117,7 +117,7 @@ proc parsePrimitive(parser: var JsmnParser, tokens: var seq[JsmnToken], json: st
     # In strict mode primitive must be followed by a comma/object/array
     raise newException(JsmnBadTokenException, $parser)
 
-proc parseString(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int) =
+func parseString(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int) =
   ## Fills next token with JSON string.
   let start = parser.pos
   inc(parser.pos)
@@ -153,7 +153,7 @@ proc parseString(parser: var JsmnParser, tokens: var seq[JsmnToken], json: strin
     inc(parser.pos)
   raise newException(JsmnBadTokenException, $parser)
 
-proc parse(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int): int =
+func parse(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int): int =
   ## Parse JSON string and fill tokens.
   var
     token: ptr JsmnToken
@@ -266,7 +266,7 @@ proc parse(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, len
 
 {.pop.}
 
-proc parseJson*(json: string, tokens: var seq[JsmnToken], autoResize = false): int =
+func parseJson*(json: string, tokens: var seq[JsmnToken], autoResize = false): int =
   ## Parse a JSON data string into and array of tokens, each describing a single JSON object.
   when defined(verbose):
     JSON_STRING = json

@@ -11,12 +11,12 @@ type
     domain*: string
     port*: Port
 
-proc normalizeUrl*(url: string): string =
+func normalizeUrl*(url: string): string =
   result = url
   if not result.startsWith("http://") and not result.startsWith("https://"):
     result = "http://" & result # Default to HTTP if no protocol is specified
 
-proc parseUrlComponents*(url: string): tuple[protocol: string, domain: string, port: Port] =
+func parseUrlComponents*(url: string): tuple[protocol: string, domain: string, port: Port] =
   let uri = parseUri(url)
   let protocol = if uri.scheme == "": "http" else: uri.scheme
   let domain = uri.hostname

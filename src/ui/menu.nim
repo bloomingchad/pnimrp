@@ -68,7 +68,7 @@ type
     hmIsHandlingUrl,
     hmIsHandlingJson
 
-proc isHandlingJSON(state: handleMenuIsHandling): bool =
+func isHandlingJSON(state: handleMenuIsHandling): bool =
   if state == hmIsHandlingJson: true else: false
 
 when not defined(simple):

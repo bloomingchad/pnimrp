@@ -62,14 +62,14 @@ template cE(status: bool) =
   if not status:
     raise newException(OSError, "An OS error occurred")
 
-proc linkStatustoBool(status: LinkStatus): uint8 =
+func linkStatustoBool(status: LinkStatus): uint8 =
   case status
   of lsInvalid: 0 #false
   of lsValid: 1 #true
   of lsChecking:
     raise newException(OSError, "are you writing CheckingStatus to cache?")
 
-proc boolToLinkStatus(status: int): LinkStatus =
+func boolToLinkStatus(status: int): LinkStatus =
   case status
   of 0: lsInvalid #false
   of 1: lsValid #true
