@@ -59,7 +59,7 @@ proc validateNodeListBounds(list: ptr NodeList): bool =
 proc validateNodeList(list: ptr NodeList): bool =
   ## Validates the entire NodeList by combining the above validation functions.
   result = list.validateNodeListStructure() and
-           list.validateNodeListPointers()  and
+           list.validateNodeListPointers() and
            list.validateNodeListBounds()
 
 iterator items(iter: var NodeListIterator): tuple[key: string, value: Node] =
@@ -68,7 +68,7 @@ iterator items(iter: var NodeListIterator): tuple[key: string, value: Node] =
   var index = iter.index
   while index < iter.list.num:
     let key = iter.list.keys[index]
-    if key != nil:  # Skip nil keys
+    if key != nil: # Skip nil keys
       yield (key: $key, value: valuePtr[index])
     inc(index)
 
@@ -123,30 +123,30 @@ proc collectMetadata(iter: var NodeListIterator,
   var metadataTable = initTable[string, string]()
 
   for key, nodeValue in items(iter):
-      # Access the format field of the client.Node correctly
-      if nodeValue.format == fmtString and nodeValue.u.str != nil:
-          let lowerKey = key.toLowerAscii()
-          let value = $nodeValue.u.str # Now a Nim string
+    # Access the format field of the client.Node correctly
+    if nodeValue.format == fmtString and nodeValue.u.str != nil:
+      let lowerKey = key.toLowerAscii()
+      let value = $nodeValue.u.str # Now a Nim string
 
           # Filter out icy-notice, icy-pub, icy-metadata, and icy-private
-          if lowerKey.startsWith("icy-notice") or lowerKey == "icy-pub" or lowerKey == "icy-metadata" or lowerKey == "icy-private":
-              continue
+      if lowerKey.startsWith("icy-notice") or lowerKey == "icy-pub" or lowerKey == "icy-metadata" or lowerKey == "icy-private":
+        continue
 
-          # Handle individual tags
-          if lowerKey in tagMap:
-              handleIndividualTag(lowerKey, value, tagMap, metadataTable)
+      # Handle individual tags
+      if lowerKey in tagMap:
+        handleIndividualTag(lowerKey, value, tagMap, metadataTable)
 
-          # Handle icy-audio-info
-          elif lowerKey == "icy-audio-info" and parseAudioInfo:
-              handleIcyAudioInfo(value, tagMap, metadataTable)
+      # Handle icy-audio-info
+      elif lowerKey == "icy-audio-info" and parseAudioInfo:
+        handleIcyAudioInfo(value, tagMap, metadataTable)
 
-          # Handle ID3v2_priv tags
-          elif lowerKey.startsWith("id3v2_priv."):
-              handleID3v2PrivTag(lowerKey, value, metadataTable)
+      # Handle ID3v2_priv tags
+      elif lowerKey.startsWith("id3v2_priv."):
+        handleID3v2PrivTag(lowerKey, value, metadataTable)
 
-          # Handle unknown tags
-          elif lowerKey notin metadataTable:
-              metadataTable[lowerKey] = value
+      # Handle unknown tags
+      elif lowerKey notin metadataTable:
+        metadataTable[lowerKey] = value
 
   return metadataTable
 
@@ -174,7 +174,7 @@ proc updateMetadataUI*(config: MenuConfig, ctx: ptr Handle, state: PlayerState):
   if result.len > 0:
     cursorDown 6
     for key, value in result:
-      if (value == "") or (key.contains("title")) : continue
+      if (value == "") or (key.contains("title")): continue
       styledEcho fgCyan, "  " & key & ": '" & value.truncateMe() & "'"
       goingDown += 1
     cursorUp int(goingDown)

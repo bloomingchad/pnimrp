@@ -1,8 +1,8 @@
 # ui.nim
 
 import
-  terminal,  random, os,
-  strutils, times, 
+  terminal, random, os,
+  strutils, times,
 
   ../audio/libmpv,
   ../utils/[
@@ -86,12 +86,12 @@ proc drawHeader*() =
   # Draw the bottom border of the header using the theme's separator color
   drawSeperatorUI(xpos = -1, offset = 0, color = currentTheme.separator)
 
-var lastTermWidth = termWidth  # Track the last terminal width
+var lastTermWidth = termWidth # Track the last terminal width
 
 proc updateTermWidth* =
   ## Updates the terminal width if it has changed significantly.
   let newWidth = terminalWidth()
-  if abs(newWidth - lastTermWidth) >= 5:  # Only update if the change is significant
+  if abs(newWidth - lastTermWidth) >= 5: # Only update if the change is significant
     termWidth = newWidth
     lastTermWidth = newWidth
 
@@ -99,19 +99,19 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
     maxColumnLengths: seq[int], spacing: int) =
   ## Renders the menu options in a multi-column layout.
   when not defined(simple):
-    emojiPositions = @[]  # Clear previous positions
+    emojiPositions = @[] # Clear previous positions
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
   # Wait for the terminal width to stabilize
   var stableWidth = false
   while not stableWidth:
     updateTermWidth()
-    if abs(termWidth - lastTermWidth) < 5:  # Terminal width is stable
+    if abs(termWidth - lastTermWidth) < 5: # Terminal width is stable
       stableWidth = true
     else:
-      sleep(100)  # Wait for 100ms before checking again
+      sleep(100) # Wait for 100ms before checking again
 
-  var currentY = 5  # Starting Y coordinate (after header and category title)
+  var currentY = 5 # Starting Y coordinate (after header and category title)
 
   for row in 0 ..< itemsPerColumn:
     var currentLine = ""
@@ -120,10 +120,10 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
       if index < options.len:
         # Calculate the prefix for the menu option
         var prefix =
-          if index < 9: $(index + 1) & "."  # Use numbers 1-9
+          if index < 9: $(index + 1) & "."                    # Use numbers 1-9
           else:
-            if index < MenuChars.len: $MenuChars[index] & "."  # Use A-Z
-            else: "?"  # Fallback
+            if index < MenuChars.len: $MenuChars[index] & "." # Use A-Z
+            else: "?"                                         # Fallback
 
         when not defined(simple):
           # Calculate X position for the emoji
@@ -154,7 +154,7 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
 
     # Render the line
     say(currentLine, fgBlue)
-    currentY += 1  # Increment Y *after* drawing the line
+    currentY += 1 # Increment Y *after* drawing the line
 
 proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
@@ -178,18 +178,18 @@ proc displayMenu*(
   var options = options
 
   # 1. Initialization
-  var currentY = 1  # Start at the top
+  var currentY = 1 # Start at the top
 
   # Draw the "Station Categories" section header
   let categoriesHeader =
     when not defined(noEmoji): "         📻 Station Categories 📻"
     else: "         \\[o=] Station Categories [o=]/"
   say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
-  currentY += 1  # Increment after header
+  currentY += 1 # Increment after header
 
   # Draw the separator line
   drawSeperatorUI(xpos = -1, sep = '-', offset = 0)
-  currentY += 1  # Increment after separator
+  currentY += 1 # Increment after separator
 
   # Calculate column layout and render menu options
   let (numColumns, maxColumnLengths, spacing) = calculateColumnLayout(options)
@@ -213,7 +213,7 @@ proc displayMenu*(
   currentY += 1 #increment after second separator
 
   # Display the footer options
-  let footerOptions = getFooterOptions(isMainMenu, isPlayerUI)  # Pass isPlayerUI here
+  let footerOptions = getFooterOptions(isMainMenu, isPlayerUI) # Pass isPlayerUI here
   say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
   currentY += 1
 
@@ -221,7 +221,7 @@ proc displayMenu*(
   drawSeperatorUI(xpos = -1, offset = 0)
   currentY += 1 #we are not tracking this, but it's good practice
 
- 
+
 proc drawMenu*(
   section: string,
   options: string | MenuOptions,
@@ -314,20 +314,20 @@ proc volumeColor(volume: int): ForegroundColor =
     fgGreen
 
 var
-  animationFrame: int = 0 # Tracks the current frame of the animation
+  animationFrame: int = 0               # Tracks the current frame of the animation
   lastAnimationUpdate: DateTime = now() # Tracks the last time the animation was updated
 
 proc drawHeaderPlayerUI(section: string) =
   ## Draws the header section of the player UI.
-  
+
   # Draw header if section is provided
   if section.len > 0:
-    setCursorPos(0, 0)  # Line 0
+    setCursorPos(0, 0) # Line 0
     say(AppNameShort & " > " & section, fgYellow)
 
 proc drawStatusAndVolumePlayerUI(status: string, volume: int) =
   ## Draws the status and volume section of the player UI.
-  
+
   setCursorPos(0, 3)
   eraseLine()
   setCursorPos(0, 3)
@@ -344,7 +344,7 @@ proc drawNowPlayingPlayerUI(nowPlaying: string) =
     # In normal mode, use the existing approach
     stdout.styledWrite(fgCyan, "   Now Playing:  ")
     if terminalSupportsEmoji:
-      startingX = "  Now Playing: ".len + 1  # +1 for emoji space
+      startingX = "  Now Playing: ".len + 1 # +1 for emoji space
     else:
       startingX = "  Now Playing: ".len + 3 # +3 because "[>]" is 3 chars long
 
@@ -361,9 +361,9 @@ proc updateVolumePlayerUI*(newVolume: int) =
   stdout.flushFile()
 
 proc updateCurrentSongPlayerUI*(songName: string) =
-  setCursorPos(0, 2)  # Line 2 (below the separator)
+  setCursorPos(0, 2) # Line 2 (below the separator)
   eraseLine()
-  setCursorPos(0, 2)  #explicit duplicate setting just to be consistent across OSes
+  setCursorPos(0, 2) #explicit duplicate setting just to be consistent across OSes
   drawNowPlayingPlayerUI(songName)
   stdout.flushFile()
 
@@ -377,7 +377,7 @@ proc updatePlayMutedStatePlayerUI*(status: string) =
 
 proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   ## Internal function that handles the common logic for drawing and updating the player UI.
-  updateTermWidth()  # Ensure the terminal width is up-to-date
+  updateTermWidth() # Ensure the terminal width is up-to-date
 
   # Clear the screen and reset cursor position
   clear()
@@ -389,7 +389,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   drawSeperatorUI(xpos = 1, '-', offset = 0) # Line 1
 
   # Display "Now Playing" with truncation if necessary
-  setCursorPos(0, 2)  # Line 2 (below the separator)
+  setCursorPos(0, 2) # Line 2 (below the separator)
   eraseLine()
   drawNowPlayingPlayerUI(nowPlaying)
 
@@ -400,7 +400,7 @@ proc drawPlayerUIInternal(section, nowPlaying, status: string, volume: int) =
   drawSeperatorUI(xpos = 4, '-', offset = 0) # Line 4
 
   # Display footer options
-  setCursorPos(0, 5)  # Line 5
+  setCursorPos(0, 5) # Line 5
   let footerOptions = "[P] Pause/Play   [V] Adjust Volume   [Q] Quit"
   say(footerOptions, fgYellow, xOffset = (termWidth - footerOptions.len) div 2)
 

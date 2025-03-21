@@ -22,13 +22,13 @@ proc isValidAudioOrPlaylistStreamContentType(contentType: string): bool =
 
 proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidationResult =
   let url = normalizeUrl(url)
-  let sslCtxWithNoVerify = newContext(verifyMode=CVerifyNone)
+  let sslCtxWithNoVerify = newContext(verifyMode = CVerifyNone)
 
   try:
     var client = newHttpClient(
       timeout = timeout,
       sslContext = sslCtxWithNoVerify
-     )
+      )
     let clientResponse = client.head(url)
 
     let clientResponseContentType = clientResponse.contentType()

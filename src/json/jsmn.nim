@@ -20,20 +20,20 @@
 
 when defined(useJsmn):
   {.define: JSMN_STRICT.}
-  
+
 type
-  JsmnKind* = enum ## JSON type identifier
+  JsmnKind* = enum  ## JSON type identifier
     JSMN_UNDEFINED, ## Undefined
-    JSMN_OBJECT, ## Object, tuple
-    JSMN_ARRAY, ## Array, seq
-    JSMN_STRING, ## String
-    JSMN_PRIMITIVE ## Other primitive: number, boolean (true/false) or null
+    JSMN_OBJECT,    ## Object, tuple
+    JSMN_ARRAY,     ## Array, seq
+    JSMN_STRING,    ## String
+    JSMN_PRIMITIVE  ## Other primitive: number, boolean (true/false) or null
 
   JsmnToken* = object
     ## JSON token description.
     kind*: JsmnKind
     start*: int ## start position in JSON data string
-    stop*: int ## end position in JSON data string
+    stop*: int  ## end position in JSON data string
     size*: int
     parent*: int
 
@@ -60,7 +60,7 @@ when defined(verbose):
   var JSON_STRING: string
 
 proc `$`(p: JsmnParser): string =
-  "JsmnParser[Position: " & $p.pos  & ", NextTokenIndex: " & $p.toknext & ", SuperTokenIndex: " & $p.toksuper & "]"
+  "JsmnParser[Position: " & $p.pos & ", NextTokenIndex: " & $p.toknext & ", SuperTokenIndex: " & $p.toksuper & "]"
 
 {.push boundChecks: off, overflowChecks: off.}
 
@@ -82,9 +82,9 @@ proc initToken(parser: var JsmnParser, tokens: var seq[JsmnToken], kind = JSMN_U
   inc(parser.toknext)
 
 when defined(JSMN_STRICT):
-  const afterPrimitiveSet =  {':', '\t', '\r', '\n', ' ', ',', ']', '}'}
+  const afterPrimitiveSet = {':', '\t', '\r', '\n', ' ', ',', ']', '}'}
 else:
-  const afterPrimitiveSet =  {'\t', '\r', '\n', ' ', ',', ']', '}'}
+  const afterPrimitiveSet = {'\t', '\r', '\n', ' ', ',', ']', '}'}
 
 proc incSize(tokens: var openarray[JsmnToken], pos: int) {.inline.} =
   var token = addr tokens[pos]

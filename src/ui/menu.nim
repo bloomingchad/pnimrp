@@ -17,7 +17,7 @@ when not defined(simple):
   import
     ../ui/[
       stationstatus,
-     ],
+      ],
     ../json/[
         statuscache
     ]
@@ -39,20 +39,20 @@ proc showHelp*() =
   say("4. Press [H] in the main menu to view this help screen.", fgBlue)
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
   say("Press any key to return to the main menu.", fgYellow)
-  discard getch()  # Wait for any key press
+  discard getch() # Wait for any key press
 
 
-var chooseForMe* = false  # Declare as mutable global variable
-var lastStationIdx*: int = -1  # Declare a global variable to track the last station index
+var chooseForMe* = false # Declare as mutable global variable
+var lastStationIdx*: int = -1 # Declare a global variable to track the last station index
 
 proc chooseForMeOrChooseYourself(itemsLen: int): Key =
   if chooseForMe:
-    chooseForMe = false  # Reset the flag after use
+    chooseForMe = false # Reset the flag after use
 
-    var rndIdx = rand(itemsLen - 1)  # Generate random index within bounds
-    while rndIdx == lastStationIdx and itemsLen > 1:  # Ensure it doesn't pick the last station again
+    var rndIdx = rand(itemsLen - 1) # Generate random index within bounds
+    while rndIdx == lastStationIdx and itemsLen > 1: # Ensure it doesn't pick the last station again
       rndIdx = rand(itemsLen - 1)
-    lastStationIdx = rndIdx  # Update the last station index
+    lastStationIdx = rndIdx # Update the last station index
 
     # Convert the random index to a menu key (1-9, A-M)
     if rndIdx < 9:
@@ -99,7 +99,7 @@ template accumulateToSubItemsAndPathsFromLoadCat(
   for folderPath in result[1]:
     subPaths.add(folderPath)
 
-template KeyToChar(key: Key): char  = char(int(key))
+template KeyToChar(key: Key): char = char(int(key))
 
 template toChar(key: Key): char = KeyToChar(key)
 
@@ -154,9 +154,9 @@ proc handleMenu*(
     var returnToParent = false
     clear()
     drawHeader()
-    
+
     # Display the menu
-    drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling))  # Pass isPlayerUI here
+    drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling)) # Pass isPlayerUI here
 
     when not defined(simple):
       items.statusCacheHandlerHM(handleMenuIsHandling)
@@ -167,7 +167,7 @@ proc handleMenu*(
         case key
         of KeysOneToNine, KeysAtoM:
           let choosenItem = ordinalizeKeyForIndx()
-          
+
           if choosenItem >= 0 and choosenItem < items.len:
             let selectedPath = paths[choosenItem]
             if dirExists(selectedPath):
@@ -190,7 +190,7 @@ proc handleMenu*(
             showInvalidChoice()
 
         of Key.N:
-          if isMainMenu:  # Only allow Notes in the main menu
+          if isMainMenu: # Only allow Notes in the main menu
             showNotes()
             break
           else:

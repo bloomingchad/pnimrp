@@ -30,13 +30,13 @@ when isMainModule:
 
     test "initialize":
       let ctx = create()
-      check initialize(ctx) == cint(errSuccess)  # Cast errSuccess to cint
+      check initialize(ctx) == cint(errSuccess) # Cast errSuccess to cint
       destroy(ctx)
 
     test "cmdString":
       let ctx = create()
       discard initialize(ctx)
-      check cmdString(ctx, "loadfile example.mp3") == cint(errSuccess)  # Cast errSuccess to cint
+      check cmdString(ctx, "loadfile example.mp3") == cint(errSuccess) # Cast errSuccess to cint
       destroy(ctx)
 
     test "getPropertyString":
@@ -50,7 +50,7 @@ when isMainModule:
     test "setPropertyString":
       let ctx = create()
       discard initialize(ctx)
-      check setPropertyString(ctx, "volume", "50") == cint(errSuccess)  # Cast errSuccess to cint
+      check setPropertyString(ctx, "volume", "50") == cint(errSuccess) # Cast errSuccess to cint
       destroy(ctx)
 
     test "waitEvent":
