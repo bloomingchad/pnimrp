@@ -1,10 +1,10 @@
 when defined(useJsmn):
   import
     os, strutils,
-  
+
     utilstypes
   from ../link/linkbase import normalizeUrl
-  
+
   import ../json/jsmn
 
   proc loadStationJSMN*(filePath: string): tuple[names, urls: seq[string]] =
@@ -30,7 +30,7 @@ when defined(useJsmn):
 
     var pairsCount = 0
     var countCap: uint8
-    
+
     while pairsCount < stationsToken.size:
       if countCap == 20: break #exceed too much
 
@@ -52,36 +52,36 @@ when defined(useJsmn):
       result.urls.add(normalizedUrl)
       inc pairsCount
       inc countCap
-      
+
   proc loadQuotesJSMN*(filePath: string): QuoteData =
-      ## Loads and validates quotes from a JSON file.
-      ## Raises `UIError` if the quote data is invalid.
+    ## Loads and validates quotes from a JSON file.
+    ## Raises `UIError` if the quote data is invalid.
 
-      var tokens = parseJson(readFile(filePath), autoResize = true)
-      # Helper proc to get string value
-      proc getString(jsonStr: string, token: JsmnToken): string =
-          result = jsonStr[token.start..<token.stop]
+    var tokens = parseJson(readFile(filePath), autoResize = true)
+    # Helper proc to get string value
+    proc getString(jsonStr: string, token: JsmnToken): string =
+      result = jsonStr[token.start..<token.stop]
 
-      if tokens[0].kind != JSMN_OBJECT:
-          raise newException(InvalidDataError, "Invalid JSON format: expected an object.")
+    if tokens[0].kind != JSMN_OBJECT:
+      raise newException(InvalidDataError, "Invalid JSON format: expected an object.")
 
-      result = QuoteData(quotes: newSeqOfCap[string](32), authors: newSeqOfCap[string](32))
-      var childIndex = 1
-      var pairCount = 0
+    result = QuoteData(quotes: newSeqOfCap[string](32), authors: newSeqOfCap[string](32))
+    var childIndex = 1
+    var pairCount = 0
 
-      while pairCount < tokens[0].size: # tokens[0] is the root object
+    while pairCount < tokens[0].size: # tokens[0] is the root object
           # Expecting quote (string key)
-          if tokens[childIndex].kind != JSMN_STRING:
-              raise newException(InvalidDataError, "Expected quote (string key).")
-          let quote = getString(readFile(filePath), tokens[childIndex])
-          inc childIndex
+      if tokens[childIndex].kind != JSMN_STRING:
+        raise newException(InvalidDataError, "Expected quote (string key).")
+      let quote = getString(readFile(filePath), tokens[childIndex])
+      inc childIndex
 
-          #Expecting author(string value)
-          if tokens[childIndex].kind != JSMN_STRING:
-              raise newException(InvalidDataError, "Expected author (string value).")
-          let author = getString(readFile(filePath), tokens[childIndex])
-          inc childIndex
+      #Expecting author(string value)
+      if tokens[childIndex].kind != JSMN_STRING:
+        raise newException(InvalidDataError, "Expected author (string value).")
+      let author = getString(readFile(filePath), tokens[childIndex])
+      inc childIndex
 
-          result.quotes.add(quote)
-          result.authors.add(author)
-          inc pairCount
+      result.quotes.add(quote)
+      result.authors.add(author)
+      inc pairCount
