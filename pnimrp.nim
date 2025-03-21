@@ -4,7 +4,7 @@ import
   os, terminal, std/exitprocs, random,
 
   src/[
-    ui/menu, ui/illwill,
+    menu, ui/illwill,
     utils/utils,
     audio/player, audio/libmpv
   ]
