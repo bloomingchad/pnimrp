@@ -307,6 +307,25 @@ proc drawHeader*(section: string) =
   say(AppNameShort & " > " & section, fgGreen)
   drawSeperatorUI(xpos = -1, '-')
 
+proc showHelp*() =
+  ## Displays instructions on how to use the app.
+  clear()
+  drawHeader("Help")
+  say("Welcome to " & AppName & "!", fgYellow)
+  say("Here's how to use the app:", fgGreen)
+  say("1. Use the number keys (1-9) or letters (A-Z) to select a station.", fgBlue)
+  say("2. In the player UI, use the following keys:", fgBlue)
+  say("   - [P] Pause/Play", fgBlue)
+  say("   - [-/+] Adjust Volume", fgBlue)
+  say("   - [R] Return to the previous menu", fgBlue)
+  say("   - [Q] Quit the application", fgBlue)
+  say("3. Press [N] in the main menu to view notes.", fgBlue)
+  say("4. Press [H] in the main menu to view this help screen.", fgBlue)
+  say("=".repeat(termWidth), fgGreen, xOffset = 0)
+  say("Press any key to return to the main menu.", fgYellow)
+  discard getch() # Wait for any key press
+
+
 proc volumeColor(volume: int): ForegroundColor =
   if volume > 110: fgRed
   elif volume < 60: fgBlue
