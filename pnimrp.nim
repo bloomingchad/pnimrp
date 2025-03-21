@@ -58,11 +58,10 @@ proc showBanner() =
 
 proc cleanup() =
   ## Performs cleanup tasks on application exit, such as restoring the cursor.
-  showCursor()
   mpvCtx.destroy()
   echo ""
   echo "Thank you for using " & AppName
-  resetAttributes()
+  illwillDeinit()
 
 proc handleInterrupt() {.noconv.} =
   ## Handles SIGINT (Ctrl+C) signal gracefully.

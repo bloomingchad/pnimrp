@@ -226,6 +226,7 @@ proc handleMenu*(
 
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu.
+  illwillInit()
   let categories = loadCategories(baseDir)
   handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
 
