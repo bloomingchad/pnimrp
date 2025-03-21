@@ -37,19 +37,19 @@ proc handlePlayerError(msg: string; config: MenuConfig; shouldReturn = false) =
   if shouldReturn:
     return
 
-proc currentStatus(state: PlayerState): PlayerStatus =
+func currentStatus(state: PlayerState): PlayerStatus =
   if not state.isPaused and not state.isMuted: StatusPlaying
   elif not state.isPaused and state.isMuted: StatusMuted
   elif state.isPaused and not state.isMuted: StatusPaused
   else:                                      StatusPausedMuted
 
-proc isValidPlaylistUrl(url: string): bool =
+func isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
-proc milSecToSec(ms: int): float = ms / 1000
+func milSecToSec(ms: int): float = ms / 1000
 
-proc getFileFormat(ctx: ptr Handle): string =
+func getFileFormat(ctx: ptr Handle): string =
   # Query the `file-format` property
   var format: cstring = getPropertyString(ctx, "file-format")
     

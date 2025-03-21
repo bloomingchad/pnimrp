@@ -319,10 +319,9 @@ proc waitEvent*(ctx; timeout: cdouble = 0): ptr Event
 proc wakeup*(ctx)
     {.importc: "mpv_wakeup".}
 
-proc checkError*(status: cint) =
+func checkError*(status: cint) =
   ## Checks the return value of input procedure, quits with failure exit status if less than 0
   if status < 0:
-    showCursor()
     raise newException(CatchableError, "mpv API error: " & $errorString(status))
 
 template cE*(s: int) = checkError(s)

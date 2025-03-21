@@ -156,7 +156,7 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
     say(currentLine, fgBlue)
     currentY += 1 # Increment Y *after* drawing the line
 
-proc getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
+func getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
   result =
     if isMainMenu: "[Q] Quit | [N] Notes | [U] Help | [S] ChooseForMe"

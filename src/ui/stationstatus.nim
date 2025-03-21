@@ -4,7 +4,7 @@ import terminal, asyncdispatch,
   ../utils/utils,
   ../link/asynclink
 
-proc toStatusCodeEmoji(status: LinkStatus): (ForegroundColor, string) =
+func toStatusCodeEmoji(status: LinkStatus): (ForegroundColor, string) =
   when not defined(noEmoji):
     case status
     of lsValid:    (fgDefault, "🟢")

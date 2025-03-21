@@ -35,28 +35,28 @@ type
     list: ptr NodeList
     index: int
 
-proc initNodeListIterator(list: ptr NodeList): NodeListIterator =
+func initNodeListIterator(list: ptr NodeList): NodeListIterator =
   result = NodeListIterator(list: list, index: 0)
 
-proc validateNodeListStructure(list: ptr NodeList): bool =
+func validateNodeListStructure(list: ptr NodeList): bool =
   ## Validates the basic structure of the NodeList.
   result = (list != nil)
   if not result:
     raise newException(MpvError, "Invalid NodeList encountered in items iterator")
 
-proc validateNodeListPointers(list: ptr NodeList): bool =
+func validateNodeListPointers(list: ptr NodeList): bool =
   ## Ensures that the keys and values pointers are not nil.
   result = (list.keys != nil) and (list.values != nil)
   if not result:
     raise newException(MpvError, "Invalid NodeList: nil pointer encountered")
 
-proc validateNodeListBounds(list: ptr NodeList): bool =
+func validateNodeListBounds(list: ptr NodeList): bool =
   ## Checks that the num field is within the expected bounds.
   result = (list.num >= 0) and (list.num < 100)
   if not result:
     raise newException(MpvError, "Invalid NodeList: num out of bounds (got: " & $list.num & ")")
 
-proc validateNodeList(list: ptr NodeList): bool =
+func validateNodeList(list: ptr NodeList): bool =
   ## Validates the entire NodeList by combining the above validation functions.
   result = list.validateNodeListStructure() and
            list.validateNodeListPointers() and
@@ -72,7 +72,7 @@ iterator items(iter: var NodeListIterator): tuple[key: string, value: Node] =
       yield (key: $key, value: valuePtr[index])
     inc(index)
 
-proc handleIndividualTag(lowerKey: string, value: string,
+func handleIndividualTag(lowerKey: string, value: string,
                           tagMap: Table[string, string],
                           metadataTable: var Table[string, string]) =
   # Handle individual tags based on the tagMap
@@ -88,7 +88,7 @@ proc handleIndividualTag(lowerKey: string, value: string,
 
     metadataTable[preferredKey] = formattedValue
 
-proc handleIcyAudioInfo(
+func handleIcyAudioInfo(
     value: string,
     tagMap: Table[string, string],
     metadataTable: var Table[string, string]
@@ -112,13 +112,13 @@ proc handleIcyAudioInfo(
 
         metadataTable[keyToAdd] = audioInfoValue
 
-proc handleID3v2PrivTag(lowerKey: string, value: string,
+func handleID3v2PrivTag(lowerKey: string, value: string,
                          metadataTable: var Table[string, string]) =
   # Handle ID3v2_priv tags
   let owner = lowerKey.split(".")[1 .. lowerKey.split(".").high].join(".") # Extract owner identifier
   metadataTable[owner] = value # Store raw data with owner as key
 
-proc collectMetadata(iter: var NodeListIterator,
+func collectMetadata(iter: var NodeListIterator,
                      parseAudioInfo: bool = true): Table[string, string] =
   var metadataTable = initTable[string, string]()
 

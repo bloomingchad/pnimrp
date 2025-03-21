@@ -19,7 +19,7 @@ proc clearLineForScroll(start: int, len: int, indentLevel: int = 0) =
       stdout.write(" ".repeat(clearLen))
       stdout.flushFile()
 
-proc getVisibleChunk(text: string, offset: int, width: int, indentLevel: int = 0): string =
+func getVisibleChunk(text: string, offset: int, width: int, indentLevel: int = 0): string =
   ## Gets the visible portion of the text to be scrolled.
 
   if text.len <= width:
