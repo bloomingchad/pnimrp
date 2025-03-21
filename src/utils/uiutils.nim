@@ -1,4 +1,4 @@
-import utilstypes, terminal, ../audio/player, os, strutils
+import utilstypes, terminal, ../audio/player, os, strutils, ../misc/bell
 
 func getSymbol*(status: PlayerStatus, useEmoji: bool): string =
   if useEmoji:

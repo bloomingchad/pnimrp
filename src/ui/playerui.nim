@@ -12,7 +12,9 @@ import
   ../link/link,
   ../utils/[
     utils
-  ]
+    ],
+
+  ../misc/like
 
 when not defined(simple):
   import
