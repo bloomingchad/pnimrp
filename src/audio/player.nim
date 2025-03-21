@@ -26,42 +26,42 @@ proc validateVolume(volume: int): int =
   result = max(MinVolume, min(MaxVolume, volume))
 
 proc setAllyOptionsToMpv(ctx: ptr Handle) =
-    # Core audio settings
-    cE mpvCtx.setOptionString("audio-display", "no")
-    cE mpvCtx.setOptionString("vid", "no")
-    cE mpvCtx.setOptionString("vo", "null")
-    cE mpvCtx.setOptionString("audio-stream-silence", "yes")
-    cE mpvCtx.setOptionString("gapless-audio", "weak")
-    cE mpvCtx.setOptionString("audio-fallback-to-null", "no")
+  # Core audio settings
+  cE mpvCtx.setOptionString("audio-display", "no")
+  cE mpvCtx.setOptionString("vid", "no")
+  cE mpvCtx.setOptionString("vo", "null")
+  cE mpvCtx.setOptionString("audio-stream-silence", "yes")
+  cE mpvCtx.setOptionString("gapless-audio", "weak")
+  cE mpvCtx.setOptionString("audio-fallback-to-null", "no")
 
-    # Network configuration
-    var netTimeout = 5.0
-    cE mpvCtx.setOption("network-timeout", fmtFloat64, netTimeout.addr)
-    cE mpvCtx.setOptionString("demuxer-lavf-o", "reconnect=1,reconnect_streamed=1,reconnect_delay_max=5")
-    cE mpvCtx.setOptionString("user-agent", "pnimrp/0.1")
+  # Network configuration
+  var netTimeout = 5.0
+  cE mpvCtx.setOption("network-timeout", fmtFloat64, netTimeout.addr)
+  cE mpvCtx.setOptionString("demuxer-lavf-o", "reconnect=1,reconnect_streamed=1,reconnect_delay_max=5")
+  cE mpvCtx.setOptionString("user-agent", "pnimrp/0.1")
 
-    # Performance settings
-    cE mpvCtx.setOptionString("ytdl", "no")
-    cE mpvCtx.setOptionString("demuxer-thread", "yes")
+  # Performance settings
+  cE mpvCtx.setOptionString("ytdl", "no")
+  cE mpvCtx.setOptionString("demuxer-thread", "yes")
 
-    # Audio processing
-    cE mpvCtx.setOptionString("audio-normalize-downmix", "yes")
-    cE mpvCtx.setOptionString("volume-max", "150")
-    var replayGain = 6.0
-    cE mpvCtx.setOption("replaygain-preamp", fmtFloat64, replayGain.addr)
+  # Audio processing
+  cE mpvCtx.setOptionString("audio-normalize-downmix", "yes")
+  cE mpvCtx.setOptionString("volume-max", "150")
+  var replayGain = 6.0
+  cE mpvCtx.setOption("replaygain-preamp", fmtFloat64, replayGain.addr)
 
-    # Terminal/interface settings
-    cE mpvCtx.setOptionString("terminal", "yes")
-    cE mpvCtx.setOptionString("really-quiet", "yes")
-    cE mpvCtx.setOptionString("osd-level", "0")  # Disable OSD completely
+  # Terminal/interface settings
+  cE mpvCtx.setOptionString("terminal", "yes")
+  cE mpvCtx.setOptionString("really-quiet", "yes")
+  cE mpvCtx.setOptionString("osd-level", "0") # Disable OSD completely
 
     # Input controls
-    cE mpvCtx.setOptionString("input-default-bindings", "no")
-    cE mpvCtx.setOptionString("input-vo-keyboard", "no")
-    cE mpvCtx.setOptionString("input-media-keys", "no")
+  cE mpvCtx.setOptionString("input-default-bindings", "no")
+  cE mpvCtx.setOptionString("input-vo-keyboard", "no")
+  cE mpvCtx.setOptionString("input-media-keys", "no")
 
-    cE mpvCtx.setOptionString("demuxer-max-bytes", "2097152")  #2MB #thanks to github.com/florianjacob
-    cE mpvCtx.setOptionString("demuxer-max-back-bytes", "2097152")  #see https://github.com/mpv-player/mpv/issues/5359
+  cE mpvCtx.setOptionString("demuxer-max-bytes", "2097152") #2MB #thanks to github.com/florianjacob
+  cE mpvCtx.setOptionString("demuxer-max-back-bytes", "2097152") #see https://github.com/mpv-player/mpv/issues/5359
 
 proc initGlobalMpv* =
   try:
@@ -90,7 +90,7 @@ proc stopCurrentJob* =
   finally:
     deallocCStringArray(cmdArgs)
 
-proc pause*(ctx: ptr Handle, shouldPause: bool) {.raises: [PlayerError].} =
+proc pause*(ctx: ptr Handle; shouldPause: bool) {.raises: [PlayerError].} =
   ## Toggles the pause state of the player.
   ##
   ## Args:
@@ -102,7 +102,7 @@ proc pause*(ctx: ptr Handle, shouldPause: bool) {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to set pause state: " & e.msg)
 
-proc mute*(ctx: ptr Handle, shouldMute: bool) {.raises: [PlayerError].} =
+proc mute*(ctx: ptr Handle; shouldMute: bool) {.raises: [PlayerError].} =
   ## Toggles the mute state of the player.
   ##
   ## Args:
@@ -156,7 +156,7 @@ proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [].} =
   try:
     var title: cstring
     cE ctx.getProperty("media-title", fmtString, addr title)
-    
+
     # Convert the cstring to a Nim string immediately to ensure GC safety
     result = if title != nil: $title else: ""
     fullMediaTitle = result
@@ -194,12 +194,12 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
       isMuted: bool(muteState),
       isPaused: bool(pauseState)
     )
-    
+
   except Exception as e:
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
 
 proc setVolumeOfBellRelativeToMainCtx(tmpMpv: ptr Handle) =
-  #set 1.5 times the last vol 
+  #set 1.5 times the last vol
   var newVolume = cstring $(float(lastVolume) * 1.5)
   cE tmpMpv.setOptionString("volume", newVolume)
     #some platforms will might cmplain about type error and cause `mpv API error:`
@@ -222,7 +222,7 @@ proc warnBell* =
 
     let assetsDir = getAppDir() / "assets"
     let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
-    
+
     # Play sound in temporary instance
     allocateJobMpv(bellPath, tmpMpv)
 
