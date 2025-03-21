@@ -7,28 +7,28 @@ import strutils, terminal,
 
 proc clearLineForScroll(start: int, len: int, indentLevel: int = 0) =
   ## Clears a specific portion of the line for scrolling.
-  
+
   # Ensure start is within bounds
   if start >= 0 and start < terminalWidth():
     setCursorPos(start, 2)
 
     # Ensure we don't clear beyond the terminal width
     let clearLen = min(len, terminalWidth() - start)
-  
+
     if clearLen > 0:
       stdout.write(" ".repeat(clearLen))
       stdout.flushFile()
-  
+
 proc getVisibleChunk(text: string, offset: int, width: int, indentLevel: int = 0): string =
   ## Gets the visible portion of the text to be scrolled.
-  
+
   if text.len <= width:
     result = text
   else:
     let loopedText = text & " • "
     let start = offset mod loopedText.len
     let endIdx = start + width
-  
+
     result =
       if endIdx <= loopedText.len:
         loopedText[start..<endIdx]

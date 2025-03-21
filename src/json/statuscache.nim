@@ -8,13 +8,13 @@ import
   ../ui/stationstatus
 
 #[spec
-    {
-        "lastChecked": "<stdanrd-datetime-format>",
-        "stationlist": {
-            "<name>": 0|1,
-            ...
-        }
+  {
+    "lastChecked": "<stdanrd-datetime-format>",
+    "stationlist": {
+      "<name>": 0|1,
+      ...
     }
+  }
 ]#
 
 using
@@ -53,7 +53,7 @@ proc checkIfCacheAlreadyExistAndIsValid*(stations; statuscontext): bool =
     let cacheTime = parse(cacheLastTimeStr, "yyyy-MM-dd'T'HH:mm:sszzz")
     let currentTime = now()
     let timeDiff = currentTime - cacheTime
-    return timeDiff.inSeconds <= 24 * 3600  # 24 hours in seconds
+    return timeDiff.inSeconds <= 24 * 3600 # 24 hours in seconds
   except:
     # Handle any parsing errors (invalid JSON, missing key, etc.)
     return false
@@ -65,14 +65,14 @@ template cE(status: bool) =
 proc linkStatustoBool(status: LinkStatus): uint8 =
   case status
   of lsInvalid: 0 #false
-  of lsValid:   1 #true
+  of lsValid: 1 #true
   of lsChecking:
     raise newException(OSError, "are you writing CheckingStatus to cache?")
 
 proc boolToLinkStatus(status: int): LinkStatus =
   case status
-  of 0: lsInvalid  #false
-  of 1: lsValid    #true
+  of 0: lsInvalid #false
+  of 1: lsValid #true
   else:
     raise newException(OSError, "are you writing CheckingStatus to cache?")
 
@@ -81,7 +81,7 @@ proc saveStatusCacheToJson(stations; statuscontext) =
   var jsonObjectCache = %*{}
   var filePathNameExt = statuscontext.sectionName
   getCacheJsonFileNameWithPath(filePathNameExt)
-  
+
   cE open(fileInConsideration, filePathNameExt, fmWrite)
 
   jsonObjectCache["lastCheckedDateTime"] = %* $now()
@@ -134,7 +134,7 @@ proc handleApplytoCacheError(e: ref Exception; stations; statuscontext): bool =
 proc applyLinkStatusFromCacheToState(stations; stationsList: JsonNode; statuscontext): bool =
   var i: uint8
   try:
-    for key, value in  stationsList.pairs:
+    for key, value in stationsList.pairs:
       if key != stations[i].name:
         raise newException(CacheDoesntMatchParentJsonError, "")
       stations[i].status = boolToLinkStatus value.getInt

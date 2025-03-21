@@ -1,7 +1,7 @@
 # pnimrp.nim
 
 import
-  os,  terminal, std/exitprocs, random,
+  os, terminal, std/exitprocs, random,
 
   src/[
     ui/menu, ui/illwill,
@@ -11,7 +11,7 @@ import
 
 when not defined(simple):
   import
-    src/
+    src /
       ui/theme
 
 when compileOption("profiler"):
@@ -25,9 +25,9 @@ type
 
 const
   AppName = "Poor Man's Radio Player" # Name of the application
-  Version = "0.1"                   # Current version of the application
+  Version = "0.1"                     # Current version of the application
   RequiredAssets = [
-    "quote.json" # List of required asset files (can be expanded as needed)
+    "quote.json"                      # List of required asset files (can be expanded as needed)
   ]
 
 proc validateEnvironment() =
@@ -53,7 +53,7 @@ proc getAppConfig(): AppConfig =
 
 proc showBanner() =
   ## Displays the application banner with version and copyright information.
-  styledEcho(fgCyan,  AppName & " v" & Version)
+  styledEcho(fgCyan, AppName & " v" & Version)
   styledEcho(fgCyan, "Copyright (c) 2021-2025")
 
 proc cleanup() =
@@ -121,7 +121,7 @@ proc main() =
 
     #init global mpv context for reuse
     initGlobalMpv()
-    
+
     # Start the main menu with the configured assets directory
     drawMainMenu(config.stationsDir)
 

@@ -3,7 +3,7 @@
 import
   json, os, terminal,
 
-  ../audio/
+  ../audio /
     [
       player,
       libmpv,
@@ -28,7 +28,7 @@ proc validateLengthStationName*(result: seq[string], filePath: string, maxLength
   var warnCount = 0
   for i in 0 ..< result.len:
     if warnCount == 3: break
-    if i mod 2 == 0:  # Only validate odd indices (0, 2, 4, ...)
+    if i mod 2 == 0: # Only validate odd indices (0, 2, 4, ...)
       if result[i].len > maxLength:
         warn(
           "Station name at index " & $i & " ('" & result[i] & "') in file " & filePath & " is too long.",
@@ -40,7 +40,7 @@ proc validateLengthStationName*(result: seq[string], filePath: string, maxLength
           xOffset = 4,
           color = fgYellow
         )
-        sleep(400)  # Pause for 400ms after displaying the warning
+        sleep(400) # Pause for 400ms after displaying the warning
         warnCount += 1
 
 
@@ -51,11 +51,11 @@ proc appendToLikedSongs* =
     # Open the file in append mode (creates the file if it doesn't exist)
     let file = open(likedSongsFile, fmAppend)
     defer: file.close()
-    
+
     # Append the song and a newline
     file.writeLine(fullMediaTitle)
     cursorDown 5
-    warn("Song added to likedSongs.txt")  # Notify the user
+    warn("Song added to likedSongs.txt") # Notify the user
     cursorUp()
     eraseLine()
     cursorUp 5
@@ -68,7 +68,7 @@ proc appendToLikedSongs* =
 
 proc checkIfTooLongMagic*: int = terminalWidth() - "  Now Playing: ".len - 6
 
-proc checkIfTooLongForUI*(str: string): bool = 
+proc checkIfTooLongForUI*(str: string): bool =
   #str.len > int(terminalWidth().toFloat() / 1.65)
   str.len > checkIfTooLongMagic()
 
@@ -76,14 +76,14 @@ proc truncateMe*(str: string): string =
   if str.checkIfTooLongForUI():
     result = str.substr(0, checkIfTooLongMagic()) & "..."
   else: return str
-      #1.65 good factor to stop nowplaying overflow, inc 1.65 if does 
+    #1.65 good factor to stop nowplaying overflow, inc 1.65 if does
 
 proc initCheckingStationNotice* =
   setCursorPos(0, terminalHeight() - 5)
   stdout.write "Checking stations... Please Wait"
   stdout.flushFile()
 
-proc finishCheckingStationNotice* = 
+proc finishCheckingStationNotice* =
   setCursorPos(0, terminalHeight() - 5)
   eraseLine()
   lastMenuSeparatorY = 0
@@ -102,9 +102,9 @@ export #uiutils
   error, updateTermWidth, clear, warn, showInvalidChoice,
   centerText, showSpinner, truncateName, calculateColumnLayout
 
-#export all internal within utils namespace 
+#export all internal within utils namespace
 export #utilstypes
-  QuoteData, 
+  QuoteData,
 
   UIError, JSONParseError, FileNotFoundError,
   ValidationError, InvalidDataError,

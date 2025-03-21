@@ -85,16 +85,16 @@ proc calculateColumnLayout*(options: MenuOptions): (int, seq[int], int) =
   var maxItemLength = 0
   for i in 0 ..< options.len:
     let prefix =
-      if i < 9: $(i + 1) & "."  # Use numbers 1-9 for the first 9 options
+      if i < 9: $(i + 1) & "."                    # Use numbers 1-9 for the first 9 options
       else:
-        if i < MenuChars.len: $MenuChars[i] & "."  # Use A-Z for the next options
-        else: "?"  # Fallback
-    let itemLength = prefix.len + 1 + options[i].len  # Include prefix and space
+        if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
+        else: "?"                                 # Fallback
+    let itemLength = prefix.len + 1 + options[i].len # Include prefix and space
     if itemLength > maxItemLength:
       maxItemLength = itemLength
 
   # Calculate the minimum required width for 3 columns
-  let minWidthFor3Columns = maxItemLength * 3 + 9  # 9 = 4.5 spaces between columns * 2
+  let minWidthFor3Columns = maxItemLength * 3 + 9 # 9 = 4.5 spaces between columns * 2
 
   # Switch to 2 columns if:
   # 1. Terminal width is less than the minimum required for 3 columns, or
@@ -102,7 +102,7 @@ proc calculateColumnLayout*(options: MenuOptions): (int, seq[int], int) =
   if termWidth < minWidthFor3Columns or maxItemLength > int(float(termWidth) / 4.5):
     numColumns = minColumns
   else:
-    numColumns = maxColumns  # Otherwise, use 3 columns
+    numColumns = maxColumns # Otherwise, use 3 columns
 
   # Calculate the number of items per column
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
@@ -124,8 +124,8 @@ proc calculateColumnLayout*(options: MenuOptions): (int, seq[int], int) =
     totalWidth += length
 
   # Calculate the required spacing between columns
-  const minSpacing = 4  # Minimum spacing between columns
-  const maxSpacing = 6  # Maximum spacing between columns
+  const minSpacing = 4 # Minimum spacing between columns
+  const maxSpacing = 6 # Maximum spacing between columns
   var spacing = maxSpacing
 
   # Adjust spacing if the terminal width is too small
@@ -138,8 +138,8 @@ proc calculateColumnLayout*(options: MenuOptions): (int, seq[int], int) =
   while spacing >= minSpacing:
     let totalWidthWithSpacing = totalWidth + spacing * (numColumns - 1)
     if totalWidthWithSpacing <= termWidth:
-      break  # We have enough space with the current spacing
-    spacing -= 1  # Reduce spacing and try again
+      break # We have enough space with the current spacing
+    spacing -= 1 # Reduce spacing and try again
 
   # Check if we have enough space even with the minimum spacing
   if spacing < minSpacing:
@@ -147,7 +147,7 @@ proc calculateColumnLayout*(options: MenuOptions): (int, seq[int], int) =
     var maxAllowedLength: int
     for i in 0 ..< maxColumnLengths.len:
       # *Assign* to maxAllowedLength inside the loop.
-      maxAllowedLength = (termWidth div numColumns - spacing) - 3  # Bias
+      maxAllowedLength = (termWidth div numColumns - spacing) - 3 # Bias
       if maxColumnLengths[i] > maxAllowedLength:
         maxColumnLengths[i] = maxAllowedLength
 

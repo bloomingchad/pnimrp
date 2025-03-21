@@ -38,7 +38,7 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
 
 
 when defined(useJsmn):
-  from privjsonjsmn   import loadStationJSMN, loadQuotesJSMN
+  from privjsonjsmn import loadStationJSMN, loadQuotesJSMN
 else:
   from privjsonstdlib import loadStationStdLib, loadQuotesStdLib
 
@@ -57,12 +57,12 @@ proc loadStations*(filePath: string): tuple[names, urls: seq[string]] =
     raise newException(FileNotFoundError, "Failed to load JSON file: " & filePath)
 
   except Exception as e:
-      when defined(useJsmn):
-        if e of JsmnException:
-          raise newException(JSONParseError, "Failed to parse JSON file with JSMN: " & getCurrentExceptionMsg())
-        else: discard
-      else:
-        raise newException(JSONParseError, "Failed to parse JSON file: " & filePath)
+    when defined(useJsmn):
+      if e of JsmnException:
+        raise newException(JSONParseError, "Failed to parse JSON file with JSMN: " & getCurrentExceptionMsg())
+      else: discard
+    else:
+      raise newException(JSONParseError, "Failed to parse JSON file: " & filePath)
 
 proc loadQuotes*(filePath: string): QuoteData =
   ## Loads and validates quotes from a JSON file.
@@ -78,9 +78,9 @@ proc loadQuotes*(filePath: string): QuoteData =
   except IOError:
     raise newException(FileNotFoundError, "Failed to load quotes: " & filePath)
   except Exception as e:
-      when defined(useJsmn):
-        if e of JsmnException:
-          raise newException(JSONParseError, "Failed to parse JSON file with JSMN: " & getCurrentExceptionMsg())
-        else: discard
-      else:
-        raise newException(JSONParseError, "Failed to parse JSON file: " & filePath)
+    when defined(useJsmn):
+      if e of JsmnException:
+        raise newException(JSONParseError, "Failed to parse JSON file with JSMN: " & getCurrentExceptionMsg())
+      else: discard
+    else:
+      raise newException(JSONParseError, "Failed to parse JSON file: " & filePath)

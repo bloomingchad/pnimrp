@@ -19,10 +19,10 @@ proc toStatusCodeEmoji(status: LinkStatus): (ForegroundColor, string) =
 # Combine similar status indicator functions
 proc drawStatusIndicator*(x, y: int, status = lsChecking, isInitial = false) =
   setCursorPos(x, y)
-  let (color, symbol) = 
+  let (color, symbol) =
     if isInitial:
         when not defined(noEmoji): (fgDefault, "🟡")
-        else: (fgYellow, "o")  # Yellow circle for initial state
+        else: (fgYellow, "o") # Yellow circle for initial state
     else:
       toStatusCodeEmoji(status)
   # Apply color and write symbol
@@ -38,7 +38,7 @@ type
     future*:   Future[LinkStatus]
 
 proc checkAndDraw(station: StationStatus) {.async.} =
-  station.future = resolveLink(station.url)  # Store future
+  station.future = resolveLink(station.url) # Store future
   await sleepAsync(5)
   station.status = await station.future
   await sleepAsync(5)
@@ -51,11 +51,11 @@ proc resolveAndDisplay*(stations: seq[StationStatus]) {.async.} =
   ## Asynchronously resolves and displays status for each station independently.
   ## Each station's status will update as soon as its check completes.
   var allChecks = newSeqOfCap[Future[void]](32)
-  
+
   for station in stations:
     allChecks.add(checkAndDraw(station))
-    
-  await all(allChecks)  # Wait for all checks to complete before returning
+
+  await all(allChecks) # Wait for all checks to complete before returning
 
 proc drawMenuEmojis* =
   ## Draws the menu emojis at the stored positions.

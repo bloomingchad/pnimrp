@@ -1,23 +1,23 @@
 # player.nim
 
 import libmpv, os
-export cE  # Export the error-checking macro for external use
+export cE # Export the error-checking macro for external use
 
 type
-  PlayerError* = object of CatchableError  # Custom error type for player-related issues
-  MediaInfo* = object                      # Structure to hold media player state
-    title*: string                         # Current media title
-    isIdle*: bool                          # Whether the player is idle
-    volume*: int                           # Current volume level
-    isMuted*: bool                         # Whether the player is muted
-    isPaused*: bool                        # Whether the player is paused
+  PlayerError* = object of CatchableError # Custom error type for player-related issues
+  MediaInfo* = object # Structure to hold media player state
+    title*: string    # Current media title
+    isIdle*: bool     # Whether the player is idle
+    volume*: int      # Current volume level
+    isMuted*: bool    # Whether the player is muted
+    isPaused*: bool   # Whether the player is paused
 
 const
   VolumeStep* = 5  # Step size for volume adjustments
   MinVolume* = 0   # Minimum allowed volume
   MaxVolume* = 150 # Maximum allowed volume
 
-var lastVolume* {.global.} = 100  # Default volume is 100
+var lastVolume* {.global.} = 100 # Default volume is 100
 var fullMediaTitle* {.global.} = ""
 var mpvCtx* {.global.}: ptr Handle
 

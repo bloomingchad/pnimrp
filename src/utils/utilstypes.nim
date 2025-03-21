@@ -36,8 +36,8 @@ type
     stationUrl*: string                   # URL of the selected station
 
 const
-  CheckIdleInterval* = 25  # Interval to check if the player is idle
-  KeyTimeout* = 25         # Timeout for key input in milliseconds
+  CheckIdleInterval* = 25 # Interval to check if the player is idle
+  KeyTimeout* = 25        # Timeout for key input in milliseconds
 
 type
   Theme* = object
@@ -66,7 +66,7 @@ type
 
 #const area
 
-var termWidth* = terminalWidth()  ## Tracks the current terminal width.
+var termWidth* = terminalWidth() ## Tracks the current terminal width.
 var lastMenuSeparatorY* {.global.}: int
 
 const
@@ -74,7 +74,7 @@ const
   EmojiFrames* = ["🎵", "🎶"]     # Emoji animation frames
 
 var
-  animationFrame*: int = 0 # Tracks the current frame of the animation
+  animationFrame*: int = 0               # Tracks the current frame of the animation
   lastAnimationUpdate*: DateTime = now() # Tracks the last time the animation was updated
 
 when not defined(simple):
