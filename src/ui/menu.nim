@@ -201,7 +201,7 @@ proc handleMenu*(
           break
 
         of Key.R, Key.BackSpace:
-          if not isMainMenu or baseDir != getAppDir() / "assets":
+          if not isMainMenu:
             returnToParent = true
             break
           else:
