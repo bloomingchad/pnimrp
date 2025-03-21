@@ -4,21 +4,23 @@ import
   terminal, os, strutils, net,
   random,
 
-  ui, illwill,
+  ui/[
+    ui,
+    illwill,
+    playerui
+  ], 
 
-  ../utils/[
+  utils/[
     utils,
     jsonutils
-  ],
-
-  playerui
+  ]
 
 when not defined(simple):
   import
-    ../ui/[
+    ui/[
       stationstatus,
-      ],
-    ../json/[
+    ],
+    json/[
         statuscache
     ]
 
@@ -40,7 +42,6 @@ proc showHelp*() =
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
   say("Press any key to return to the main menu.", fgYellow)
   discard getch() # Wait for any key press
-
 
 var chooseForMe* = false # Declare as mutable global variable
 var lastStationIdx*: int = -1 # Declare a global variable to track the last station index
