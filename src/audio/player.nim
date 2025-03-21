@@ -25,7 +25,7 @@ proc validateVolume(volume: int): int =
   ## Ensures the volume stays within valid bounds (0-150).
   result = max(MinVolume, min(MaxVolume, volume))
 
-proc setAllyOptionsToMpv(ctx: ptr Handle) =
+proc setAllyOptionsToMpv*(ctx: ptr Handle) =
   # Core audio settings
   cE mpvCtx.setOptionString("audio-display", "no")
   cE mpvCtx.setOptionString("vid", "no")
@@ -198,42 +198,10 @@ proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
 
-proc setVolumeOfBellRelativeToMainCtx(tmpMpv: ptr Handle) =
+proc setVolumeOfBellRelativeToMainCtx*(tmpMpv: ptr Handle) =
   #set 1.5 times the last vol
   var newVolume = cstring $(float(lastVolume) * 1.5)
   cE tmpMpv.setOptionString("volume", newVolume)
     #some platforms will might cmplain about type error and cause `mpv API error:`
     #by having the cost of string conversions, we are offloading the dirty work
     #to libmpv, which is very robust
-
-proc warnBell* =
-  ## Plays a warning sound using a temporary MPV instance without interrupting main playback
-  var tmpMpv: ptr Handle
-  try:
-    # Create temporary MPV instance
-    tmpMpv = create()
-
-    # Global Config for bell playback
-    tmpMpv.setAllyOptionsToMpv()
-
-    # Set volume relative to currentVol directly on temporary instance
-    tmpMpv.setVolumeOfBellRelativeToMainCtx()
-    cE tmpMpv.initialize()
-
-    let assetsDir = getAppDir() / "assets"
-    let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
-
-    # Play sound in temporary instance
-    allocateJobMpv(bellPath, tmpMpv)
-
-    # Wait for completion
-    var event: ptr Event
-    while true:
-      event = tmpMpv.waitEvent()
-      if event.eventID in {IDEndFile}:
-        break
-
-  except Exception as e:
-    stderr.writeLine "Warning bell error: ", e.msg
-  finally:
-    tmpMpv.destroy()
