@@ -196,6 +196,9 @@ proc handleMenu*(
           showExitMessage()
           break
 
+        of Key.Up, Key.Down, Key.Mouse:
+          discard
+
         else:
           showInvalidChoice()
 
