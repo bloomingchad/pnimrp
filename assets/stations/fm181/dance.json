@@ -1,0 +1,12 @@
+{
+  "stations": {
+    "Energy 98": "https://listen.181fm.com/181-energy98_128k.mp3",
+    "Classic Energy": "https://listen.181fm.com/181-classicenergy_128k.mp3",
+    "Chilled Out": "https://listen.181fm.com/181-chilled_128k.mp3",
+    "Energy 93": "https://listen.181fm.com/181-energy93_128k.mp3",
+    "Studio 181": "https://listen.181fm.com/181-ball_128k.mp3",
+    "The Vibe of Vegas": "https://listen.181fm.com/181-vibe_128k.mp3",
+    "90's Dance": "https://listen.181fm.com/181-90sdance_128k.mp3",
+    "Techno Club": "https://listen.181fm.com/181-techno_128k.mp3"
+  }
+}
