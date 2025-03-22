@@ -24,7 +24,7 @@
 ##
 ##  0. You just DO WHAT THE FUCK YOU WANT TO.
 
-import terminal
+import terminal, strutils
 when not defined windows: import unicode, macros, os
 
 type
@@ -196,7 +196,11 @@ type
 
   IllwillError* = object of CatchableError
 
-{.push warning[HoleEnumConv]: off.}
+func turnOffWarningFOrOldCompiler(v: string): bool =
+  v notin["1.4.0", "1.4.2", "1.4.4", "1.4.6"]
+
+when turnOffWarningForOldCompiler(NimVersion):
+  {.push warning[HoleEnumConv]: off.}
 
 func toKey*(c: int): Key =
   try:
@@ -204,7 +208,8 @@ func toKey*(c: int): Key =
   except RangeDefect: # ignore unknown keycodes
     result = Key.None
 
-{.pop.}
+when turnOffWarningFOrOldCompiler(NimVersion):
+  {.pop.}
 
 var gIllwillInitialised = false
 var gFullScreen = false
