@@ -200,7 +200,7 @@ proc playStation*(config: MenuConfig) =
 
       of Key.L: # New key binding for "Like" action
         if state.currentSong != "":
-          appendToLikedSongs()
+          appendToLikedSongs(config.currentSection)
         else:
           warn("song field is currently empty")
 
