@@ -3,10 +3,10 @@
   <h1>♪♫ pnimrp - Poor Man's Radio Player in Nim ♫♪</h1>
 </div>
 
-Are you on the terminal and want to listen to music without opening
-the web browser? **pnimrp** is here to save the day! 🎉
+sick of opening Chrome just to stream some music?
+I made this little terminal radio player that's saved me tons of RAM.
 
-With a collection of **30+ modifiable radio station links** (JSON),
+With a collection of **30+ modifiable radio station genres** (JSON),
 you can browse, play, pause, and mute your favorite stations—all from
 the comfort of your terminal. No more fiddling with PLS files! 🚀
 
@@ -14,13 +14,17 @@ Inspired by [Poor Man's Radio Player](https://github.com/hakerdefo/pmrp),
 **pnimrp** takes things to the next level with added features and
 improvements.
 
+## 🎥 Demo
+
+![pnimrp Demo](https://github.com/bloomingchad/pnimrp/raw/main/web/demo.gif)
+made with ![asciinema](https://asciinema.org/)
+
 ## 🌟 Key Features
 
 - **Portable**: Works seamlessly on Unix and Windows. 📦
 - **Easy to Use**: Simple menu-driven interface. 💡🎮
 - **Modifiable Stations**: Edit JSON files to add or remove stations.🔧
 - **Now Playing**: Displays the currently playing song.📻
-- **Async Input**: Non-blocking key polling for smooth controls.
 - **Lightweight**: Minimal dependencies, fast and efficient.⚡
 - **Customizable Themes**: Easily switch between themes by editing `config.json`. 🎨
 
@@ -47,7 +51,7 @@ improvements.
 2.  Extract both. The `dev` archive has `libmpv-2.dll` (name may vary).
 3.  **Important:** After compiling `pnimrp`, copy `libmpv-2.dll` to the *same directory* as `pnimrp.exe`.
 
-**macOS:**
+**macOS X:**
 *   **Homebrew (Recommended):** `brew install mpv`
 *    **MacPorts:** `sudo port install mpv`
 
@@ -63,7 +67,7 @@ improvements.
   ```bash
   curl https://nim-lang.org/choosenim/init.sh -sSf | sh
   ```
-note this wouldnt work on termux instead do
+note this wouldnt work on termux, instead do
 **Termux (Android):**
 ```pkg install nim```
 
@@ -91,10 +95,6 @@ cant/dont want emojis?: add `-d:noEmoji`
 
 want to use smaller bin size?: add `-d:useJsmn`
 
-## 🎥 Demo
-
-![pnimrp Demo](https://github.com/bloomingchad/pnimrp/raw/main/web/demo.gif)
-
 ## 🎮 Controls
 
 | Key          | Action                      |
@@ -107,30 +107,13 @@ want to use smaller bin size?: add `-d:useJsmn`
 | **+**        | Increase volume             |
 | **-**        | Decrease volume             |
 
-## 🎨 Customizing Themes
-
-You can easily switch between themes by editing the `config.json` file
-located in the root directory of the project. Here's how:
-
-1. Open `config.json` in a text editor.
-2. Change the `currentTheme` field to the desired theme
-   (e.g., `default`, `dark`, `vibrant`).
-3. Save the file and restart the application.
-
 ## 📖 Documentation
 
 For detailed usage instructions, see:
 - 📄 **doc/user.md**: User guide.
 - 📄 **doc/installation.md**: Installation instructions.
 
-To generate HTML documentation:
-```bash
-nim rst2html file.rst
-```
-
-Then open **htmldocs/file.html** in your browser.
-
-## 🤝 Contributing
+🤝 Contributing
 
 We welcome contributions! Here’s how you can help:
 
