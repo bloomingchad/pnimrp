@@ -17,7 +17,7 @@ improvements.
 ## 🎥 Demo
 
 ![pnimrp Demo](https://github.com/bloomingchad/pnimrp/raw/main/web/demo.gif)
-made with ![asciinema](https://asciinema.org/)
+made with [asciinema](https://asciinema.org/)
 
 ## 🌟 Key Features
 
