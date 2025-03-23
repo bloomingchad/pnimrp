@@ -1,4 +1,7 @@
-import terminal, ../utils/utils, ../audio/player
+import
+  terminal, times,
+
+  ../utils/utils, ../audio/player
 
 proc appendToLikedSongs* =
   ## Appends a song to the likedSongs.txt file.
@@ -9,7 +12,7 @@ proc appendToLikedSongs* =
     defer: file.close()
 
     # Append the song and a newline
-    file.writeLine(fullMediaTitle)
+    file.writeLine("[" & getDateStr() & "][" & getClockStr() & "] " & fullMediaTitle)
     cursorDown 5
     warn("Song added to likedSongs.txt") # Notify the user
     cursorUp()
