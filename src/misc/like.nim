@@ -3,7 +3,7 @@ import
 
   ../utils/utils, ../audio/player
 
-proc appendToLikedSongs*(sectionName: string) =
+proc appendToLikedSongs*(config: MenuConfig) =
   ## Appends a song to the likedSongs.txt file.
   const likedSongsFile = "likedSongs.txt"
   try:
@@ -14,11 +14,12 @@ proc appendToLikedSongs*(sectionName: string) =
     # Append the song and a newline
 
     file.writeLine(
-      "" & getDateStr()  &  " | "  &
-           getClockStr() &  " | " &
-            sectionName   & " | " &
+        getDateStr()  &  " | "  &
+        getClockStr() &  " | "  &
+        config.currentSection   & " | " &
+        config.stationName      & " | " &
       fullMediaTitle
-      )
+    )
     cursorDown 5
     warn("Song added to likedSongs.txt") # Notify the user
     cursorUp()
@@ -30,4 +31,3 @@ proc appendToLikedSongs*(sectionName: string) =
 
   finally:
     stdout.flushFile()
-
