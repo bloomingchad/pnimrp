@@ -14,9 +14,9 @@ proc appendToLikedSongs*(sectionName: string) =
     # Append the song and a newline
 
     file.writeLine(
-      "[" & getDateStr()  & "]"  &
-      "[" & getClockStr() & "] " &
-            sectionName   & " " &
+      "" & getDateStr()  &  " | "  &
+           getClockStr() &  " | " &
+            sectionName   & " | " &
       fullMediaTitle
       )
     cursorDown 5
