@@ -26,18 +26,30 @@ type
 const
   AppName = "Poor Man's Radio Player" # Name of the application
   Version = "0.1"                     # Current version of the application
-  RequiredAssets = [
-    "quote.json"                      # List of required asset files (can be expanded as needed)
-  ]
+
+template assertAssetNotFound(asset: string, isDir = true) =
+  let status =
+    when isDir:
+      dirExists(asset)
+    else:
+      fileExists(asset)
+  if not status:
+    error "Assets directory/file not found: " & asset
 
 proc validateEnvironment() =
   ## Validates the application environment, ensuring necessary assets and permissions are in place.
-  let assetsDir = getAppDir() / "assets"
-  let stationsDir = assetsDir / "stations"
+  let assetsDir   = getAppDir() / "assets"
+  let stationsDir = assetsDir  / "stations"
+  let configDir   = assetsDir / "config"
 
   # Ensure the assets directory exists
-  if not dirExists(assetsDir):
-    error "Assets directory not found: " & assetsDir
+  assertAssetNotFound assetsDir
+  assertAssetNotFound stationsDir
+  assertAssetNotFound configDir
+
+  assertAssetNotFound configDir / "qoute.json", isDir = false
+  assertAssetNotFound configDir / "themes.json", isDir = false
+  assertAssetNotFound configDir / "sounds" / "bell.ogg", isDir = false
 
   when not defined(simple):
     checkIfCacheDirExistElseCreate()
@@ -68,7 +80,7 @@ proc handleInterrupt() {.noconv.} =
   cursorDown 1
   echo "Received interrupt signal (Ctrl+C). Exiting gracefully..."
   cleanup()
-  quit(0)
+  quit(QuitSuccess)
 
 when defined(dragonfly) or defined(macos):
   {.error: """
