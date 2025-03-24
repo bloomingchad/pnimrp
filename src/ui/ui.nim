@@ -159,10 +159,10 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
 func getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
   result =
-    if isMainMenu: "[Q] Quit | [N] Notes | [U] Help | [S] ChooseForMe"
+    if isMainMenu: "[Q] Quit | [N] Notes | [U] Help | [S] ImFeelingLucky"
     elif isPlayerUI:
       "[Q] Quit | [R] Return | [P] Pause/Play | [-/+] Vol | [L] Like"
-    else: "[Q] Quit | [R] Return | [U] Help | [S] ChooseForMe"
+    else: "[Q] Quit | [R] Return | [U] Help | [S] ImFeelingLucky"
 
 proc displayMenu*(
   options: MenuOptions,
