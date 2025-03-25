@@ -3,38 +3,38 @@
   <h1>♪♫ pnimrp - Poor Man's Radio Player in Nim ♫♪</h1>
 </div>
 
-sick of opening Chrome just to stream some music?
-I made this little terminal radio player that's saved me tons of RAM.
+sick of opening chrome just to stream some internet radio?
+i made this little terminal radio player that's saved me tons of ram
 
-With a collection of **30+ modifiable radio station genres** (JSON),
-you can browse, play, pause, and mute your favorite stations—all from
-the comfort of your terminal. No more fiddling with PLS files! 🚀
+with a collection of **30+ modifiable radio station genres** (json),
+you can play your favorite stations—all from the comfort of your terminal
 
-Inspired by [Poor Man's Radio Player](https://github.com/hakerdefo/pmrp),
-**pnimrp** takes things to the next level with added features and
-improvements.
+no more fiddling with pls files
 
-## 🎥 Demo
+inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
+**pnimrp** aims to extend pmrp whilst keeping familiarity.
 
-![pnimrp Demo](https://github.com/bloomingchad/pnimrp/raw/main/web/demo.gif)
-made with [asciinema](https://asciinema.org/)
+## 🎥 demo
 
-## 🌟 Key Features
+![pnimrp demo](https://github.com/bloomingchad/pnimrp/raw/main/web/demo.gif)
 
-- **Portable**: Works seamlessly on Unix and Windows. 📦
-- **Easy to Use**: Simple menu-driven interface. 💡🎮
-- **Modifiable Stations**: Edit JSON files to add or remove stations.🔧
-- **Now Playing**: Displays the currently playing song.📻
-- **Lightweight**: Minimal dependencies, fast and efficient.⚡
-- **Customizable Themes**: Easily switch between themes by editing `config.json`. 🎨
+`made with [asciinema](https://asciinema.org/)
 
-## 🚀 Installation
+## 🌟 key features
 
-### Step 1: Install **mpv** with development files for your distribution.
+- **portable**: works on unix and windows
+- **easy to use**: simple intuitive interface
+- **curatable stations**: edit json files to add or remove stations easily
+- **now playing**: displays the currently playing song
+- **lightweight**: minimal dependencies, fast and efficient
+- **customizable themes**: easily switch between themes by editing `config.json`
+- **checked links**: links get checked automatically so you dont waste your time.
 
-### Step 1: Install **mpv** (including development files)
+## ⬇️  installation
 
-**pnimrp** uses `mpv` for audio playback.  Install both the `mpv` player *and*
+### step 1: install **mpv** (might need development build/files)
+
+**pnimrp** uses `mpv` for audio playback.  install both the `mpv` player *and*
   its development files
 
 **Linux:**
@@ -43,13 +43,13 @@ made with [asciinema](https://asciinema.org/)
 *   **Fedora/CentOS/RHEL:** `sudo dnf install mpv mpv-devel` (may need [RPM Fusion](https://rpmfusion.org/))
 *   **Arch Linux:**         `sudo pacman -S mpv` (includes development headers)
 *   **openSUSE:**           `sudo zypper install mpv libmpv-devel`
-*   **Other Distros:** Use your package manager; search for "mpv" and a related "dev/devel/headers" package.
+*   **other distros:** Use your package manager; search for "mpv" and a related "dev/devel/headers" package.
 
 **Windows:**
 
-1.  Download `mpv` *and* the matching `dev.7z` from [mpv.io](https://mpv.io/installation/) or [SourceForge](https://sourceforge.net/projects/mpv-player-windows/files/) (x86_64 usually).
-2.  Extract both. The `dev` archive has `libmpv-2.dll` (name may vary).
-3.  **Important:** After compiling `pnimrp`, copy `libmpv-2.dll` to the *same directory* as `pnimrp.exe`.
+1.  download `mpv` *and* the matching `*dev.7z` from [mpv.io](https://mpv.io/installation/) or [sourceforge](https://sourceforge.net/projects/mpv-player-windows/files/) (x86_64 usually).
+2.  extract both. the `dev` archive has `libmpv-2.dll` (name may vary).
+3.  **important:** after compiling `pnimrp`, copy `libmpv-2.dll` to the *same directory* as `pnimrp.exe`.
 
 **macOS X:**
 *   **Homebrew (Recommended):** `brew install mpv`
@@ -61,9 +61,9 @@ made with [asciinema](https://asciinema.org/)
 **Termux (Android):**
 ```pkg install mpv```
 
-### Step 2: Install the Nim compiler:
+### step 2: install the nim compiler:
 
-- **Unix**:
+- **unix**:
   ```bash
   curl https://nim-lang.org/choosenim/init.sh -sSf | sh
   ```
@@ -72,16 +72,16 @@ note this wouldnt work on termux, instead do
 ```pkg install nim```
 
 - **Windows**:
-  Download the latest release from [choosenim](https://github.com/dom96/choosenim/releases).
-- **Other Distros**:
-  Follow the official [Nim installation guide](https://nim-lang.org/install.html).
+  download the latest release from [choosenim](https://github.com/dom96/choosenim/releases).
+- **other distros**:
+  follow the official [nim installation guide](https://nim-lang.org/install.html).
 
-### Step 3: Install **pnimrp**:
+### step 3: install **pnimrp**:
 ```bash
 nimble install pnimrp
 ```
 
-Or compile it manually:
+or compile it manually:
 ```bash
 nim c -d:release pnimrp
 ./pnimrp
@@ -95,64 +95,60 @@ cant/dont want emojis?: add `-d:noEmoji`
 
 want to use smaller bin size?: add `-d:useJsmn`
 
-## 🎮 Controls
+## 🎮 controls
 
-| Key          | Action                      |
+| key          | action                      |
 | ------------ | --------------------------- |
-| **1-9, a-l** | Select menu options         |
-| **R**        | Return to the previous menu |
-| **Q**        | Quit the application        |
-| **P**        | Pause/resume playback       |
-| **M**        | Mute/unmute                 |
-| **+**        | Increase volume             |
-| **-**        | Decrease volume             |
+| **1-9, a-m** | select menu options         |
+| **r**        | return to the previous menu |
+| **q**        | quit the application        |
+| **p**        | pause/resume playback       |
+| **m**        | mute/unmute                 |
+| **+**        | increase volume             |
+| **-**        | decrease volume             |
 
-## 📖 Documentation
+## 📖 documentation
 
-For detailed usage instructions, see:
-- 📄 **doc/user.md**: User guide.
-- 📄 **doc/installation.md**: Installation instructions.
+for detailed usage instructions, see:
+- 📄 **doc/user.md**: user guide.
+- 📄 **doc/installation.md**: installation instructions.
 
-🤝 Contributing
+## 🤝 contributing
 
-We welcome contributions! Here’s how you can help:
+here is how you can help:
 
-1. **Report Bugs**: Open an issue on GitHub.
-2. **Suggest Features**: Share your ideas for new features.
-3. **Submit Pull Requests**: Fix bugs or add new functionality.
+1. **submit pull requests**: fix bugs you found or propose and add new functionality.
 
-Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
+please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
 
-## 📜 License
+## 📜 license
 
 **pnimrp** is primarily licensed under the **Mozilla Public License 2.0 (MPL-2.0)**.
-See the [LICENSE](LICENSE) file for details.
+see the [LICENSE](LICENSE) file for details.
 
-However, the following component is licensed with their respective original licences:
-- **illwill.nim**: Adapted from [illwill](https://github.com/johnnovak/illwill),
+however, the following component is licensed with their respective original licences:
+- **illwill.nim**: adapted from [illwill](https://github.com/johnnovak/illwill),
   this file is used for non-blocking input handling and is licensed under the WTFPL.
 
 - **jsmn.nim**: See More [jsmn.nim](https://github.com/OpenSystemsLab/jsmn.nim)
   this file is under original licence which is MIT.
 
-For more information about the WTFPL, see: [WTFPL License](http://www.wtfpl.net/).
-  The original license text is included in the file.
+for more information about WTFPL, see: [WTFPL License](http://www.wtfpl.net/).
+  the original license text is included in the file.
 
-## 🙏 Credits
+## 🙏 credits
 
-- **pmrp**: Inspiration and initial codebase.💡
-- **libmpv**: Playback functionality.📻
-- **c2nim**: Wrapping objects.
-- **illwill**: Async input handling.
-- **jsmn.nim**: minimal json parser impl.
-- **GPT-3.5 Claude-3.5-Sonnet**: Documentation and code improvements.🤖
-- **DeepSeek-V3**: Documentation and Code improvements 🥰
+- **pmrp**: inspiration and initial codebase 💡
+- **libmpv**: playback functionality
+- **c2nim**: wrapping objects
+- **illwill**: async input handling
+- **jsmn.nim**: minimal json parser impl
+- **GPT-3.5 Claude-3.5-Sonnet**: documentation and code improvements
+- **DeepSeek-V3**: documentation and Code improvements 🥰
 - **fmstream.org and others**: for providing links
 - **asciinema**: for being able to show HD demo 🎥
-- **You**: For using and supporting this project! ❤️
+- **you**: for using and supporting this project! ❤️
 
-## 🎉 Happy Listening!
+## 🎶 happy listening!
 
-Thank you for using **pnimrp**! If you enjoy the project, consider giving
-it a ⭐ on GitHub or sharing it with your friends.
-Let’s make terminal radio awesome! 🎶
+thank you for using **pnimrp**. please do share it with your minimalist friends
