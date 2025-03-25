@@ -6,6 +6,9 @@ import
 
 from net import TimeoutError
 
+when defined(asynclinkadv):
+  import asynclinkadv
+
 const
   ResolveTimeout = 5000 # Timeout in milliseconds (5 seconds)
 
@@ -35,8 +38,10 @@ proc tryConnect(domain: string, port: Port): Future[LinkStatus] {.async.} =
       return lsInvalid
 
 proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
+ let normalizedUrl = normalizeUrl(url)
+
+ when not defined(asynclinkadv):
   try:
-    let normalizedUrl = normalizeUrl(url)
     let (protocol, domain, port) = parseUrlComponents(normalizedUrl)
     result = await tryConnect(domain, port)
   except Exception as e:
@@ -46,3 +51,22 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
       return lsValid
     else:
       return lsInvalid
+ else:
+  #try:
+    var fileInConsideration: File
+    when not defined(release) or not defined(danger):
+      let filePathNameExt = "debug.log"
+      discard open(fileInConsideration, filePathNameExt, fmAppend)
+
+    result = await  asyncLinkCheckTolerantWithContentType(normalizedUrl)
+    fileInConsideration.writeLine tempFileLogContent
+    fileInConsideration.close()
+    tempFileLogContent = ""
+
+  #except Exception as e:
+    #await sleepAsync(5)
+    #let result = handleLinkCheckError(e, ResolveTimeout)
+    #if result.isValid:
+    #  return lsValid
+    #else:
+    #  return lsInvalid
