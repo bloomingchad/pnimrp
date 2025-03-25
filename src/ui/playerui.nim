@@ -24,6 +24,11 @@ when not defined(simple):
       animation,
       ]
 
+template volume(inc = true) =
+  if inc: state.volume = min(state.volume + VolumeStep, MaxVolume)
+  else:   state.volume = max(state.volume - VolumeStep, MinVolume)
+  lastVolume = state.volume
+
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
   let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
@@ -177,15 +182,13 @@ proc playStation*(config: MenuConfig) =
         updatePlayMutedStatePlayerUI(currentStatusEmoji(currentStatus(state)))
 
       of Key.Slash, Key.Plus:
-        state.volume = min(state.volume + VolumeStep, MaxVolume)
+        volume(inc = true)
         cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
-        lastVolume = state.volume
         updateVolumePlayerUI(state.volume)
 
       of Key.Asterisk, Key.Minus:
-        state.volume = max(state.volume - VolumeStep, MinVolume)
+        volume(inc = false)
         cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
-        lastVolume = state.volume
         updateVolumePlayerUI(state.volume)
 
       of Key.R, Key.BackSpace:
