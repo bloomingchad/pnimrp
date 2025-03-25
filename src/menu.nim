@@ -211,7 +211,9 @@ proc handleMenu*(
 
 proc drawMainMenu*(baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu.
-  illwillInit()
+  const fullscreen = when not defined(release) or defined(debug): false else: true
+    ## stack traces are cleared, we dont want fullscreen until not debug
+  illwillInit(fullscreen)
   let categories = loadCategories(baseDir)
   handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
 
