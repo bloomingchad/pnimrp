@@ -57,7 +57,7 @@ proc truncateMe*(str: string): string =
 
 proc initCheckingStationNotice* =
   setCursorPos(0, terminalHeight() - 5)
-  stdout.write "Checking stations... Please Wait"
+  stdout.styledWrite fgYellow, "Checking stations... Please Wait"
   stdout.flushFile()
 
 proc finishCheckingStationNotice* =
