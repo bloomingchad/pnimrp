@@ -1,25 +1,5 @@
 import std/net, httpclient, linkbase, strutils
 
-template tryHttpGetWhenMediaServerDoesNotSupportHead(url: string) = #TODO
-  discard
-
-const validPlaylistTypesList = [
-  "audio/x-scpls",
-  "audio/x-mpegurl",
-  "application/vnd.apple.mpegurl",
-  "application/x-mpegurl",
-  "application/pls+xml",
-  "application/xspf+xml",
-  "audio/x-ms-asx",
-  "application/octet-stream"
-]
-
-func isValidAudioOrPlaylistStreamContentType(contentType: string): bool =
-  let normalizedContentType = contentType.toLowerAscii()
-  if normalizedContentType.startsWith("audio/"): return true
-  elif normalizedContentType in validPlaylistTypesList: return true
-  return
-
 proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidationResult =
   let url = normalizeUrl(url)
   let sslCtxWithNoVerify = newContext(verifyMode = CVerifyNone)
