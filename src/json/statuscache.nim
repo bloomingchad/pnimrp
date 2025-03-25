@@ -66,13 +66,14 @@ func linkStatustoBool(status: LinkStatus): uint8 =
   case status
   of lsInvalid: 0 #false
   of lsValid: 1 #true
-  of lsChecking:
-    raise newException(OSError, "are you writing CheckingStatus to cache?")
+  of lsChecking: 2
+    #raise newException(OSError, "are you writing CheckingStatus to cache?")
 
 func boolToLinkStatus(status: int): LinkStatus =
   case status
   of 0: lsInvalid #false
   of 1: lsValid #true
+  of 2: lsChecking
   else:
     raise newException(OSError, "are you writing CheckingStatus to cache?")
 
