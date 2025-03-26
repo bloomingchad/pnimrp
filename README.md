@@ -32,6 +32,11 @@ inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
 
 ## ⬇️  installation
 
+```bash
+  curl https://raw.githubusercontent.com/bloomingchad/pnimrp/main/init.sh | bash
+```
+
+
 ### step 1: install **mpv** (might need development build/files)
 
 **pnimrp** uses `mpv` for audio playback.  install both the `mpv` player *and*
