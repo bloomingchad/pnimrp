@@ -31,35 +31,35 @@ proc asyncLinkCheckTolerantWithContentType*(url: string; timeout = 10000): Futur
     var status: bool
 
     if clientResponseContentType != "":
-      status = clientResponseContentType.isValidAudioOrPlaylistStreamContentType()
-      if status: return lsValid
+      if clientResponseStatusCodeString[0] in ['1', '2', '3']:
+        if clientResponseContentType.isValidAudioOrPlaylistStreamContentType():
+          result = lsValid
+        else: result = lsChecking
+
     tempFileLogContent = tempFileLogContent & "url: " & url & " | " & clientResponseStatusCodeString & "\n"
 
 
-    if clientResponseStatusCodeString[0] == '4': 
-      
+    if clientResponseStatusCodeString[0] == '4':
       #echo clientResponseStatusCodeString; result = lsInvalid
       case clientResponseStatusCodeString:
       of "401", "403", "404", "408", "410": return lsInvalid
       of "405", "400":
           tryHttpGetWhenMediaServerDoesNotSupportHead(url)
           return lsChecking
-      else: discard
-
-      if clientResponseStatusCodeString[0] in ['1', '2', '3']: result = lsValid
-
+      else: return lsInvalid
 
     elif clientResponseStatusCodeString[0] == '5': return lsChecking
 
     #result = LinkValidationResult(
     #  isValid: status
     #)
-  except Exception as e:
+  except SslError, ProtocolError:
     #Handle exceptions using the reusable error-handling function
-    if e of SslError or e of ProtocolError: return lsChecking
-    elif e of OSError: return lsInvalid
-    #elif e of ProtocolError: result = lsInvalid
-    else:
-      raise e
+    return lsChecking
+
+  except OSError:
+    #if "Connection Refused" == getCurrentExceptionMsg():
+      return lsInvalid
+
     #result = lsInvalid #handleLinkCheckError(e, timeout)
     #echo ""
