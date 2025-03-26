@@ -46,7 +46,7 @@ proc asyncLinkCheckTolerantWithContentType*(url: string; timeout = 10000): Futur
       of "405", "400":
           tryHttpGetWhenMediaServerDoesNotSupportHead(url)
           return lsChecking
-      else: return lsInvalid
+      else: return lsChecking#Invalid
 
     elif clientResponseStatusCodeString[0] == '5': return lsChecking
 
