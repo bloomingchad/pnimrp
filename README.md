@@ -18,7 +18,7 @@ inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
 
 ![pnimrp demo](https://github.com/bloomingchad/pnimrp/raw/main/web/demo.gif)
 
-`made with [asciinema](https://asciinema.org/)
+made with [asciinema](https://asciinema.org/)
 
 ## 🌟 key features
 
@@ -32,9 +32,9 @@ inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
 
 ## ⬇️  installation
 
-```bash
+  ```bash
   curl https://raw.githubusercontent.com/bloomingchad/pnimrp/main/init.sh | bash
-```
+  ```
 
 
 ### step 1: install **mpv** (might need development build/files)
