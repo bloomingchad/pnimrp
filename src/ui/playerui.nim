@@ -125,6 +125,7 @@ proc playStation*(config: MenuConfig) =
     if event.eventID in {IDEventPropertyChange}:
       state.currentSong = mpvCtx.getCurrentMediaTitle()
       fullTitle = state.currentSong # Assign to fullTitle
+      config.appendToHistory()
       updateCurrentSongPlayerUI(state.currentSong)
       setCursorXPos 0
       when not defined(simple):
