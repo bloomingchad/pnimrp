@@ -45,7 +45,7 @@ proc showExitMessage* =
   let quotesData = loadQuotes(getAppDir() / "assets" / "config" / "qoute.json")
   let rand = rand(0 .. quotesData.quotes.high)
 
-  when not defined(release) or not defined(danger):
+  when debug:
     echo "free mem: ", $(getFreeMem() / 1024), " kB"
     echo "total/max mem: ", $(getTotalMem() / 1024), " kB"
     echo "occupied mem: ", $(getOccupiedMem() / 1024), " kB"

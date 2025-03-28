@@ -27,6 +27,11 @@
 import terminal, strutils
 when not defined windows: import unicode, macros, os
 
+template debug: bool =
+  not defined(release) or
+    not defined(danger) or
+      defined(debug)
+
 type
   Key* {.pure.} = enum     #Supported single key presses and key combinations
     None = (-1, "None"),
@@ -514,7 +519,7 @@ proc checkInit =
     raise newException(IllwillError, "Illwill not initialised")
 
 proc illwillDeinit* =
-  when not defined(release) or not defined(danger):
+  when debug:
     checkInit()
   if gFullScreen: exitFullScreen()
   consoleDeinit()
@@ -526,7 +531,7 @@ proc getKey*: Key =
   ## Reads the next keystroke in a non-blocking manner. If there are no
   ## keypress events in the buffer, `Key.None` is returned.
   ## If the module is not intialised, `IllwillError` is raised.
-  when not defined(release) or not defined(danger):
+  when debug:
     checkInit()
   result = getKeyAsync(0)
   when defined(windows):
@@ -537,7 +542,7 @@ proc getKeyWithTimeout*(ms = 1000): Key =
   ## in the specified `ms` period, `Key.None` is returned.
   ##
   ## If the module is not intialised, `IllwillError` is raised.
-  when not defined(release) or not defined(danger):
+  when debug:
     checkInit()
   result = getKeyAsync(int32 ms)
   when defined(windows):
