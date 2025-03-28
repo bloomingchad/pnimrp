@@ -112,6 +112,26 @@ func handleIcyAudioInfo(
 
         metadataTable[keyToAdd] = audioInfoValue
 
+const avoidTagList = [
+    "icy-notice",
+    "icy-notice1",
+    "icy-notice2",
+    "icy-pub",
+    "icy-metadata",
+    "icy-private",
+    "icy-index-metadata",
+    "icy-country-code",
+    "icy-logo",
+    "icy-vbr",
+    "icy-language-codes",
+    "icy-geo-lat-long",
+    "icy-country-subdivision-code",
+    "icy-main-stream-url",
+    "icy-metaint",
+    "icy-samplerate",
+    "encoder"
+]
+
 func handleID3v2PrivTag(lowerKey: string, value: string,
                          metadataTable: var Table[string, string]) =
   # Handle ID3v2_priv tags
