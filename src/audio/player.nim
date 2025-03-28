@@ -29,6 +29,7 @@ proc setAllyOptionsToMpv*(ctx: ptr Handle) =
   # Core audio settings
   cE mpvCtx.setOptionString("audio-display", "no")
   cE mpvCtx.setOptionString("vid", "no")
+  cE mpvCtx.setOptionString("config", "no")
   cE mpvCtx.setOptionString("vo", "null")
   cE mpvCtx.setOptionString("audio-stream-silence", "yes")
   cE mpvCtx.setOptionString("gapless-audio", "weak")
