@@ -71,6 +71,11 @@ proc cleanupPlayer*(ctx: ptr Handle) =
   #ctx.terminateDestroy()
   stopCurrentJob()
 
+template debug*: bool =
+  not defined(release) or
+    not defined(danger) or
+      defined(debug)
+
 export #jsonutils
   loadCategories, loadStations, loadQuotes
 
