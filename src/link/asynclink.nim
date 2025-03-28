@@ -53,13 +53,13 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
       return lsInvalid
  else:
   #try:
-    when not defined(release) or not defined(danger):
+    when debug:
       var fileInConsideration: File
       let filePathNameExt = "debug.log"
       discard open(fileInConsideration, filePathNameExt, fmAppend)
 
     result = await  asyncLinkCheckTolerantWithContentType(normalizedUrl)
-    when not defined(release) or not defined(danger):
+    when debug:
       fileInConsideration.writeLine tempFileLogContent
       fileInConsideration.close()
       tempFileLogContent = ""
