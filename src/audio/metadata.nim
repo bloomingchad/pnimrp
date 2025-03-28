@@ -146,19 +146,18 @@ func handleID3v2PrivTag(lowerKey: string, value: string,
   let owner = lowerKey.split(".")[1 .. lowerKey.split(".").high].join(".") # Extract owner identifier
   metadataTable[owner] = value # Store raw data with owner as key
 
-func collectMetadata(iter: var NodeListIterator,
+proc collectMetadata(iter: var NodeListIterator,
                      parseAudioInfo: bool = true): Table[string, string] =
   var metadataTable = initTable[string, string]()
+  when debug:
+    var unkTable = initTable[string, string]()
+    var unkFound: bool
 
   for key, nodeValue in items(iter):
     # Access the format field of the client.Node correctly
     if nodeValue.format == fmtString and nodeValue.u.str != nil:
       let lowerKey = key.toLowerAscii()
-      let value = $nodeValue.u.str # Now a Nim string
-
-          # Filter out icy-notice, icy-pub, icy-metadata, and icy-private
-      if lowerKey.startsWith("icy-notice") or lowerKey == "icy-pub" or lowerKey == "icy-metadata" or lowerKey == "icy-private":
-        continue
+      let value = $nodeValue.u.str
 
       # Handle individual tags
       if lowerKey in tagMap:
@@ -177,7 +176,14 @@ func collectMetadata(iter: var NodeListIterator,
 
       # Handle unknown tags
       elif lowerKey notin metadataTable:
-        metadataTable[lowerKey] = value
+        when debug:
+          if lowerKey notin avoidTagList:
+            unkTable[lowerKey] = value
+            unkFound = true
+  when debug:
+    if unkFound:
+      #echo unkTable
+      discard
 
   return metadataTable
 
