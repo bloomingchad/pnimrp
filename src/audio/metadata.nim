@@ -132,6 +132,14 @@ const avoidTagList = [
     "encoder"
 ]
 
+const binTagList = [
+    "com.elementaltechnologies.timestamp.utc",
+    "com.apple.streaming.transportstreamtimestamp"
+]
+
+#func handleAppleTransportStreamTimeStamp(bin: string): int =
+#  return 0
+
 func handleID3v2PrivTag(lowerKey: string, value: string,
                          metadataTable: var Table[string, string]) =
   # Handle ID3v2_priv tags
@@ -159,6 +167,9 @@ func collectMetadata(iter: var NodeListIterator,
       # Handle icy-audio-info
       elif lowerKey == "icy-audio-info" and parseAudioInfo:
         handleIcyAudioInfo(value, tagMap, metadataTable)
+
+      elif lowerKey in binTagList:
+        discard #handleAppleTransportStreamTimeStamp(lowerkey)
 
       # Handle ID3v2_priv tags
       elif lowerKey.startsWith("id3v2_priv."):
