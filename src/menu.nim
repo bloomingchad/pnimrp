@@ -69,9 +69,6 @@ when not defined(simple):
         )
       )
 
-template KeysOneToNine: set[Key] = { Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine }
-template KeysAtoM: set[Key] = { Key.A , Key.B , Key.C , Key.D , Key.E , Key.F , Key.G , Key.H , Key.I ,Key.J , Key.K , Key.L ,Key.M }
-
 template accumulateToSubItemsAndPathsFromLoadCat(
     result: tuple[names: seq[string], paths: seq[string]],
     subItems, subPaths: seq[string]
@@ -147,7 +144,7 @@ proc handleMenu*(
       try:
         let key = chooseForMeOrChooseYourself(items.len)
         case key
-        of KeysOneToNine, KeysAtoM:
+        of Key.One .. Key.Nine, Key.A .. Key.M:
           let choosenItem = ordinalizeKeyForIndx()
 
           if choosenItem >= 0 and choosenItem < items.len:
