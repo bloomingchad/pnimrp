@@ -52,9 +52,20 @@ made with [asciinema](https://asciinema.org/)
 
 **Windows:**
 
-1.  download `mpv` *and* the matching `*dev.7z` from [mpv.io](https://mpv.io/installation/) or [sourceforge](https://sourceforge.net/projects/mpv-player-windows/files/) (x86_64 usually).
-2.  extract both. the `dev` archive has `libmpv-2.dll` (name may vary).
-3.  **important:** after compiling `pnimrp`, copy `libmpv-2.dll` to the *same directory* as `pnimrp.exe`.
+1. get mpv and development files:
+   - download from:
+     1. [sourceforge](https://sourceforge.net/projects/mpv-player-windows/files/)
+     2. [mpv.io](https://mpv.io/installation/)
+     3. [shinchiro's builds](https://github.com/shinchiro/mpv-winbuild-cmake/releases)
+     4. [zhongfly's builds](https://github.com/zhongfly/mpv-winbuild/releases)
+   - you'll need:
+     - the main `mpv-dev*` matching package (* means matching)
+
+2. extract both packages. the `dev` archive contains:
+   - `libmpv*.dll` (name may vary slightly)
+
+3. after compiling `pnimrp`:
+   - copy `libmpv*.dll` to the same directory as `pnimrp.exe`
 
 **macOS X:**
 *   **Homebrew (Recommended):** `brew install mpv`
@@ -78,6 +89,10 @@ note this wouldnt work on termux, instead do
 
 - **Windows**:
   download the latest release from [choosenim](https://github.com/dom96/choosenim/releases).
+
+- **FreeBSD**:
+```pkg install nim```
+
 - **other distros**:
   follow the official [nim installation guide](https://nim-lang.org/install.html).
 
