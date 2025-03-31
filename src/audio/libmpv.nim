@@ -46,7 +46,8 @@ const dynlibName =
   elif defined(macosx): "libmpv(|.1|.2|.3).dylib"
   else: "libmpv.so(|.1|.2|.3)"
 
-{.push dynlib: dynlibName.}
+when not defined(nlvm):
+  {.push dynlib: dynlibName.}
 
 # Templates
 template makePackedVersion*(major, minor: untyped): untyped =
@@ -331,7 +332,8 @@ func checkError*(status: cint) =
 
 template cE*(s: int) = checkError(s)
 
-{.pop.}
+when not defined(nlvm):
+  {.pop.}
 
 # Constants
 let clientApiVersion* = getUnpackedVersionComponents getClientApiVersion()

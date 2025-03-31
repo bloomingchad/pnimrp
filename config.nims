@@ -9,3 +9,6 @@ else:
 
 when defined(asynclinkadv):
   switch("define", "ssl")
+
+when defined(nlvm):
+  switch("passL", "-lmpv")
