@@ -49,7 +49,7 @@ const dynlibName =
 {.push dynlib: dynlibName.}
 
 # Templates
-template makeVersion*(major, minor: untyped): untyped =
+template makePackedVersion*(major, minor: untyped): untyped =
   major shl 16 or minor or 0'u32 ##[
    version is incremented on each change, minor = 16 lower bits, major = 16
    higher bits. when api becomes incompatible with previous, major is
@@ -57,8 +57,13 @@ template makeVersion*(major, minor: untyped): untyped =
    (see libmpv/docs/client-api-changes.rst for changelog)
 ]##
 
-# Constants
-const clientApiVersion* = makeVersion(1, 107)
+template getUnpackedVersionComponents*(version: untyped): untyped = #:tuple[num, num]
+  ## gets major and minor components from a version number
+  ((version shr 16) and 0xFFFF'u32,
+      version and 0xFFFF'u32)
+
+#constants
+#let clientApiVersion* = { defined at bottom (stupid compiler)}
 
 # Types
 type
@@ -327,3 +332,6 @@ func checkError*(status: cint) =
 template cE*(s: int) = checkError(s)
 
 {.pop.}
+
+# Constants
+let clientApiVersion* = getUnpackedVersionComponents getClientApiVersion()
