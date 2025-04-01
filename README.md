@@ -35,7 +35,7 @@ made with [asciinema](https://asciinema.org/)
   ```bash
   curl https://raw.githubusercontent.com/bloomingchad/pnimrp/main/init.sh | bash
   ```
-
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ### step 1: install **mpv** (might need development build/files)
 
@@ -115,6 +115,8 @@ cant/dont want emojis?: add `-d:noEmoji`
 
 want to use smaller bin size?: add `-d:useJsmn`
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 ## 🎮 controls
 
 | key          | action                      |
@@ -172,3 +174,5 @@ for more information about WTFPL, see: [WTFPL License](http://www.wtfpl.net/).
 ## 🎶 happy listening!
 
 thank you for using **pnimrp**. please do share it with your minimalist friends
+
+<p align="right">(<a href="#top">back to top</a>)</p>
