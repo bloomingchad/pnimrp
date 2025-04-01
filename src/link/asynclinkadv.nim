@@ -36,8 +36,9 @@ proc asyncLinkCheckTolerantWithContentType*(url: string; timeout = 10000): Futur
           result = lsValid
         else: result = lsChecking
 
-    tempFileLogContent = tempFileLogContent & "url: " & url & " | " & clientResponseStatusCodeString & "\n"
 
+    tempFileLogContent =
+      tempFileLogContent & "url: " & url & " | " & clientResponseStatusCodeString
 
     if clientResponseStatusCodeString[0] == '4':
       #echo clientResponseStatusCodeString; result = lsInvalid

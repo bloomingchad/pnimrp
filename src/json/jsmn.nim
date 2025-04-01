@@ -64,7 +64,13 @@ func `$`(p: JsmnParser): string =
 
 {.push boundChecks: off, overflowChecks: off.}
 
-proc initToken(parser: var JsmnParser, tokens: var seq[JsmnToken], kind = JSMN_UNDEFINED, start = -1; stop = -1): ptr JsmnToken =
+proc initToken(
+    parser: var JsmnParser,
+    tokens: var seq[JsmnToken],
+    kind = JSMN_UNDEFINED,
+    start = -1,
+    stop = -1,
+): ptr JsmnToken =
   ## Allocates a token and fills type and boundaries.
   if parser.toknext >= tokens.len:
     if not parser.autoResize:
@@ -92,10 +98,12 @@ func incSize(tokens: var openarray[JsmnToken], pos: int) {.inline.} =
     var parent = tokens[token.parent]
     echo "parent: ", parent
     if token.stop != -1:
-      echo "    incSize: ", JSON_STRING[token.start..<token.stop], " ", token[]
+      echo "    incSize: ", JSON_STRING[token.start ..< token.stop], " ", token[]
   inc(token.size)
 
-func parsePrimitive(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int) =
+func parsePrimitive(
+    parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int
+) =
   ## Fills next available token with JSON primitive.
   var start = parser.pos
   while parser.pos < length:
@@ -107,7 +115,8 @@ func parsePrimitive(parser: var JsmnParser, tokens: var seq[JsmnToken], json: st
       var token = initToken(parser, tokens, JSMN_PRIMITIVE, start, parser.pos)
       when not defined(JSMN_NO_PARENT_LINKS):
         token.parent = parser.toksuper
-        assert tokens[token.parent].kind == JSMN_STRING or tokens[token.parent].kind == JSMN_ARRAY
+        assert tokens[token.parent].kind == JSMN_STRING or
+          tokens[token.parent].kind == JSMN_ARRAY
       dec(parser.pos)
       return
     if json[parser.pos].ord < 32 or json[parser.pos].ord >= 127:
@@ -117,7 +126,9 @@ func parsePrimitive(parser: var JsmnParser, tokens: var seq[JsmnToken], json: st
     # In strict mode primitive must be followed by a comma/object/array
     raise newException(JsmnBadTokenException, $parser)
 
-func parseString(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int) =
+func parseString(
+    parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int
+) =
   ## Fills next token with JSON string.
   let start = parser.pos
   inc(parser.pos)
@@ -153,7 +164,9 @@ func parseString(parser: var JsmnParser, tokens: var seq[JsmnToken], json: strin
     inc(parser.pos)
   raise newException(JsmnBadTokenException, $parser)
 
-func parse(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int): int =
+func parse(
+    parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, length: int
+): int =
   ## Parse JSON string and fill tokens.
   var
     token: ptr JsmnToken
@@ -169,15 +182,18 @@ func parse(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, len
       inc(result)
       token = initToken(parser, tokens)
       if parser.toksuper != -1:
-        assert tokens[parser.toksuper].kind == JSMN_STRING or tokens[parser.toksuper].kind != JSMN_OBJECT
+        assert tokens[parser.toksuper].kind == JSMN_STRING or
+          tokens[parser.toksuper].kind != JSMN_OBJECT
         incSize(tokens, parser.toksuper)
         when not defined(JSMN_NO_PARENT_LINKS):
           token.parent = parser.toksuper
-          assert tokens[token.parent].kind == JSMN_STRING or tokens[token.parent].kind != JSMN_OBJECT
+          assert tokens[token.parent].kind == JSMN_STRING or
+            tokens[token.parent].kind != JSMN_OBJECT
       token.kind = (if c == '{': JSMN_OBJECT else: JSMN_ARRAY)
       token.start = parser.pos
       parser.toksuper = parser.toknext - 1
-      assert tokens[parser.toksuper].kind != JSMN_STRING and tokens[parser.toksuper].kind != JSMN_PRIMITIVE
+      assert tokens[parser.toksuper].kind != JSMN_STRING and
+        tokens[parser.toksuper].kind != JSMN_PRIMITIVE
     of '}', ']':
       kind = (if c == '}': JSMN_OBJECT else: JSMN_ARRAY)
       when not defined(JSMN_NO_PARENT_LINKS):
@@ -228,7 +244,8 @@ func parse(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, len
       parser.toksuper = parser.toknext - 1
       assert tokens[parser.toksuper].kind == JSMN_STRING
     of ',':
-      if parser.toksuper != -1 and tokens[parser.toksuper].kind notin {JSMN_ARRAY, JSMN_OBJECT}:
+      if parser.toksuper != -1 and
+          tokens[parser.toksuper].kind notin {JSMN_ARRAY, JSMN_OBJECT}:
         when not defined(JSMN_NO_PARENT_LINKS):
           parser.toksuper = tokens[parser.toksuper].parent
         var i = parser.toknext - 1
@@ -236,7 +253,8 @@ func parse(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, len
           if tokens[i].kind in {JSMN_ARRAY, JSMN_OBJECT}:
             if tokens[i].start != -1 and tokens[i].stop == -1:
               parser.toksuper = i
-              assert tokens[parser.toksuper].kind != JSMN_STRING and tokens[parser.toksuper].kind != JSMN_PRIMITIVE
+              assert tokens[parser.toksuper].kind != JSMN_STRING and
+                tokens[parser.toksuper].kind != JSMN_PRIMITIVE
               break
           dec(i)
     else:
@@ -253,7 +271,8 @@ func parse(parser: var JsmnParser, tokens: var seq[JsmnToken], json: string, len
       parsePrimitive(parser, tokens, json, length)
       inc(result)
       if parser.toksuper != -1:
-        assert tokens[parser.toksuper].kind == JSMN_STRING or tokens[parser.toksuper].kind == JSMN_ARRAY
+        assert tokens[parser.toksuper].kind == JSMN_STRING or
+          tokens[parser.toksuper].kind == JSMN_ARRAY
         incSize(tokens, parser.toksuper)
     inc(parser.pos)
 

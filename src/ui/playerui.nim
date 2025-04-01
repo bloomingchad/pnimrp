@@ -31,7 +31,10 @@ template volume(inc = true) =
 
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
-  let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
+
+  let fileHint =
+    if config.currentSubsection != "": config.currentSubsection
+    else:                              config.currentSection
   setCursorPos(0, terminalHeight() - 4)
 
   warn("Failed to access station: " & config.stationName, delayMs = 0, dontRing = true)
@@ -86,7 +89,11 @@ proc playStation*(config: MenuConfig) =
     editBadFileHint(config)
     return
 
-  var state = PlayerState(isPaused: false, isMuted: false, volume: lastVolume) # Use lastVolume
+  var state = PlayerState(
+    isPaused: false,
+    isMuted: false,
+    volume: lastVolume
+  ) # Use lastVolume
   var isObserving = false
   var coreIdleCounter: uint8
   var playlistFirstPass = false
@@ -118,7 +125,7 @@ proc playStation*(config: MenuConfig) =
     # Handle playback events
     if event.eventID in {IDPlaybackRestart} and not isObserving:
       when not defined(simple): mpvCtx.observeMetadata()
-      else: mpvCtx.observeMediaTitle()
+      else:                     mpvCtx.observeMediaTitle()
 
       isObserving = true
 

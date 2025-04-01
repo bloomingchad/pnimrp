@@ -11,12 +11,13 @@ when defined(useJsmn):
     var tokens = parseJson(readFile(filePath), autoResize = true)
     # Helper proc to get string value from token
     proc getString(jsonStr: string, token: JsmnToken): string =
-      result = jsonStr[token.start..<token.stop]
+      result = jsonStr[token.start ..< token.stop]
 
     # Find "stations" token
     var stationsTokenIndex = -1
-    for i in 0..<tokens.len:
-      if tokens[i].kind == JSMN_STRING and getString(readFile(filePath), tokens[i]) == "stations":
+    for i in 0 ..< tokens.len:
+      if tokens[i].kind == JSMN_STRING and
+          getString(readFile(filePath), tokens[i]) == "stations":
         stationsTokenIndex = i + 1 # The object/array is *after* the "stations" string
         break
 
@@ -60,7 +61,7 @@ when defined(useJsmn):
     var tokens = parseJson(readFile(filePath), autoResize = true)
     # Helper proc to get string value
     proc getString(jsonStr: string, token: JsmnToken): string =
-      result = jsonStr[token.start..<token.stop]
+      result = jsonStr[token.start ..< token.stop]
 
     if tokens[0].kind != JSMN_OBJECT:
       raise newException(InvalidDataError, "Invalid JSON format: expected an object.")

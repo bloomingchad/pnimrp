@@ -59,7 +59,7 @@ when not defined(simple):
     items: seq[string],
     paths: seq[string]
   ) =
-    for i in 0..<items.len:
+    for i in 0 ..< items.len:
       stations.add(
         StationStatus(
           name:     items[i],
@@ -83,7 +83,7 @@ template KeyToChar(key: Key): char = char(int(key))
 template toChar(key: Key): char = KeyToChar(key)
 
 template ordinalizeKeyForIndx: int =
-  if key.toChar() in {'1'..'9'}:
+  if key.toChar() in {'1' .. '9'}:
     ord(key.toChar()) - ord('1')
   else: ord(toLowerAscii(key.toChar())) - ord('a') + 9
 
@@ -95,9 +95,16 @@ template directoryHandlerHM(items: seq[string]) =
 
   if subItems.len != 0:
     # Navigate to subcategories with isMainMenu = false
-    handleMenu(items[choosenItem], subItems, subPaths, isMainMenu = false, baseDir = selectedPath, handleMenuIsHandling = hmIsHandlingDirectory)
-  else: warn("No station lists available in this category.")
-
+    handleMenu(
+      items[choosenItem],
+      subItems,
+      subPaths,
+      isMainMenu = false,
+      baseDir = selectedPath,
+      handleMenuIsHandling = hmIsHandlingDirectory,
+    )
+  else:
+    warn("No station lists available in this category.")
 
 template jsonFileHandlerHM(items: seq[string]) =
   # Handle JSON files (station lists)
@@ -106,13 +113,20 @@ template jsonFileHandlerHM(items: seq[string]) =
     warn("No stations available. Please check the station list.")
   else:
     # Navigate to station list with isMainMenu = false
-    handleMenu(items[choosenItem], stations.names, stations.urls, isMainMenu = false, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingJSON)
-
-template statusCacheHandlerHM(items: seq[string], handleMenuIsHandling: handleMenuIsHandling) =
-  if isHandlingJSON(handleMenuIsHandling):
-    var statuscontext = StatusCache(
-      sectionName: section
+    handleMenu(
+      items[choosenItem],
+      stations.names,
+      stations.urls,
+      isMainMenu = false,
+      baseDir = baseDir,
+      handleMenuIsHandling = hmIsHandlingJSON,
     )
+
+template statusCacheHandlerHM(
+    items: seq[string], handleMenuIsHandling: handleMenuIsHandling
+) =
+  if isHandlingJSON(handleMenuIsHandling):
+    var statuscontext = StatusCache(sectionName: section)
 
     var stations = newSeqOfCap[StationStatus](32)
 
@@ -120,12 +134,12 @@ template statusCacheHandlerHM(items: seq[string], handleMenuIsHandling: handleMe
     hookCacheResolveAndDisplay(stations, statuscontext)
 
 proc handleMenu*(
-  section: string,
-  items: seq[string],
-  paths: seq[string],
-  isMainMenu: bool = false,
-  baseDir: string = getAppDir() / "assets",
-  handleMenuIsHandling: handleMenuIsHandling
+    section: string,
+    items: seq[string],
+    paths: seq[string],
+    isMainMenu: bool = false,
+    baseDir: string = getAppDir() / "assets",
+    handleMenuIsHandling: handleMenuIsHandling,
 ) =
   ## Handles a generic menu for station selection or main category selection.
   ## Supports both directories and JSON files.
@@ -135,7 +149,13 @@ proc handleMenu*(
     drawHeader()
 
     # Display the menu
-    drawMenu(section, items, isMainMenu = isMainMenu, isPlayerUI = false, isHandlingJSON = isHandlingJSON(handleMenuIsHandling)) # Pass isPlayerUI here
+    drawMenu(
+      section,
+      items,
+      isMainMenu = isMainMenu,
+      isPlayerUI = false,
+      isHandlingJSON = isHandlingJSON(handleMenuIsHandling),
+    ) # Pass isPlayerUI here
 
     when not defined(simple):
       items.statusCacheHandlerHM(handleMenuIsHandling)
@@ -212,6 +232,13 @@ proc drawMainMenu*(baseDir = getAppDir() / "assets") =
     ## stack traces are cleared, we dont want fullscreen until not debug
   illwillInit(fullscreen)
   let categories = loadCategories(baseDir)
-  handleMenu("Main", categories.names, categories.paths, isMainMenu = true, baseDir = baseDir, handleMenuIsHandling = hmIsHandlingDirectory)
+  handleMenu(
+    "Main",
+    categories.names,
+    categories.paths,
+    isMainMenu = true,
+    baseDir = baseDir,
+    handleMenuIsHandling = hmIsHandlingDirectory,
+  )
 
 export hideCursor, error
