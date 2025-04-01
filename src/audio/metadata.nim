@@ -129,7 +129,12 @@ const avoidTagList = [
     "icy-main-stream-url",
     "icy-metaint",
     "icy-samplerate",
-    "encoder"
+    "encoder",
+    "icy-prebuffer",
+    "icy-icq",
+    "icy-irc",
+    "icy-aim",
+    "icy-audio-info"
 ]
 
 const binTagList = [
