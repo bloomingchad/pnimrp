@@ -72,9 +72,12 @@ iterator items(iter: var NodeListIterator): tuple[key: string, value: Node] =
       yield (key: $key, value: valuePtr[index])
     inc(index)
 
-func handleIndividualTag(lowerKey: string, value: string,
-                          tagMap: Table[string, string],
-                          metadataTable: var Table[string, string]) =
+func handleIndividualTag(
+    lowerKey: string,
+    value: string,
+    tagMap: Table[string, string],
+    metadataTable: var Table[string, string],
+) =
   # Handle individual tags based on the tagMap
   let preferredKey = tagMap[lowerKey]
   if preferredKey notin metadataTable:
@@ -102,7 +105,9 @@ func handleIcyAudioInfo(
       var audioInfoValue = keyValue[1].strip
 
       # Use preferred key if available, otherwise use the lowercase key
-      let keyToAdd = if audioInfoKey in tagMap: tagMap[audioInfoKey] else: audioInfoKey
+      let keyToAdd =
+        if audioInfoKey in tagMap: tagMap[audioInfoKey]
+        else:  audioInfoKey
       if keyToAdd notin metadataTable:
         # Add units for specific keys
         if keyToAdd == "Bitrate":

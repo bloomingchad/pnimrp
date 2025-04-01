@@ -112,7 +112,7 @@ proc calculateColumnLayout*(options: MenuOptions): (int, seq[int], int) =
   for i in 0 ..< options.len:
     let columnIndex = i div itemsPerColumn
     let prefix =
-      if i < 9: $(i + 1) & "."
+      if i < 9:  $(i + 1) & "."
       else: $MenuChars[i] & "."
     let itemLength = prefix.len + 1 + options[i].len # +1 for emoji/space
     if itemLength > maxColumnLengths[columnIndex]:

@@ -38,13 +38,14 @@ proc loadQuotesStdLib*(filePath: string): QuoteData =
   if jsonData.kind != JObject:
     raise newException(InvalidDataError, "Invalid JSON format: expected an object.")
 
-  result = QuoteData(quotes: newSeqOfCap[string](32), authors: newSeqOfCap[string](32)) # Initialize empty sequences
+  result = QuoteData(quotes: newSeqOfCap[string](32), authors: newSeqOfCap[string](32))
+    # Initialize empty sequences
 
     # Iterate over the key-value pairs in the JSON object
   for quote, author in jsonData.pairs:
     result.quotes.add(quote) # Add the quote (key)
     result.authors.add(author.getStr) # Add the author (value, converted to string)
-    
+
     # Validate quotes and authors
   for i in 0 ..< result.quotes.len:
     if result.quotes[i].len == 0:

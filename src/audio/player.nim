@@ -38,7 +38,9 @@ proc setAllyOptionsToMpv*(ctx: ptr Handle) =
   # Network configuration
   var netTimeout = 5.0
   cE mpvCtx.setOption("network-timeout", fmtFloat64, netTimeout.addr)
-  cE mpvCtx.setOptionString("demuxer-lavf-o", "reconnect=1,reconnect_streamed=1,reconnect_delay_max=5")
+  cE mpvCtx.setOptionString(
+    "demuxer-lavf-o", "reconnect=1,reconnect_streamed=1,reconnect_delay_max=5"
+  )
   cE mpvCtx.setOptionString("user-agent", "pnimrp/0.1")
 
   # Performance settings

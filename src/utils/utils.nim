@@ -43,7 +43,8 @@ proc validateLengthStationName*(result: seq[string], filePath: string, maxLength
         sleep(400) # Pause for 400ms after displaying the warning
         warnCount += 1
 
-proc checkIfTooLongMagic*: int = terminalWidth() - "  Now Playing: ".len - 6
+proc checkIfTooLongMagic*(): int =
+  terminalWidth() - "  Now Playing: ".len - 6
 
 proc checkIfTooLongForUI*(str: string): bool =
   #str.len > int(terminalWidth().toFloat() / 1.65)

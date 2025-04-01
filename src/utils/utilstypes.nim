@@ -70,12 +70,12 @@ var termWidth* = terminalWidth() ## Tracks the current terminal width.
 var lastMenuSeparatorY* {.global.}: int
 
 const
-  AsciiFrames* = ["♪♫", "♫♪"] # ASCII fallback animation frames
-  EmojiFrames* = ["🎵", "🎶"]     # Emoji animation frames
+  AsciiFrames* = ["♪♫", "♫♪"]  # ASCII fallback animation frames
+  EmojiFrames* = ["🎵", "🎶"]  # Emoji animation frames
 
 var
-  animationFrame*: int = 0               # Tracks the current frame of the animation
-  lastAnimationUpdate*: DateTime = now() # Tracks the last time the animation was updated
+  animationFrame*: int = 0  # Tracks the current frame of the animation
+  lastAnimationUpdate*: DateTime = now()  # Tracks the last time the animation was updated
 
 when not defined(simple):
   type

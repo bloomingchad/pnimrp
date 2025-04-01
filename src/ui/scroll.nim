@@ -1,9 +1,6 @@
 # scroll.nim
 
-import strutils, terminal,
-
-  illwill
-
+import strutils, terminal, illwill
 
 proc clearLineForScroll(start: int, len: int, indentLevel: int = 0) =
   ## Clears a specific portion of the line for scrolling.
@@ -19,7 +16,11 @@ proc clearLineForScroll(start: int, len: int, indentLevel: int = 0) =
       stdout.write(" ".repeat(clearLen))
       stdout.flushFile()
 
-func getVisibleChunk(text: string, offset: int, width: int, indentLevel: int = 0): string =
+func getVisibleChunk(
+    text: string,
+    offset, width: int,
+    indentLevel: int = 0
+): string =
   ## Gets the visible portion of the text to be scrolled.
 
   if text.len <= width:
@@ -31,11 +32,15 @@ func getVisibleChunk(text: string, offset: int, width: int, indentLevel: int = 0
 
     result =
       if endIdx <= loopedText.len:
-        loopedText[start..<endIdx]
+        loopedText[start ..< endIdx]
       else:
-        loopedText[start..^1] & loopedText[0..<endIdx - loopedText.len]
+        loopedText[start ..^ 1] & loopedText[0 ..< endIdx - loopedText.len]
 
-proc scrollTextOnce*(text: string, offset: int, width: int, xStart: int, indentLevel: int = 0) =
+proc scrollTextOnce*(
+    text: string,
+    offset, width, xStart: int,
+    indentLevel: int = 0
+) =
   ## Calculates and prints a single frame of the scrolled text.
   let visibleChunk = getVisibleChunk(text, offset, width - xStart - 3, indentLevel + 1)
   let clearStart = xStart

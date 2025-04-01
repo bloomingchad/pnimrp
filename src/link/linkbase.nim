@@ -21,10 +21,11 @@ func parseUrlComponents*(url: string): tuple[protocol: string, domain: string, p
   let protocol = if uri.scheme == "": "http" else: uri.scheme
   let domain = uri.hostname
 
-  let portNum = if uri.port == "":
-    if protocol == "https": 443 else: 80
-  else:
-    parseInt(uri.port)
+  let portNum =
+    if uri.port == "":
+      if protocol == "https": 443 else: 80
+    else:
+      parseInt(uri.port)
 
   let port = Port(portNum)
 
@@ -32,7 +33,6 @@ func parseUrlComponents*(url: string): tuple[protocol: string, domain: string, p
     raise newException(LinkCheckError, "Invalid domain")
 
   return (protocol, domain, port)
-
 
 proc handleLinkCheckError*(e: ref Exception, timeout: int): LinkValidationResult =
   ## Handles exceptions during link validation and returns a `LinkValidationResult`.
@@ -44,31 +44,19 @@ proc handleLinkCheckError*(e: ref Exception, timeout: int): LinkValidationResult
   ##
   ## Returns:
   ##   LinkValidationResult object containing error details.
+  var err: string
   if e of OSError or e of IOError:
-    result = LinkValidationResult(
-      isValid: false,
-      error: "Connection error: " & e.msg
-    )
+    err = "Connection error: " & e.msg
   elif e of TimeoutError:
-    result = LinkValidationResult(
-      isValid: false,
-      error: "Connection timed out after " & $timeout & "ms"
-    )
+    err = "Connection timed out after " & $timeout & "ms"
   elif e of LinkCheckError:
-    result = LinkValidationResult(
-      isValid: false,
-      error: "Invalid URL: " & e.msg
-    )
+    err = "Invalid URL: " & e.msg
   elif e of ValueError:
-    result = LinkValidationResult(
-      isValid: false,
-      error: "Invalid URL format"
-    )
+    err = "Invalid URL format"
   else:
-    result = LinkValidationResult(
-      isValid: false,
-      error: "Unexpected error: " & e.msg
-    )
+    err = "Unexpected error: " & e.msg
+
+  result = LinkValidationResult(isValid: false, error: err)
 
 template tryHttpGetWhenMediaServerDoesNotSupportHead*(url: string) = #TODO
   discard

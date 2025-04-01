@@ -58,7 +58,7 @@ proc resolveLink*(url: string): Future[LinkStatus] {.async.} =
       let filePathNameExt = "debug.log"
       discard open(fileInConsideration, filePathNameExt, fmAppend)
 
-    result = await  asyncLinkCheckTolerantWithContentType(normalizedUrl)
+    result = await asyncLinkCheckTolerantWithContentType(normalizedUrl)
     when debug:
       fileInConsideration.writeLine tempFileLogContent
       fileInConsideration.close()

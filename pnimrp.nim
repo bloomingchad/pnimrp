@@ -25,7 +25,7 @@ type
 
 const
   AppName = "Poor Man's Radio Player" # Name of the application
-  Version = "0.1"                     # Current version of the application
+  Version = "0.1" # Current version of the application
 
 template assertAssetNotFound(asset: string, isDir = true) =
   let status =
