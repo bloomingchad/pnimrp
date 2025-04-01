@@ -12,7 +12,7 @@ you can play your favorite stations all from the comfort of your terminal
 inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
 **pnimrp** aims to extend pmrp whilst keeping familiarity.
 
-[![Windows](https://img.shields.io/badge/Windows-7_11-0078D6?logo=windows&logoColor=white)]()
+[![Windows](https://img.shields.io/badge/Windows-7_|_11-0078D6?logo=windows&logoColor=white)]()
 [![Debian AntiX](https://img.shields.io/badge/Debian-AntiX_19.1_(2021)-A81D33?logo=debian&logoColor=white)]()
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04_|_24.04-E95420?logo=ubuntu&logoColor=white)]()
 [![Termux](https://img.shields.io/badge/Termux-Android-3DDC84?logo=android&logoColor=white)]()
