@@ -6,13 +6,19 @@
 sick of opening chrome just to stream some internet radio?
 i made this little terminal radio player that's saved me tons of ram
 
-with a collection of **30+ modifiable radio station genres** (json),
-you can play your favorite stations—all from the comfort of your terminal
-
-no more fiddling with pls files
+with a collection of over 700 radio stations, curated and modifiable,
+you can play your favorite stations all from the comfort of your terminal
 
 inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
 **pnimrp** aims to extend pmrp whilst keeping familiarity.
+
+[![Windows](https://img.shields.io/badge/Windows-7_11-0078D6?logo=windows&logoColor=white)]()
+[![Debian AntiX](https://img.shields.io/badge/Debian-AntiX_19.1_(2021)-A81D33?logo=debian&logoColor=white)]()
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04_|_24.04-E95420?logo=ubuntu&logoColor=white)]()
+[![Termux](https://img.shields.io/badge/Termux-Android-3DDC84?logo=android&logoColor=white)]()
+[![FreeBSD](https://img.shields.io/badge/FreeBSD-14.x-AB2B28?logo=freebsd&logoColor=white)]()
+[![OpenIndiana](https://img.shields.io/badge/OpenIndiana-2022.10_|_2023.10-ED2E38)]()
+[![Haiku](https://img.shields.io/badge/Haiku-R1/Beta4_(2022)-000000)]()
 
 ## 🎥 demo
 
