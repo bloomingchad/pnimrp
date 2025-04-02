@@ -91,7 +91,7 @@ when defined(dragonfly) or defined(macos):
 proc main() =
   ## Main entry point for the application.
   when not defined(windows):
-    if not stdin.isatty():
+    if not stdin.isatty() or not stdout.isatty():
       error "please run within terminal!"
       quit QuitFailure
 
