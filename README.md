@@ -18,7 +18,7 @@ inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
 [![Termux](https://img.shields.io/badge/Termux-Android-3DDC84?logo=android&logoColor=white)]()   
 [![FreeBSD](https://img.shields.io/badge/FreeBSD-14.x-AB2B28?logo=freebsd&logoColor=white)]()
 [![OpenIndiana](https://img.shields.io/badge/OpenIndiana-2022.10_|_2023.10-ED2E38?logo=openindiana&logoColor=white)]()  
-[![Haiku](https://img.shields.io/badge/Haiku-R1/Beta4-FFCC00?logo=haiku&logoColor=black)]()
+[![Haiku](https://img.shields.io/badge/Haiku-R1_Beta4_|_Beta5-FFCC00?logo=haiku&logoColor=black)]()
 
 ## 🎥 demo
 
