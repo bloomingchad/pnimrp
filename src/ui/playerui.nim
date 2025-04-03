@@ -222,6 +222,11 @@ proc playStation*(config: MenuConfig) =
       else:
         showInvalidChoice()
 
+  if state.isPaused: #reset states for globalCtx if user returned with P/M
+    mpvCtx.pause(false)
+  if state.isMuted:
+    mpvCtx.mute(false)
+
 #except Exception:
   #  let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
   #  warn("An error occurred during playback. Edit the station list in: " & fileHint & ".json")
