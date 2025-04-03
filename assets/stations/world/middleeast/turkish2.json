@@ -1,0 +1,15 @@
+{
+  "stations": {
+    "Virgin Radio": "http://playerservices.streamtheworld.com/api/livestream-redirect/VIRGIN_RADIO_SC",
+    "Joy FM": "http://playerservices.streamtheworld.com/api/livestream-redirect/JOY_FM_SC",
+    "Joy Jazz": "http://playerservices.streamtheworld.com/api/livestream-redirect/JOY_JAZZ_SC",
+    "Metro FM": "http://playerservices.streamtheworld.com/api/livestream-redirect/METRO_FM_SC",
+    "NTV Radyo": "http://ntvrdsc.radyotvonline.com/",
+    "Pal Nostalji": "http://shoutcast.radyogrup.com:1010/",
+    "Pal Station": "http://shoutcast.radyogrup.com:1020/",
+    "Radyo Dejavu": "http://radyodejavu.canliyayinda.com:8054/",
+    "Radyo Voyage": "http://voyagewmp.radyotvonline.com:80/",
+    "Retro Türk": "http://playerservices.streamtheworld.com/api/livestream-redirect/RETROTURK_SC",
+    "World Hits": "http://37.247.98.8/stream/34/.mp3"
+  }
+}
