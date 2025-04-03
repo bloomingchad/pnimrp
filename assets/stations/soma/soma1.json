@@ -1,20 +1,20 @@
 {
-	"stations": {
-		"7 Inch Soul": "ice.somafm.com/7soul",
-		"BAGeL Radio": "ice.somafm.com/bagel",
-		"Beat Blender": "ice.somafm.com/beatblender",
-		"Black Rock FM": "ice.somafm.com/brfm",
-		"Boot Liquor": "ice.somafm.com/bootliquor",
-		"Cliqhop idm": "ice.somafm.com/cliqhop",
-		"Covers": "ice.somafm.com/covers",
-		"DEF CON Radio": "ice.somafm.com/defcon",
-		"Deep Space One": "ice.somafm.com/deepspaceone",
-		"Digitalis": "ice.somafm.com/digitalis",
-		"Doomed": "ice.somafm.com/doomed",
-		"Drone Zone": "ice.somafm.com/dronezone",
-		"Dub Step Beyond": "ice.somafm.com/dubstep",
-		"Earwaves": "ice.somafm.com/earwaves",
-		"Fluid": "ice.somafm.com/fluid",
-		"Underground 80s": "ice.somafm.com/u80s"
-	}
+  "stations": {
+    "Groove Salad": "https://ice.somafm.com/groovesalad-128-mp3",
+    "Drone Zone": "https://ice.somafm.com/dronezone-128-mp3",
+    "Indie Pop Rocks!": "https://ice.somafm.com/indiepop-128-mp3",
+    "Deep Space One": "https://ice.somafm.com/deepspaceone-128-mp3",
+    "Groove Salad Classic": "https://ice.somafm.com/gsclassic-128-mp3",
+    "Space Station Soma": "https://ice.somafm.com/spacestation-128-mp3",
+    "Secret Agent": "https://ice.somafm.com/secretagent-128-mp3",
+    "Underground 80s": "https://ice.somafm.com/u80s-128-mp3",
+    "Lush": "https://ice.somafm.com/lush-128-mp3",
+    "DEF CON Radio": "https://ice.somafm.com/defcon-128-mp3",
+    "Synphaera Radio": "https://ice.somafm.com/synphaera-128-mp3",
+    "Left Coast 70s": "https://ice.somafm.com/seventies-128-mp3",
+    "Folk Forward": "https://ice.somafm.com/folkfwd-128-mp3",
+    "Beat Blender": "https://ice.somafm.com/beatblender-128-mp3",
+    "Boot Liquor": "https://ice.somafm.com/bootliquor-128-mp3",
+    "The Trip": "https://ice.somafm.com/thetrip-128-mp3"
+  }
 }

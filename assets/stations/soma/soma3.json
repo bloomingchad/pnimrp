@@ -1,0 +1,16 @@
+{
+  "stations": {
+    "ThistleRadio": "https://ice.somafm.com/thistle-128-mp3",
+    "Black Rock FM": "https://ice.somafm.com/brfm-128-mp3",
+    "n5MD Radio": "https://ice.somafm.com/n5md-128-mp3",
+    "SomaFM Specials": "https://ice.somafm.com/specials-128-mp3",
+    "Chillits Radio": "https://ice.somafm.com/chillits-128-mp3",
+    "Doomed": "https://ice.somafm.com/doomed-128-mp3",
+    "SomaFM Live": "https://ice.somafm.com/live-128-mp3",
+    "SF Police Scanner": "https://ice.somafm.com/scanner-128-mp3",
+    "SF in SF": "https://ice.somafm.com/sfinsf-128-mp3",
+    "The In-Sound": "https://ice.somafm.com/insound-128-mp3",
+    "Mission Control": "https://ice.somafm.com/missioncontrol-128-mp3",
+    "SF 10-33": "https://ice.somafm.com/sf1033-128-mp3"
+  }
+}
