@@ -1,19 +1,20 @@
 {
-	"stations": {
-		"Folk Forward": "ice.somafm.com/folkfwd",
-		"Groove Salad": "ice.somafm.com/groovesalad",
-		"Illinois Street Lounge": "ice.somafm.com/illstreet",
-		"Indie Pop Rocks": "ice.somafm.com/indiepop",
-		"Left Coast 70s": "ice.somafm.com/seventies",
-		"Lush": "ice.somafm.com/lush",
-		"Mission Control": "ice.somafm.com/missioncontrol",
-		"PopTron": "ice.somafm.com/poptron",
-		"SF 1033": "ice.somafm.com/sf1033",
-		"Secret Agent": "ice.somafm.com/secretagent",
-		"Sonic Universe": "ice.somafm.com/sonicuniverse",
-		"Space Station Soma": "ice.somafm.com/spacestation",
-		"Suburbs of Goa": "ice.somafm.com/suburbsofgoa",
-		"The Trip": "ice.somafm.com/thetrip",
-		"ThistleRadio": "ice.somafm.com/thistle"
-	}
+  "stations": {
+    "PopTron": "https://ice.somafm.com/poptron-128-mp3",
+    "Sonic Universe": "https://ice.somafm.com/sonicuniverse-128-mp3",
+    "Bossa Beyond": "https://ice.somafm.com/bossa-128-mp3",
+    "Suburbs of Goa": "https://ice.somafm.com/suburbsofgoa-128-mp3",
+    "Heavyweight Reggae": "https://ice.somafm.com/reggae-128-mp3",
+    "The Dark Zone": "https://ice.somafm.com/darkzone-128-mp3",
+    "Illinois Street Lounge": "https://ice.somafm.com/illstreet-128-mp3",
+    "Seven Inch Soul": "https://ice.somafm.com/7soul-128-mp3",
+    "cliqhop idm": "https://ice.somafm.com/cliqhop-128-mp3",
+    "Vaporwaves": "https://ice.somafm.com/vaporwaves-128-mp3",
+    "Fluid": "https://ice.somafm.com/fluid-128-mp3",
+    "Dub Step Beyond": "https://ice.somafm.com/dubstep-128-mp3",
+    "Digitalis": "https://ice.somafm.com/digitalis-128-mp3",
+    "Metal Detector": "https://ice.somafm.com/metal-128-mp3",
+    "Tiki Time": "https://ice.somafm.com/tikitime-128-mp3",
+    "Covers": "https://ice.somafm.com/covers-128-mp3"
+  }
 }
