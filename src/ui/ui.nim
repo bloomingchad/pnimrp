@@ -64,8 +64,9 @@ proc showExitMessage* =
 
   quit(QuitSuccess)
 
-proc drawSeperatorUI*(xpos = -1; sep = '='; offset = 5; color = fgGreen) =
-  if not xpos == -1: setCursorXPos xpos
+proc drawSeperatorUI*(xpos = -1, sep = '=', offset = 5, color = fgGreen) =
+  if not xpos == -1:
+    setCursorXPos xpos
   say(sep.repeat(termWidth), color, offset)
 
 proc drawHeader*() =
@@ -79,8 +80,10 @@ proc drawHeader*() =
 
   # Draw the application title with emojis using the theme's header color
   let title =
-    when not defined(noEmoji): "       🎧 " & AppName & " 🎧"
-    else: "          " & AppName
+    when not defined(noEmoji):
+      "       🎧 " & AppName & " 🎧"
+    else:
+      "          " & AppName
   say(title, currentTheme.header, xOffset = (termWidth - title.len) div 2)
 
   # Draw the bottom border of the header using the theme's separator color
@@ -95,8 +98,9 @@ proc updateTermWidth* =
     termWidth = newWidth
     lastTermWidth = newWidth
 
-proc renderMenuOptions(options: MenuOptions, numColumns: int,
-    maxColumnLengths: seq[int], spacing: int) =
+proc renderMenuOptions(
+    options: MenuOptions, numColumns: int, maxColumnLengths: seq[int], spacing: int
+) =
   ## Renders the menu options in a multi-column layout.
   when not defined(simple):
     emojiPositions = @[] # Clear previous positions
@@ -128,7 +132,7 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
         when not defined(simple):
           # Calculate X position for the emoji
           var emojiX = 0
-          for i in 0..<col:
+          for i in 0 ..< col:
             emojiX += maxColumnLengths[i] + spacing
 
           emojiX += prefix.len + 1 # +1 for the space after the number/letter
@@ -139,7 +143,8 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
         prefix = " " & prefix
 
         # Truncate and format
-        let truncatedName = truncateName(options[index], maxColumnLengths[col] - prefix.len)
+        let truncatedName =
+          truncateName(options[index], maxColumnLengths[col] - prefix.len)
         let formattedOption = prefix & truncatedName
         let padding = maxColumnLengths[col] - formattedOption.len
         currentLine.add(formattedOption & " ".repeat(padding))
@@ -159,18 +164,20 @@ proc renderMenuOptions(options: MenuOptions, numColumns: int,
 func getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
   ## Returns footer options string based on context (main menu/submenu/player).
   result =
-    if isMainMenu: "[Q] Quit | [N] Notes | [U] Help | [S] ImFeelingLucky"
+    if isMainMenu:
+      "[Q] Quit | [N] Notes | [U] Help | [S] ImFeelingLucky"
     elif isPlayerUI:
       "[Q] Quit | [R] Return | [P] Pause/Play | [-/+] Vol | [L] Like"
-    else: "[Q] Quit | [R] Return | [U] Help | [S] ImFeelingLucky"
+    else:
+      "[Q] Quit | [R] Return | [U] Help | [S] ImFeelingLucky"
 
 proc displayMenu*(
-  options: MenuOptions,
-  showReturnOption = true,
-  highlightActive = true,
-  isMainMenu = false,
-  isPlayerUI = false,
-  isHandlingJSON = false
+    options: MenuOptions,
+    showReturnOption = true,
+    highlightActive = true,
+    isMainMenu = false,
+    isPlayerUI = false,
+    isHandlingJSON = false
 ) =
   ## Displays menu options in a formatted multi-column layout.
   updateTermWidth()
@@ -182,8 +189,10 @@ proc displayMenu*(
 
   # Draw the "Station Categories" section header
   let categoriesHeader =
-    when not defined(noEmoji): "         📻 Station Categories 📻"
-    else: "         \\[o=] Station Categories [o=]/"
+    when not defined(noEmoji):
+          "         📻 Station Categories 📻"
+    else:
+      "         \\[o=] Station Categories [o=]/"
   say(categoriesHeader, fgCyan, xOffset = (termWidth - categoriesHeader.len) div 2)
   currentY += 1 # Increment after header
 
@@ -221,15 +230,14 @@ proc displayMenu*(
   drawSeperatorUI(xpos = -1, offset = 0)
   currentY += 1 #we are not tracking this, but it's good practice
 
-
 proc drawMenu*(
-  section: string,
-  options: string | MenuOptions,
-  subsection = "",
-  showNowPlaying = true,
-  isMainMenu = false,
-  isPlayerUI = false,
-  isHandlingJSON = false
+    section: string,
+    options: string | MenuOptions,
+    subsection = "",
+    showNowPlaying = true,
+    isMainMenu = false,
+    isPlayerUI = false,
+    isHandlingJSON = false
 ) =
   ## Draws a complete menu with header and options.
   clear()
@@ -241,14 +249,19 @@ proc drawMenu*(
     for line in splitLines(options):
       say(line, fgBlue)
   else:
-    displayMenu(options, isMainMenu = isMainMenu, isPlayerUI = isPlayerUI, isHandlingJSON = isHandlingJSON)
+    displayMenu(
+      options,
+      isMainMenu = isMainMenu,
+      isPlayerUI = isPlayerUI,
+      isHandlingJSON = isHandlingJSON
+    )
 
 proc showFooter*(
-  lineToDraw = 4,
-  isMainMenu = false,
-  isPlayerUI = false,
-  separatorColor = fgGreen,
-  footerColor = fgYellow
+    lineToDraw = 4,
+    isMainMenu = false,
+    isPlayerUI = false,
+    separatorColor = fgGreen,
+    footerColor = fgYellow
 ) =
   ## Displays the footer with dynamic options based on the context.
   updateTermWidth()
@@ -324,7 +337,6 @@ proc showHelp*() =
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
   say("Press any key to return to the main menu.", fgYellow)
   discard getch() # Wait for any key press
-
 
 proc volumeColor(volume: int): ForegroundColor =
   if volume > 110: fgRed
