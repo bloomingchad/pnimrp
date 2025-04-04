@@ -28,6 +28,10 @@ template volume(inc = true) =
   if inc: state.volume = min(state.volume + VolumeStep, MaxVolume)
   else:   state.volume = max(state.volume - VolumeStep, MinVolume)
   lastVolume = state.volume
+  cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
+
+template incVolume() = volume(inc = true)
+template decVolume() = volume(inc = false)
 
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
@@ -191,13 +195,11 @@ proc playStation*(config: MenuConfig) =
         updatePlayMutedStatePlayerUI(currentStatusEmoji(currentStatus(state)))
 
       of Key.Slash, Key.Plus:
-        volume(inc = true)
-        cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
+        incVolume()
         updateVolumePlayerUI(state.volume)
 
       of Key.Asterisk, Key.Minus:
-        volume(inc = false)
-        cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
+        decVolume()
         updateVolumePlayerUI(state.volume)
 
       of Key.R, Key.BackSpace:
@@ -223,9 +225,9 @@ proc playStation*(config: MenuConfig) =
         showInvalidChoice()
 
   if state.isPaused: #reset states for globalCtx if user returned with P/M
-    mpvCtx.pause(false)
+    mpvCtx.resume()
   if state.isMuted:
-    mpvCtx.mute(false)
+    mpvCtx.unmute()
 
 #except Exception:
   #  let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection
