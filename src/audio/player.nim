@@ -105,6 +105,8 @@ proc pause*(ctx: ptr Handle; shouldPause: bool) {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to set pause state: " & e.msg)
 
+template resume*(ctx: ptr Handle) = ctx.pause(shouldPause = false)
+
 proc mute*(ctx: ptr Handle; shouldMute: bool) {.raises: [PlayerError].} =
   ## Toggles the mute state of the player.
   ##
@@ -116,6 +118,8 @@ proc mute*(ctx: ptr Handle; shouldMute: bool) {.raises: [PlayerError].} =
     cE ctx.setProperty("mute", fmtFlag, addr muteState)
   except Exception as e:
     raise newException(PlayerError, "Failed to set mute state: " & e.msg)
+
+template unmute*(ctx: ptr Handle) = ctx.mute(shouldMute = false)
 
 proc observeMediaTitle*(ctx: ptr Handle) {.raises: [PlayerError].} =
   ## Starts observing changes to the media title.
