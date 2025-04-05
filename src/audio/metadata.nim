@@ -214,15 +214,24 @@ proc metadata*(ctx: ptr Handle): Table[string, string] =
   except CatchableError:
     discard
 
+template willHitUIBottom(): bool = (result.len + startingPoint + 1) >= maxHeight
+
 proc updateMetadataUI*(config: MenuConfig, ctx: ptr Handle, state: PlayerState): Table[string, string] =
   ## Updates and returns the metadata for the current station.
   result = metadata(ctx)
-  var goingDown: uint8
+  var goingDown: int
+
+  let maxHeight = terminalHeight()
+  let startingPoint = 6
+  cursorDown startingPoint
+
+  if willHitUIBottom():
+    return result
+
   if result.len > 0:
-    cursorDown 6
     for key, value in result:
       if (value == "") or (key.toLowerAscii().contains("title")): continue
       styledEcho fgCyan, "  " & key & ": '" & value.truncateMe() & "'"
       goingDown += 1
-    cursorUp int(goingDown)
-    cursorUp 6
+
+  cursorUp goingDown + startingPoint
