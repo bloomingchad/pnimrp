@@ -221,7 +221,7 @@ proc updateMetadataUI*(config: MenuConfig, ctx: ptr Handle, state: PlayerState):
   if result.len > 0:
     cursorDown 6
     for key, value in result:
-      if (value == "") or (key.contains("title")): continue
+      if (value == "") or (key.toLowerAscii().contains("title")): continue
       styledEcho fgCyan, "  " & key & ": '" & value.truncateMe() & "'"
       goingDown += 1
     cursorUp int(goingDown)
