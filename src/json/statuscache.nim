@@ -17,6 +17,10 @@ import
   }
 ]#
 
+const statusCacheValidity =
+  when debug: 1  #1day
+  else:       12 #12days
+
 using
   stations: seq[StationStatus]
   statuscontext: StatusCache
@@ -53,7 +57,7 @@ proc checkIfCacheAlreadyExistAndIsValid*(stations; statuscontext): bool =
     let cacheTime = parse(cacheLastTimeStr, "yyyy-MM-dd'T'HH:mm:sszzz")
     let currentTime = now()
     let timeDiff = currentTime - cacheTime
-    return timeDiff.inSeconds <= 24 * 3600 # 24 hours in seconds
+    return timeDiff.inDays <= statusCacheValidity
   except:
     # Handle any parsing errors (invalid JSON, missing key, etc.)
     return false
