@@ -1,4 +1,3 @@
-
 # pnimrp.nim
 
 import
@@ -71,7 +70,9 @@ proc showBanner() =
 
 proc cleanup() =
   ## Performs cleanup tasks on application exit, such as restoring the cursor.
-  illwillDeinit()
+  try: illwillDeInit()
+  except IllwillError: discard
+
   echo ""
   echo "Thank you for using " & AppName
 
