@@ -201,7 +201,7 @@ type
 
   IllwillError* = object of CatchableError
 
-func turnOffWarningFOrOldCompiler(v: string): bool =
+func turnOffWarningForOldCompiler*(v: string): bool =
   v notin["1.4.0", "1.4.2", "1.4.4", "1.4.6", "1.4.8"]
 
 when turnOffWarningForOldCompiler(NimVersion):
