@@ -13,3 +13,6 @@ else:
 
 when defined(nlvm):
   switch("passL", "-lmpv")
+
+when not defined(dev):
+  switch("define", "release")
