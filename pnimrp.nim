@@ -1,3 +1,4 @@
+
 # pnimrp.nim
 
 import
@@ -70,10 +71,9 @@ proc showBanner() =
 
 proc cleanup() =
   ## Performs cleanup tasks on application exit, such as restoring the cursor.
-  mpvCtx.destroy()
+  illwillDeinit()
   echo ""
   echo "Thank you for using " & AppName
-  illwillDeinit()
 
 proc handleInterrupt() {.noconv.} =
   ## Handles SIGINT (Ctrl+C) signal gracefully.
@@ -137,6 +137,7 @@ proc main() =
 
     #init global mpv context for reuse
     initGlobalMpv()
+    defer: mpvCtx.destroy()
 
     # Start the main menu with the configured assets directory
     drawMainMenu(config.stationsDir)
