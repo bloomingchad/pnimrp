@@ -4,7 +4,7 @@ import
   os, terminal, std/exitprocs, random,
 
   src/[
-    menu, ui/illwill,
+    menu, ui/illwill, ui/hidestderr,
     utils/utils,
     audio/player, audio/libmpv
   ]
@@ -22,6 +22,8 @@ type
     assetsDir: string # Directory where application assets are stored
     stationsDir: string
     version: string   # Application version
+
+var state: StderrState
 
 const
   AppName = "Poor Man's Radio Player" # Name of the application
@@ -73,6 +75,7 @@ proc cleanup() =
   try: illwillDeInit()
   except IllwillError: discard
 
+  restoreStderr(addr(state))
   echo ""
   echo "Thank you for using " & AppName
 
@@ -95,6 +98,8 @@ proc main() =
     if not stdin.isatty() or not stdout.isatty():
       error "please run within terminal!"
       quit QuitFailure
+
+  initSuppressStderr(addr(state))
 
   try:
     # Register cleanup procedure to run on exit
