@@ -16,7 +16,8 @@ inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
 [![Debian AntiX](https://img.shields.io/badge/Debian_AntiX-19.1_|_23.2-A81D33?logo=debian&logoColor=white)]()  
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04_|_24.04-E95420?logo=ubuntu&logoColor=white)]()
 [![Termux](https://img.shields.io/badge/Termux-Android-3DDC84?logo=android&logoColor=white)]()   
-[![FreeBSD](https://img.shields.io/badge/FreeBSD-14.x-AB2B28?logo=freebsd&logoColor=white)]()
+[![FreeBSD](https://img.shields.io/badge/FreeBSD-14.x-AB2B28?logo=freebsd&logoColor=white)]()  
+[![NetBSD](https://img.shields.io/badge/NetBSD-10.1-FF6600?logo=netbsd&logoColor=white)]()  
 [![OpenIndiana](https://img.shields.io/badge/OpenIndiana-2022.10_|_2023.10-ED2E38?logo=openindiana&logoColor=white)]()  
 [![Haiku](https://img.shields.io/badge/Haiku-R1_Beta4_|_Beta5-FFCC00?logo=haiku&logoColor=black)]()
 
