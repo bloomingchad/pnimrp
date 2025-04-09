@@ -73,18 +73,22 @@ status=$?
 # Check if the temporary file exists and is not empty
 if [[ -s "$TEMP_FILE" ]]; then
     # Use the `file` command to identify the file type
-    FILE_TYPE=$(file "$TEMP_FILE" | tr '[:upper:]' '[:lower:]')
+    #FILE_TYPE=$(file "$TEMP_FILE" | tr '[:upper:]' '[:lower:]')
     
     # Check if any of the keywords are present in the file type description
+    #FOUND=0
+    #MATCHED_KEYWORD=""
+    #for keyword in "${KEYWORDS[@]}"; do
+    #    if echo "$FILE_TYPE" | grep -q "$keyword"; then
+    #        FOUND=1
+    #        MATCHED_KEYWORD="$keyword"
+    #        break
+    #    fi
+    #done
+
+    # Use mediainfo to identify the file type
     FOUND=0
     MATCHED_KEYWORD=""
-    for keyword in "${KEYWORDS[@]}"; do
-        if echo "$FILE_TYPE" | grep -q "$keyword"; then
-            FOUND=1
-            MATCHED_KEYWORD="$keyword"
-            break
-        fi
-    done
     
     # If file command didn't identify audio, try mediainfo as a fallback
     if [[ $FOUND -eq 0 ]]; then
