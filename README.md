@@ -27,6 +27,13 @@ inspired by [poor man's radio player](https://github.com/hakerdefo/pmrp),
 
 made with [asciinema](https://asciinema.org/)
 
+## Health Status: 2025-04-10
+| Metric              | Value     |
+|---------------------| ----------|
+| Total Stations      | 1034      |
+| Successfull ✅      | 934 (90%) |
+| Failure Rate        | 101       |
+
 ## 🌟 key features
 
 - **portable**: works on unix and windows
