@@ -2,11 +2,64 @@
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/data/data/com.termux/files/usr/bin/"
 
-# Check if help flag is provided
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+# Function to display help message
+show_help() {
     echo "Usage: $0 [STATION_NAME] [URL]"
     echo "Checks if the provided URL points to an audio file."
     echo "Returns exit code 0 if audio file is detected, 1 otherwise."
+}
+
+# Function to check if required commands exist
+check_required_commands() {
+    for cmd in curl mediainfo; do
+        if ! command -v "$cmd" &> /dev/null; then
+            echo "❌ $STATION_NAME: '$cmd' is not installed or not in PATH."
+            exit 1
+        fi
+    done
+}
+
+# Function to make a curl request
+make_request() {
+    local extra_opts=("$@")
+    curl "${CURL_OPTS[@]}" "${extra_opts[@]}" "$URL" 2>&1
+}
+
+# Function to check file type using mediainfo
+check_with_mediainfo() {
+    MEDIAINFO_OUTPUT=$(mediainfo "$TEMP_FILE" | tr '[:upper:]' '[:lower:]')
+    for keyword in "${KEYWORDS[@]}"; do
+        if echo "$MEDIAINFO_OUTPUT" | grep -q "$keyword"; then
+            FOUND=1
+            MATCHED_KEYWORD="$keyword (detected by mediainfo)"
+            return
+        fi
+    done
+
+    # Additional check for generic MPEG Audio detection in mediainfo
+    if echo "$MEDIAINFO_OUTPUT" | grep -q "mpeg audio"; then
+        FOUND=1
+        MATCHED_KEYWORD="mpeg audio (detected by mediainfo)"
+    fi
+}
+
+# Function to check file type using file command
+check_with_file() {
+    FILE_TYPE=$(file "$TEMP_FILE" | tr '[:upper:]' '[:lower:]')
+    for keyword in "${KEYWORDS[@]}"; do
+        if echo "$FILE_TYPE" | grep -q "$keyword"; then
+            FOUND=1
+            MATCHED_KEYWORD="$keyword (detected by file)"
+            return
+        fi
+    done
+}
+
+# Main script logic starts here
+
+# Check if help flag is provided
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    show_help
     exit 0
 fi
 
@@ -20,21 +73,14 @@ fi
 STATION_NAME="$1"
 URL="$2"
 
-# Check for required commands: curl and mediainfo
-for cmd in curl mediainfo; do
-    if ! command -v "$cmd" &> /dev/null; then
-        echo "❌ $STATION_NAME: '$cmd' is not installed or not in PATH."
-        exit 1
-    fi
-done
+# Check for required commands
+check_required_commands
 
 # Define the target keywords (case-insensitive)
 KEYWORDS=("flac" "aac" "mp3" "adts" "mpeg" "layer iii" "pls" "m3u" "ogg" "vorbis" "opus")
 
 # Create a randomly named temporary file with unique identifier for concurrent runs
 TEMP_FILE="$(mktemp)"
-
-# Use curl to download the file with a timeout of 5 seconds and a user-agent string
 
 # Common curl options
 CURL_OPTS=(
@@ -50,12 +96,6 @@ CURL_OPTS=(
     --header "Range: bytes=0-"
     --output "$TEMP_FILE"
 )
-
-# Function to make the request
-make_request() {
-    local extra_opts=("$@")
-    curl "${CURL_OPTS[@]}" "${extra_opts[@]}" "$URL" 2>&1
-}
 
 # Try curl normally first
 output=$(make_request)
@@ -73,48 +113,23 @@ status=$?
 #    fi
 #fi
 
-
 # Check if the temporary file exists and is not empty
 if [[ -s "$TEMP_FILE" ]]; then
-    # Use mediainfo to identify the file type
+    # Initialize variables for detection
     FOUND=0
     MATCHED_KEYWORD=""
-    
-    # If file command didn't identify audio, try mediainfo as a fallback
+
+    # First, try detecting with mediainfo
+    check_with_mediainfo
+
+    # If mediainfo fails, fall back to the file command
     if [[ $FOUND -eq 0 ]]; then
-        MEDIAINFO_OUTPUT=$(mediainfo "$TEMP_FILE" | tr '[:upper:]' '[:lower:]')
-        for keyword in "${KEYWORDS[@]}"; do
-            if echo "$MEDIAINFO_OUTPUT" | grep -q "$keyword"; then
-                FOUND=1
-                MATCHED_KEYWORD="$keyword (detected by mediainfo)"
-                break
-            fi
-        done
-        
-        # Additional check for generic MPEG Audio detection in mediainfo
-        if [[ $FOUND -eq 0 ]] && echo "$MEDIAINFO_OUTPUT" | grep -q "mpeg audio"; then
-            FOUND=1
-            MATCHED_KEYWORD="mpeg audio (detected by mediainfo)"
-        fi
+        check_with_file
     fi
 
-    # Use the `file` command to identify the file type (fallback if mediainfo fails)
-    if [[ $FOUND -eq 0 ]]; then
-        FILE_TYPE=$(file "$TEMP_FILE" | tr '[:upper:]' '[:lower:]')
-        
-        # Check if any of the keywords are present in the file type description
-        for keyword in "${KEYWORDS[@]}"; do
-            if echo "$FILE_TYPE" | grep -q "$keyword"; then
-                FOUND=1
-                MATCHED_KEYWORD="$keyword (detected by file)"
-                break
-            fi
-        done
-    fi
-    
     # Clean up the temporary file
     rm -f "$TEMP_FILE"
-    
+
     # Return success or error based on whether a keyword was found
     if [[ $FOUND -eq 1 ]]; then
         echo "✅ $STATION_NAME ($MATCHED_KEYWORD)"
