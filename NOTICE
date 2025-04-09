@@ -3,35 +3,31 @@ NOTICE
 **pnimrp**
    - Description: A terminal-based radio player written in Nim.
    - License: Mozilla Public License 2.0 (MPL-2.0)
-   - Copyright: Copyright (c) 2021-2025 bloomingchad
+   - Copyright: Copyright (c) 2021-2022, 2024-2025 bloomingchad
    - Source: https://github.com/bloomingchad/pnimrp
 
-   Unless otherwise noted, all files in this project are licensed under the Mozilla Public License 2.0 (MPL-2.0).
-   The full text of the MPL-2.0 license can be found in the `LICENSE` file.
+   All original source code in this project is licensed under the Mozilla Public License 2.0 (MPL-2.0),
+   except where noted below. The full text of the MPL-2.0 license can be found in the `LICENSE` file.
 
-This project includes code from the following third-party libraries:
+This project incorporates the following third-party components:
 
 1. **illwill**
    - Description: A Nim library for non-blocking input handling.
-   - License: DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE (WTFPL)
-   - Copyright: Copyright (c) [Year] John Novak (original author)
+   - Original Copyright: (c) [Year] John Novak
+   - License: WTFPL (version 2)
    - Source: https://github.com/johnnovak/illwill
-   - Modifications: Adapted for use in pnimrp by bloomingchad.
-
-   The full text of the WTFPL license is included in the `illwill.nim` file.
+   - Modifications: Copyright (c) 2021-2025 bloomingchad
+   - Note: The modified version remains under WTFPL.
 
 2. **jsmn.nim**
    - Description: A minimal JSON parser in Nim.
+   - Original Copyright: (c) 2016 Huy Doan
    - License: MIT License
-   - Copyright: Copyright (c) 2016 Huy Doan (from jsmn.nim)
    - Source: https://github.com/OpenSystemsLab/jsmn.nim
-   - Modifications: None
+   - Modifications: Minor adaptations.
 
-   The full text of the MIT license is included in the `jsmn.nim` file.
+Attribution:
+- Inspired by concepts from Poor Man's Radio Player (public domain)
+- Some station metadata obtained from public sources
 
----
-
-Additional Notes:
-- This project is inspired by Poor Man's Radio Player (https://github.com/hakerdefo/pmrp), which is in the Public Domain.
-- The `illwill.nim` file is licensed under the WTFPL, while the rest of the project is licensed under the MPL-2.0.
-- For more information about the WTFPL, visit: http://www.wtfpl.net/
+Complete license texts for all components are included in their respective source files.
