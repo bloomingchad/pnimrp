@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/data/data/com.termux/files/usr/bin/"
 
 # Check if help flag is provided
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
