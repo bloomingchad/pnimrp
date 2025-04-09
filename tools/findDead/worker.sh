@@ -29,7 +29,7 @@ for cmd in curl mediainfo; do
 done
 
 # Define the target keywords (case-insensitive)
-KEYWORDS=("flac" "aac" "mp3" "layer iii" "pls" "m3u" "ogg" "vorbis" "opus")
+KEYWORDS=("flac" "aac" "mp3" "adts" "mpeg" "layer iii" "pls" "m3u" "ogg" "vorbis" "opus")
 
 # Create a randomly named temporary file with unique identifier for concurrent runs
 TEMP_FILE="$(mktemp)"
