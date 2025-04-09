@@ -40,10 +40,14 @@ TEMP_FILE="$(mktemp)"
 CURL_OPTS=(
     --silent
     -L
-    --http0.9
     --insecure
     --max-time 5
-    --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    --http0.9
+    --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+    --header "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+    --header "Accept-Language: en-US,en;q=0.9"
+    --header "Connection: keep-alive"
+    --header "Range: bytes=0-"
     --output "$TEMP_FILE"
 )
 
