@@ -221,6 +221,11 @@ proc playStation*(config: MenuConfig) =
       of Key.None:
         continue
 
+      of Key.Up, Key.Down, Key.Left, Key.Right:
+        when defined(android):
+          continue
+        else: showInvalidChoice()
+
       else:
         showInvalidChoice()
 
