@@ -42,34 +42,22 @@ if ! command -v jq &> /dev/null; then
     exit 1
 fi
 
-# Function to process a single JSON file
+# Function to process a single JSON file and feed its stations to GNU Parallel
 process_json_file() {
     local json_file="$1"
     echo "Processing $json_file..." >&2  # Redirect to stderr
 
     # Extract stations from JSON using jq (tab-separated)
-    stations=$(jq -r '.stations | to_entries[] | "\(.key)\t\(.value)"' "$json_file" 2>/dev/null)
-
-    # Process each station using GNU Parallel
-    if [[ -n "$stations" ]]; then
-        echo "$stations" | parallel --will-cite -j "$PARALLEL_JOBS" --colsep '\t' \
-            'bash ./worker.sh {1} {2}'
-    else
-        echo "No stations found in $json_file" >&2  # Redirect to stderr
-    fi
-}
-# Find all JSON files recursively and process them
-find_and_process_json() {
-    local search_dir="$1"
-    
-    # Find all JSON files recursively
-    find "$search_dir" -type f -name "*.json" | while read -r json_file; do
-        process_json_file "$json_file"
-    done
+    jq -r '.stations | to_entries[] | "\(.key)\t\(.value)"' "$json_file" 2>/dev/null
 }
 
-# Main execution with the provided directory
-find_and_process_json "$SCAN_DIR"
+# Main execution: Continuously find JSON files, extract stations, and feed to GNU Parallel
+find "$SCAN_DIR" -type f -name "*.json" -print0 | \
+while IFS= read -r -d '' json_file; do
+    # Process each JSON file and feed its stations to GNU Parallel
+    process_json_file "$json_file"
+done | parallel --will-cite -j "$PARALLEL_JOBS" --colsep '\t' \
+    'bash ./worker.sh {1} {2}'
 
 echo "All JSON files processed."
 exit 0
