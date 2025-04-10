@@ -51,7 +51,7 @@ STATION_NAME="$1"
 URL="$2"
 
 # Define the target keywords (case-insensitive)
-KEYWORDS=("flac" "aac" "mp3" "adts" "mpeg" "hls" "layer iii" "pls" "m3u" "ogg" "vorbis" "opus")
+KEYWORDS=("flac" "aac" "mp3" "adts" "mpeg" "hls" "layer iii" "layer 3" "dash" "pls" "mpd" "m3u" "ogg" "vorbis" "opus")
 
 # Create a randomly named temporary file with unique identifier for concurrent runs
 TEMP_FILE="$(mktemp)"
