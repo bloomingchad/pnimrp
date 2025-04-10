@@ -5,7 +5,7 @@
         "CVGM": "http://radio.cvgm.net:8000/cvgm192",
         "SceneSat": "http://sj-1.scenesat.com/scenesat",
         "SlayRadio": "https://www.slayradio.org/tune_in.php/56kbps/slayradio.56.m3u",
-        "KOHINA": "http://kohina.duckdns.org:8000/stream.ogg.m3u",
+        "KOHINA": "http://kohina.duckdns.org:8000/stream.ogg",
         "chiptune.rainwave.cc": "https://relay.rainwave.cc/chiptune.ogg",
         "ocremix.rainwave.cc": "https://relay.rainwave.cc/ocremix.ogg",
         "game.rainwave.cc": "https://relay.rainwave.cc/game.ogg",
