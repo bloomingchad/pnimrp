@@ -25,22 +25,37 @@ if [[ ! -f "./worker.sh" ]]; then
     exit 1
 fi
 
+
+# Function to display help message
+show_help() {
+    echo "Usage: $0 [STATION_NAME] [URL]"
+    echo "Checks if the provided URL points to an audio file."
+    echo "Returns exit code 0 if audio file is detected, 1 otherwise."
+}
+
+# Check if help flag is provided
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    show_help
+    exit 0
+fi
+
+# Check for required commands
+check_required_commands
+
 # Check if worker.sh is executable, if not make it executable
 if [[ ! -x "./worker.sh" ]]; then
     chmod +x "./worker.sh"
 fi
 
-# Check if GNU Parallel is installed
-if ! command -v parallel &> /dev/null; then
-    echo "Error: GNU Parallel is not installed. Please install it first."
-    exit 1
-fi
-
-# Check if jq is installed
-if ! command -v jq &> /dev/null; then
-    echo "Error: jq is not installed. Please install it first."
-    exit 1
-fi
+# Function to check if required commands exist
+check_required_commands() {
+    for cmd in curl mediainfo parallel jq; do
+        if ! command -v "$cmd" &> /dev/null; then
+            echo "❌: '$cmd' is not installed or not in PATH."
+            exit 1
+        fi
+    done
+}
 
 # Function to process a single JSON file and feed its stations to GNU Parallel
 process_json_file() {
@@ -50,6 +65,9 @@ process_json_file() {
     # Extract stations from JSON using jq (tab-separated)
     jq -r '.stations | to_entries[] | "\(.key)\t\(.value)"' "$json_file" 2>/dev/null
 }
+
+
+check_required_commands
 
 # Main execution: Continuously find JSON files, extract stations, and feed to GNU Parallel
 find "$SCAN_DIR" -type f -name "*.json" -print0 | \

@@ -2,23 +2,6 @@
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/data/data/com.termux/files/usr/bin/"
 
-# Function to display help message
-show_help() {
-    echo "Usage: $0 [STATION_NAME] [URL]"
-    echo "Checks if the provided URL points to an audio file."
-    echo "Returns exit code 0 if audio file is detected, 1 otherwise."
-}
-
-# Function to check if required commands exist
-check_required_commands() {
-    for cmd in curl mediainfo; do
-        if ! command -v "$cmd" &> /dev/null; then
-            echo "❌ $STATION_NAME: '$cmd' is not installed or not in PATH."
-            exit 1
-        fi
-    done
-}
-
 # Function to make a curl request
 make_request() {
     local extra_opts=("$@")
@@ -57,12 +40,6 @@ check_with_file() {
 
 # Main script logic starts here
 
-# Check if help flag is provided
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    show_help
-    exit 0
-fi
-
 # Check if STATION_NAME and URL are provided
 if [[ -z "$1" || -z "$2" ]]; then
     echo "Error: STATION_NAME or URL not provided."
@@ -72,9 +49,6 @@ fi
 # Define arguments
 STATION_NAME="$1"
 URL="$2"
-
-# Check for required commands
-check_required_commands
 
 # Define the target keywords (case-insensitive)
 KEYWORDS=("flac" "aac" "mp3" "adts" "mpeg" "hls" "layer iii" "pls" "m3u" "ogg" "vorbis" "opus")
