@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# thanks to gnuparallel and mediainfo.
+
 # Configuration
 PARALLEL_JOBS=10  # Number of parallel jobs to run
 
