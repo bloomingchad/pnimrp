@@ -241,7 +241,7 @@ proc destroy*(ctx)
 proc errorString*(error): cstring
     {.importc: "mpv_error_string".}
 
-proc eventName*(Event: EventID): cstring
+proc eventName*(event: EventID): cstring
     {.importc: "mpv_event_name".}
 
 proc free*(data)
@@ -286,7 +286,7 @@ proc loadConfigFile*(ctx; filename: cstring): cint
 proc observeProperty*(ctx; replyUserData; name; fmt): cint
     {.importc: "mpv_observe_property".}
 
-proc requestEvent*(ctx; Event: EventID; enable: cint): cint
+proc requestEvent*(ctx; event: EventID; enable: cint): cint
     {.importc: "mpv_request_event".}
 
 proc requestLogMsgs*(ctx; minLevel: cstring): cint

@@ -14,7 +14,7 @@ else:
 type StderrState* {.bycopy.} = object
   originalStderrFd*: cint
 
-template c_perror(str: cstring) = stderr.writeLine str
+template error(str: cstring) = stderr.writeLine str
 
 when win32:
   {.push header: "<io.h>".}
@@ -37,7 +37,7 @@ proc c_freopen*(filename: cstring, mode: cstring, stream: File): File {.importc:
 
 template checkError(status: cint) =
   if status == -1:
-    c_perror "error!"
+    error "error!"
     quit(QuitFailure)
 
 template cE(status: cint) =
@@ -48,11 +48,11 @@ proc initSuppressStderr*(state: ptr StderrState) =
   else:       state.originalStderrFd = c_dup(c_fileno(stderr))
 
   if state.originalStderrFd == -1:
-    c_perror("failed to save original stderr")
+    error("failed to save original stderr")
     quit(QuitFailure)
 
   if c_freopen(NULL_DEVICE, "w", stderr) == nil:
-    c_perror("failed to suppress stderr")
+    error("failed to suppress stderr")
     quit(QuitFailure)
 
 proc restoreStderr*(state: ptr StderrState) =
@@ -64,14 +64,14 @@ proc restoreStderr*(state: ptr StderrState) =
       quit(QuitFailure)
   else:
     if c_dup2(state.originalStderrFd, c_fileno(stderr)) == -1:
-      c_perror("failed to restore stderr")
+      error("failed to restore stderr")
       quit(QuitFailure)
 
   when win32: cE c_close(state.originalStderrFd)
   else:       cE c_close(state.originalStderrFd)
 
   if c_freopen(TERMINAL_DEVICE, "w", stderr) == nil:
-    c_perror("failed to reopen stderr")
+    error("failed to reopen stderr")
     stdout.write "using stdout as fallback for stderr"
 
     when win32: cE c_dup2(c_fileno(stdout), c_fileno(stderr))
