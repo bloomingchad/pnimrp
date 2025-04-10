@@ -86,5 +86,11 @@ done | parallel --bar --will-cite -j "$PARALLEL_JOBS" --colsep '\t' \
     'bash ./worker.sh {1} {2}'
 
 echo "All JSON files processed."
-echo "Please check results.txt"
+
+echo "summary"
+echo "  Total Stations: $(grep -ri ": \"" ../../assets/stations/ | wc -l)"
+echo "  ❌ Unhealthy Found: $(grep -ic ❌ result.txt)"
+echo "  ✅ Healthy Found: $(grep -ic ✅ result.txt)"
+
+echo "Please check results.txt for more detailed"
 exit 0
