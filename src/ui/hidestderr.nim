@@ -61,7 +61,7 @@ proc restoreStderr*(state: ptr StderrState) =
 
   when win32:
     if c_dup2(state.originalStderrFd, c_fileno(stderr)) == -1:
-      c_perror("failed to restore stderr")
+      error("failed to restore stderr")
       quit(QuitFailure)
   else:
     if c_dup2(state.originalStderrFd, c_fileno(stderr)) == -1:
