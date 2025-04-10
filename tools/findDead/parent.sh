@@ -49,7 +49,7 @@ fi
 
 # Function to check if required commands exist
 check_required_commands() {
-    for cmd in curl mediainfo parallel jq; do
+    for cmd in curl mediainfo parallel jq file; do
         if ! command -v "$cmd" &> /dev/null; then
             echo "❌: '$cmd' is not installed or not in PATH."
             exit 1
