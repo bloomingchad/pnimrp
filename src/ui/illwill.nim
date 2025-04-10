@@ -213,7 +213,7 @@ func toKey*(c: int): Key =
   except RangeDefect: # ignore unknown keycodes
     result = Key.None
 
-when turnOffWarningFOrOldCompiler(NimVersion):
+when turnOffWarningForOldCompiler(NimVersion):
   {.pop.}
 
 var gIllwillInitialised = false

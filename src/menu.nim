@@ -78,9 +78,9 @@ template accumulateToSubItemsAndPathsFromLoadCat(
   for folderPath in result[1]:
     subPaths.add(folderPath)
 
-template KeyToChar(key: Key): char = char(int(key))
+template keyToChar(key: Key): char = char(int(key))
 
-template toChar(key: Key): char = KeyToChar(key)
+template toChar(key: Key): char = keyToChar(key)
 
 template ordinalizeKeyForIndx: int =
   if key.toChar() in {'1' .. '9'}:
@@ -119,7 +119,7 @@ template jsonFileHandlerHM(items: seq[string]) =
       stations.urls,
       isMainMenu = false,
       baseDir = baseDir,
-      handleMenuIsHandling = hmIsHandlingJSON,
+      handleMenuIsHandling = hmIsHandlingJson,
     )
 
 template statusCacheHandlerHM(

@@ -72,7 +72,7 @@ proc showBanner() =
 
 proc cleanup() =
   ## Performs cleanup tasks on application exit, such as restoring the cursor.
-  try: illwillDeInit()
+  try: illwillDeinit()
   except IllwillError: discard
 
   restoreStderr(addr(state))
