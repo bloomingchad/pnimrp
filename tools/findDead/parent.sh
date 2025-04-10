@@ -39,9 +39,6 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     exit 0
 fi
 
-# Check for required commands
-check_required_commands
-
 # Check if worker.sh is executable, if not make it executable
 if [[ ! -x "./worker.sh" ]]; then
     chmod +x "./worker.sh"
