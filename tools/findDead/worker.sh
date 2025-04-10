@@ -5,7 +5,7 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/data/
 # Function to make a curl request
 make_request() {
     local extra_opts=("$@")
-    curl "${CURL_OPTS[@]}" "${extra_opts[@]}" "$URL" 2>&1
+    curl "${CURL_OPTS[@]}" "${extra_opts[@]}" "$URL" 2>/dev/null   #2>&1
 }
 
 # Function to check file type using mediainfo
@@ -36,6 +36,40 @@ check_with_file() {
             return
         fi
     done
+}
+
+#!/bin/bash
+
+# Function to move the cursor up by one line
+cursorUp() {
+    echo -ne "\033[1A"
+}
+
+# Function to move the cursor down by one line
+cursorDown() {
+    echo -ne "\033[1B"
+}
+
+eraseLine() {
+    # Move the cursor to the beginning of the line (\r)
+    # Clear the entire line (\033[2K)
+    echo -ne "\r\033[2K"
+}
+
+# Custom _echo function
+_echo() {
+    # Move the cursor up
+    cursorUp
+    #echo ""
+    
+    # Call the regular echo with the provided argument
+    #echo "$1"
+    #eraseLine
+    
+    # Move the cursor down
+    cursorDown
+    echo "$1" >> result.txt
+
 }
 
 # Main script logic starts here
@@ -108,15 +142,15 @@ if [[ -s "$TEMP_FILE" ]]; then
 
     # Return success or error based on whether a keyword was found
     if [[ $FOUND -eq 1 ]]; then
-        echo "✅ $STATION_NAME ($MATCHED_KEYWORD)"
+        _echo "✅ $STATION_NAME ($MATCHED_KEYWORD)"
         exit 0
     else
-        echo "❌ $STATION_NAME: No matching keywords found."
+        _echo "❌ $STATION_NAME: No matching keywords found."
         exit 1
     fi
 else
     # Temporary file is empty or does not exist
     rm -f "$TEMP_FILE"
-    echo "❌ $STATION_NAME: Downloaded file is empty or missing."
+    _echo "❌ $STATION_NAME: Downloaded file is empty or missing."
     exit 1
 fi
