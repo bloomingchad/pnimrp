@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 import ../audio/[libmpv, player], os
 
 proc warnBell* =

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 # scroll.nim
 
 import strutils, terminal, illwill

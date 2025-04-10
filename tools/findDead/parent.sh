@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# SPDX-License-Identifier: MPL-2.0
 # thanks to gnuparallel and mediainfo.
 
 # Configuration

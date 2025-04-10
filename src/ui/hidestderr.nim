@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 const win32 =
   static:
     defined(windows)

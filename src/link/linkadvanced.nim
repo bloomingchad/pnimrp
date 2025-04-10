@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 import std/net, httpclient, linkbase, strutils
 
 proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidationResult =

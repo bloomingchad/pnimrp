@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 # linkbase.nim
 
 import strutils, uri, net

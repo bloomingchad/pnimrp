@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 # animation.nim
 
 import terminal, ../utils/utils
