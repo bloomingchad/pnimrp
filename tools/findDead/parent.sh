@@ -19,6 +19,11 @@ fi
 # Store the directory to scan
 SCAN_DIR="$1"
 
+if [ -f "result.txt" ]; then
+    # Remove the file if it exists
+    rm "result.txt"
+fi
+
 # Check if worker.sh exists in current directory
 if [[ ! -f "./worker.sh" ]]; then
     echo "Error: worker.sh not found in current directory."
@@ -54,10 +59,16 @@ check_required_commands() {
     done
 }
 
+cursorUp() {
+    echo -ne "\033[1A" "$@"
+}
+
 # Function to process a single JSON file and feed its stations to GNU Parallel
 process_json_file() {
     local json_file="$1"
-    echo "Processing $json_file..." >&2  # Redirect to stderr
+    #echo "Processing $json_file..." >&2  # Redirect to stderr
+    echo "" >&2
+    cursorUp >&2
 
     # Extract stations from JSON using jq (tab-separated)
     jq -r '.stations | to_entries[] | "\(.key)\t\(.value)"' "$json_file" 2>/dev/null
@@ -71,8 +82,9 @@ find "$SCAN_DIR" -type f -name "*.json" -print0 | \
 while IFS= read -r -d '' json_file; do
     # Process each JSON file and feed its stations to GNU Parallel
     process_json_file "$json_file"
-done | parallel --will-cite -j "$PARALLEL_JOBS" --colsep '\t' \
+done | parallel --bar --will-cite -j "$PARALLEL_JOBS" --colsep '\t' \
     'bash ./worker.sh {1} {2}'
 
 echo "All JSON files processed."
+echo "Please check results.txt"
 exit 0
