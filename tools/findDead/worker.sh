@@ -77,7 +77,7 @@ URL="$2"
 check_required_commands
 
 # Define the target keywords (case-insensitive)
-KEYWORDS=("flac" "aac" "mp3" "adts" "mpeg" "layer iii" "pls" "m3u" "ogg" "vorbis" "opus")
+KEYWORDS=("flac" "aac" "mp3" "adts" "mpeg" "hls" "layer iii" "pls" "m3u" "ogg" "vorbis" "opus")
 
 # Create a randomly named temporary file with unique identifier for concurrent runs
 TEMP_FILE="$(mktemp)"
