@@ -5,7 +5,7 @@ import
   terminal, random, os,
   strutils, times,
 
-  ../audio/mpv/libmpv,
+  ../audio/mpv/player,
   ../utils/[
     utils,
     jsonutils

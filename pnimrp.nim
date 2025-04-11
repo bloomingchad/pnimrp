@@ -7,7 +7,7 @@ import
   src/[
     menu, ui/illwill, ui/hidestderr,
     utils/utils,
-    audio/mpv/player, audio/mpv/libmpv
+    audio/mpv/player,
   ]
 
 when not defined(simple):
