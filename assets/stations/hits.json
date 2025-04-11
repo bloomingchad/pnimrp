@@ -1,19 +1,19 @@
 {
-	"stations": {
-		"ANTENNE BAYERN Top 40": "s6-webradio.antenne.de/top-40/stream",
-		"Yes! 91.2": "https://ams-pioneer02.dedicateware.com:1060/;",
-		"Al Arabiya 99": "stream.radiojar.com/s1mygd1frxquv",
-		"Dublins KISS FM": "https://kathy.torontocast.com:4175/stream",
-		"M Radio Francais": "mfm.ice.infomaniak.ch/mfm-64.aac",
-		"Radio France Mouv": "https://play.radioking.io/mouvfm/300106",
-		"Megahit Radio": "38.96.175.97:5216/;",
-		"Raute Musik": "rautemusik-de-hz-fal-stream12.radiohost.de/charthits",
-		"Venus FM": "s3.onweb.gr:8808/;stream",
-        "BBC Radio 1 (UK)": "https://a.files.bbci.co.uk/ms6/live/3441A116-B12E-4D2F-ACA8-C1984642FA4B/audio/simulcast/dash/nonuk/pc_hd_abr_v2/cfs/bbc_radio_one.mpd",
-        "KIIS 1065 (Australia)": "https://playerservices.streamtheworld.com/api/livestream-redirect/ARN_KIIS1065.mp3",
-        "Z100 (New York)": "https://stream.revma.ihrhls.com/zc1469",
-        "102.7 KIIS FM (Los Angeles)": "https://stream.revma.ihrhls.com/zc185",
-        "NRJ (France)": "https://scdn.nrjaudio.fm/adwz2/fr/30001/mp3_128.mp3",
-        "Radio Disney BR": "https://playerservices.streamtheworld.com/api/livestream-redirect/DISNEY_BRA_SP.mp3"
-	}
+  "stations": {
+    "ANTENNE BAYERN Top 40": "s6-webradio.antenne.de/top-40/stream",
+    "Yes! 91.2": "https://ams-pioneer02.dedicateware.com:1060/;",
+    "Al Arabiya 99": "stream.radiojar.com/s1mygd1frxquv",
+    "Dublins KISS FM": "https://kathy.torontocast.com:4175/stream",
+    "M Radio Francais": "mfm.ice.infomaniak.ch/mfm-64.aac",
+    "Radio France Mouv": "https://play.radioking.io/mouvfm/300106",
+    "Megahit Radio": "38.96.175.97:5216/;",
+    "rm.fm": "rautemusik-de-hz-fal-stream12.radiohost.de/charthits",
+    "Venus FM": "s3.onweb.gr:8808/;stream",
+    "BBC Radio 1 ": "https://a.files.bbci.co.uk/ms6/live/3441A116-B12E-4D2F-ACA8-C1984642FA4B/audio/simulcast/dash/nonuk/pc_hd_abr_v2/cfs/bbc_radio_one.mpd",
+    "KIIS 1065 AUS": "https://playerservices.streamtheworld.com/api/livestream-redirect/ARN_KIIS1065.mp3",
+    "Z100 (NY)": "https://stream.revma.ihrhls.com/zc1469",
+    "102.7 KIIS FM (LA)": "https://stream.revma.ihrhls.com/zc185",
+    "NRJ FR": "https://scdn.nrjaudio.fm/adwz2/fr/30001/mp3_128.mp3",
+    "Radio Disney BR": "https://playerservices.streamtheworld.com/api/livestream-redirect/DISNEY_BRA_SP.mp3"
+  }
 }

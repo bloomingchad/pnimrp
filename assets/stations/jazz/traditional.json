@@ -1,9 +1,9 @@
 {
-    "stations": {
-        "Public Domain Classical Jazz": "relay.publicdomainradio.org/jazz_swing.mp3",
-        "WSKG Classic Jazz": "https://wskg.streamguys1.com/wskg-classic-jazz",
-        "WKWF": "https://sh.fl-us.audio-stream.com/proxy/rconne02?mp=/stream",
-        "ClassicJazzCA": "https://c25.radioboss.fm:8176/stream",
-        "TraxxFM": "https://traxx014.ice.infomaniak.ch/traxx014-low.mp3 "
-    }
+  "stations": {
+    "PubDomain Cls Jazz": "relay.publicdomainradio.org/jazz_swing.mp3",
+    "WSKG Classic Jazz": "https://wskg.streamguys1.com/wskg-classic-jazz",
+    "WKWF": "https://sh.fl-us.audio-stream.com/proxy/rconne02?mp=/stream",
+    "ClassicJazzCA": "https://c25.radioboss.fm:8176/stream",
+    "TraxxFM": "https://traxx014.ice.infomaniak.ch/traxx014-low.mp3 "
+  }
 }

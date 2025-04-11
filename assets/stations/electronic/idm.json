@@ -1,14 +1,13 @@
 {
-    "stations": {
-        "SomaFM cliqhopIDM": "https://ice1.somafm.com/cliqhop-128-mp3",
-        "Brainwave Radio": "https://listen.radioking.com/radio/121066/stream/162115",
-        "Systrum Ambient": "https://systrum.net/SSR1",
-        "radioFunk ": "https://icecast.westerfunk.net/radiofunk.mp3",
-        "Anima Amoris - IDM": "https://amoris.sknt.ru/idm.mp3",
-        "Soma GrooveSalad": "https://ice2.somafm.com/groovesalad-128-aac",
-        "Soma GrooveSaladClassic": "https://ice5.somafm.com/gsclassic-128-mp3",
-        "RadioCaprice IDM Ambient": "http://213.141.131.10:8002/idmambient",
-        "RadioCaprice IDM": "http://79.111.14.76:8004/idm",
-        "RadioCaprice": "http://79.111.14.76:8002/idm"
-    }
+  "stations": {
+    "SomaFM cliqhopIDM": "https://ice1.somafm.com/cliqhop-128-mp3",
+    "Brainwave Radio": "https://listen.radioking.com/radio/121066/stream/162115",
+    "Systrum Ambient": "https://systrum.net/SSR1",
+    "radioFunk ": "https://icecast.westerfunk.net/radiofunk.mp3",
+    "Anima Amoris IDM": "https://amoris.sknt.ru/idm.mp3",
+    "Soma GrooveSalad": "https://ice2.somafm.com/groovesalad-128-aac",
+    "Soma GrooveSaladClassic": "https://ice5.somafm.com/gsclassic-128-mp3",
+    "radcap IDM Ambient": "http://213.141.131.10:8002/idmambient",
+    "radcap IDM": "http://79.111.14.76:8004/idm"
+  }
 }

@@ -1,18 +1,18 @@
 {
-    "stations": {
-		"AH.FM -data": "https://nl.ah.fm/mobile",
-		"AH.FM -high": "https://nl.ah.fm/live",
-		"Ambient Sleeping Pill": "radio.stereoscenic.com/asp-s",
-		"Ibiza Global Radio": "http://ibizaglobalradio.streaming-pro.com:8024",
-		"Radio Seven": "80.86.106.32:8000/radio7.mp3",
-		"Antenne Bayern Chillout": "stream.antenne.de/chillout",
-		"Frisky": "stream2.friskyradio.com/frisky_mp3_hi",
-		"Nirvana Radio": "streaming.exclusive.radio/er/nirvana/icecast.audio",
-		"Puls Radio": "http://puls-radio.ru:8000/puls",
-		"Puls Radio - Club": "https://str3.openstream.co/2138",
-		"Puls Radio - Trance": "https://193.200.42.211/pulstranceHD.mp3",
-        "Fnoob Techno Radio": "https://streams.radiomast.io/8846a94e-9874-4692-a1a0-ec7aadbe2771",
-        "House Nation": "https://streaming.radio.co/s06bd9d805/listen",
-        "DnB Radio": "https://source.dnbradio.com/stream/300/;"
-    }
+  "stations": {
+    "AH.FM -data": "https://nl.ah.fm/mobile",
+    "AH.FM -high": "https://nl.ah.fm/live",
+    "Ambient Sleeping Pill": "radio.stereoscenic.com/asp-s",
+    "Ibiza Global Radio": "http://ibizaglobalradio.streaming-pro.com:8024",
+    "Radio Seven": "80.86.106.32:8000/radio7.mp3",
+    "Antenne Bayern Chillout": "stream.antenne.de/chillout",
+    "Frisky": "stream2.friskyradio.com/frisky_mp3_hi",
+    "Nirvana Radio": "streaming.exclusive.radio/er/nirvana/icecast.audio",
+    "Puls Radio": "http://puls-radio.ru:8000/puls",
+    "Puls Radio Club": "https://str3.openstream.co/2138",
+    "Puls Radio Trance": "https://193.200.42.211/pulstranceHD.mp3",
+    "Fnoob Techno Radio": "https://streams.radiomast.io/8846a94e-9874-4692-a1a0-ec7aadbe2771",
+    "House Nation": "https://streaming.radio.co/s06bd9d805/listen",
+    "DnB Radio": "https://source.dnbradio.com/stream/300/;"
+  }
 }

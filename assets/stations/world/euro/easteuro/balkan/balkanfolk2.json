@@ -1,7 +1,7 @@
 {
   "stations": {
     "R Studio M": "https://a4.asurahosting.com:7090/studiom.aac",
-    "R Caprice": "http://213.141.131.10:8002/chalga",
+    "radcap": "http://213.141.131.10:8002/chalga",
     "R Cazin": "http://195.222.33.217:8095/;",
     "Favorit FM": "http://91.250.252.251:8001/;",
     "Hrvatski R Karlovac": "http://s8.iqstreaming.com:8002/;",
@@ -12,7 +12,7 @@
     "R Bubamara": "http://radiostream.exe-net.net:5010/;",
     "R Dardania": "http://radio.radiodardania.com:4000/;",
     "R Glas Drine Studio Onyx": "https://stream.master-dizajn.com/8030/stream",
-    "R Gračanica": "http://radio.striminghost.com:8012/;",
+    "R Gracanica": "http://radio.striminghost.com:8012/;",
     "R Holidej": "https://stream.zeno.fm/3mdkkf9hgg0uv"
   }
 }

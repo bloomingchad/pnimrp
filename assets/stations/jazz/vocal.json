@@ -1,12 +1,12 @@
 {
-    "stations": {
-        "181 Vocal jazz": "https://listen.181fm.com/181-vocals_128k.mp3",
-        "Radio Caprice - Vocal Jazz (Russia)": "http://79.120.39.202:8002/vocaljazz",   
-		"Crooner Radio - Vocal Jazz (France)": "https://jazzladiescrooners.ice.infomaniak.ch/jazzladiescrooners-high.mp3",
-		"AceRadio": "https://bigrradio.cdnstream1.com/5127_128",
-        "RadioArt: Vocal Jazz": "https://live.radioart.com/fVocal_jazz.mp3",
-        "Klassik Radio - Bar Lounge (Germany)": "https://klassikr.streamabc.net/klr-60iesbarlounge-aacplus-64-7100628",
-        "1.fm Adore Jazz (Switzerland)": "https://strm112.1.fm/ajazz_mobile_mp3",
-        "JAZZGROOVE.org - Gems (USA)": "https://audio-edge-hy4wy.blr.d.radiomast.io/b7a6570b-524f-4d9a-ba9f-9502a00cafa0"
-	}
+  "stations": {
+    "181 Vocal jazz": "https://listen.181fm.com/181-vocals_128k.mp3",
+    "radcap Vocal Jazz RU": "http://79.120.39.202:8002/vocaljazz",
+    "Crooner Radio Vocal Jazz (FR)": "https://jazzladiescrooners.ice.infomaniak.ch/jazzladiescrooners-high.mp3",
+    "AceRadio": "https://bigrradio.cdnstream1.com/5127_128",
+    "RadioArt Vocal Jazz": "https://live.radioart.com/fVocal_jazz.mp3",
+    "Klassik R Bar Lounge DE": "https://klassikr.streamabc.net/klr-60iesbarlounge-aacplus-64-7100628",
+    "1.fm Adore Jazz Swiss": "https://strm112.1.fm/ajazz_mobile_mp3",
+    "JAZZGROOVE.org Gems US": "https://audio-edge-hy4wy.blr.d.radiomast.io/b7a6570b-524f-4d9a-ba9f-9502a00cafa0"
+  }
 }

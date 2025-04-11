@@ -1,11 +1,11 @@
 {
-    "stations": {
-        "Radio Caprice Avant Garde Jazz": "http://79.111.119.111:8000/avantgardejazz",
-        "Adroit Jazz Underground": "https://icecast.walmradio.com:8443/jazz_opus",
-        "After Hours DE": "https://stream.laut.fm/after-hours",
-        "Fango Radio": "https://pantano.ovh:8444/pantano",
-        "In Between DE": "https://stream.laut.fm/inbetween",
-        "Radio Caprice Classical Avantgarde": "http://213.141.131.10:8002/classavant",
-        "Freakout DE": "https://stream.laut.fm/freakout"
-    }
+  "stations": {
+    "radcap AvantGarde": "http://79.111.119.111:8000/avantgardejazz",
+    "Adroit Jazz Underground": "https://icecast.walmradio.com:8443/jazz_opus",
+    "After Hours DE": "https://stream.laut.fm/after-hours",
+    "Fango Radio": "https://pantano.ovh:8444/pantano",
+    "In Between DE": "https://stream.laut.fm/inbetween",
+    "radcap Cls Avantgarde": "http://213.141.131.10:8002/classavant",
+    "Freakout DE": "https://stream.laut.fm/freakout"
+  }
 }

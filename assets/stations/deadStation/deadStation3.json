@@ -1,21 +1,21 @@
 {
-	"stations": {
-        "Chuck N Jane -data": "https://listen.chucknjane.com/32kbps",
-		"Yes! 91.2": "5.9.17.142:8024/;7stream.nsv",
-		"Dublins KISS FM": "daniel.torontocast.com:2985/stream",
-		"Radio France Mouv": "stream.radiofrance.fr/mouv/mouv_hifi.m3u8",
-		"Hit Station FM": "46.163.124.61:8450",
-		"Metal Only": "178.77.127.105:4400",
-		"STAR FM From Hell": "80.237.153.93:7000",
-		"Aardschok": "178.18.137.248:80",
-		"Big R Radio": "107.155.111.234:18310",
-		"Braingell Radio": "206.217.213.16:8010",
-		"KNAC": "s5.voscast.com:7346",
-		"Metal Express Radio": "66.90.104.41:8248",
-		"Radio Gothic": "ca.radio-streamhosting.com:8006",
-		"Air Progressive": "airprogressive.org:8000/stream",
-		"CBC Fresh Air": "cbcradiolive.akamaized.net/hls/live/2041037/ES_R1ETT/master.m3u8",
-		"GLT News & Ideas": "wgltradio.ilstu.edu:8000/wgltmain.mp3",
-		"Newstalk 106-108": "vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high"
-	}
+  "stations": {
+    "Chuck N Jane -data": "https://listen.chucknjane.com/32kbps",
+    "Yes! 91.2": "5.9.17.142:8024/;7stream.nsv",
+    "Dublins KISS FM": "daniel.torontocast.com:2985/stream",
+    "Radio France Mouv": "stream.radiofrance.fr/mouv/mouv_hifi.m3u8",
+    "Hit Station FM": "46.163.124.61:8450",
+    "Metal Only": "178.77.127.105:4400",
+    "STAR FM From Hell": "80.237.153.93:7000",
+    "Aardschok": "178.18.137.248:80",
+    "Big R Radio": "107.155.111.234:18310",
+    "Braingell Radio": "206.217.213.16:8010",
+    "KNAC": "s5.voscast.com:7346",
+    "Metal Express Radio": "66.90.104.41:8248",
+    "Radio Gothic": "ca.radio-streamhosting.com:8006",
+    "Air Progressive": "airprogressive.org:8000/stream",
+    "CBC Fresh Air": "cbcradiolive.akamaized.net/hls/live/2041037/ES_R1ETT/master.m3u8",
+    "GLT News & Ideas": "wgltradio.ilstu.edu:8000/wgltmain.mp3",
+    "Newstalk 106-108": "vice02.iad.xpc-mii.net:80/communicorp/Newstalk_high"
+  }
 }
