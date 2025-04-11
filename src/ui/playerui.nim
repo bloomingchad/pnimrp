@@ -25,15 +25,6 @@ when not defined(simple):
       animation,
       ]
 
-template volume(inc = true) =
-  if inc: state.volume = min(state.volume + VolumeStep, MaxVolume)
-  else:   state.volume = max(state.volume - VolumeStep, MinVolume)
-  lastVolume = state.volume
-  cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
-
-template incVolume() = volume(inc = true)
-template decVolume() = volume(inc = false)
-
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
 
@@ -63,16 +54,6 @@ func isValidPlaylistUrl(url: string): bool =
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
 func milSecToSec(ms: int): float = ms / 1000
-
-func getFileFormat(ctx: ptr Handle): string =
-  # Query the `file-format` property
-  var format: cstring = getPropertyString(ctx, "file-format")
-
-  if format != nil:
-    result = $format  # Convert cstring to Nim string
-    free(format)  # Free the allocated cstring
-  else:
-    result = "unknown" # Fallback if the property is not available
 
 proc playStation*(config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.

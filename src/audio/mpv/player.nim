@@ -213,3 +213,24 @@ proc setVolumeOfBellRelativeToMainCtx*(tmpMpv: ptr Handle) =
     #some platforms will might cmplain about type error and cause `mpv API error:`
     #by having the cost of string conversions, we are offloading the dirty work
     #to libmpv, which is very robust
+
+template volume*(inc = true) =
+  if inc: state.volume = min(state.volume + VolumeStep, MaxVolume)
+  else:   state.volume = max(state.volume - VolumeStep, MinVolume)
+  lastVolume = state.volume
+  cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
+
+func getFileFormat*(ctx: ptr Handle): string =
+  # Query the `file-format` property
+  var format: cstring = getPropertyString(ctx, "file-format")
+
+  if format != nil:
+    result = $format  # Convert cstring to Nim string
+    free(format)  # Free the allocated cstring
+  else:
+    result = "unknown" # Fallback if the property is not available
+
+template incVolume*() = volume(inc = true)
+template decVolume*() = volume(inc = false)
+
+export destroy, Handle, create, initialize, Event, EventID, waitEvent, setProperty
