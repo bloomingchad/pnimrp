@@ -5,7 +5,7 @@ import
 
   ui, illwill,
 
-  ../audio/[
+  ../audio/mpv/[
       player,
       libmpv,
     ],
@@ -19,7 +19,7 @@ import
 
 when not defined(simple):
   import
-    ../audio/metadata,
+    ../audio/mpv/metadata,
     ../ui/[
       scroll,
       animation,
