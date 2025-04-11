@@ -1,20 +1,20 @@
 {
-    "stations": {
-        "Dubstep.FM": "https://stream.dubstep.fm/128mp3",
-        "Sub.FM": "http://kiyi.radioca.st:9053/SubFMMount",
-        "Dubplate.fm DubBass": "https://sc2.dubplate.fm/radio/8000/dubandbass/uhifi",
-        "Dubterrain.net[AutoDJ]": "http://ic2255.c471.fast-serv.com/autodj",
-        "HCT DE": "https://stream.laut.fm/hct",
-        "LWR": "https://lwrdubstep-zaklwr10.radioca.st/stream",
-        "PartyVibeRadio UK": "http://partyvibe.com:8040/stream3",
-        "R1 BG": "https://stream.zeno.fm/xcaubmtj5dquv",
-        "Caprice Riddim": "http://79.111.119.111:8002/riddimdubstep",
-        "Caprice Dubtep": "http://79.120.39.202:8002/dubstep",
-        "Sensimedia Bass Radio": "https://sensibass.radioca.st/;",
-        "DnBEDM ChillStep": "https://edmdnb.com:448/radio/8000/radio.mp3",
-        "RadioSpinner Chillstep": "https://live.radiospinner.com/chillstep-32",
-        "BreakingBassAir RU": "https://aircast.breaking-bass.ru:8443/air",
-        "Uturn Radio Dubstep Music": "https://listen.uturnradio.com/dubstep_32",
-        "Line FM Gaming": "https://stream.laut.fm/linefmgaming"
-    }
+  "stations": {
+    "Dubstep.FM": "https://stream.dubstep.fm/128mp3",
+    "Sub.FM": "http://kiyi.radioca.st:9053/SubFMMount",
+    "Dubplate.fm DubBass": "https://sc2.dubplate.fm/radio/8000/dubandbass/uhifi",
+    "Dubterrain.net[AutoDJ]": "http://ic2255.c471.fast-serv.com/autodj",
+    "HCT DE": "https://stream.laut.fm/hct",
+    "LWR": "https://lwrdubstep-zaklwr10.radioca.st/stream",
+    "PartyVibeRadio UK": "http://partyvibe.com:8040/stream3",
+    "R1 BG": "https://stream.zeno.fm/xcaubmtj5dquv",
+    "radcap Riddim": "http://79.111.119.111:8002/riddimdubstep",
+    "radcap Dubtep": "http://79.120.39.202:8002/dubstep",
+    "Sensimedia Bass Radio": "https://sensibass.radioca.st/;",
+    "DnBEDM ChillStep": "https://edmdnb.com:448/radio/8000/radio.mp3",
+    "RadioSpinner Chillstep": "https://live.radiospinner.com/chillstep-32",
+    "BreakingBassAir RU": "https://aircast.breaking-bass.ru:8443/air",
+    "Uturn Dubstep": "https://listen.uturnradio.com/dubstep_32",
+    "Line FM Gaming": "https://stream.laut.fm/linefmgaming"
+  }
 }

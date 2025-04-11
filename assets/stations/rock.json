@@ -1,8 +1,8 @@
 {
-	"stations": {
-		"ROCK ANTENNE": "mp3channels.webradio.antenne.de:80/rockantenne",
-		"104 Classic Rock": "https://streaming.live365.com/b47785_128mp3",
-		"1055 ROCK": "https://radio.1055rock.gr:31056/live",
-		"Classic Rock 109": "http://listen.classicrock109.com:10042/;"
-	}
+  "stations": {
+    "ROCK ANTENNE": "mp3channels.webradio.antenne.de:80/rockantenne",
+    "104 Classic Rock": "https://streaming.live365.com/b47785_128mp3",
+    "1055 ROCK": "https://radio.1055rock.gr:31056/live",
+    "Classic Rock 109": "http://listen.classicrock109.com:10042/;"
+  }
 }

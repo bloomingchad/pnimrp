@@ -1,13 +1,13 @@
 {
-	"stations": {
-		"Orthodox Chants": "orthodox-chants.ru:8000/64kb",
-		"RadioVaticana": "https://radio.vaticannews.va/stream-en",
-		"OCR Rudder 24": "radio.myocn.net:8080/stream",
-		"LiveQuranRadio": "http://104.167.2.55:2199/tunein/qasiuran.pls",
-		"QuranVerse24": "verse24.com:3344/listen.mp3",
-        "Relevant Radio (Catholic)": "https://17653.live.streamtheworld.com/RR_MAIN.mp3",
-        "Jewish Music Stream": "http://stream2.jewishmusicstream.com:10000/stream",
-        "Ancient Faith Radio": "https://ancientfaith.streamguys1.com/talk",
-		"EWTN Global Catholic Radio": "https://ssl-2.stream.miriamtech.net/grn/KATH910AM.mp3"
-	}
+  "stations": {
+    "Orthodox Chants": "orthodox-chants.ru:8000/64kb",
+    "RadioVaticana": "https://radio.vaticannews.va/stream-en",
+    "OCR Rudder 24": "radio.myocn.net:8080/stream",
+    "LiveQuranRadio": "http://104.167.2.55:2199/tunein/qasiuran.pls",
+    "QuranVerse24": "verse24.com:3344/listen.mp3",
+    "Relevant Radio Catholic": "https://17653.live.streamtheworld.com/RR_MAIN.mp3",
+    "Jewish Music Stream": "http://stream2.jewishmusicstream.com:10000/stream",
+    "Ancient Faith Radio": "https://ancientfaith.streamguys1.com/talk",
+    "EWTN Global Catholic": "https://ssl-2.stream.miriamtech.net/grn/KATH910AM.mp3"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "stations": {
-    "Number 1 Turk FM": "https://n10101m.mediatriple.net/numberoneturk",
+    "#1 Turk FM": "https://n10101m.mediatriple.net/numberoneturk",
     "Pal FM": "https://moondigitaledge.radyotvonline.net/palfm/playlist.m3u8",
     "Karadeniz FM": "https://moondigitaledge.radyotvonline.net/karadenizfm/playlist.m3u8",
     "Radyo Ekin": "https://yayin.turkhosted.com/6006/stream",
@@ -10,13 +10,13 @@
     "Show Radyo": "https://46.20.3.228/;",
     "Radyo Voyage": "https://ssldyg.radyotvonline.com/pozitif/smil:voyage.smil/playlist.m3u8",
     "Mydonose Turk": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_MYDONOSE128AAC.aac",
-    "Big FM - bigSES": "https://audiotainment-sw.streamabc.net/atsw-turkey-aac-128-5516527",
-    "Meteorolojinin Sesi Radyosu": "https://radyomgm.canliyayinda.com/;",
+    "Big FM bigSES": "https://audiotainment-sw.streamabc.net/atsw-turkey-aac-128-5516527",
+    "Meteorolojinin Sesi": "https://radyomgm.canliyayinda.com/;",
     "Imbat FM": "http://38.96.148.39:8788/;",
     "Kent Radyo": "https://anadolu.liderhost.com.tr:10906/;",
     "Radyo Moda": "https://radyo.yayin.com.tr:4230/stream",
     "Kiyi Turkce": "https://kiyiturk.radioca.st/stream",
-    "Radyo Odtu - Karisik Kaset": "https://stream3.radyoodtu.com.tr:8000/karisikkaset",
+    "Radyo Odtu Karisik Kaset": "https://stream3.radyoodtu.com.tr:8000/karisikkaset",
     "Radyo Dumlupinar": "https://radyo.yayin.com.tr:6090/;",
     "Radyo Kral 44": "https://yayin1.canliyayin.org:8698/;",
     "R Life Kayseri": "https://yayin2.canliyayin.org:10990/;"

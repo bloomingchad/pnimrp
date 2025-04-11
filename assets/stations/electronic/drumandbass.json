@@ -1,14 +1,14 @@
 {
-    "stations": {
-        "DnB Radio": "https://source.dnbradio.com/stream/300/;",
-        "JungleTrain": "http://stream5.jungletrain.net:8000/;",
-        "RadioCaprice": "http://79.111.14.76:8002/drumbass",
-        "Khomyak FM": "https://misato.ru-hoster.com:8075/dnbpg_live",
-        "247 Drums.ro": "http://radio.drums.ro:8000/;",
-        "Alfa DNB": "https://alfa.apachan.ru:8000/RoyalDrum",
-        "BassDrive": "https://www.bassdrive.com/bassdrive.m3u",
-        "Skerce FM": "http://skerce.com:8000/listen",
-        "DNB Brasil Radio": "https://stm4.conectastreaming.com:7178/stream",
-        "FMBase": "https://stream.laut.fm/fmbase"
-    }
+  "stations": {
+    "DnB Radio": "https://source.dnbradio.com/stream/300/;",
+    "JungleTrain": "http://stream5.jungletrain.net:8000/;",
+    "radcap": "http://79.111.14.76:8002/drumbass",
+    "Khomyak FM": "https://misato.ru-hoster.com:8075/dnbpg_live",
+    "247 Drums.ro": "http://radio.drums.ro:8000/;",
+    "Alfa DNB": "https://alfa.apachan.ru:8000/RoyalDrum",
+    "BassDrive": "https://www.bassdrive.com/bassdrive.m3u",
+    "Skerce FM": "http://skerce.com:8000/listen",
+    "DNB Brasil Radio": "https://stm4.conectastreaming.com:7178/stream",
+    "FMBase": "https://stream.laut.fm/fmbase"
+  }
 }

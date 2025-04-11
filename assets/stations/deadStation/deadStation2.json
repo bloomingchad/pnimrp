@@ -1,19 +1,19 @@
 {
-	"stations": {
-        "RFI": "stream.rfi.fr/2588/rfi_en_anglais/rfianglais.mp3",
-		"Sputnik": "audio1.video.ria.ru:80/voiceeng",
-		"WKSU News": "66.225.205.8:8020",
-		"Radio France FranceInfo": "stream.radiofrance.fr/franceinfo/franceinfo_hifi.m3u8",
-		"detour TALK": "arizona.thedetour.us:8000/;",
-		"Freethought Radio": "212.48.126.146:9110",
-		"KSFC": "173.192.70.138:8710",
-		"Radio Newark": "98.114.57.7:8000",
-		"E.P. Express Radio": "37.187.79.56:9246",
-		"Flower Power Radio": "50.7.129.122:8433",
-		"FUN45s": "198.178.123.20:8376",
-		"Oldies 104": "66.85.88.2:7142",
-		"Oldie Party": "212.48.110.146:8410",
-		"Oldiesradio RGR": "streams.lazernet.be:2620",
-		"Pure Gold 95FM": "198.178.123.20:8374"
-	}
+  "stations": {
+    "RFI": "stream.rfi.fr/2588/rfi_en_anglais/rfianglais.mp3",
+    "Sputnik": "audio1.video.ria.ru:80/voiceeng",
+    "WKSU News": "66.225.205.8:8020",
+    "Radio France FranceInfo": "stream.radiofrance.fr/franceinfo/franceinfo_hifi.m3u8",
+    "detour TALK": "arizona.thedetour.us:8000/;",
+    "Freethought Radio": "212.48.126.146:9110",
+    "KSFC": "173.192.70.138:8710",
+    "Radio Newark": "98.114.57.7:8000",
+    "E.P. Express Radio": "37.187.79.56:9246",
+    "Flower Power Radio": "50.7.129.122:8433",
+    "FUN45s": "198.178.123.20:8376",
+    "Oldies 104": "66.85.88.2:7142",
+    "Oldie Party": "212.48.110.146:8410",
+    "Oldiesradio RGR": "streams.lazernet.be:2620",
+    "Pure Gold 95FM": "198.178.123.20:8374"
+  }
 }

@@ -1,15 +1,15 @@
 {
-    "stations": {
-        "Memories 89.1 KCEA": "https://streaming.rubinbroadcasting.com/kcea",
-        "Cladrite Radio": "https://streaming.live365.com/a43564",
-        "Got Radio Big Band Land": "http://206.217.213.236:8430/;",
-        "Got Radio Jazz Joint": "https://pureplay.cdnstream1.com/6004_64.aac",
-        "Jazz Club Bandstand": "https://cast1.torontocast.com:2060/;",
-        "Radio Art Big Bands GR": "https://air.radioart.com/fBig_bands.mp3",
-        "R Caprice Big Band": "http://79.120.39.202:8000/bigband",
-        "Swing City Radio": "https://streaming.live365.com/a03438",
-        "Tu Musica FM Con Banda": "http://157.230.134.234:8007/;",
-        "WZQR - Gold Big Band": "https://c3.radioboss.fm:18065/stream",
-        "Adroit Jazz Underground": "https://icecast.walmradio.com:8443/jazz_opus"
-    }
+  "stations": {
+    "Memories 89.1 KCEA": "https://streaming.rubinbroadcasting.com/kcea",
+    "Cladrite Radio": "https://streaming.live365.com/a43564",
+    "Got Radio Big Band Land": "http://206.217.213.236:8430/;",
+    "Got Radio Jazz Joint": "https://pureplay.cdnstream1.com/6004_64.aac",
+    "Jazz Club Bandstand": "https://cast1.torontocast.com:2060/;",
+    "Radio Art Big Bands GR": "https://air.radioart.com/fBig_bands.mp3",
+    "radcap Big Band": "http://79.120.39.202:8000/bigband",
+    "Swing City Radio": "https://streaming.live365.com/a03438",
+    "Tu Musica FM Con Banda": "http://157.230.134.234:8007/;",
+    "WZQR Gold Big Band": "https://c3.radioboss.fm:18065/stream",
+    "Adroit Jazz Underground": "https://icecast.walmradio.com:8443/jazz_opus"
+  }
 }

@@ -9,7 +9,7 @@
     "Pal Station": "http://shoutcast.radyogrup.com:1020/",
     "Radyo Dejavu": "http://radyodejavu.canliyayinda.com:8054/",
     "Radyo Voyage": "http://voyagewmp.radyotvonline.com:80/",
-    "Retro Türk": "http://playerservices.streamtheworld.com/api/livestream-redirect/RETROTURK_SC",
+    "Retro Turk": "http://playerservices.streamtheworld.com/api/livestream-redirect/RETROTURK_SC",
     "World Hits": "http://37.247.98.8/stream/34/.mp3"
   }
 }

@@ -1,21 +1,21 @@
 {
   "stations": {
-      "Africa No1": "https://african1paris.ice.infomaniak.ch/african1paris-64.mp3",
-      "R Mix Congolaise": "https://stream.zeno.fm/qe5g83upga0uv",
-      "HighLife R": "https://hello.citrus3.com:2020/stream/highliferadio",
-      "ORTB R Alafia": "https://listen.radioking.com/radio/320564/stream/368243",
-      "Zodiak Online": "https://ice31.securenetsystems.net/0079",
-      "R Simba": "https://radiosimba.ug:8000/stream2",
-      "Beat FM": "http://5230.cloudrad.io:8354",
-      "R Ndeke Luka": "https://stream.radiondekeluka.org/ndekeluka",
-      "Horizon FM": "https://stream.zeno.fm/0945crn4bf9uv",
-      "Awash FM 90.7": "https://stream.zeno.fm/655zm6w4vc9uv",
-      "Wazobia Lagos FM": "https://wazobiafmlagos951-atunwadigital.streamguys1.com/wazobiafmlagos951",
-      "Ahadu R": "https://stream.zeno.fm/txxpndf1wwzuv",
-      "FM Senegal": "https://stream.zeno.fm/t8gcyq6ts0quv",
-      "Balla R": "https://usa5.fastcast4u.com/proxy/cameroon?mp=/;",
-      "Family GH": "http://s39.myradiostream.com:8516/;",
-      "Gospel R - GGR": "https://213.136.72.168:9010/;",
-      "R 254": "https://s4.radio.co/sba1f00abf/listen"
+    "Africa No1": "https://african1paris.ice.infomaniak.ch/african1paris-64.mp3",
+    "R Mix Congolaise": "https://stream.zeno.fm/qe5g83upga0uv",
+    "HighLife R": "https://hello.citrus3.com:2020/stream/highliferadio",
+    "ORTB R Alafia": "https://listen.radioking.com/radio/320564/stream/368243",
+    "Zodiak Online": "https://ice31.securenetsystems.net/0079",
+    "R Simba": "https://radiosimba.ug:8000/stream2",
+    "Beat FM": "http://5230.cloudrad.io:8354",
+    "R Ndeke Luka": "https://stream.radiondekeluka.org/ndekeluka",
+    "Horizon FM": "https://stream.zeno.fm/0945crn4bf9uv",
+    "Awash FM 90.7": "https://stream.zeno.fm/655zm6w4vc9uv",
+    "Wazobia Lagos FM": "https://wazobiafmlagos951-atunwadigital.streamguys1.com/wazobiafmlagos951",
+    "Ahadu R": "https://stream.zeno.fm/txxpndf1wwzuv",
+    "FM Senegal": "https://stream.zeno.fm/t8gcyq6ts0quv",
+    "Balla R": "https://usa5.fastcast4u.com/proxy/cameroon?mp=/;",
+    "Family GH": "http://s39.myradiostream.com:8516/;",
+    "Gospel R GGR": "https://213.136.72.168:9010/;",
+    "R 254": "https://s4.radio.co/sba1f00abf/listen"
   }
 }

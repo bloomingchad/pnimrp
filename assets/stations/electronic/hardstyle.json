@@ -1,19 +1,19 @@
 {
-    "stations": {
-        "RealHardStyle.Nl": "https://stream.realhardstyle.nl",
-        "Q-dance Radio": "https://playerservices.streamtheworld.com/api/livestream-redirect/Q_DANCEAAC.aac",
-        "Hardstyle.FM": "https://stream.laut.fm/hardstylefm",
-        "HardBase.FM": "https://aacl.stream.tb-group.fm/hb-low.aac",
-        "NRJ Hard": "https://scdn.nrjaudio.fm/adwz1/fr/56708/mp3_128.mp3",
-        "Welike to jump DE": "https://stream.laut.fm/weliketojump",
-        "ADM Hard": "https://kathy.torontocast.com:2900/stream",
-        "AU Digital Hard": "http://abm22.com.au:8000/CONTAINER33",
-        "Der Bemsi": "https://stream.laut.fm/derbemsi",
-        "EliteDance": "https://stream.laut.fm/elitedance",
-        "KroneHit Hard": "https://secureonair.krone.at/kronehit16.mp3",
-        "ILoveMusic Hard": "https://streams.ilovemusic.de/iloveradio21.mp3",
-        "NXOne": "https://stream.laut.fm/nxone",
-        "Primal.FM": "https://main.stream.primal.fm/dresden",
-        "RadioCaprice": "http://79.111.14.76:8002/hardstyle"
-    }
+  "stations": {
+    "RealHardStyle.Nl": "https://stream.realhardstyle.nl",
+    "Q-dance Radio": "https://playerservices.streamtheworld.com/api/livestream-redirect/Q_DANCEAAC.aac",
+    "Hardstyle.FM": "https://stream.laut.fm/hardstylefm",
+    "HardBase.FM": "https://aacl.stream.tb-group.fm/hb-low.aac",
+    "NRJ Hard": "https://scdn.nrjaudio.fm/adwz1/fr/56708/mp3_128.mp3",
+    "Welike to jump DE": "https://stream.laut.fm/weliketojump",
+    "ADM Hard": "https://kathy.torontocast.com:2900/stream",
+    "AU Digital Hard": "http://abm22.com.au:8000/CONTAINER33",
+    "Der Bemsi": "https://stream.laut.fm/derbemsi",
+    "EliteDance": "https://stream.laut.fm/elitedance",
+    "KroneHit Hard": "https://secureonair.krone.at/kronehit16.mp3",
+    "ILoveMusic Hard": "https://streams.ilovemusic.de/iloveradio21.mp3",
+    "NXOne": "https://stream.laut.fm/nxone",
+    "Primal.FM": "https://main.stream.primal.fm/dresden",
+    "radcap": "http://79.111.14.76:8002/hardstyle"
+  }
 }
