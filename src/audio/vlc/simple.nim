@@ -5,7 +5,7 @@ when isMainModule:
   let url1 = "https://listen.181fm.com/181-jammin_128k.mp3"
   var Handle = libvlcHandle.new()
 
-  Handle = initNewCtx(Handle)
+  Handle.initNewCtx()
   Handle.setAllyOptionsVlc()
   Handle.allocateJobVlc(url1)
   Handle.playPlayer()
