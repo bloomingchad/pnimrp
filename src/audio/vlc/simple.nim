@@ -1,14 +1,16 @@
 import helper
 
-when isMainModule:
+proc example =
   #let url = "https://nl.ah.fm/mobile"
   let url1 = "https://listen.181fm.com/181-jammin_128k.mp3"
-  var Handle = libvlcHandle.new()
+  var handle = new libvlcHandle
 
-  Handle.initNewCtx()
-  Handle.setAllyOptionsVlc()
-  Handle.allocateJobVlc(url1)
-  Handle.playPlayer()
+  handle.initNewCtx()
+  defer: handle.deinitPlayer()
+
+  handle.setAllyOptionsVlc()
+  handle.allocateJobVlc(url1)
+  handle.playPlayer()
   ## sleep(5)
   ## ^^^!!!small delay to call is_play
   ## while libvlc.mediaPlayerIsPlaying(Handle.mediaPlayerCtx):
@@ -19,4 +21,6 @@ when isMainModule:
     ## fflush(stdout);
     ## ^^^^ only written to stdout when flushed
 
-  deinitPlayer(Handle)
+
+when isMainModule:
+  example()

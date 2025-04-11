@@ -6,8 +6,8 @@ var playerCurrentSituation*: libvlc.state
 var currentVol*: cint
 
 type libvlcHandle* = object
-  ctx*: ptr libvlc.instance
-  mediaDscptr*: ptr libvlc.media
+  ctx*:            ptr libvlc.instance
+  mediaDscptr*:    ptr libvlc.media
   mediaPlayerCtx*: ptr libvlc.mediaPlayer
 
 proc checkError*(status: cint, msg: cstring) =
