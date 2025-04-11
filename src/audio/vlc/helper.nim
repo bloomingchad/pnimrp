@@ -74,13 +74,12 @@ proc isIdle*(Handle): bool =
 proc getCurrentMediaTitleVlc*(Handle): string =
   return $libvlc.mediaGetMeta(Handle.mediaDscptr, libvlc.metaNowPlaying)
 
-proc initNewCtx*(Handle): ref libvlc_handle =
+proc initNewCtx*(Handle) =
   var ctx = libvlc.new(0, allocCStringArray [])
   if ctx.isNil:
     raise newException(VlcError, "Failed to create libvlc instance")
 
   Handle.ctx = ctx
-  return Handle
 
 proc deinitPlayer*(Handle) =
   libvlc.mediaPlayerRelease(Handle.mediaPlayerCtx)
