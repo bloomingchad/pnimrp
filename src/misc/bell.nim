@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MPL-2.0
-import ../audio/mpv/[libmpv, player], os
+import ../audio/mpv/player, os
 
 proc warnBell* =
   ## Plays a warning sound using a temporary MPV instance without interrupting main playback
@@ -32,4 +32,3 @@ proc warnBell* =
     stderr.writeLine "Warning bell error: ", e.msg
   finally:
     tmpMpv.destroy()
-

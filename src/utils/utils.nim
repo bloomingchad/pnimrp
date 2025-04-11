@@ -6,7 +6,6 @@ import
 
   ../audio/mpv/[
       player,
-      libmpv,
     ],
 
   ../ui/illwill,
