@@ -2,7 +2,7 @@
 import
   times, terminal, tables,
 
-  ../audio/libmpv
+  ../audio/mpv/libmpv
 
 type
   QuoteData* = object

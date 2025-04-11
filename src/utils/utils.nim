@@ -4,8 +4,7 @@
 import
   json, os, terminal,
 
-  ../audio /
-    [
+  ../audio/mpv/[
       player,
       libmpv,
     ],

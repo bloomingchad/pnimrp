@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MPL-2.0
 # metadata.nim
 
-import libmpv, tables, strutils, terminal, ../utils/utils
+import libmpv, tables, strutils, terminal, ../../utils/utils
 
 # Mapping of common tag names (case-insensitive) to preferred names
 const tagMap* = {

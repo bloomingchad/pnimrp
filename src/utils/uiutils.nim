@@ -1,5 +1,11 @@
 # SPDX-License-Identifier: MPL-2.0
-import utilstypes, terminal, ../audio/player, os, strutils, ../misc/bell
+import
+  utilstypes, terminal, os,
+  strutils, 
+
+  ../audio/mpv/player,
+  ../misc/bell
+
 
 func getSymbol*(status: PlayerStatus, useEmoji: bool): string =
   if useEmoji:
