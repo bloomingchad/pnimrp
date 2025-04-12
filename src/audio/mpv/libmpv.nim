@@ -140,7 +140,7 @@ type
     llDebug  = 60, ## More noisy verbose info
     llTrace  = 70  ## Extremely verbose
 
-  Handle* = distinct pointer ## Basic type, used by API to infer the context
+  Handle* = distinct object ## Basic type, used by API to infer the context
 
 {.push bycopy.}
 type
