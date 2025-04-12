@@ -3,9 +3,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # thanks to gnuparallel and mediainfo.
 
-# Configuration
-PARALLEL_JOBS=10  # Number of parallel jobs to run
-
 # Check if directory argument was provided
 if [[ -z "$1" ]]; then
     echo "Error: Please provide a directory to scan."
@@ -13,10 +10,47 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 
+# Function to print red-colored error messages
+perror() {
+    echo -e "\e[31mError: $1\e[0m" >&2
+}
+
+# Function to print yellow-colored warning messages
+pwarn() {
+    echo -e "\e[33mWarning: $1\e[0m" >&2
+}
+
 # Check if the provided directory exists
 if [[ ! -d "$1" ]]; then
-    echo "Error: Directory '$1' not found or not accessible."
+    perror "Directory '$1' not found or not accessible."
     exit 1
+fi
+
+# Ensure the script runs only on Linux
+if [[ "$(uname)" != "Linux" ]]; then
+    perror "This script is only tested on Linux"
+    perror "Exiting due to possible quirky behaviour"
+    exit 1
+fi
+
+if ! command -v ldd &> /dev/null; then
+  pwarn "ldd is not installed or not in PATH"
+fi
+
+# Check if glibc is present
+if ! ldd --version 2>&1 | grep -q "GLIBC"; then
+    pwarn "This script is only tested in glibc (GNU C Library)."
+    pwarn "Consider possible quirky behaviour!"
+    sleep 3
+fi
+
+PARALLEL_JOBS=10  # Default number of parallel jobs
+
+# Detect system architecture and adjust PARALLEL_JOBS accordingly
+ARCH=$(uname -m)  # Get the system architecture
+
+if [[ "$ARCH" == "i386" || "$ARCH" == "x86_64" ]]; then
+    PARALLEL_JOBS=30  # Set higher parallel jobs for i386 or amd64
 fi
 
 # Store the directory to scan
@@ -32,7 +66,6 @@ if [[ ! -f "./worker.sh" ]]; then
     echo "Error: worker.sh not found in current directory."
     exit 1
 fi
-
 
 # Function to display help message
 show_help() {
