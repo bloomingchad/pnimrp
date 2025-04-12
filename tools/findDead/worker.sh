@@ -54,16 +54,20 @@ eraseLine() {
 }
 
 _echo() {
-    cursorUp
+    #cursorUp
     #echo ""
     
     # Call the regular echo with the provided argument
     #echo "$1"
     #eraseLine
     
-    cursorDown
+    #cursorDown
     echo "$1" >> result.txt
 
+}
+
+log_echo() {
+    echo "$1" >> error.txt
 }
 
 
@@ -84,7 +88,7 @@ KEYWORDS=("flac" "aac" "mp3" "adts" "mpeg" "hls" "layer iii" "layer 3" "dash" "p
 TEMP_FILE="$(mktemp)"
 
 # Common curl options
-CURL_OPTS=(
+CURL_OPTS_CORE=(
     --silent
     -L
     --insecure
@@ -100,9 +104,45 @@ CURL_OPTS=(
     --output "$TEMP_FILE"
 )
 
+CURL_OPTS=(
+    -L
+    "${CURL_OPTS_CORE[@]}"
+)
+
+
+#special case for m3u8 files
+if echo "$URL" | grep -iq "m3u"; then
+  curl "${CURL_OPTS_CORE[@]}" "$URL" 2>/dev/null
+  curl_status=$?
+  
+  if (( curl_status != 0 && curl_status != 28 )); then
+    log_echo "❌ $STATION_NAME: CurlError $curl_status"
+    _echo "❌ $STATION_NAME: CurlError $curl_status"
+    log_echo "-----------------------------------------"
+    log_echo curl_output
+    log_echo "-----------------------------------------"
+    exit 1
+  fi
+
+    if grep -q "#EXTM3U" "$TEMP_FILE"; then
+        _echo "✅ $STATION_NAME (PLAYLIST)"
+    fi
+  rm -f "$TEMP_FILE"
+  exit 0
+fi
+
 # Try curl normally first
-output=$(make_request)
-status=$?
+curl_output=$(make_request)
+curl_status=$?
+
+if (( curl_status != 0 && curl_status != 28 )); then
+  log_echo "❌ $STATION_NAME: CurlError $curl_status"
+  _echo "❌ $STATION_NAME: CurlError $curl_status"
+  log_echo "-----------------------------------------"
+  log_echo curl_output
+  log_echo "-----------------------------------------"
+  exit 1
+fi
 
 #if [ $status -ne 0 ]; then
 #    # Check if error indicates HTTP/0.9 is not allowed
@@ -130,20 +170,26 @@ if [[ -s "$TEMP_FILE" ]]; then
         check_with_file
     fi
 
-    # Clean up the temporary file
-    rm -f "$TEMP_FILE"
-
     # Return success or error based on whether a keyword was found
     if [[ $FOUND -eq 1 ]]; then
         _echo "✅ $STATION_NAME ($MATCHED_KEYWORD)"
+        rm -f "$TEMP_FILE"
         exit 0
     else
+        log_echo "❌ $STATION_NAME: No matching keywords found."
         _echo "❌ $STATION_NAME: No matching keywords found."
+        log_echo "-----------------------------------------"
+        file "$TEMP_FILE" >> error.txt
+        mediainfo "$TEMP_FILE" >> error.txt
+        log_echo "$STATION_NAME: $TEMP_FILE"
+        log_echo "$URL"
+        log_echo "-----------------------------------------"
+		rm -f "$TEMP_FILE"
         exit 1
     fi
 else
     # Temporary file is empty or does not exist
-    rm -f "$TEMP_FILE"
     _echo "❌ $STATION_NAME: Downloaded file is empty or missing."
+    rm -f "$TEMP_FILE"
     exit 1
 fi
