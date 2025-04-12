@@ -61,6 +61,10 @@ if [ -f "result.txt" ]; then
     rm "result.txt"
 fi
 
+if [ -f "error.txt" ]; then
+    rm "error.txt"
+fi
+
 # Check if worker.sh exists in current directory
 if [[ ! -f "./worker.sh" ]]; then
     echo "Error: worker.sh not found in current directory."
