@@ -1,4 +1,4 @@
-import libvlc
+import libvlc/libvlc, libvlc/base
 
 type VlcError* = object of CatchableError
 
@@ -6,9 +6,9 @@ var playerCurrentSituation*: libvlc.state
 var currentVol*: cint
 
 type libvlcHandle* = object
-  ctx*:            ptr libvlc.instance
-  mediaDscptr*:    ptr libvlc.media
-  mediaPlayerCtx*: ptr libvlc.mediaPlayer
+  ctx*:            ptr instance
+  mediaDscptr*:    ptr media
+  mediaPlayerCtx*: ptr mediaPlayer
 
 proc checkError*(status: cint, msg: cstring) =
   if status == -1:
