@@ -40,8 +40,6 @@ check_with_file() {
     done
 }
 
-#!/bin/bash
-
 # Function to move the cursor up by one line
 cursorUp() {
     echo -ne "\033[1A"
