@@ -40,25 +40,20 @@ check_with_file() {
     done
 }
 
-# Function to move the cursor up by one line
 cursorUp() {
     echo -ne "\033[1A"
 }
 
-# Function to move the cursor down by one line
 cursorDown() {
     echo -ne "\033[1B"
 }
 
 eraseLine() {
     # Move the cursor to the beginning of the line (\r)
-    # Clear the entire line (\033[2K)
     echo -ne "\r\033[2K"
 }
 
-# Custom _echo function
 _echo() {
-    # Move the cursor up
     cursorUp
     #echo ""
     
@@ -66,13 +61,11 @@ _echo() {
     #echo "$1"
     #eraseLine
     
-    # Move the cursor down
     cursorDown
     echo "$1" >> result.txt
 
 }
 
-# Main script logic starts here
 
 # Check if STATION_NAME and URL are provided
 if [[ -z "$1" || -z "$2" ]]; then
