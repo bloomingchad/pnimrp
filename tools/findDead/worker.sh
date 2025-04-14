@@ -94,7 +94,7 @@ CURL_OPTS_CORE=(
     --insecure
     --max-time 8
     --http0.9
-    --limit-rate 1K
+    --limit-rate 64
     --connect-timeout 5
     --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
     --header "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
