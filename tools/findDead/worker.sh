@@ -90,7 +90,6 @@ TEMP_FILE="$(mktemp)"
 # Common curl options
 CURL_OPTS_CORE=(
     --silent
-    -L
     --insecure
     --max-time 8
     --http0.9
