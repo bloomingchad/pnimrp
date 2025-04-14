@@ -1,7 +1,7 @@
 {
   "stations": {
     "AH.FM -data": "https://nl.ah.fm/mobile",
-    "AH.FM -high": "https://nl.ah.fm/live",
+    "AH.FM -high": "https://ah.fm/live.m3u",
     "Ambient Sleeping Pill": "radio.stereoscenic.com/asp-s",
     "Ibiza Global Radio": "http://ibizaglobalradio.streaming-pro.com:8024",
     "Radio Seven": "80.86.106.32:8000/radio7.mp3",
