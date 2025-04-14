@@ -12,9 +12,9 @@ make_request() {
 
 # Function to check file type using mediainfo
 check_with_mediainfo() {
-    MEDIAINFO_OUTPUT=$(mediainfo "$TEMP_FILE" | tr '[:upper:]' '[:lower:]')
+    MEDIAINFO_OUTPUT=$(mediainfo "$TEMP_FILE")
     for keyword in "${KEYWORDS[@]}"; do
-        if echo "$MEDIAINFO_OUTPUT" | grep -q "$keyword"; then
+        if echo "$MEDIAINFO_OUTPUT" | grep -iq "$keyword"; then
             FOUND=1
             MATCHED_KEYWORD="$keyword (detected by mediainfo)"
             return
@@ -22,22 +22,43 @@ check_with_mediainfo() {
     done
 
     # Additional check for generic MPEG Audio detection in mediainfo
-    if echo "$MEDIAINFO_OUTPUT" | grep -q "mpeg audio"; then
+    if echo "$MEDIAINFO_OUTPUT" | grep -iq "mpeg"; then
         FOUND=1
         MATCHED_KEYWORD="mpeg audio (detected by mediainfo)"
+    fi
+
+    WHAT_FILE_SAID=$(file "$TEMP_FILE")
+    if echo "$WHAT_FILE_SAID" | grep -iq "mpeg"; then
+        FOUND=1
+        MATCHED_KEYWORD="mpeg audio (detected by file)"
+    fi
+
+    if echo "$WHAT_FILE_SAID" | grep -iq "pls"; then
+        FOUND=1
+        MATCHED_KEYWORD="PLS file (detected by file)"
+    fi
+
+    if echo "$WHAT_FILE_SAID" | grep -iq "data"; then
+        FOUND=1
+        MATCHED_KEYWORD="ℹ️  GENERIC DATA file (detected by file) assuming suces"
     fi
 }
 
 # Function to check file type using file command
 check_with_file() {
-    FILE_TYPE=$(file "$TEMP_FILE" | tr '[:upper:]' '[:lower:]')
+    WHAT_FILE_SAID=$(file "$TEMP_FILE")
     for keyword in "${KEYWORDS[@]}"; do
-        if echo "$FILE_TYPE" | grep -q "$keyword"; then
+        if echo "$WHAT_FILE_SAID" | grep -iq "$keyword"; then
             FOUND=1
             MATCHED_KEYWORD="$keyword (detected by file)"
             return
         fi
     done
+
+    if echo "$WHAT_FILE_SAID" | grep -iq "mpeg"; then
+        FOUND=1
+        MATCHED_KEYWORD="mpeg audio (detected by file)"
+    fi
 }
 
 cursorUp() {
@@ -111,35 +132,38 @@ CURL_OPTS=(
 
 #special case for m3u8 files
 if echo "$URL" | grep -iq "m3u"; then
-  curl "${CURL_OPTS_CORE[@]}" "$URL" 2>/dev/null
+  curl_output=$(curl "${CURL_OPTS_CORE[@]}" "$URL" 2>/dev/null)
   curl_status=$?
   
   if (( curl_status != 0 && curl_status != 28 )); then
     log_echo "❌ $STATION_NAME: CurlError $curl_status"
     _echo "❌ $STATION_NAME: CurlError $curl_status"
     log_echo "-----------------------------------------"
-    log_echo curl_output
+    log_echo "$curl_output"
     log_echo "-----------------------------------------"
     exit 1
   fi
 
-    if grep -q "#EXTM3U" "$TEMP_FILE"; then
-        _echo "✅ $STATION_NAME (PLAYLIST)"
-    fi
+  if grep -q "#EXTM3U" "$TEMP_FILE"; then
+     _echo "✅ $STATION_NAME (M3U8 PLAYLIST)"
+     log_echo "✅ $STATION_NAME (M3U8 PLAYLIST)"
+     exit 0
+  fi
+
   rm -f "$TEMP_FILE"
   exit 0
 fi
 
 # Try curl normally first
 curl_output=$(make_request)
-curl_status=$?
+curl_status="$?"
 
 if (( curl_status != 0 && curl_status != 28 )); then
   log_echo "❌ $STATION_NAME: CurlError $curl_status"
   _echo "❌ $STATION_NAME: CurlError $curl_status"
-  log_echo "-----------------------------------------"
-  log_echo curl_output
-  log_echo "-----------------------------------------"
+  log_echo "START curloutp-----------------------------------------"
+  log_echo "$curl_output"
+  log_echo "END curloutp-----------------------------------------"
   exit 1
 fi
 
@@ -165,8 +189,20 @@ if [[ -s "$TEMP_FILE" ]]; then
     check_with_mediainfo
 
     # If mediainfo fails, fall back to the file command
-    if [[ $FOUND -eq 0 ]]; then
-        check_with_file
+    FILE_RESPONSE=$(file "$TEMP_FILE")
+
+    if echo "$FILE_RESPONSE" | grep -iq "with very long lines"; then
+        log_echo "ℹ️  $STATION_NAME has very long lines, assuming sucess ✅"
+        _echo "ℹ️  $STATION_NAME has very long lines, assuming sucess ✅"
+        FOUND=1
+        log_echo "START-----------------------------------------"
+        log_echo "file said:"
+        file "$TEMP_FILE" >> error.txt
+        log_echo "mediainfo said:"
+        mediainfo "$TEMP_FILE" >> error.txt
+        log_echo "$STATION_NAME: $TEMP_FILE"
+        log_echo "$URL"
+        log_echo "END-----------------------------------------"
     fi
 
     # Return success or error based on whether a keyword was found
@@ -177,12 +213,14 @@ if [[ -s "$TEMP_FILE" ]]; then
     else
         log_echo "❌ $STATION_NAME: No matching keywords found."
         _echo "❌ $STATION_NAME: No matching keywords found."
-        log_echo "-----------------------------------------"
+        log_echo "START-----------------------------------------"
+        log_echo "file said:"
         file "$TEMP_FILE" >> error.txt
+        log_echo "mediainfo said:"
         mediainfo "$TEMP_FILE" >> error.txt
         log_echo "$STATION_NAME: $TEMP_FILE"
         log_echo "$URL"
-        log_echo "-----------------------------------------"
+        log_echo "END-----------------------------------------"
 		rm -f "$TEMP_FILE"
         exit 1
     fi
