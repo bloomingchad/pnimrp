@@ -133,4 +133,5 @@ echo "    ❌ Unhealthy Found: $(grep -ic ❌ result.txt)"
 echo "    ✅ Healthy Found: $(grep -ic ✅ result.txt)"
 
 echo "Please check results.txt and error.txt for more detailed"
+echo "Please use man curl and navigate to EXIT CODES section"
 exit 0
