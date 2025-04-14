@@ -130,7 +130,7 @@ echo "All JSON files processed."
 echo "Summary:"
 echo "    Total Stations: $(grep -ri ": \"" "$1" | wc -l)"
 echo "    ❌ Unhealthy Found: $(grep -ic ❌ result.txt)"
-echo "    ✅ Healthy Found: $(grep -ic ✅ result.txt)"
+echo "    ✅ Healthy Found:   $(grep -ic -e "✅" -e "ℹ️ " result.txt)"
 
 echo "Please check results.txt and error.txt for more detailed"
 echo "Please use man curl and navigate to EXIT CODES section"
