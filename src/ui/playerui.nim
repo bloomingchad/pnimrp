@@ -3,7 +3,7 @@ import
   terminal, strutils, net,
   tables,
 
-  ui, illwill,
+  illwill, playeruiutils, menuui,
 
   ../audio/mpv/[
       player
