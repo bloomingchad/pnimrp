@@ -6,10 +6,10 @@ import
   random,
 
   ui/[
-    ui,
     illwill,
-    playerui
-  ], 
+    playerui,
+    menuui,
+  ],
 
   utils/[
     utils,
