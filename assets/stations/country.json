@@ -11,7 +11,7 @@
     "650 AM WSM (Nashville)": "http://stream01048.westreamradio.com/wsm-am-mp3",
     "The Ranch FM": "https://live.amperwave.net/direct/alphacorporate-kkusfmmp3-ibc4",
     "Bluegrass Country": "https://ice24.securenetsystems.net/WAMU",
-    "Country Roads Radio": "https://server-24.stream-server.nl/stream/CrossroadsCountryRadio/stream",
+    "Country Roads Radio": "http://server-24.stream-server.nl/stream/CrossroadsCountryRadio/stream",
     "KC Americana Radio 94.7": "https://stream.radio.co/sda3008cc9/listen"
   }
 }
