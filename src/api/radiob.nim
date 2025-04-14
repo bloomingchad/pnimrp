@@ -20,9 +20,9 @@ proc getStyleToProcessFromFileName(fileName: string): string =
   styleFromFileName.removeSuffix(".json")
   result = styleFromFilename
 
-
 let styleToProcess = getStyleToProcessFromFileName(fileName)
 
+const MAX_STATION_CAP = 20
 
 template skipThisLoopIfTooLong =
   if ($name in nameItems) or (name.getStr.len > 40):
@@ -38,7 +38,17 @@ template skipThisLoopIfTooLong =
 #echo baseUrl & "json/stations/bytag/" & styleToProcess & "/?hidebroken=true&limit=50"
 #quit()
 
-let e = client.getContent(baseUrl & "json/stations/bytag/" & styleToProcess #& "/?hidebroken=true&limit=50"
+let e =
+  client.getContent(
+    baseUrl &
+    "json/stations/bytag/" &
+    styleToProcess &
+    "?" &
+    "order=votes"     & "&" &
+    "reverse=true"    & "&" &
+    "hidebroken=true" & "&" &
+    "limit=70"        & "&" &
+    "lastcheckok=1"        #& "&" &
 )
 
 let c = e.parseJson()
@@ -51,15 +61,13 @@ var
   url:  JsonNode
 
 for station in 0 .. (c.len - 1):
-  if nameItems.len == 20: break
+  if nameItems.len == MAX_STATION_CAP: break
   name = c[station]["name"]
   url = c[station]["url"]
 
   skipThisLoopIfTooLong()
   #echo "name: ", name #, ": "
   #echo "len: ", name.getStr.len
-
-    
   nameItems.add $name
 
   #echo "url: ", url
