@@ -94,3 +94,6 @@ proc allocateJobVlc*(Handle; url: string) =
 proc setAllyOptionsVlc*(Handle) =
   libvlc.setUserAgent(Handle.ctx, "pnimrp/0.1", "pnimrp/0.1")
   libvlc.setAppId(Handle.ctx, "pnimrp", "0.1", "")
+
+proc mediaPlayerIsPlaying*(Handle): bool =
+  bool libvlc.mediaPlayerIsPlaying(Handle.mediaPlayerCtx)
