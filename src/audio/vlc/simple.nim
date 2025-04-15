@@ -13,15 +13,13 @@ proc example =
   handle.playPlayer()
   ## sleep(5)
   ## ^^^!!!small delay to call is_play
-  ## while libvlc.mediaPlayerIsPlaying(Handle.mediaPlayerCtx):
-  while true:
+  while handle.mediaPlayerIsPlaying():
     sleep 50
     continue
     ##  poll loop
     ## printf("nowplaying: %s\n", getCurrentMediaTitleVlc(libvlc_handle));
     ## fflush(stdout);
     ## ^^^^ only written to stdout when flushed
-
 
 when isMainModule:
   example()
