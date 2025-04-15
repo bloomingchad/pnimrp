@@ -4,7 +4,11 @@ import net, httpclient, json, strutils
 
 let baseUrl = "https://de2.api.radio-browser.info/"
 
-let client = newHttpClient(sslContext=newContext(verifyMode=CVerifyNone))
+let client =
+  newHttpClient(
+    sslContext=newContext(verifyMode=CVerifyNone),
+    userAgent="pnimrp/0.1"
+  )
 
 #let fileName = "house.json"
 let fileName = commandLineParams()[0] #"house.json"
