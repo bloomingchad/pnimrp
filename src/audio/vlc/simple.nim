@@ -3,9 +3,8 @@ import helper, os
 proc example =
   #let url = "https://nl.ah.fm/mobile"
   let url1 = "https://listen.181fm.com/181-jammin_128k.mp3"
-  let handle = new libvlcHandle
 
-  handle.initNewCtx()
+  var handle = initNewCtx()
   defer: handle.deinitPlayer()
 
   handle.setAllyOptionsVlc()
