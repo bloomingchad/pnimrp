@@ -11,8 +11,12 @@ proc example =
   handle.setAllyOptionsVlc()
   handle.allocateJobVlc(url1)
   handle.playPlayer()
-  ## sleep(5)
-  ## ^^^!!!small delay to call is_play
+
+  while true:
+    sleep(5)
+    if handle.mediaPlayerIsPlaying(): break
+    else: continue
+
   while handle.mediaPlayerIsPlaying():
     sleep 50
     continue
