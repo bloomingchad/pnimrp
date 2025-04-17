@@ -37,10 +37,10 @@ if ! command -v ldd &> /dev/null; then
   pwarn "ldd is not installed or not in PATH"
 fi
 
-# Check if glibc is present
-if ! ldd --version 2>&1 | grep -q "GLIBC"; then
-    pwarn "This script is only tested in glibc (GNU C Library)."
-    pwarn "Consider possible quirky behaviour!"
+# Check if we are in GNU Coreutils
+if ! ls --version 2>&1 | grep -q "GNU coreutils"; then
+    pwarn "This script requires GNU Coreutils for predictable behavior."
+    pwarn "Consider installing GNU Coreutils to avoid quirky behavior!"
     sleep 3
 fi
 
