@@ -31,18 +31,28 @@ func sanitizeStationName(str: string): string =
 
 template skipThisLoopIfTooLong =
   if ($name in nameItems):
-    echo "skipped reason in arr: ", name
-    echo "skipped reason in arr url: ", url
+    echo "skipped reason name in arr: ", name
+    echo "url: ", url
+    echo "---"
+    continue
+
+  if ($url in urlItems):
+    echo "skipped reason url in arr: ", url
+    echo "name url: ", name
+    echo "---"
     continue
 
   if (name.getStr.len > 40):
     echo "skipped name too long: ", name
     echo "skipped reason in arr url: ", url
+    echo "---"
     continue
 
   if url.getStr.len > 70:
     echo "skpped url too long: ", url
+    echo "---"
     continue
+  echo "end-------------------------------"
 
 proc getStyleToProcessFromFileName(fileName: string): string =
   var styleFromFilename = fileName
@@ -59,7 +69,8 @@ proc apiRequest(client: HttpClient, styleToProcess: string): string =
     "reverse=true"    & "&" &
     "hidebroken=true" & "&" &
     "limit=70"        & "&" &
-    "lastcheckok=1")
+    "lastcheckok=1"
+  )
 
 proc constructExpectedJsonFromNamesAndUrlItem(nameItems, urlItems: seq[string]): string =
   var jsonObject = %* {"stations": {}}
