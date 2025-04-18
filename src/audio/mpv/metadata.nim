@@ -36,28 +36,30 @@ type
     list: ptr NodeList
     index: int
 
-func initNodeListIterator(list: ptr NodeList): NodeListIterator =
+using list: ptr NodeList
+
+func initNodeListIterator(list): NodeListIterator =
   result = NodeListIterator(list: list, index: 0)
 
-func validateNodeListStructure(list: ptr NodeList): bool =
+func validateNodeListStructure(list): bool =
   ## Validates the basic structure of the NodeList.
   result = (list != nil)
   if not result:
     raise newException(MpvError, "Invalid NodeList encountered in items iterator")
 
-func validateNodeListPointers(list: ptr NodeList): bool =
+func validateNodeListPointers(list): bool =
   ## Ensures that the keys and values pointers are not nil.
   result = (list.keys != nil) and (list.values != nil)
   if not result:
     raise newException(MpvError, "Invalid NodeList: nil pointer encountered")
 
-func validateNodeListBounds(list: ptr NodeList): bool =
+func validateNodeListBounds(list): bool =
   ## Checks that the num field is within the expected bounds.
   result = (list.num >= 0) and (list.num < 100)
   if not result:
     raise newException(MpvError, "Invalid NodeList: num out of bounds (got: " & $list.num & ")")
 
-func validateNodeList(list: ptr NodeList): bool =
+func validateNodeList(list): bool =
   ## Validates the entire NodeList by combining the above validation functions.
   result = list.validateNodeListStructure() and
            list.validateNodeListPointers() and
