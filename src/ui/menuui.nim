@@ -1,5 +1,3 @@
-import terminal
-
 import
   terminal, random, os,
   strutils, ../audio/mpv/player,
