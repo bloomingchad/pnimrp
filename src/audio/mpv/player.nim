@@ -210,7 +210,7 @@ proc getMediaInfo*(ctx): MediaInfo {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to get media info: " & e.msg)
 
-proc setVolumeOfBellRelativeToMainCtx*(tmpMpv: ptr Handle) =
+proc setVolumeOfBellRelativeToMainCtx*(ctx) =
   #set 1.5 times the last vol
   var newVolume = cstring $(float(lastVolume) * 1.5)
   cE tmpMpv.setOptionString("volume", newVolume)
