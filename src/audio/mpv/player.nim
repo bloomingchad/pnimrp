@@ -83,18 +83,18 @@ proc initGlobalMpv* =
   except Exception as e:
     raise newException(PlayerError, "MPV initialization failed: " & e.msg)
 
-proc allocateJobMpv*(source: string; mpvCtx = mpvCtx) =
+proc allocateJobMpv*(ctx; source: string) =
   let fileArgs = allocCStringArray(["loadfile", source])
   try:
-    cE mpvCtx.cmd(fileArgs)
+    cE ctx.cmd(fileArgs)
   finally:
     deallocCStringArray(fileArgs)
 
-proc stopCurrentJob* =
+proc stopCurrentJob*(ctx) =
   let cmdArgs = allocCStringArray(["stop"])
   #discard mpvCtx.waitEvent(1)
   try:
-    cE mpvCtx.cmd(cmdArgs)
+    cE ctx.cmd(cmdArgs)
   finally:
     deallocCStringArray(cmdArgs)
 
@@ -124,7 +124,7 @@ proc mute*(ctx; shouldMute: bool) {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to set mute state: " & e.msg)
 
-template unmute*(ctx: ptr Handle) = ctx.mute(shouldMute = false)
+template unmute*(ctx) = ctx.mute(shouldMute = false)
 
 proc observeMediaTitle*(ctx) {.raises: [PlayerError].} =
   ## Starts observing changes to the media title.
@@ -213,7 +213,7 @@ proc getMediaInfo*(ctx): MediaInfo {.raises: [PlayerError].} =
 proc setVolumeOfBellRelativeToMainCtx*(ctx) =
   #set 1.5 times the last vol
   var newVolume = cstring $(float(lastVolume) * 1.5)
-  cE tmpMpv.setOptionString("volume", newVolume)
+  cE ctx.setOptionString("volume", newVolume)
     #some platforms will might cmplain about type error and cause `mpv API error:`
     #by having the cost of string conversions, we are offloading the dirty work
     #to libmpv, which is very robust

@@ -93,7 +93,7 @@ proc playStation*(config: MenuConfig) =
     var animationCounter: int = 0 # Counter for animation updates
 
 
-  allocateJobMpv(config.stationUrl)
+  mpvCtx.allocateJobMpv(config.stationUrl)
   var event = mpvCtx.waitEvent()
 
 
@@ -185,12 +185,12 @@ proc playStation*(config: MenuConfig) =
 
       of Key.R, Key.BackSpace:
         if not state.isPaused:
-          cleanupPlayer(mpvCtx)
-        stopCurrentJob()
+          mpvCtx.cleanupPlayer()
+        mpvCtx.stopCurrentJob()
         break
 
       of Key.Q, Key.Escape:
-        cleanupPlayer(mpvCtx)
+        mpvCtx.cleanupPlayer()
         exit(mpvCtx, state.isPaused)
 
       of Key.L: # New key binding for "Like" action
