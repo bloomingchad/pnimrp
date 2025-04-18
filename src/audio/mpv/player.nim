@@ -22,17 +22,18 @@ var lastVolume* {.global.} = 100 # Default volume is 100
 var fullMediaTitle* {.global.} = ""
 var mpvCtx* {.global.}: ptr Handle
 
-proc validateVolume(volume: int): int =
+using ctx: ptr Handle
+
+func validateVolume(volume: int): int =
   ## Ensures the volume stays within valid bounds (0-150).
   result = max(MinVolume, min(MaxVolume, volume))
 
-proc setAllyOptionsToMpv*(ctx: ptr Handle) =
+proc setAllyOptionsToMpv*(ctx) =
   var netTimeout = 5.0
   cE mpvCtx.setOption("network-timeout", fmtFloat64, netTimeout.addr)
 
   var replayGain = 6.0
   cE mpvCtx.setOption("replaygain-preamp", fmtFloat64, replayGain.addr)
-
 
   let optionList = [
     ("audio-display", "no"),
@@ -97,7 +98,7 @@ proc stopCurrentJob* =
   finally:
     deallocCStringArray(cmdArgs)
 
-proc pause*(ctx: ptr Handle; shouldPause: bool) {.raises: [PlayerError].} =
+proc pause*(ctx; shouldPause: bool) {.raises: [PlayerError].} =
   ## Toggles the pause state of the player.
   ##
   ## Args:
@@ -109,9 +110,9 @@ proc pause*(ctx: ptr Handle; shouldPause: bool) {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to set pause state: " & e.msg)
 
-template resume*(ctx: ptr Handle) = ctx.pause(shouldPause = false)
+template resume*(ctx) = ctx.pause(shouldPause = false)
 
-proc mute*(ctx: ptr Handle; shouldMute: bool) {.raises: [PlayerError].} =
+proc mute*(ctx; shouldMute: bool) {.raises: [PlayerError].} =
   ## Toggles the mute state of the player.
   ##
   ## Args:
@@ -125,7 +126,7 @@ proc mute*(ctx: ptr Handle; shouldMute: bool) {.raises: [PlayerError].} =
 
 template unmute*(ctx: ptr Handle) = ctx.mute(shouldMute = false)
 
-proc observeMediaTitle*(ctx: ptr Handle) {.raises: [PlayerError].} =
+proc observeMediaTitle*(ctx) {.raises: [PlayerError].} =
   ## Starts observing changes to the media title.
   ##
   ## Args:
@@ -135,13 +136,13 @@ proc observeMediaTitle*(ctx: ptr Handle) {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to observe media title: " & e.msg)
 
-proc observeMetadata*(ctx: ptr Handle) {.raises: [PlayerError].} =
+proc observeMetadata*(ctx) {.raises: [PlayerError].} =
   try:
     cE ctx.observeProperty(0, "metadata", fmtNone)
   except Exception as e:
     raise newException(PlayerError, "Failed to observe metadata: " & e.msg)
 
-proc isIdle*(ctx: ptr Handle): bool {.raises: [PlayerError].} =
+proc isIdle*(ctx): bool {.raises: [PlayerError].} =
   ## Checks if the player is currently idle.
   ##
   ## Args:
@@ -156,7 +157,7 @@ proc isIdle*(ctx: ptr Handle): bool {.raises: [PlayerError].} =
   except Exception as e:
     raise newException(PlayerError, "Failed to check idle state: " & e.msg)
 
-proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [].} =
+proc getCurrentMediaTitle*(ctx): string {.raises: [].} =
   ## Retrieves the current media title.
   ##
   ## Args:
@@ -180,7 +181,7 @@ proc getCurrentMediaTitle*(ctx: ptr Handle): string {.raises: [].} =
     #raise newException(PlayerError, "Failed to get media title: " & e.msg)
     discard
 
-proc getMediaInfo*(ctx: ptr Handle): MediaInfo {.raises: [PlayerError].} =
+proc getMediaInfo*(ctx): MediaInfo {.raises: [PlayerError].} =
   ## Retrieves comprehensive information about the media player's current state.
   ##
   ## Args:
@@ -223,9 +224,9 @@ template volume*(inc = true) =
   lastVolume = state.volume
   cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
 
-func getFileFormat*(ctx: ptr Handle): string =
+func getFileFormat*(ctx): string =
   # Query the `file-format` property
-  var format: cstring = getPropertyString(ctx, "file-format")
+  var format = getPropertyString(ctx, "file-format")
 
   if format != nil:
     result = $format  # Convert cstring to Nim string
