@@ -65,7 +65,10 @@ proc setAllyOptionsToMpv*(ctx: ptr Handle) =
   ]
 
   for option in optionList:
-    cE mpvCtx.setOptionString(option[0], option[1])
+    cE mpvCtx.setOptionString(
+      cstring(option[0]),
+      cstring(option[1])
+    )
 
 proc initGlobalMpv* =
   try:
