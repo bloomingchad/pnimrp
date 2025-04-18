@@ -27,45 +27,45 @@ proc validateVolume(volume: int): int =
   result = max(MinVolume, min(MaxVolume, volume))
 
 proc setAllyOptionsToMpv*(ctx: ptr Handle) =
-  # Core audio settings
-  cE mpvCtx.setOptionString("audio-display", "no")
-  cE mpvCtx.setOptionString("vid", "no")
-  cE mpvCtx.setOptionString("config", "no")
-  cE mpvCtx.setOptionString("vo", "null")
-  cE mpvCtx.setOptionString("audio-stream-silence", "yes")
-  cE mpvCtx.setOptionString("gapless-audio", "weak")
-  cE mpvCtx.setOptionString("audio-fallback-to-null", "no")
-
-  # Network configuration
   var netTimeout = 5.0
   cE mpvCtx.setOption("network-timeout", fmtFloat64, netTimeout.addr)
-  cE mpvCtx.setOptionString(
-    "demuxer-lavf-o", "reconnect=1,reconnect_streamed=1,reconnect_delay_max=5"
-  )
-  cE mpvCtx.setOptionString("user-agent", "pnimrp/0.1")
 
-  # Performance settings
-  cE mpvCtx.setOptionString("ytdl", "no")
-  cE mpvCtx.setOptionString("demuxer-thread", "yes")
-
-  # Audio processing
-  cE mpvCtx.setOptionString("audio-normalize-downmix", "yes")
-  cE mpvCtx.setOptionString("volume-max", "150")
   var replayGain = 6.0
   cE mpvCtx.setOption("replaygain-preamp", fmtFloat64, replayGain.addr)
 
-  # Terminal/interface settings
-  cE mpvCtx.setOptionString("terminal", "yes")
-  cE mpvCtx.setOptionString("really-quiet", "yes")
-  cE mpvCtx.setOptionString("osd-level", "0") # Disable OSD completely
 
-    # Input controls
-  cE mpvCtx.setOptionString("input-default-bindings", "no")
-  cE mpvCtx.setOptionString("input-vo-keyboard", "no")
-  cE mpvCtx.setOptionString("input-media-keys", "no")
+  let optionList = [
+    ("audio-display", "no"),
+    ("vid", "no"),
+    ("config", "no"),
+    ("vo", "null"),
+    ("audio-stream-silence", "yes"),
+    ("gapless-audio", "weak"),
+    ("audio-fallback-to-null", "no"),
 
-  cE mpvCtx.setOptionString("demuxer-max-bytes", "2097152") #2MB #thanks to github.com/florianjacob
-  cE mpvCtx.setOptionString("demuxer-max-back-bytes", "2097152") #see https://github.com/mpv-player/mpv/issues/5359
+    ("demuxer-lavf-o", "reconnect=1,reconnect_streamed=1,reconnect_delay_max=5"),
+    ("user-agent", "pnimrp/0.1"),
+
+    ("ytdl", "no"),
+    ("demuxer-thread", "yes"),
+
+    ("audio-normalize-downmix", "yes"),
+    ("volume-max", "150"),
+
+    ("terminal", "yes"),
+    ("really-quiet", "yes"),
+    ("osd-level", "0"),
+
+    ("input-default-bindings", "no"),
+    ("input-vo-keyboard", "no"),
+    ("input-media-keys", "no"),
+
+    ("demuxer-max-bytes", "2097152"), #2MB #thanks to github.com/florianjacob
+    ("demuxer-max-back-bytes", "2097152") #see https://github.com/mpv-player/mpv/issues/5359
+  ]
+
+  for option in optionList:
+    cE mpvCtx.setOptionString(option[0], option[1])
 
 proc initGlobalMpv* =
   try:
