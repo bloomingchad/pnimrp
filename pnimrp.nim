@@ -144,7 +144,7 @@ proc main() =
 
     #init global mpv context for reuse
     initGlobalMpv()
-    defer: mpvCtx.destroy()
+    defer: mpvCtx.terminateDestroy()
 
     # Start the main menu with the configured assets directory
     drawMainMenu(config.stationsDir)
