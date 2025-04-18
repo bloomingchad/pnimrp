@@ -69,7 +69,8 @@ proc finishCheckingStationNotice* =
 proc cleanupPlayer*(ctx: ptr Handle) =
   ## Cleans up player resources.
   #ctx.terminateDestroy()
-  stopCurrentJob()
+  #stopCurrentJob()
+  discard
 
 template debug*: bool =
   not defined(release) or
