@@ -24,7 +24,7 @@ proc warnBell* =
     let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
 
     # Play sound in temporary instance
-    allocateJobMpv(bellPath, tmpMpv)
+    tmpMpv.allocateJobMpv(bellPath)
 
     # Wait for completion
     var event: ptr Event
