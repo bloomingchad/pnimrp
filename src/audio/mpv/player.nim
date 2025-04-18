@@ -237,4 +237,8 @@ func getFileFormat*(ctx): string =
 template incVolume*() = volume(inc = true)
 template decVolume*() = volume(inc = false)
 
-export destroy, Handle, create, initialize, Event, EventID, waitEvent, setProperty
+export
+  Handle, create, initialize,
+  destroy, terminateDestroy,
+  Event, EventID, waitEvent,
+  setProperty
