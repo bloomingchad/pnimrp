@@ -74,7 +74,7 @@ proc isIdle*(Handle): bool =
   else:
     return false
 
-## auto observeMediaTitle() {}
+#proc observeMediaTitle(Handle)
 
 proc getCurrentMediaTitleVlc*(Handle): string =
   return $libvlc.mediaGetMeta(Handle.mediaDscptr, libvlc.metaNowPlaying)
@@ -104,26 +104,36 @@ proc setAllyOptionsVlc*(Handle) =
 proc mediaPlayerIsPlaying*(Handle): bool =
   bool libvlc.mediaPlayerIsPlaying(Handle.mediaPlayerCtx)
 
+
+
+
+#example for using helper
 when isMainModule:
   import os
+
   proc example =
     let url = "https://listen.181fm.com/181-jammin_128k.mp3"
-  
+
     var handle = initNewCtx()
     defer: handle.deinitPlayer()
-  
+
     handle.setAllyOptionsVlc()
     handle.allocateJobVlc(url)
     handle.playPlayer()
-  
-    while true:
-      sleep(5)
+
+    while true: #wait for init
+      sleep 10
       if handle.mediaPlayerIsPlaying(): break
       else: continue
-  
-    while handle.mediaPlayerIsPlaying():
-      sleep 50
+
+    var isMuted = false
+    while handle.mediaPlayerIsPlaying(): #poll loop
+      sleep 500
+
+      if not isMuted: handle.muteVolume()
+      else:           handle.unmuteVolume()
+      isMuted = not isMuted
+
       continue
-      ##  poll loop
-  
+
   example()
