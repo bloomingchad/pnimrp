@@ -20,7 +20,7 @@ template cE*(status: cint, msg: cstring) =
 using Handle: ref libvlcHandle
 
 proc playPlayer*(Handle) =
-  let msg: cstring = "play player"
+  let msg: cstring = "fail to play player"
   cE(libvlc.mediaPlayerPlay(Handle.mediaPlayerCtx), msg)
 
 template resume*(Handle) =
@@ -30,7 +30,7 @@ proc pausePlayer*(Handle) =
   mediaPlayerPause(Handle.mediaPlayerCtx)
 
 proc setVolume*(Handle; volume: int) =
-  let msg: cstring = "set volume"
+  let msg: cstring = "fail set volume"
   cE(audioSetVolume(Handle.mediaPlayerCtx, cint(volume)), msg)
 
 template volumeChange*(Handle; inc: bool) =
