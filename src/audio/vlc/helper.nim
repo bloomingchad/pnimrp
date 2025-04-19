@@ -99,3 +99,27 @@ proc setAllyOptionsVlc*(Handle) =
 
 proc mediaPlayerIsPlaying*(Handle): bool =
   bool libvlc.mediaPlayerIsPlaying(Handle.mediaPlayerCtx)
+
+when isMainModule:
+  import os
+  proc example =
+    let url = "https://listen.181fm.com/181-jammin_128k.mp3"
+  
+    var handle = initNewCtx()
+    defer: handle.deinitPlayer()
+  
+    handle.setAllyOptionsVlc()
+    handle.allocateJobVlc(url)
+    handle.playPlayer()
+  
+    while true:
+      sleep(5)
+      if handle.mediaPlayerIsPlaying(): break
+      else: continue
+  
+    while handle.mediaPlayerIsPlaying():
+      sleep 50
+      continue
+      ##  poll loop
+  
+  example()
