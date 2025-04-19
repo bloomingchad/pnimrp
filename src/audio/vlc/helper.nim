@@ -2,13 +2,17 @@ import libvlc/libvlc, libvlc/base
 
 type VlcError* = object of CatchableError
 
-var playerCurrentSituation*: libvlc.state
-var currentVol*: cint
-
+type
+  libvlcStateInfo = object
+    playerCurrentSituation*: libvlc.state
+    currentVol*: cint
+    volumeBeforeMuted*: int
+          
 type libvlcHandle* = object
   ctx*:            ptr instance
   mediaDscptr*:    ptr media
   mediaPlayerCtx*: ptr mediaPlayer
+  stateInfo:           libvlcStateInfo
 
 proc checkError*(status: cint, msg: cstring) =
   if status == -1:
@@ -39,15 +43,15 @@ template volumeChange*(Handle; inc: bool) =
 
   Handle.setVolume(currentVol)
 
-var volumeBeforeMuted*: int
-
 proc muteVolume*(Handle) =
-  volumeBeforeMuted = libvlc.audioGetVolume(Handle.mediaPlayerCtx)
+  Handle.stateInfo.volumeBeforeMuted = libvlc.audioGetVolume(Handle.mediaPlayerCtx)
   setVolume(Handle, 0)
 
 proc unmuteVolume*(Handle) =
-  setVolume(Handle, volumeBeforeMuted)
-  volumeBeforeMuted = -1
+  if Handle.stateInfo.volumeBeforeMuted == 0:
+    Handle.stateInfo.volumeBeforeMuted = 100
+  Handle.setVolume(Handle.stateInfo.volumeBeforeMuted)
+  Handle.stateInfo.volumeBeforeMuted = -1
 
 template volumeUp*(Handle) =
   volumeChange(Handle, true)
@@ -56,15 +60,15 @@ template volumeDown*(Handle) =
   volumeChange(Handle, false)
 
 proc setVolumeOfBellRelativeToMainCtx*(Handle) =
-  var relativeVol = int(1.5 * float(currentVol))
+  var relativeVol = int(1.5 * float(Handle.stateInfo.currentVol))
   setVolume(Handle, relativeVol)
 
 proc stopPlayer*(Handle) =
   libvlc.mediaPlayerStop(Handle.mediaPlayerCtx)
 
 proc isIdle*(Handle): bool =
-  playerCurrentSituation = libvlc.mediaPlayerGetState(Handle.mediaPlayerCtx)
-  if playerCurrentSituation in
+  Handle.stateInfo.playerCurrentSituation = libvlc.mediaPlayerGetState(Handle.mediaPlayerCtx)
+  if Handle.stateInfo.playerCurrentSituation in
     [libvlc.Ended, libvlc.Error, libvlc.Stopped]:
       return true
   else:
