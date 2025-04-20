@@ -281,7 +281,8 @@ proc drawHeader*(section: string) =
 proc showHelp*() =
   ## Displays instructions on how to use the app.
   clear()
-  drawHeader("Help")
+
+  drawHeader()
   say("Welcome to " & AppName & "!", fgYellow)
   say("Here's how to use the app:", fgGreen)
   say("1. Use the number keys (1-9) or letters (A-Z) to select a station.", fgBlue)
