@@ -18,6 +18,11 @@ import
   }
 ]#
 
+when defined(useJsmn):
+  {. error:
+"""cant use jsmn for statuscache
+please disable useJsmn""".}
+
 const statusCacheValidity =
   when debug: 1  #1day
   else:       12 #12days
