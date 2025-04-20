@@ -143,11 +143,11 @@ proc main() =
     randomize()
 
     #init global mpv context for reuse
-    initGlobalMpv()
+    var mpvCtx = initGlobalMpv()
     defer: mpvCtx.terminateDestroy()
 
     # Start the main menu with the configured assets directory
-    drawMainMenu(config.stationsDir)
+    mpvCtx.drawMainMenu(config.stationsDir)
 
   #except Exception as e:
     # Handle any fatal errors that occur during execution

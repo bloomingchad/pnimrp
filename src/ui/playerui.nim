@@ -54,7 +54,7 @@ func isValidPlaylistUrl(url: string): bool =
 
 func milSecToSec(ms: int): float = ms / 1000
 
-proc playStation*(config: MenuConfig) =
+proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
   #try:
   if config.stationUrl == "":
@@ -93,8 +93,8 @@ proc playStation*(config: MenuConfig) =
     var animationCounter: int = 0 # Counter for animation updates
 
 
-  mpvCtx.allocateJobMpv(config.stationUrl)
-  var event = mpvCtx.waitEvent()
+  ctx.allocateJobMpv(config.stationUrl)
+  var event = ctx.waitEvent()
 
 
   # Draw the initial player UI
@@ -105,24 +105,24 @@ proc playStation*(config: MenuConfig) =
 
   while true:
     if not state.isPaused:
-      event = mpvCtx.waitEvent(mpvEventLoopTimeout)
+      event = ctx.waitEvent(mpvEventLoopTimeout)
 
     # Handle playback events
     if event.eventID in {IDPlaybackRestart} and not isObserving:
-      when not defined(simple): mpvCtx.observeMetadata()
-      else:                     mpvCtx.observeMediaTitle()
+      when not defined(simple): ctx.observeMetadata()
+      else:                     ctx.observeMediaTitle()
 
       isObserving = true
 
     if event.eventID in {IDEventPropertyChange}:
-      state.currentSong = mpvCtx.getCurrentMediaTitle()
+      state.currentSong = ctx.getCurrentMediaTitle()
       if fullTitle != state.currentSong:
         config.appendToHistory()
       fullTitle = state.currentSong # Assign to fullTitle
       updateCurrentSongPlayerUI(state.currentSong)
       setCursorXPos 0
       when not defined(simple):
-        globalMetadata = updateMetadataUI(config, mpvCtx, state)
+        globalMetadata = updateMetadataUI(config, ctx, state)
 
 
     when not defined(simple):
@@ -147,7 +147,7 @@ proc playStation*(config: MenuConfig) =
 
     # Periodic checks
     if coreIdleCounter >= CheckIdleInterval:
-      if mpvCtx.isIdle():
+      if ctx.isIdle():
         handlePlayerError("Player core idle", config)
         break
 
@@ -167,12 +167,12 @@ proc playStation*(config: MenuConfig) =
     case getKeyWithTimeout(KeyTimeout):
       of Key.P:
         state.isPaused = not state.isPaused
-        mpvCtx.pause(state.isPaused)
+        ctx.pause(state.isPaused)
         updatePlayMutedStatePlayerUI(currentStatusEmoji(currentStatus(state)))
 
       of Key.M:
         state.isMuted = not state.isMuted
-        mpvCtx.mute(state.isMuted)
+        ctx.mute(state.isMuted)
         updatePlayMutedStatePlayerUI(currentStatusEmoji(currentStatus(state)))
 
       of Key.Slash, Key.Plus:
@@ -185,13 +185,13 @@ proc playStation*(config: MenuConfig) =
 
       of Key.R, Key.BackSpace:
         if not state.isPaused:
-          mpvCtx.cleanupPlayer()
-        mpvCtx.stopCurrentJob()
+          ctx.cleanupPlayer()
+        ctx.stopCurrentJob()
         break
 
       of Key.Q, Key.Escape:
-        mpvCtx.cleanupPlayer()
-        exit(mpvCtx, state.isPaused)
+        ctx.cleanupPlayer()
+        ctx.exit(state.isPaused)
 
       of Key.L: # New key binding for "Like" action
         if state.currentSong != "":
@@ -211,9 +211,9 @@ proc playStation*(config: MenuConfig) =
         showInvalidChoice()
 
   if state.isPaused: #reset states for globalCtx if user returned with P/M
-    mpvCtx.resume()
+    ctx.resume()
   if state.isMuted:
-    mpvCtx.unmute()
+    ctx.unmute()
 
 #except Exception:
   #  let fileHint = if config.currentSubsection != "": config.currentSubsection else: config.currentSection

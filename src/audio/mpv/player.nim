@@ -20,7 +20,6 @@ const
 
 var lastVolume* {.global.} = 100 # Default volume is 100
 var fullMediaTitle* {.global.} = ""
-var mpvCtx* {.global.}: ptr Handle
 
 using ctx: ptr Handle
 
@@ -30,10 +29,10 @@ func validateVolume(volume: int): int =
 
 proc setAllyOptionsToMpv*(ctx) =
   var netTimeout = 5.0
-  cE mpvCtx.setOption("network-timeout", fmtFloat64, netTimeout.addr)
+  cE ctx.setOption("network-timeout", fmtFloat64, netTimeout.addr)
 
   var replayGain = 6.0
-  cE mpvCtx.setOption("replaygain-preamp", fmtFloat64, replayGain.addr)
+  cE ctx.setOption("replaygain-preamp", fmtFloat64, replayGain.addr)
 
   let optionList = [
     ("audio-display", "no"),
@@ -66,19 +65,16 @@ proc setAllyOptionsToMpv*(ctx) =
   ]
 
   for option in optionList:
-    cE mpvCtx.setOptionString(
+    cE ctx.setOptionString(
       cstring(option[0]),
       cstring(option[1])
     )
 
-proc initGlobalMpv* =
+proc initGlobalMpv*(): ptr Handle =
   try:
-    mpvCtx = create()
-
-    mpvCtx.setAllyOptionsToMpv()
-
-    # Initialize MPV context
-    cE mpvCtx.initialize()
+    result = create()
+    result.setAllyOptionsToMpv()
+    cE result.initialize()
 
   except Exception as e:
     raise newException(PlayerError, "MPV initialization failed: " & e.msg)
@@ -222,7 +218,7 @@ template volume*(inc = true) =
   if inc: state.volume = min(state.volume + VolumeStep, MaxVolume)
   else:   state.volume = max(state.volume - VolumeStep, MinVolume)
   lastVolume = state.volume
-  cE mpvCtx.setProperty("volume", fmtInt64, addr state.volume)
+  cE ctx.setProperty("volume", fmtInt64, addr state.volume)
 
 func getFileFormat*(ctx): string =
   # Query the `file-format` property

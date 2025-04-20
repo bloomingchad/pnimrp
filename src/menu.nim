@@ -14,6 +14,11 @@ import
   utils/[
     utils,
     jsonutils
+  ],
+
+  audio/[
+    mpv/player,
+    mpv/libmpv
   ]
 
 when not defined(simple):
@@ -96,7 +101,7 @@ template directoryHandlerHM(items: seq[string]) =
 
   if subItems.len != 0:
     # Navigate to subcategories with isMainMenu = false
-    handleMenu(
+    ctx.handleMenu(
       items[choosenItem],
       subItems,
       subPaths,
@@ -114,7 +119,7 @@ template jsonFileHandlerHM(items: seq[string]) =
     warn("No stations available. Please check the station list.")
   else:
     # Navigate to station list with isMainMenu = false
-    handleMenu(
+    ctx.handleMenu(
       items[choosenItem],
       stations.names,
       stations.urls,
@@ -135,6 +140,7 @@ template statusCacheHandlerHM(
     hookCacheResolveAndDisplay(stations, statuscontext)
 
 proc handleMenu*(
+    ctx: ptr Handle,
     section: string,
     items: seq[string],
     paths: seq[string],
@@ -184,7 +190,7 @@ proc handleMenu*(
                 stationName: items[choosenItem],
                 stationUrl: selectedPath
               )
-              playStation(config)
+              ctx.playStation(config)
             break
           else:
             showInvalidChoice()
@@ -227,13 +233,13 @@ proc handleMenu*(
     if returnToParent:
       break
 
-proc drawMainMenu*(baseDir = getAppDir() / "assets") =
+proc drawMainMenu*(ctx: ptr Handle, baseDir = getAppDir() / "assets") =
   ## Draws and handles the main category menu.
   const fullscreen = when not defined(release) or defined(debug): false else: true
     ## stack traces are cleared, we dont want fullscreen until not debug
   illwillInit(fullscreen)
   let categories = loadCategories(baseDir)
-  handleMenu(
+  ctx.handleMenu(
     "Main",
     categories.names,
     categories.paths,
