@@ -67,14 +67,14 @@ a:hover {
 }
 
 section {
-    padding: 60px 0;
+    padding: 1rem 0;
 }
 
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px 0;
+    padding: 0.5rem 0;
 }
 
 /* Hero Section */
@@ -135,7 +135,7 @@ section {
 
 /* Features Section */
 .features {
-    padding: 80px 0;
+    padding: 2rem 0;
 }
 
 .features h2 {
@@ -185,7 +185,7 @@ section {
 
 /* Installation Section */
 .installation {
-    padding: 80px 0;
+    padding: 2rem 0;
 }
 
 .installation h2 {
@@ -218,7 +218,7 @@ section {
 
 /* Demo Section */
 .demo {
-    padding: 80px 0;
+    padding: 1rem 0;
 }
 
 .demo h2 {
@@ -342,4 +342,8 @@ footer a {
     .nav-links a:hover {
         transform: translateY(-2px);
     }
+}
+
+.license a {
+	color: #0000EE;
 }
