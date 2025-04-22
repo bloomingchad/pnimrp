@@ -216,7 +216,7 @@ proc handleMenu*(
         of Key.S:
           chooseForMe = true
 
-        of Key.Q, Key.Escape:
+        of Key.Q, Key.Escape, CtrlQ:
           showExitMessage()
           break
 

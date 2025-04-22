@@ -189,7 +189,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
         ctx.stopCurrentJob()
         break
 
-      of Key.Q, Key.Escape:
+      of Key.Q, Key.Escape, CtrlQ:
         ctx.cleanupPlayer()
         ctx.exit(state.isPaused)
 
