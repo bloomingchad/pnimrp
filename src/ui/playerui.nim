@@ -165,7 +165,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
 
     # Handle user input
     case getKeyWithTimeout(KeyTimeout):
-      of Key.P:
+      of Key.P, Key.Space:
         state.isPaused = not state.isPaused
         ctx.pause(state.isPaused)
         updatePlayMutedStatePlayerUI(currentStatusEmoji(currentStatus(state)))
