@@ -73,9 +73,11 @@ proc cleanupPlayer*(ctx: ptr Handle) =
   discard
 
 template debug*: bool =
-  not defined(release) or
-    not defined(danger) or
-      defined(debug)
+  not(
+    defined(release) or
+    defined(danger)
+  ) or
+  defined(debug)
 
 export #jsonutils
   loadCategories, loadStations, loadQuotes

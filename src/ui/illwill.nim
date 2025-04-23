@@ -27,10 +27,12 @@
 import terminal
 when not defined windows: import unicode, macros, os
 
-template debug: bool =
-  not defined(release) or
-    not defined(danger) or
-      defined(debug)
+template debug*: bool =
+  not(
+    defined(release) or
+    defined(danger)
+  ) or
+  defined(debug)
 
 type
   Key* {.pure.} = enum     #Supported single key presses and key combinations

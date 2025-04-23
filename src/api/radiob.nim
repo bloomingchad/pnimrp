@@ -10,10 +10,12 @@ proc sanitizeEscapedQuotesFromRB(str: string): string =
   tempStr.removeSuffix("\"")
   return tempStr
 
-template debug*: bool =
-  not defined(release) or
-    not defined(danger) or
-      defined(debug)
+template debug: bool =
+  not(
+    defined(release) or
+    defined(danger)
+  ) or
+  defined(debug)
 
 template didFindInStr(res: int): bool = res != -1
 
