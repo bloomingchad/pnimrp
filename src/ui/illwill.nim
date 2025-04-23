@@ -24,7 +24,7 @@
 ##
 ##  0. You just DO WHAT THE FUCK YOU WANT TO.
 
-import terminal, strutils
+import terminal
 when not defined windows: import unicode, macros, os
 
 template debug: bool =
