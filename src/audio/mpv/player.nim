@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MPL-2.0
 # player.nim
 
-import libmpv, os
+import libmpv
 export cE # Export the error-checking macro for external use
 
 type

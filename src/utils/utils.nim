@@ -2,7 +2,7 @@
 # utils.nim
 
 import
-  json, os, terminal,
+  os, terminal,
 
   ../audio/mpv/[
       player,

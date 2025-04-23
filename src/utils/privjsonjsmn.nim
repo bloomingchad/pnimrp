@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: MPL-2.0
 when defined(useJsmn):
   import
-    os, strutils,
-
     utilstypes
+
   from ../link/linkbase import normalizeUrl
 
   import ../json/jsmn

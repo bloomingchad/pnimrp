@@ -4,8 +4,7 @@ import commonui
 
 import
   ../utils/[
-    utils,
-    jsonutils
+    utils
   ]
 
 proc drawHeaderPlayerUI(section: string) =

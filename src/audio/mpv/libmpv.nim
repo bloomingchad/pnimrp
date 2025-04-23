@@ -40,8 +40,6 @@ Terms Used
      !!making static is not implemented yet!!
 ]##
 
-from terminal import showCursor
-
 const dynlibName =
   when defined(windows): "mpv-(1|2|3).dll"
   elif defined(macosx): "libmpv(|.1|.2|.3).dylib"

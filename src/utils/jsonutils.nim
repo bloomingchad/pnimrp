@@ -6,8 +6,6 @@ import
 
 when defined(useJsmn):
   import ../json/jsmn
-else:
-  import json
 
 proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[string]] =
   ## Loads available station categories from the assets directory.

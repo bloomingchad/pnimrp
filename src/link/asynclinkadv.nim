@@ -2,7 +2,7 @@
 #asynclinkadv.nim
 import
   times, ../utils/utils, asyncdispatch,
-  asyncnet, strutils, linkbase
+  strutils, linkbase
 
 import std/net, httpclient
 

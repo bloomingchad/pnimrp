@@ -3,7 +3,6 @@ import
   utilstypes, terminal, os,
   strutils, 
 
-  ../audio/mpv/player,
   ../misc/bell
 
 
