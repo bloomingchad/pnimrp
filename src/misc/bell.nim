@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MPL-2.0
 import
   os,
+  terminal,
   ../audio/mpv/[
     player,
     libmpv
@@ -10,7 +11,6 @@ proc warnBell* =
   ## Plays a warning sound using a temporary MPV instance without interrupting main playback
   var tmpMpvCtx = initGlobalMpv()
   try:
-
     let assetsDir = getAppDir() / "assets"
     let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
 
@@ -28,3 +28,4 @@ proc warnBell* =
     stderr.writeLine "Warning bell error: ", e.msg
   finally:
     tmpMpvCtx.terminateDestroy()
+    hideCursor() #somehow we need this ._.
