@@ -1,4 +1,4 @@
-import net, httpclient, json, strutils
+import net, httpclient, uri, json, strutils
 import std/cmdline
 
 const apiEndPoint = "https://all.api.radio-browser.info/"
@@ -62,10 +62,11 @@ proc getStyleToProcessFromFileName(fileName: string): string =
   result = styleFromFilename
 
 proc apiRequest(client: HttpClient, styleToProcess: string): string =
+  let encodedStyleToProcess = encodeUrl(styleToProcess, usePlus = false)
   client.getContent(
     apiEndPoint &
     "json/stations/bytag/" &
-    styleToProcess &
+    encodedStyleToProcess &
     "?" &
     "order=votes"     & "&" &
     "reverse=true"    & "&" &
