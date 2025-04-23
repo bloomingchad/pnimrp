@@ -103,6 +103,8 @@ var
   startingX* = 0
   scrollCounter* = 0
 
+func milSecToSec(ms: int): float = ms / 1000
+
 const
   MenuChars* = "123456789ABCDEFGHIJKLMOPTVWXYZ"
   AppName* = "Poor Mans Radio Player"
@@ -110,3 +112,4 @@ const
   DefaultErrorMsg* = "INVALID CHOICE"
   MinTerminalWidth* = 40
   MaxStationNameLength* = 22
+  mpvEventLoopTimeout* = KeyTimeout.milSecToSec()

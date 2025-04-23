@@ -129,7 +129,8 @@ export #utilstypes
   AppNameShort,
   DefaultErrorMsg,
   MinTerminalWidth,
-  MaxStationNameLength
+  MaxStationNameLength,
+  mpvEventLoopTimeout
 
 when not defined(simple):
   export #utilstypes

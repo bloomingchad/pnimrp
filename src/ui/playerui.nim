@@ -52,8 +52,6 @@ func isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
-func milSecToSec(ms: int): float = ms / 1000
-
 proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
   #try:
@@ -85,7 +83,6 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   var scrollOffset: int = 0
   var lastWidth: int = 0
   var fullTitle: string # Declare fullTitle here
-  const mpvEventLoopTimeout = KeyTimeout.milSecToSec
 
   when not defined(simple):
     var metadata = initTable[string, string](8) # Declare metadata here

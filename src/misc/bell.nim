@@ -5,22 +5,21 @@ import
   ../audio/mpv/[
     player,
     libmpv
-  ]
+  ],
+  ../utils/utils
 
 proc warnBell* =
-  ## Plays a warning sound using a temporary MPV instance without interrupting main playback
+  #dont interrupt main player
   var tmpMpvCtx = initGlobalMpv()
   try:
     let assetsDir = getAppDir() / "assets"
     let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
 
-    # Play sound in temporary instance
     tmpMpvCtx.allocateJobMpv(bellPath)
 
-    # Wait for completion
     var event: ptr Event
     while true:
-      event = tmpMpvCtx.waitEvent()
+      event = tmpMpvCtx.waitEvent(mpvEventLoopTimeout)
       if event.eventID in {IDEndFile}:
         break
 
