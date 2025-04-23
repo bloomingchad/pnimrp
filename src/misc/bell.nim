@@ -5,8 +5,13 @@ import
   ../audio/mpv/[
     player,
     libmpv
-  ],
-  ../utils/utils
+  ]
+
+template milSecToSec(ms: int): float = ms / 1000
+
+const
+  KeyTimeout = 25
+  mpvEventLoopTimeout = KeyTimeout.milSecToSec()
 
 proc warnBell* =
   #dont interrupt main player
