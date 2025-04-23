@@ -5,7 +5,7 @@ import
   os, terminal, std/exitprocs, random,
 
   src/[
-    menu, ui/illwill, ui/hidestderr,
+    menu, ui/illwill, ui/hidestderr, ui/menuui,
     utils/utils,
     audio/mpv/player,
   ]
@@ -78,6 +78,7 @@ proc cleanup() =
 
   restoreStderr(addr(state))
   echo ""
+  showQuotes()
   echo "Thank you for using " & AppName
 
 proc handleInterrupt() {.noconv.} =

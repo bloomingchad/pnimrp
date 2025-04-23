@@ -36,11 +36,7 @@ proc say*(
   else:
     styledEcho(color, message)
 
-proc showExitMessage* =
-  ## Displays an exit message with a random quote from the quotes file.
-  setCursorPos(0, 15)
-  echo ""
-
+proc showQuotes* =
   let quotesData = loadQuotes(getAppDir() / "assets" / "config" / "qoute.json")
   let rand = rand(0 .. quotesData.quotes.high)
 
@@ -61,6 +57,9 @@ proc showExitMessage* =
     if rand * 2 != -1:
       error("@ line: " & $(rand * 2) & " in qoute.json")
 
+proc showExitMessage* =
+  setCursorPos(0, 15)
+  echo ""
   quit(QuitSuccess)
 
 proc drawSeperatorUI*(xpos = -1, sep = '=', offset = 5, color = fgGreen) =

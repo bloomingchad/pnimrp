@@ -69,10 +69,8 @@ proc loadQuotes*(filePath: string): QuoteData =
   try:
     when defined(useJsmn):
       return loadQuotesJSMN(filePath)
-
     else:
       return loadQuotesStdLib(filePath)
-
 
   except IOError:
     raise newException(FileNotFoundError, "Failed to load quotes: " & filePath)
