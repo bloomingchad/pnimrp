@@ -22,5 +22,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y nim
 
-      - name: Build the project
+      - name: Build the project (Linux x64)
         run: nim c pnimrp.nim
+
+      - name: try to gen source for (Windows x64)
+        run: nim c -c --os:windows pnimrp.nim
+
+      - name: try to gen source for (FreeBSD x64)
+        run: nim c -c --os:freebsd pnimrp.nim
+
+      - name: try to gen source for (Android arm64)
+        run: nim c -c --os:android --cpu:arm64 pnimrp.nim
