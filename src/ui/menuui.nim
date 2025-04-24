@@ -143,7 +143,22 @@ proc renderMenuOptions(
         # Truncate and format
         let truncatedName =
           truncateName(options[index], maxColumnLengths[col] - prefix.len)
-        let formattedOption = prefix & truncatedName
+        var dashToSpaced = truncatedName
+
+        proc isFound(s: int): bool =
+          if s < 0: return false
+          else: return true
+
+        if isFound dashToSpaced.find("!"):
+          dashToSpaced = dashToSpaced.replace("!", "")
+          dashToSpaced[0] = dashToSpaced[0].toUpperAscii()
+
+        if isFound dashToSpaced.find("_"):
+          var getVal = dashToSpaced.find("_")
+          dashToSpaced = dashToSpaced.replace("_", " ")
+          dashToSpaced[getVal+1] = dashToSpaced[getVal+1].toUpperAscii()
+
+        let formattedOption = prefix & dashToSpaced
         let padding = maxColumnLengths[col] - formattedOption.len
         currentLine.add(formattedOption & " ".repeat(padding))
 
