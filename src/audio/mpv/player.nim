@@ -238,3 +238,7 @@ export
   destroy, terminateDestroy,
   Event, EventID, waitEvent,
   setProperty
+
+proc setVolumeMpv*(ctx; vol: int) =
+  var tmp = cint vol
+  cE ctx.setProperty("volume", fmtInt64, addr tmp)

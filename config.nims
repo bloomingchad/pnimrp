@@ -17,6 +17,8 @@ when defined(nlvm):
 when not defined(dev):
   switch("define", "release")
 
+switch("define", "volumeFade")
+
 switch("warning", "UnusedImport:off")
 switch("hint", "XDeclaredButNotUsed:off")
 switch("hint", "Conf:off")

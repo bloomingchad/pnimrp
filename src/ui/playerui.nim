@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MPL-2.0
 import
   terminal, strutils, net,
-  tables,
+  tables, os,
 
   illwill, playeruiutils, menuui,
 
@@ -121,6 +121,16 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
       when not defined(simple):
         globalMetadata = updateMetadataUI(config, ctx, state)
 
+    if event.eventID in {IDFileLoaded}:
+      when defined(volumeFade):
+        var volumeForFading = 0
+        ctx.setVolumeMpv(volumeForFading)
+        while true:
+          volumeForFading += VolumeStep
+          ctx.setVolumeMpv(volumeForFading)
+          sleep 100
+          if volumeForFading == state.volume:
+            break
 
     when not defined(simple):
       # Increment the animation counter every 25ms (getKeyWithTimeout interval)
@@ -183,7 +193,20 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
       of Key.R, Key.BackSpace:
         if not state.isPaused:
           ctx.cleanupPlayer()
+
+        when defined(volumeFade):
+          var volumeForFading = state.volume
+          while true:
+            volumeForFading -= VolumeStep
+            ctx.setVolumeMpv(volumeForFading)
+            sleep 15
+            if volumeForFading == 0:
+              break
+
+
         ctx.stopCurrentJob()
+        ctx.setVolumeMpv(state.volume)
+
         break
 
       of Key.Q, Key.Escape, CtrlQ:
