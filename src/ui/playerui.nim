@@ -203,9 +203,9 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
             if volumeForFading == 0:
               break
 
-
         ctx.stopCurrentJob()
-        ctx.setVolumeMpv(state.volume)
+        when defined(volumeFade):
+          ctx.setVolumeMpv(state.volume)
 
         break
 

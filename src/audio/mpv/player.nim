@@ -240,4 +240,4 @@ export
   setProperty
 
 proc setVolumeMpv*(ctx; vol: int) =
-  cE ctx.setOptionString("volume", $vol)
+  cE ctx.setOptionString("volume", cstring $vol)
