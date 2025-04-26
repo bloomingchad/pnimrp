@@ -128,7 +128,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
         while true:
           volumeForFading += VolumeStep
           ctx.setVolumeMpv(volumeForFading)
-          sleep 100
+          sleep 40
           if volumeForFading == state.volume:
             break
 
@@ -199,7 +199,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
           while true:
             volumeForFading -= VolumeStep
             ctx.setVolumeMpv(volumeForFading)
-            sleep 15
+            sleep 28
             if volumeForFading == 0:
               break
 
