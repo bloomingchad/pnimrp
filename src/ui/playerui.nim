@@ -98,6 +98,8 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   ctx.allocateJobMpv(config.stationUrl)
   var event = ctx.waitEvent()
 
+  when defined(volumeFade):
+    ctx.setVolumeMpv(0)
 
   # Draw the initial player UI
   drawPlayerUI(config.stationName, "Loading...", currentStatusEmoji(currentStatus(state)), state.volume)
