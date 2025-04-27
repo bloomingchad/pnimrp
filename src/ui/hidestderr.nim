@@ -44,7 +44,7 @@ template checkError(status: cint) =
 template cE(status: cint) =
   checkError(status)
 
-proc initSuppressStderr*(state: ref StderrState) =
+proc initSuppressStderr*(state: var StderrState) =
   when win32: state.originalStderrFd = c_dup(c_fileno(stderr))
   else:       state.originalStderrFd = c_dup(c_fileno(stderr))
 
@@ -56,7 +56,7 @@ proc initSuppressStderr*(state: ref StderrState) =
     error("failed to suppress stderr")
     quit(QuitFailure)
 
-proc restoreStderr*(state: ref StderrState) =
+proc restoreStderr*(state: var StderrState) =
   flushFile(stderr)
 
   when win32:
@@ -79,7 +79,7 @@ proc restoreStderr*(state: ref StderrState) =
     else:       cE c_dup2(c_fileno(stdout), c_fileno(stderr))
 
 when isMainModule:
-  var state = new StderrState
+  var state: StderrState
   echo("this goes to stdout")
 
   state.initSuppressStderr()

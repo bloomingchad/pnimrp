@@ -24,7 +24,7 @@ type
     stationsDir: string
     version: string   # Application version
 
-var state = new StderrState
+var state: StderrState
 
 const
   AppName = "Poor Man's Radio Player" # Name of the application
