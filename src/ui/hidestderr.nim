@@ -12,8 +12,8 @@ else:
     NULL_DEVICE* = "/dev/null"
     TERMINAL_DEVICE* = "/dev/tty"
 
-type StderrState* {.bycopy.} = object
-  originalStderrFd*: cint
+type StderrState* = object
+  originalStderrFd: cint
 
 template error(str: cstring) = stderr.writeLine str
 
@@ -44,7 +44,7 @@ template checkError(status: cint) =
 template cE(status: cint) =
   checkError(status)
 
-proc initSuppressStderr*(state: ptr StderrState) =
+proc initSuppressStderr*(state: ref StderrState) =
   when win32: state.originalStderrFd = c_dup(c_fileno(stderr))
   else:       state.originalStderrFd = c_dup(c_fileno(stderr))
 
@@ -56,7 +56,7 @@ proc initSuppressStderr*(state: ptr StderrState) =
     error("failed to suppress stderr")
     quit(QuitFailure)
 
-proc restoreStderr*(state: ptr StderrState) =
+proc restoreStderr*(state: ref StderrState) =
   flushFile(stderr)
 
   when win32:
@@ -79,11 +79,11 @@ proc restoreStderr*(state: ptr StderrState) =
     else:       cE c_dup2(c_fileno(stdout), c_fileno(stderr))
 
 when isMainModule:
-  var state: StderrState
+  var state = new StderrState
   echo("this goes to stdout")
 
-  initSuppressStderr(addr(state))
+  state.initSuppressStderr()
   stderr.writeLine "this would go to stderr, but its suppressed"
-  restoreStderr(addr(state))
+  state.restoreStderr()
 
   stderr.writeLine "this goes to stderr after restoration"

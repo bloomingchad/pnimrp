@@ -24,7 +24,7 @@ type
     stationsDir: string
     version: string   # Application version
 
-var state: StderrState
+var state = new StderrState
 
 const
   AppName = "Poor Man's Radio Player" # Name of the application
@@ -76,7 +76,7 @@ proc cleanup() =
   try: illwillDeinit()
   except IllwillError: discard
 
-  restoreStderr(addr(state))
+  state.restoreStderr()
   echo ""
   showQuotes()
   echo "Thank you for using " & AppName
@@ -101,7 +101,7 @@ proc main() =
       error "please run within terminal!"
       quit QuitFailure
 
-  initSuppressStderr(addr(state))
+  state.initSuppressStderr()
 
   try:
     # Register cleanup procedure to run on exit
