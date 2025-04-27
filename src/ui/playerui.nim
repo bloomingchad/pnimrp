@@ -52,6 +52,11 @@ func isValidPlaylistUrl(url: string): bool =
   ## Checks if the URL points to a valid playlist format (.pls or .m3u).
   result = url.endsWith(".pls") or url.endsWith(".m3u")
 
+func getPerCycleSleepTimeFade(vol: int): int =
+  const toTime = 500 #ms
+  let steps = int vol / 5
+  result = int toTime / steps
+
 proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
   #try:
@@ -128,7 +133,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
         while true:
           volumeForFading += VolumeStep
           ctx.setVolumeMpv(volumeForFading)
-          sleep 40
+          sleep getPerCycleSleepTimeFade state.volume
           if volumeForFading == state.volume:
             break
 
@@ -199,7 +204,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
           while true:
             volumeForFading -= VolumeStep
             ctx.setVolumeMpv(volumeForFading)
-            sleep 28
+            sleep getPerCycleSleepTimeFade state.volume
             if volumeForFading == 0:
               break
 
