@@ -1,7 +1,7 @@
 {
   "stations": {
     "antenne.de Goldies": "stream.antenne.de/oldie-antenne",
-    "Rewound Radio": "71.125.37.66:8000",
+    "Rewound Radio": "71.125.37.66:8000/stream",
     "BigR Country Oldies": "https://bigrradio.cdnstream1.com/5195_128",
     "Flower Power Radio": "https://nl1.streamingpulse.com/ssl/flowerpowerradio",
     "Oldies 104": "https://edge3.peta.live365.net/b09584_128mp3",
