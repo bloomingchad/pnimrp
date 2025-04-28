@@ -241,3 +241,6 @@ export
 
 proc setVolumeMpv*(ctx; vol: int) =
   cE ctx.setOptionString("volume", cstring $vol)
+
+proc deinitPlayer*(ctx) =
+  ctx.terminateDestroy()
