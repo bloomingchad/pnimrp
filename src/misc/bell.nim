@@ -17,11 +17,15 @@ const
 proc warnBell* =
   #dont interrupt main player
   var handle = initAudio()
+
   try:
     let assetsDir = getAppDir() / "assets"
     let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
 
+    handle.setAllyOptions()
     handle.allocateJob(bellPath)
+    handle.playPlayer()
+    handle.waitForCoreToInit()
 
     while true:
       handle.waitEvent(mpvEventLoopTimeout)
