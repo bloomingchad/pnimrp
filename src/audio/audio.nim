@@ -47,11 +47,11 @@ proc setVolumeOfBellRelativeToMainCtx*(audioHandle) =
   when isVlc: audioHandle.vlcHandle.setVolumeOfBellRelativeToMainCtx()
   else:       audioHandle.mpvHandle.setVolumeOfBellRelativeToMainCtx()
 
-proc playPlayer(audioHandle) =
+proc playPlayer*(audioHandle) =
   when isVlc: audioHandle.vlcHandle.playPlayer()
   else:       player.resume(audioHandle.mpvHandle)
 
-proc waitForCoreToInit(audioHandle) =
+proc waitForCoreToInit*(audioHandle) =
   when isVlc:
     while true: #wait for init
       sleep 10
@@ -60,11 +60,11 @@ proc waitForCoreToInit(audioHandle) =
   else:
     sleep 10
 
-proc muteVolume(audioHandle) =
+proc muteVolume*(audioHandle) =
   when isVlc: audioHandle.vlcHandle.muteVolume()
   else:       audioHandle.mpvHandle.mute(shouldMute = true)
 
-proc unmuteVolume(audioHandle) =
+proc unmuteVolume*(audioHandle) =
   when isVlc: audioHandle.vlcHandle.unmuteVolume()
   else:       audioHandle.mpvHandle.unmute()
 
