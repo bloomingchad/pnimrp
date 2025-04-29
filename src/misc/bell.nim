@@ -5,7 +5,8 @@ import
   ../audio/mpv/[
     player,
     libmpv
-  ]
+  ],
+  ../audio/audio
 
 template milSecToSec(ms: int): float = ms / 1000
 
@@ -15,21 +16,18 @@ const
 
 proc warnBell* =
   #dont interrupt main player
-  var tmpMpvCtx = initGlobalMpv()
+  var handle = initAudio()
   try:
     let assetsDir = getAppDir() / "assets"
     let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
 
-    tmpMpvCtx.allocateJobMpv(bellPath)
+    handle.allocateJob(bellPath)
 
-    var event: ptr Event
     while true:
-      event = tmpMpvCtx.waitEvent(mpvEventLoopTimeout)
-      if event.eventID in {IDEndFile}:
-        break
+      handle.waitEvent(mpvEventLoopTimeout)
 
   except Exception as e:
     stderr.writeLine "Warning bell error: ", e.msg
   finally:
-    tmpMpvCtx.terminateDestroy()
+    handle.deinitAudio()
     hideCursor() #somehow we need this ._.

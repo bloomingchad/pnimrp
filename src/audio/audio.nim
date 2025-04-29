@@ -31,9 +31,9 @@ proc allocateJob*(audioHandle; url: string) =
   when isVlc: audioHandle.vlcHandle.allocateJobVlc(url)
   else:       audioHandle.mpvHandle.allocateJobMpv(url)
 
-proc waitEvent*(audioHandle; timeout = 0) =
+proc waitEvent*(audioHandle; timeout: float = 0) =
   when isVlc:
-    sleep timeout
+    sleep int timeout
   else:
     audioHandle.event = audioHandle.mpvHandle.waitEvent(cdouble timeout)
 
