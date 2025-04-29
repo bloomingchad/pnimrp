@@ -11,7 +11,7 @@ when defined(asynclinkadv):
   import asynclinkadv
 
 const
-  ResolveTimeout = 5000 # Timeout in milliseconds (5 seconds)
+  ResolveTimeout = 5000 #ms
 
 proc connectSocket(domain: string, port: Port): Future[bool] {.async.} =
   var socket = newAsyncSocket()

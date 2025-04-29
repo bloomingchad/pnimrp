@@ -4,19 +4,8 @@
 import terminal, ../utils/utils
 
 proc updateJinglingAnimation*(status: string, animationCounter: int): string =
-  ## Updates the jingling animation and returns the current frame.
-  ## Returns an empty string if the player is not in the StatusPlaying state.
-  ##
-  ## Args:
-  ##   status: The player status (e.g., "🔊" for playing).
-  ##   animationCounter: The current counter value (incremented every 25ms).
-  ##
-  ## Returns:
-  ##   The current animation frame (emoji or ASCII).
-
-  # Check if it's time to update the animation frame (1350ms / 50ms = 27 iterations)
   if animationCounter == 27:
-    animationFrame = (animationFrame + 1) mod 2 # Alternate between 0 and 1
+    animationFrame = (animationFrame + 1) mod 2 #alternate between 0 and 1
 
   # Determine the animation symbol based on terminal support and player status
   if status == currentStatusEmoji(StatusPlaying):

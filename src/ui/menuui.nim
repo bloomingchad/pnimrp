@@ -20,13 +20,6 @@ proc say*(
   xOffset = 5,
   shouldEcho = true
 ) =
-  ## Displays styled text at a specified position.
-  ##
-  ## Args:
-  ##   message: The text to display.
-  ##   color: The foreground color of the text (default: fgYellow).
-  ##   xOffset: The horizontal offset for the cursor (default: 5).
-  ##   shouldEcho: Whether to echo the message to stdout (default: true).
   if color in {fgBlue, fgGreen}:
     setCursorXPos(xOffset)
     if color == fgGreen and not shouldEcho:
@@ -309,10 +302,9 @@ proc showHelp*() =
   say("4. Press [H] in the main menu to view this help screen.", fgBlue)
   say("=".repeat(termWidth), fgGreen, xOffset = 0)
   say("Press any key to return to the main menu.", fgYellow)
-  discard getch() # Wait for any key press
+  discard getch()
 
 proc showNotes* =
-  ## Displays application notes/about section.
   while true:
     var shouldReturn = false
     drawMenu(
@@ -339,6 +331,5 @@ under certain conditions.""",
       break
 
 proc exit*(ctx: ptr Handle, isPaused: bool) =
-  ## Cleanly exits the application.
   showExitMessage()
   quit(QuitSuccess)

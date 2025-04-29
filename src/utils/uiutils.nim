@@ -28,23 +28,19 @@ proc currentStatusEmoji*(status: PlayerStatus): string =
   return getSymbol(status, terminalSupportsEmoji)
 
 proc error*(message: string) =
-  ## Displays an error message and exits the program.
   styledEcho(fgRed, "Error: ", message)
   quit(QuitFailure)
 
 proc updateTermWidth* =
-  ## Updates the terminal width only if it has changed.
   let newWidth = terminalWidth()
   if newWidth != termWidth:
     termWidth = newWidth
 
 proc clear* =
-  ## Clears the screen and resets the cursor position.
   eraseScreen()
   setCursorPos(0, 0)
 
 proc warn*(message: string, xOffset = 4, color = fgYellow, delayMs = 750; dontRing = false) =
-  ## Displays a warning message with a delay.
   if xOffset >= 0:
     setCursorXPos(xOffset)
   styledEcho(color, message)
@@ -52,7 +48,6 @@ proc warn*(message: string, xOffset = 4, color = fgYellow, delayMs = 750; dontRi
   sleep(delayMs)
 
 proc showInvalidChoice*(message = DefaultErrorMsg) =
-  ## Shows an invalid choice message and repositions the cursor.
   cursorDown(5)
   warn(message, color = fgRed)
   cursorUp()
@@ -61,12 +56,10 @@ proc showInvalidChoice*(message = DefaultErrorMsg) =
   stdout.flushFile()
 
 proc centerText*(text: string, width: int = termWidth): string =
-  ## Centers the given text within the specified width.
   let padding = (width - text.len) div 2
   result = " ".repeat(max(0, padding)) & text
 
 proc showSpinner*(delayMs: int = 100) =
-  ## Displays a simple spinner animation.
   const spinner = @["-", "\\", "|", "/"]
   var frame = 0
   while true:
@@ -76,22 +69,19 @@ proc showSpinner*(delayMs: int = 100) =
     sleep(delayMs)
 
 proc truncateName*(name: string, maxLength: int): string =
-  ## Truncates a station name to the specified maximum length and adds ellipsis.
   if termWidth <= MinTerminalWidth or name.len > maxLength:
-    name[0 ..< maxLength - 3] #& "..."  # Always truncate at minimum width
+    name[0 ..< maxLength - 3] #& "..."
   else: name
 
 proc calculateColumnLayout*(options: MenuOptions): (int, seq[int], int) =
-  ## Calculates the number of columns, max column lengths, and spacing.
   const minColumns = 2
   const maxColumns = 3
   var numColumns = maxColumns
 
-  # Calculate the maximum length of items including prefix
   var maxItemLength = 0
   for i in 0 ..< options.len:
     let prefix =
-      if i < 9: $(i + 1) & "."                    # Use numbers 1-9 for the first 9 options
+      if i < 9: $(i + 1) & "."                    # use 1-9 for the first 9 options
       else:
         if i < MenuChars.len: $MenuChars[i] & "." # Use A-Z for the next options
         else: "?"                                 # Fallback
@@ -99,18 +89,18 @@ proc calculateColumnLayout*(options: MenuOptions): (int, seq[int], int) =
     if itemLength > maxItemLength:
       maxItemLength = itemLength
 
-  # Calculate the minimum required width for 3 columns
+  #calculate minimum required width for 3 columns
   let minWidthFor3Columns = maxItemLength * 3 + 9 # 9 = 4.5 spaces between columns * 2
 
-  # Switch to 2 columns if:
-  # 1. Terminal width is less than the minimum required for 3 columns, or
-  # 2. The longest item is more than 1/4.5 of the terminal width
+  #switch to 2 columns if:
+  #1.terminal width is less than minimum required for 3 columns, or
+  #2.longest item is more than 1/4.5 of the terminal width
   if termWidth < minWidthFor3Columns or maxItemLength > int(float(termWidth) / 4.5):
     numColumns = minColumns
   else:
-    numColumns = maxColumns # Otherwise, use 3 columns
+    numColumns = maxColumns # otherwise, use 3 columns
 
-  # Calculate the number of items per column
+  #calculate the number of items per column
   let itemsPerColumn = (options.len + numColumns - 1) div numColumns
 
   # Find the maximum length of items in each column (including prefix)

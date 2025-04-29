@@ -32,5 +32,4 @@ proc validateLinkWithContentTypeCheck*(url: string; timeout = 2000): LinkValidat
       isValid: status
     )
   except Exception as e:
-    #Handle exceptions using the reusable error-handling function
     result = handleLinkCheckError(e, timeout)

@@ -36,15 +36,6 @@ func parseUrlComponents*(url: string): tuple[protocol: string, domain: string, p
   return (protocol, domain, port)
 
 proc handleLinkCheckError*(e: ref Exception, timeout: int): LinkValidationResult =
-  ## Handles exceptions during link validation and returns a `LinkValidationResult`.
-  ## This function is reusable and handles specific exceptions like `OSError`, `IOError`, etc.
-  ##
-  ## Args:
-  ##   e: The exception to handle.
-  ##   timeout: The timeout value used during the connection attempt.
-  ##
-  ## Returns:
-  ##   LinkValidationResult object containing error details.
   var err: string
   if e of OSError or e of IOError:
     err = "Connection error: " & e.msg

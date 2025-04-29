@@ -8,7 +8,6 @@ when defined(useJsmn):
   import ../json/jsmn
 
 proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[string]] =
-  ## Loads available station categories from the assets directory.
   result = (names: newSeqOfCap[string](32), paths: newSeqOfCap[string](32))
 
   let nativePath = baseDir / "*".unixToNativePath
@@ -16,11 +15,9 @@ proc loadCategories*(baseDir = getAppDir() / "assets"): tuple[names, paths: seq[
   for file in walkFiles(nativePath):
     let filename = file.extractFilename
 
-    # Skip qoute.json (exact match, case-sensitive)
     if filename == "qoute.json":
       continue
 
-    # Add the file to names and paths
     let name = filename.changeFileExt("").capitalizeAscii
     result.names.add(name)
     result.paths.add(file)
@@ -43,10 +40,6 @@ else:
 
 
 proc loadStations*(filePath: string): tuple[names, urls: seq[string]] =
-  ## Parses a JSON file and returns station names and URLs.
-  ##  - Normalizes URLs using linkbase.normalizeUrl.
-  ##  - Raises `FileNotFoundError` if the file is not found.
-  ##  - Raises `JSONParseError` if the JSON is invalid.
   try:
     when defined(useJsmn):
       return loadStationJSMN(filePath)
@@ -64,8 +57,6 @@ proc loadStations*(filePath: string): tuple[names, urls: seq[string]] =
       raise newException(JSONParseError, "Failed to parse JSON file: " & filePath)
 
 proc loadQuotes*(filePath: string): QuoteData =
-  ## Loads and validates quotes from a JSON file.
-  ## Raises `UIError` if the quote data is invalid.
   try:
     when defined(useJsmn):
       return loadQuotesJSMN(filePath)

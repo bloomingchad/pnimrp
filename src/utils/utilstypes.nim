@@ -59,7 +59,7 @@ type
     frame: int
     lastUpdate: DateTime
 
-  PlayerStatus* = enum # Enumeration for player states
+  PlayerStatus* = enum
     StatusPlaying
     StatusMuted
     StatusPaused
@@ -71,8 +71,8 @@ var termWidth* = terminalWidth() ## Tracks the current terminal width.
 var lastMenuSeparatorY* {.global.}: int
 
 const
-  AsciiFrames* = [$'#', "%"]   # ASCII fallback animation frames
-  EmojiFrames* = ["🎵", "🎶"]  # Emoji animation frames
+  AsciiFrames* = [$'#', "%"]
+  EmojiFrames* = ["🎵", "🎶"]
 
 var
   animationFrame*: int = 0  # Tracks the current frame of the animation

@@ -1,7 +1,6 @@
 import terminal
 
 func getFooterOptions*(isMainMenu, isPlayerUI: bool): string =
-  ## Returns footer options string based on context (main menu/submenu/player).
   result =
     if isMainMenu:
       "[Q] Quit | [N] Notes | [U] Help | [S] ImFeelingLucky"

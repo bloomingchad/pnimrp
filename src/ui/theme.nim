@@ -8,16 +8,6 @@ import
   ../utils/utils
 
 proc loadThemeConfig*(configPath: string): ThemeConfig =
-  ## Loads the theme configuration from the specified JSON file.
-  ##
-  ## Args:
-  ##   configPath: Path to the JSON configuration file
-  ##
-  ## Returns:
-  ##   ThemeConfig object containing the loaded themes and current theme
-  ##
-  ## Raises:
-  ##   ValueError: If the file is not found or the JSON format is invalid
   try:
     let jsonData = parseFile(configPath)
     result.themes = initTable[string, Theme]()
@@ -45,30 +35,12 @@ proc loadThemeConfig*(configPath: string): ThemeConfig =
     raise newException(ValueError, "Failed to parse theme config: Invalid JSON format")
 
 proc getCurrentTheme*(config: ThemeConfig): Theme =
-  ## Returns the currently active theme.
-  ##
-  ## Args:
-  ##   config: ThemeConfig object
-  ##
-  ## Returns:
-  ##   The current theme
-  ##
-  ## Raises:
-  ##   ValueError: If the current theme is not found in the config
   if config.currentTheme in config.themes:
     return config.themes[config.currentTheme]
   else:
     raise newException(ValueError, "Current theme not found in config")
 
 proc setCurrentTheme*(config: var ThemeConfig, themeName: string) =
-  ## Sets the current theme to the specified theme name.
-  ##
-  ## Args:
-  ##   config: ThemeConfig object
-  ##   themeName: Name of the theme to set as current
-  ##
-  ## Raises:
-  ##   ValueError: If the theme is not found in the config
   if themeName in config.themes:
     config.currentTheme = themeName
   else:

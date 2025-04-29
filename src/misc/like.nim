@@ -5,9 +5,7 @@ import
   ../utils/utils, ../audio/mpv/player
 
 proc appendToFileReUsable(filen: string, config: MenuConfig, isLike: bool) =
-  ## Appends a song to the likedSongs.txt file.
   try:
-    # Open the file in append mode (creates the file if it doesn't exist)
     let file = open(filen, fmAppend)
     defer: file.close()
 
@@ -22,7 +20,7 @@ proc appendToFileReUsable(filen: string, config: MenuConfig, isLike: bool) =
     )
     if isLike:
       cursorDown 5
-      warn("Song added to likedSongs.txt") # Notify the user
+      warn("Song added to likedSongs.txt")
       cursorUp()
       eraseLine()
       cursorUp 5
