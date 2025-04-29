@@ -37,9 +37,9 @@ proc waitEvent*(audioHandle; timeout: float = 0) =
   else:
     audioHandle.event = audioHandle.mpvHandle.waitEvent(cdouble timeout)
 
-template resourceIsOver*(audioHandle): bool =
+proc resourceIsOver*(audioHandle): bool =
   when isVlc:
-    discard
+    not audioHandle.vlcHandle.mediaPlayerIsPlaying()
   else:
     audioHandle.event.eventID in {IDEndFile}
 
@@ -94,6 +94,8 @@ when isMainModule:
     while true: #poll loop
       #handle.setVolume(100)
       handle.waitEvent(10)
+      if handle.resourceIsOver():
+        break
 
       #sleep 500
 

@@ -25,6 +25,8 @@ proc warnBell* =
 
     while true:
       handle.waitEvent(mpvEventLoopTimeout)
+      if handle.resourceIsOver():
+        break
 
   except Exception as e:
     stderr.writeLine "Warning bell error: ", e.msg
