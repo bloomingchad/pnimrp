@@ -23,7 +23,7 @@ proc warnBell* =
     let bellPath = assetsDir / "config" / "sounds" / "bell.ogg"
 
     handle.setAllyOptions()
-    handle.allocateJob(bellPath)
+    handle.allocateJob("file://" & absolutePath bellPath)
     handle.playPlayer()
     handle.waitForCoreToInit()
 
