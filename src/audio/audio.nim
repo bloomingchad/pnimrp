@@ -14,9 +14,10 @@ type
 
 using audioHandle: ref audioHandle
 
-proc initAudio*(audiohandle) =
-  when isVlc: audiohandle.vlcHandle = initNewCtx()
-  else:       audiohandle.mpvHandle = initGlobalMpv()
+proc initAudio*(): ref audiohandle =
+  result = new audiohandle
+  when isVlc: result.vlcHandle = initNewCtx()
+  else:       result.mpvHandle = initGlobalMpv()
 
 proc deinitAudio*(audioHandle) =
   when isVlc: audioHandle.vlcHandle.deinitPlayer()
@@ -79,8 +80,7 @@ when isMainModule:
   proc example =
     let url = "https://listen.181fm.com/181-jammin_128k.mp3"
 
-    var handle = new audioHandle
-    handle.initAudio()
+    var handle = initAudio()
 
     defer: handle.deinitAudio()
 
