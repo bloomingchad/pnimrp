@@ -85,7 +85,7 @@ export #jsonutils
 export #uiutils
   getSymbol, terminalSupportsEmoji, currentStatusEmoji,
   error, updateTermWidth, clear, warn, showInvalidChoice,
-  centerText, showSpinner, truncateName, calculateColumnLayout
+  centerText, truncateName, calculateColumnLayout
 
 #export all internal within utils namespace
 export #utilstypes

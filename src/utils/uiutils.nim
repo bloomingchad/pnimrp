@@ -59,15 +59,6 @@ proc centerText*(text: string, width: int = termWidth): string =
   let padding = (width - text.len) div 2
   result = " ".repeat(max(0, padding)) & text
 
-proc showSpinner*(delayMs: int = 100) =
-  const spinner = @["-", "\\", "|", "/"]
-  var frame = 0
-  while true:
-    stdout.write("\r" & spinner[frame] & " Working...")
-    stdout.flushFile()
-    frame = (frame + 1) mod spinner.len
-    sleep(delayMs)
-
 proc truncateName*(name: string, maxLength: int): string =
   if termWidth <= MinTerminalWidth or name.len > maxLength:
     name[0 ..< maxLength - 3] #& "..."

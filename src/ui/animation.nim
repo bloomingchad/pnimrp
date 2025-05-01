@@ -31,3 +31,16 @@ proc updateAnimationOnly*(status, currentSong: string, animationCounter: int) =
   # Write ONLY the animation symbol and 3 spaces, then erase to the end of the line
   stdout.styledWrite(fgCyan, animationSymbol)
   stdout.flushFile()
+
+proc spinLoadingSpinnerOnce*(frame: var int) =
+  const spinner = @["-", "\\", "|", "/"]
+  while true:
+    setCursorPos(16, 2)
+    stdout.write("[" & spinner[frame] & "]")
+    stdout.flushFile()
+    if frame == 3: frame = 0
+    else: frame += 1
+
+when isMainModule:
+  var spinnerFrame = 0
+  spinnerFrame.spinLoadingSpinnerOnce()
