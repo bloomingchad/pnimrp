@@ -88,6 +88,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   var scrollOffset: int = 0
   var lastWidth: int = 0
   var fullTitle: string # Declare fullTitle here
+  var finishedLoading = false
 
   when not defined(simple):
     var metadata = initTable[string, string](8) # Declare metadata here
@@ -107,6 +108,8 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   when defined(simple):
     fullTitle = fullTitle.truncateMe()
 
+  var spinnerState = 0
+  var count = 0
   while true:
     if not state.isPaused:
       event = ctx.waitEvent(mpvEventLoopTimeout)
@@ -115,7 +118,6 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
     if event.eventID in {IDPlaybackRestart} and not isObserving:
       when not defined(simple): ctx.observeMetadata()
       else:                     ctx.observeMediaTitle()
-
       isObserving = true
 
     if event.eventID in {IDEventPropertyChange}:
@@ -138,6 +140,11 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
           sleep getPerCycleSleepTimeFade state.volume
           if volumeForFading == state.volume:
             break
+      finishedLoading = true
+    else:
+      if not finishedLoading:
+        spinnerState.spinLoadingSpinnerOnce()
+        count += 1
 
     when not defined(simple):
       # Increment the animation counter every 25ms (getKeyWithTimeout interval)

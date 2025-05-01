@@ -34,13 +34,13 @@ proc updateAnimationOnly*(status, currentSong: string, animationCounter: int) =
 
 proc spinLoadingSpinnerOnce*(frame: var int) =
   const spinner = @["-", "\\", "|", "/"]
-  while true:
-    setCursorPos(16, 2)
-    stdout.write("[" & spinner[frame] & "]")
-    stdout.flushFile()
-    if frame == 3: frame = 0
-    else: frame += 1
+  setCursorPos(termWidth-3, 2)
+  stdout.write("[" & spinner[frame] & "]")
+  stdout.flushFile()
+  if frame == 3: frame = 0
+  else: frame += 1
 
 when isMainModule:
   var spinnerFrame = 0
-  spinnerFrame.spinLoadingSpinnerOnce()
+  while true:
+    spinnerFrame.spinLoadingSpinnerOnce()
