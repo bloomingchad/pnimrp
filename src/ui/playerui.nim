@@ -11,7 +11,7 @@ import
 
   ../link/link,
   ../utils/[
-    utils
+      utils
     ],
 
   ../misc/like
@@ -22,7 +22,7 @@ when not defined(simple):
     ../ui/[
       scroll,
       animation,
-      ]
+    ]
 
 proc editBadFileHint(config: MenuConfig, extraMsg = "") =
   if extraMsg != "": warn(extraMsg)
@@ -89,6 +89,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   var lastWidth: int = 0
   var fullTitle: string # Declare fullTitle here
   var finishedLoading = false
+  var spinnerState = 0
 
   when not defined(simple):
     var metadata = initTable[string, string](8) # Declare metadata here
@@ -108,8 +109,6 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   when defined(simple):
     fullTitle = fullTitle.truncateMe()
 
-  var spinnerState = 0
-  var count = 0
   while true:
     if not state.isPaused:
       event = ctx.waitEvent(mpvEventLoopTimeout)
@@ -144,7 +143,6 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
     else:
       if not finishedLoading:
         spinnerState.spinLoadingSpinnerOnce()
-        count += 1
 
     when not defined(simple):
       # Increment the animation counter every 25ms (getKeyWithTimeout interval)
