@@ -24,7 +24,7 @@ when defined(useJsmn):
 please disable useJsmn""".}
 
 const statusCacheValidity =
-  when debug: 1  #1day
+  when utils.debug: 1  #1day
   else:       12 #12days
 
 using
