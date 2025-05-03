@@ -8,6 +8,7 @@ else:
   switch("define", "asynclinkadv")
   switch("define", "ssl")
   switch("define", "volumeFade")
+  switch("define", "asynccheckspinner")
 
 #when defined(asynclinkadv):
 #  switch("define", "ssl")

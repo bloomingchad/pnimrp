@@ -4,7 +4,7 @@
 import
   json, os, asyncdispatch,
   ../utils/utils, strutils,
-  times, terminal,
+  times, terminal, ../ui/[menuui, illwill],
 
   ../ui/stationstatus
 
@@ -123,9 +123,25 @@ proc readFromExistingStatusCache*(stations; statuscontext): JsonNode =
 
 type CacheDoesntMatchParentJsonError = object of CatchableError
 
+proc waitForProcessButSpin() =
+  var spinner: int
+  try:
+    while true:
+      spinner.spinLoadingSpinnerOnce((termWidth - 3,3))
+      poll(1000)
+  except ValueError:
+    discard
+  finally:
+    setCursorPos(termWidth - 3,3)
+    stdout.write("   ")
+
 template waitForResolveNewStatusAndSave =
   initCheckingStationNotice()
-  waitFor resolveAndDisplay(stations)
+  when defined(asynccheckspinner):
+    asyncCheck resolveAndDisplay(stations)
+    waitForProcessButSpin()
+  else:
+    waitFor resolveAndDisplay(stations)
   finishCheckingStationNotice()
   saveStatusCacheToJson(stations, statuscontext)
 
@@ -164,4 +180,8 @@ proc hookCacheResolveAndDisplay*(stations; statuscontext) =
       if not stations.applyLinkStatusFromCacheToState(cacheStatusStationList, statuscontext):
         waitForResolveNewStatusAndSave()
   else:
-    waitFor resolveAndDisplay(stations)
+    when defined(asynccheckspinner):
+      asyncCheck resolveAndDisplay(stations)
+      waitForProcessButSpin()
+    else:
+      waitFor resolveAndDisplay(stations)
