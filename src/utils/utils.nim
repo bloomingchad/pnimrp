@@ -43,10 +43,9 @@ proc validateLengthStationName*(result: seq[string], filePath: string, maxLength
         warnCount += 1
 
 proc checkIfTooLongMagic*(): int =
-  terminalWidth() - "  Now Playing: ".len - 6
+  termWidth - "  Now Playing: ".len - 6
 
 proc checkIfTooLongForUI*(str: string): bool =
-  #str.len > int(terminalWidth().toFloat() / 1.65)
   str.len > checkIfTooLongMagic()
 
 proc truncateMe*(str: string): string =

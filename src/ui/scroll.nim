@@ -1,17 +1,17 @@
 # SPDX-License-Identifier: MPL-2.0
 # scroll.nim
 
-import strutils, terminal, illwill
+import strutils, terminal, illwill, ../utils/utils
 
 proc clearLineForScroll(start: int, len: int, indentLevel: int = 0) =
   ## Clears a specific portion of the line for scrolling.
 
   # Ensure start is within bounds
-  if start >= 0 and start < terminalWidth():
+  if start >= 0 and start < termWidth:
     setCursorPos(start, 2)
 
     # Ensure we don't clear beyond the terminal width
-    let clearLen = min(len, terminalWidth() - start)
+    let clearLen = min(len, termWidth - start)
 
     if clearLen > 0:
       stdout.write(" ".repeat(clearLen))
@@ -47,7 +47,7 @@ proc scrollTextOnce*(
   let clearStart = xStart
 
   # Ensure visibleChunk length does not exceed terminal width
-  let clearLen = min(visibleChunk.len, terminalWidth() - clearStart)
+  let clearLen = min(visibleChunk.len, termWidth - clearStart)
 
   # Clear only the portion where the text will be displayed
   clearLineForScroll(clearStart, clearLen, indentLevel + 1)
