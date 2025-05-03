@@ -334,9 +334,10 @@ proc exit*(ctx: ptr Handle, isPaused: bool) =
   showExitMessage()
   quit(QuitSuccess)
 
-proc spinLoadingSpinnerOnce*(frame: var int) =
+proc spinLoadingSpinnerOnce*(frame: var int, coord = (-1, -1)) =
   const spinner = @["-", "\\", "|", "/"]
-  setCursorPos(termWidth-3, 2)
+  if coord == (-1, -1): setCursorPos(termWidth - 3, 2)
+  else:                 setCursorPos(coord[0], coord[1])
   stdout.write("[" & spinner[frame] & "]")
   stdout.flushFile()
   if frame == 3: frame = 0
