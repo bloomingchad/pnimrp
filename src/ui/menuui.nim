@@ -333,3 +333,16 @@ under certain conditions.""",
 proc exit*(ctx: ptr Handle, isPaused: bool) =
   showExitMessage()
   quit(QuitSuccess)
+
+proc spinLoadingSpinnerOnce*(frame: var int) =
+  const spinner = @["-", "\\", "|", "/"]
+  setCursorPos(termWidth-3, 2)
+  stdout.write("[" & spinner[frame] & "]")
+  stdout.flushFile()
+  if frame == 3: frame = 0
+  else: frame += 1
+
+when isMainModule:
+  var spinnerFrame = 0
+  while true:
+    spinnerFrame.spinLoadingSpinnerOnce()
