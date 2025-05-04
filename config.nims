@@ -9,6 +9,7 @@ else:
   switch("define", "ssl")
   switch("define", "volumeFade")
   switch("define", "asynccheckspinner")
+  #switch("define", "asynclinktimeout")
 
 #when defined(asynclinkadv):
 #  switch("define", "ssl")
