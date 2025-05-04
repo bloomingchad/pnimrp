@@ -2,7 +2,6 @@
   "stations": {
     "radcap": "http://79.111.119.111:8002/ambient",
     "R Art Ambient": "https://air.radioart.com/fAmbient.mp3",
-    "Calm Radio Ambient": "https://proxy.calmradio.com:6728/;",
     "1.FM SPA": "https://strm112.1.fm/spa_mobile_mp3",
     "mrg AmbientRadio.net": "https://str3.openstream.co/1808",
     "Positively Ambient": "https://streaming.positivity.radio/pr/positranquil/icecast.audio",
