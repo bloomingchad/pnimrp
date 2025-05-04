@@ -129,7 +129,8 @@ export #utilstypes
   DefaultErrorMsg,
   MinTerminalWidth,
   MaxStationNameLength,
-  mpvEventLoopTimeout
+  mpvEventLoopTimeout,
+  RetryTimesWhenStreamInterrupt
 
 when not defined(simple):
   export #utilstypes

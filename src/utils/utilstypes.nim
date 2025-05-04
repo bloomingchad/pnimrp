@@ -113,3 +113,4 @@ const
   MinTerminalWidth* = 40
   MaxStationNameLength* = 22
   mpvEventLoopTimeout* = KeyTimeout.milSecToSec()
+  RetryTimesWhenStreamInterrupt* = 8

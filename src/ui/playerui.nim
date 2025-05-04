@@ -14,7 +14,7 @@ import
       utils
     ],
 
-  ../misc/like
+  ../misc/[like, bell]
 
 when not defined(simple):
   import
@@ -57,6 +57,9 @@ func getPerCycleSleepTimeFade(vol: int): int =
   let steps = int vol / 5
   result = int toTime / steps
 
+template tryToPlayAgain(url: string) =
+  ctx.allocateJobMpv(url)
+
 proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   ## Plays a radio station and handles user input for playback control.
   #try:
@@ -90,6 +93,8 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
   var fullTitle: string # Declare fullTitle here
   var finishedLoading = false
   var spinnerState = 0
+  var wasTheStreamPlayingForSomeTime: bool
+  var streamInterruptRetryCount = 1
 
   when not defined(simple):
     var metadata = initTable[string, string](8) # Declare metadata here
@@ -130,6 +135,7 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
         globalMetadata = updateMetadataUI(config, ctx, state)
 
     if event.eventID in {IDFileLoaded}:
+      wasTheStreamPlayingForSomeTime = true
       when defined(volumeFade):
         var volumeForFading = 0
         ctx.setVolumeMpv(volumeForFading)
@@ -167,8 +173,22 @@ proc playStation*(ctx: ptr Handle, config: MenuConfig) =
     # Periodic checks
     if coreIdleCounter >= CheckIdleInterval:
       if ctx.isIdle():
-        handlePlayerError("Player core idle", config)
-        break
+        if streamInterruptRetryCount < RetryTimesWhenStreamInterrupt and
+          wasTheStreamPlayingForSomeTime:
+            tryToPlayAgain(config.stationUrl)
+            streamInterruptRetryCount += 1
+            setCursorPos 4, 7
+            stdout.write "retrying count "
+            echo streamInterruptRetryCount
+            if streamInterruptRetryCount mod 2 != 0:
+              warnBell()
+            sleep 500
+            cursorUp()
+            eraseLine()
+
+        else:
+          handlePlayerError("Player core idle", config)
+          break
 
       if event.eventID in {IDEndFile, IDShutdown}:
         if config.stationUrl.isValidPlaylistUrl():
