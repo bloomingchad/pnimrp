@@ -128,7 +128,7 @@ proc waitForProcessButSpin() =
   try:
     while true:
       spinner.spinLoadingSpinnerOnce((termWidth - 3,3))
-      poll(1000)
+      poll()
   except ValueError:
     discard
   finally:
