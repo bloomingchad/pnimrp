@@ -16,6 +16,8 @@ else:
 
 when defined(nlvm):
   switch("passL", "-lmpv")
+  switch("hint", "User:off")
+  switch("hint", "Link:off")
 
 when not defined(dev):
   switch("define", "release")
