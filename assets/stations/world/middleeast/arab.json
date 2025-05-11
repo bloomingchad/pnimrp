@@ -1,5 +1,6 @@
 {
   "stations": {
+    "92.6 Fujairah": "http://ccfz.dyndns.org:4427/live",
     "MonteCarlo Doualiya": "https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3",
     "Nogoum Egypt": "https://audio.nrpstream.com/listen/nogoumfm/radio.mp3",
     "MBC FM": "https://mbcfm-radio.mbc.net/mbcfm-radio_1.m3u8",
