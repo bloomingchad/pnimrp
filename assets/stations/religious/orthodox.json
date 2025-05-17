@@ -1,0 +1,14 @@
+{
+  "stations": {
+    "Radio Caprice - Orthodox": "http://79.111.14.76:9127/",
+    "ΡΣ. Ι.Μ. Αργολίδος 105.2": "http://eco.onestreaming.com:8556/",
+    "Άγιος Οικουμένιος 102": "http://s5.onweb.gr:8508/",
+    "Μοναχική Διακονία 87.5": "http://eco.onestreaming.com:8019/;stream.mp3",
+    "Παύλειος Λόγος 90.2": "http://eco.onestreaming.com:8548/;",
+    "orthodoxiya.org": "http://s5.viastreaming.net:7040/;",
+    "Αλήθεια FM 96.3": "http://sc2.streamwithq.com:8070/",
+    "Ancient Faith Radio": "https://ancientfaith.streamguys1.com/talk",
+    "OCR Rudder 24": "http://radio.myocn.net:8080/stream",
+    "Orthodox Chants": "http://orthodox-chants.ru:8000/64kb"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "stations": {
+    "LiveQuranRadio": "http://104.167.2.55:2199/tunein/qasiuran.pls",
+    "QuranVerse24": "http://verse24.com:3344/listen.mp3"
+  }
+}
