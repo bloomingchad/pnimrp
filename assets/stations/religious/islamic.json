@@ -1,6 +1,10 @@
 {
   "stations": {
-    "LiveQuranRadio": "http://104.167.2.55:2199/tunein/qasiuran.pls",
-    "QuranVerse24": "http://verse24.com:3344/listen.mp3"
+    "surahquran.com": "http://n07.radiojar.com/8s5u5tpdtwzuv",
+    "Quran Radio Tafsir": "https://radio.quranradiotafsir.com/9992/stream",
+    "mp3islam.com": "https://radio.mp3islam.com/listen/quran_radio/radio.mp3",
+    "mp3islam Mishary": "https://radio.mp3islam.com/listen/mishary/radio.mp3",
+    "Irib R Quran": "https://s1.cdn1.iranseda.ir/liveedge/radio-quran/playlist.m3u8",
+    "Aloula SA": "http://n0b.radiojar.com/0tpy1h0kxtzuv"
   }
 }
