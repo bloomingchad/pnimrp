@@ -35,6 +35,7 @@ var lastStationIdx*: int = -1 # Declare a global variable to track the last stat
 
 proc chooseForMeOrChooseYourself(itemsLen: int): Key =
   if chooseForMe:
+    randomize()
     chooseForMe = false # Reset the flag after use
 
     var rndIdx = rand(itemsLen - 1) # Generate random index within bounds
